@@ -1,0 +1,236 @@
+"use client";
+
+import Link from "next/link";
+import Footer from "@/components/Footer";
+import Cursor from "@/components/Cursor";
+import Nav from "@/components/Nav";
+import { motion } from "framer-motion";
+import type { CaseStudy } from "@/lib/caseStudies";
+import { caseStudies } from "@/lib/caseStudies";
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.65, ease: EASE } },
+};
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+
+export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
+  const currentIndex = caseStudies.findIndex((c) => c.slug === cs.slug);
+  const next = caseStudies[currentIndex + 1];
+
+  return (
+    <>
+      <Cursor />
+      <Nav />
+      <main style={{ paddingTop: "52px" }}>
+
+        {/* Hero */}
+        <section style={{ padding: "56px 0 48px", borderBottom: "1px solid var(--border)" }}>
+          <div className="page-pad">
+            <motion.div variants={container} initial="hidden" animate="show">
+              <motion.div variants={fadeUp}>
+                <Link
+                  href="/#work"
+                  style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "36px", transition: "color 0.15s" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+                >
+                  ← Back to work
+                </Link>
+              </motion.div>
+
+              <motion.div variants={fadeUp} style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
+                {cs.tags.map(tag => (
+                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface)", color: "var(--muted)", borderRadius: "4px" }}>
+                    {tag}
+                  </span>
+                ))}
+                {cs.confidential && (
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", background: "rgba(34,197,94,0.08)", color: "#16A34A", borderRadius: "4px" }}>
+                    Confidential — available 1:1
+                  </span>
+                )}
+              </motion.div>
+
+              <motion.p variants={fadeUp} style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>
+                {cs.number}
+              </motion.p>
+
+              <motion.h1
+                variants={fadeUp}
+                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 700, lineHeight: 1.1, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "16px" }}
+              >
+                {cs.title}
+              </motion.h1>
+
+              <motion.p
+                variants={fadeUp}
+                style={{ fontFamily: "var(--font-body)", fontSize: "17px", fontWeight: 400, lineHeight: 1.6, color: "var(--muted2)", maxWidth: "520px", marginBottom: "40px" }}
+              >
+                {cs.subtitle}
+              </motion.p>
+
+              <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "16px" }}>
+                {[
+                  { label: "Type", value: cs.type },
+                  { label: "Role", value: cs.role },
+                  cs.company  ? { label: "Company",  value: cs.company  } : null,
+                  cs.timeline ? { label: "Timeline", value: cs.timeline } : null,
+                  cs.team     ? { label: "Team",     value: cs.team     } : null,
+                ].filter(Boolean).map(item => (
+                  <div key={item!.label} style={{ borderTop: "1px solid var(--border)", paddingTop: "12px" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "5px" }}>{item!.label}</p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", lineHeight: 1.4 }}>{item!.value}</p>
+                  </div>
+                ))}
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Metrics bar */}
+        <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "32px 0" }}>
+          <div className="page-pad">
+            <div style={{ display: "flex", gap: "40px", flexWrap: "wrap" }}>
+              {cs.metrics.map(m => (
+                <div key={m.label}>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(24px, 3.5vw, 36px)", fontWeight: 700, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1, marginBottom: "5px" }}>
+                    {m.value}
+                  </p>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>{m.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Body */}
+        <article style={{ padding: "0" }}>
+          <div className="page-pad">
+
+            <CsSection label="Overview"><BodyText>{cs.summary}</BodyText></CsSection>
+            <CsSection label="The Problem"><BodyText>{cs.problem}</BodyText></CsSection>
+
+            {cs.insight && (
+              <section style={{ padding: "48px 0", borderBottom: "1px solid var(--border)" }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                  style={{ background: "var(--surface)", borderRadius: "10px", padding: "28px" }}
+                >
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "14px" }}>Core Insight</p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 600, lineHeight: 1.45, letterSpacing: "-0.02em", color: "var(--text)" }}>
+                    {cs.insight}
+                  </p>
+                </motion.div>
+              </section>
+            )}
+
+            <CsSection label="Key Design Decisions">
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {cs.decisions.map((d, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: EASE, delay: i * 0.06 }}
+                    style={{ padding: "24px 0", borderBottom: "1px solid var(--border)", display: "grid", gridTemplateColumns: "48px 1fr", gap: "20px" }}
+                  >
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", color: "var(--muted)", paddingTop: "2px" }}>
+                      {String(i + 1).padStart(2, "0")}
+                    </p>
+                    <div>
+                      <h3 style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 600, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3 }}>
+                        {d.title}
+                      </h3>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, color: "var(--muted2)" }}>
+                        {d.body}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </CsSection>
+
+            <CsSection label="Outcomes">
+              <div>
+                {cs.outcomes.map((o, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55, ease: EASE, delay: i * 0.05 }}
+                    style={{ display: "flex", alignItems: "flex-start", gap: "16px", padding: "18px 0", borderBottom: "1px solid var(--border)" }}
+                  >
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--muted)", letterSpacing: "0.06em", marginTop: "2px", flexShrink: 0, minWidth: "24px" }}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 500, lineHeight: 1.55, color: "var(--text)", letterSpacing: "-0.01em" }}>
+                      {o}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </CsSection>
+
+            {cs.lesson && (
+              <section style={{ padding: "48px 0", borderBottom: "1px solid var(--border)" }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                >
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>What I learned</p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 600, lineHeight: 1.45, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "600px" }}>
+                    {cs.lesson}
+                  </p>
+                </motion.div>
+              </section>
+            )}
+
+            {/* Navigation */}
+            <nav style={{ padding: "40px 0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+              <Link href="/#work" className="btn-secondary">← All work</Link>
+              {next && <Link href={`/work/${next.slug}`} className="btn-primary">Next: {next.title} →</Link>}
+            </nav>
+          </div>
+        </article>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+function CsSection({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.65, ease: EASE }}
+      style={{ padding: "48px 0", borderBottom: "1px solid var(--border)" }}
+    >
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px" }}>{label}</p>
+      {children}
+    </motion.section>
+  );
+}
+
+function BodyText({ children }: { children: React.ReactNode }) {
+  return (
+    <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 400, lineHeight: 1.8, color: "var(--muted2)", maxWidth: "580px" }}>
+      {children}
+    </p>
+  );
+}
