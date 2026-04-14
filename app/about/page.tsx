@@ -101,13 +101,13 @@ export default function AboutPage() {
       <main style={{ paddingTop: "52px" }}>
 
         {/* Intro */}
-        <section style={{ padding: "64px 0 0" }}>
+        <section style={{ padding: "48px 0 0" }}>
           <div className="page-pad">
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.65, ease: EASE, delay: 0.1 }}
-              style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "20px" }}
+              style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}
             >
               About
             </motion.p>
@@ -115,7 +115,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.75, ease: EASE, delay: 0.12 }}
-              style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "24px" }}
+              style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 300, lineHeight: 1.2, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "24px" }}
             >
               I&apos;m Arun Gaddam.
             </motion.h1>
@@ -123,7 +123,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: EASE, delay: 0.18 }}
-              style={{ fontFamily: "var(--font-body)", fontSize: "15px", lineHeight: 1.75, color: "var(--muted2)", marginBottom: "16px" }}
+              style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "16px" }}
             >
               Senior UX/Product Designer with 8+ years across startups and large-scale consumer products. I&apos;ve designed for apps with millions of users — from a 50M-user sports platform to enterprise SaaS tools tied directly to revenue. I care about systems that work, not just screens that look good.
             </motion.p>
@@ -131,7 +131,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: EASE, delay: 0.24 }}
-              style={{ fontFamily: "var(--font-body)", fontSize: "15px", lineHeight: 1.75, color: "var(--muted2)", marginBottom: "16px" }}
+              style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "16px" }}
             >
               I work at the intersection of UX, product thinking, and AI. I care about the problem before the interface, the system before the screen, and the metric before the launch. I&apos;ve led cross-functional teams, mentored designers, and shipped design systems adopted across multiple product surfaces.
             </motion.p>
@@ -139,7 +139,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: EASE, delay: 0.30 }}
-              style={{ fontFamily: "var(--font-body)", fontSize: "15px", lineHeight: 1.75, color: "var(--muted2)", marginBottom: "32px" }}
+              style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "32px" }}
             >
               Outside work, I&apos;m in Hyderabad with my wife and our son — figuring out how to be present as a parent while staying sharp as a designer. AI helps with the second part.
             </motion.p>
@@ -150,7 +150,7 @@ export default function AboutPage() {
         </section>
 
         {/* Perspective Q&A */}
-        <section style={{ padding: "56px 0 0" }}>
+        <section style={{ padding: "48px 0 0" }}>
           <div className="page-pad">
             <SectionLabel>Perspective</SectionLabel>
             {qa.map(({ q, a }, i) => (
@@ -162,7 +162,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.6, ease: EASE, delay: i * 0.06 }}
                 style={{ padding: "24px 0", borderBottom: "1px solid var(--border)", borderTop: i === 0 ? "1px solid var(--border)" : "none", marginTop: i === 0 ? "20px" : "0" }}
               >
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 600, color: "var(--text)", marginBottom: "10px", letterSpacing: "-0.01em" }}>{q}</p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, color: "var(--text)", marginBottom: "8px", letterSpacing: "-0.01em" }}>{q}</p>
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, color: "var(--muted2)" }}>{a}</p>
               </motion.div>
             ))}
@@ -170,7 +170,7 @@ export default function AboutPage() {
         </section>
 
         {/* Experience */}
-        <section style={{ padding: "56px 0 0" }}>
+        <section style={{ padding: "48px 0 0" }}>
           <div className="page-pad">
             <SectionLabel>Experience</SectionLabel>
             {timeline.map((item, i) => (
@@ -180,12 +180,12 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, ease: EASE, delay: i * 0.05 }}
-                style={{ display: "grid", gridTemplateColumns: "100px 1fr", gap: "20px", padding: "24px 0", borderTop: "1px solid var(--border)", marginTop: i === 0 ? "20px" : "0", alignItems: "start" }}
+                style={{ display: "grid", gridTemplateColumns: "100px 1fr", gap: "24px", padding: "24px 0", borderTop: "1px solid var(--border)", marginTop: i === 0 ? "20px" : "0", alignItems: "start" }}
                 className="timeline-item"
               >
                 <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", paddingTop: "3px" }}>{item.year}</p>
                 <div>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 600, color: "var(--text)", marginBottom: "2px", letterSpacing: "-0.01em" }}>{item.role}</p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, color: "var(--text)", marginBottom: "2px", letterSpacing: "-0.01em" }}>{item.role}</p>
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", marginBottom: "8px" }}>{item.company}</p>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, color: "var(--muted2)" }}>{item.note}</p>
                 </div>
@@ -196,7 +196,7 @@ export default function AboutPage() {
         </section>
 
         {/* Tools — categorized */}
-        <section style={{ padding: "56px 0 0" }}>
+        <section style={{ padding: "48px 0 0" }}>
           <div className="page-pad">
             <SectionLabel>Tools</SectionLabel>
             <div style={{ paddingTop: "20px", display: "flex", flexDirection: "column", gap: "0" }}>
@@ -213,7 +213,7 @@ export default function AboutPage() {
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "5px" }}>
                     {cat.label}
                   </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                     {cat.tools.map(t => (
                       <span key={t} style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, padding: "4px 12px", background: "var(--surface)", color: "var(--muted2)", borderRadius: "5px", letterSpacing: "-0.01em" }}>
                         {t}
@@ -228,7 +228,7 @@ export default function AboutPage() {
         </section>
 
         {/* Education */}
-        <section style={{ padding: "56px 0 0" }}>
+        <section style={{ padding: "48px 0 0" }}>
           <div className="page-pad">
             <SectionLabel>Education</SectionLabel>
             {[
@@ -247,7 +247,7 @@ export default function AboutPage() {
               >
                 <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", paddingTop: "3px" }}>{e.year}</p>
                 <div>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 600, color: "var(--text)", marginBottom: "2px", letterSpacing: "-0.01em" }}>{e.title}</p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, color: "var(--text)", marginBottom: "2px", letterSpacing: "-0.01em" }}>{e.title}</p>
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)" }}>{e.org}</p>
                 </div>
               </motion.div>

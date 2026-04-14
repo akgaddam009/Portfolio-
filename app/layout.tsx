@@ -5,14 +5,14 @@ import "./globals.css";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400"],
   display: "swap",
 });
 
 const dmMono = DM_Mono({
   variable: "--font-dm-mono",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400"],
   display: "swap",
 });
 
