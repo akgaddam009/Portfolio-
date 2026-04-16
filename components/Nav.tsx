@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -12,7 +13,7 @@ export default function Nav() {
 
   const copyEmail = async () => {
     try {
-      await navigator.clipboard.writeText("hello@arungaddam.com");
+      await navigator.clipboard.writeText("akgaddam02@gmail.com");
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -31,13 +32,11 @@ export default function Nav() {
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EASE }}
+        className="nav-glass"
         style={{
           position: "fixed",
           top: 0, left: 0, right: 0,
           zIndex: 200,
-          background: "rgba(255,255,255,0.92)",
-          backdropFilter: "blur(16px) saturate(160%)",
-          WebkitBackdropFilter: "blur(16px) saturate(160%)",
           borderBottom: "1px solid var(--border)",
         }}
       >
@@ -52,22 +51,26 @@ export default function Nav() {
             justifyContent: "space-between",
           }}
         >
-          {/* Name — logo */}
-          <Link
-            href="/"
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "14px",
-              fontWeight: 600,
-              color: "var(--text)",
-              letterSpacing: "-0.02em",
-              transition: "opacity 0.15s",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.opacity = "0.5")}
-            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
-          >
-            Arun Gaddam
-          </Link>
+          {/* Name + theme toggle */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Link
+              href="/"
+              style={{
+                fontFamily: "var(--font-logo)",
+                fontStyle: "italic",
+                fontSize: "17px",
+                fontWeight: 400,
+                color: "var(--text)",
+                letterSpacing: "-0.01em",
+                transition: "opacity 0.15s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = "0.5")}
+              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+            >
+              Arun Gaddam
+            </Link>
+            <ThemeToggle />
+          </div>
 
           {/* Desktop: nav links + email copy */}
           <nav
@@ -84,6 +87,23 @@ export default function Nav() {
               </Link>
             ))}
 
+            {/* CV download */}
+            <Link
+              href="/cv.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--font-mono)", fontSize: "10px",
+                letterSpacing: "0.06em", textTransform: "uppercase",
+                color: "var(--muted)", transition: "color 0.15s",
+                display: "inline-flex", alignItems: "center", gap: "5px",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+            >
+              CV ↓
+            </Link>
+
             <div
               style={{ width: "1px", height: "14px", background: "var(--border)" }}
             />
@@ -97,7 +117,7 @@ export default function Nav() {
                 gap: "6px",
                 fontFamily: "var(--font-body)",
                 fontSize: "13px",
-                fontWeight: 500,
+                fontWeight: 400,
                 color: copied ? "#16a34a" : "var(--muted)",
                 background: "none",
                 border: "none",
@@ -170,7 +190,7 @@ export default function Nav() {
                     display: "block",
                     fontFamily: "var(--font-body)",
                     fontSize: "28px",
-                    fontWeight: 600,
+                    fontWeight: 400,
                     letterSpacing: "-0.02em",
                     color: "var(--text)",
                     padding: "14px 0",

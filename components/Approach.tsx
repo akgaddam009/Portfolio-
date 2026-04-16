@@ -22,11 +22,6 @@ const principles = [
   },
   {
     number: "04",
-    title: "Cross-Functional by Default",
-    body: "Design doesn't live in a Figma file. I operate at the intersection of product, engineering, data science, and business — as a decision-maker who speaks every language in the room, not as a liaison.",
-  },
-  {
-    number: "05",
     title: "Measure, Then Iterate",
     body: "I define success metrics before design begins. Adoption rate, task completion time, decision accuracy — those are metrics. 'Improved UX' is not. I use Pendo, Mixpanel, and Looker to validate whether the design actually worked.",
   },

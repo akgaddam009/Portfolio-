@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
 import ContactCTA from "@/components/ContactCTA";
+import PageTransition from "@/components/PageTransition";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -99,6 +100,7 @@ export default function AboutPage() {
       <Cursor />
       <Nav />
       <main style={{ paddingTop: "52px" }}>
+      <PageTransition>
 
         {/* Intro */}
         <section style={{ padding: "48px 0 0" }}>
@@ -143,8 +145,23 @@ export default function AboutPage() {
             >
               Outside work, I&apos;m in Hyderabad with my wife and our son — figuring out how to be present as a parent while staying sharp as a designer. AI helps with the second part.
             </motion.p>
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.36 }}>
-              <Link href="mailto:hello@arungaddam.com" className="btn-primary">Get in touch →</Link>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.36 }} style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+              <Link href="mailto:akgaddam02@gmail.com" className="btn-primary">Get in touch →</Link>
+              <Link
+                href="/cv.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontFamily: "var(--font-mono)", fontSize: "10px",
+                  letterSpacing: "0.06em", textTransform: "uppercase",
+                  color: "var(--muted)", transition: "color 0.15s",
+                  display: "inline-flex", alignItems: "center", gap: "5px",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+              >
+                Download CV ↓
+              </Link>
             </motion.div>
           </div>
         </section>
@@ -183,10 +200,10 @@ export default function AboutPage() {
                 style={{ display: "grid", gridTemplateColumns: "100px 1fr", gap: "24px", padding: "24px 0", borderTop: "1px solid var(--border)", marginTop: i === 0 ? "20px" : "0", alignItems: "start" }}
                 className="timeline-item"
               >
-                <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", paddingTop: "3px" }}>{item.year}</p>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", color: "var(--muted)", paddingTop: "3px" }}>{item.year}</p>
                 <div>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, color: "var(--text)", marginBottom: "2px", letterSpacing: "-0.01em" }}>{item.role}</p>
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", marginBottom: "8px" }}>{item.company}</p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--muted)", marginBottom: "8px" }}>{item.company}</p>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, color: "var(--muted2)" }}>{item.note}</p>
                 </div>
               </motion.div>
@@ -245,10 +262,10 @@ export default function AboutPage() {
                 style={{ display: "grid", gridTemplateColumns: "100px 1fr", gap: "20px", padding: "20px 0", borderTop: "1px solid var(--border)", marginTop: i === 0 ? "20px" : "0", alignItems: "start" }}
                 className="timeline-item"
               >
-                <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", paddingTop: "3px" }}>{e.year}</p>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", color: "var(--muted)", paddingTop: "3px" }}>{e.year}</p>
                 <div>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, color: "var(--text)", marginBottom: "2px", letterSpacing: "-0.01em" }}>{e.title}</p>
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)" }}>{e.org}</p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--muted)" }}>{e.org}</p>
                 </div>
               </motion.div>
             ))}
@@ -257,6 +274,7 @@ export default function AboutPage() {
         </section>
 
         <ContactCTA />
+      </PageTransition>
       </main>
       <Footer />
 

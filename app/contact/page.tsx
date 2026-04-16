@@ -3,6 +3,7 @@
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
+import PageTransition from "@/components/PageTransition";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -26,6 +27,7 @@ export default function ContactPage() {
       <Cursor />
       <Nav />
       <main style={{ paddingTop: "52px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <PageTransition>
         <section style={{ flex: 1, padding: "48px 0" }}>
           <div className="page-pad">
             <motion.p
@@ -86,10 +88,15 @@ export default function ContactPage() {
               transition={{ duration: 0.75, ease: EASE, delay: 0.3 }}
               style={{ background: "var(--surface)", borderRadius: "12px", padding: "24px" }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--muted)", display: "inline-block", flexShrink: 0 }} />
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)" }}>
-                  Open to opportunities
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span className="availability-dot" />
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)" }}>
+                    Open to opportunities
+                  </span>
+                </div>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.05em", color: "var(--muted)", opacity: 0.6 }}>
+                  Updated Apr 2026
                 </span>
               </div>
               <h2 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400, letterSpacing: "-0.02em", lineHeight: 1.35, color: "var(--text)", marginBottom: "16px" }}>
@@ -109,6 +116,7 @@ export default function ContactPage() {
             </motion.div>
           </div>
         </section>
+      </PageTransition>
       </main>
       <Footer />
     </>

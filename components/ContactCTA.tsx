@@ -21,7 +21,7 @@ export default function ContactCTA() {
         >
           <h2 style={{
             fontFamily: "var(--font-body)", fontSize: "clamp(22px, 3vw, 28px)",
-            fontWeight: 600, lineHeight: 1.25, letterSpacing: "-0.025em",
+            fontWeight: 300, lineHeight: 1.25, letterSpacing: "-0.025em",
             color: "var(--bg)", marginBottom: "10px",
           }}>
             Have a hard problem?
@@ -31,9 +31,9 @@ export default function ContactCTA() {
           </p>
 
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-            <Link href="mailto:hello@arungaddam.com" style={{
+            <Link href="mailto:akgaddam02@gmail.com" style={{
               display: "inline-flex", alignItems: "center", gap: "6px",
-              fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500,
+              fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
               padding: "9px 20px", background: "var(--bg)", color: "var(--text)",
               borderRadius: "8px", letterSpacing: "-0.01em", transition: "opacity 0.15s",
             }}
@@ -42,9 +42,9 @@ export default function ContactCTA() {
             >
               Say hello →
             </Link>
-            <Link href="https://linkedin.com/in/arungaddam" target="_blank" rel="noopener noreferrer" style={{
+            <Link href="https://linkedin.com/in/akgaddam" target="_blank" rel="noopener noreferrer" style={{
               display: "inline-flex", alignItems: "center", gap: "6px",
-              fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500,
+              fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
               padding: "9px 20px", border: "1px solid rgba(245,244,240,0.15)",
               color: "rgba(245,244,240,0.65)", borderRadius: "8px",
               letterSpacing: "-0.01em", transition: "border-color 0.15s, color 0.15s",

@@ -7,7 +7,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 const container = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
 };
 
 const item = {
@@ -15,23 +15,18 @@ const item = {
   show:   { opacity: 1, y: 0, transition: { duration: 0.65, ease: EASE } },
 };
 
-/* Info cards — MC's Role/Focus/Stack/Experience blocks */
 const infoCards = [
   {
     label: "Role",
-    value: "Senior Product Designer. I own everything from discovery to design and now can produce code using Claude Code.",
+    value: "Senior Product Designer. I own the full design process — from discovery and strategy to final pixel.",
   },
   {
     label: "Focus",
-    value: "My main focus is product design & product thinking, but I also dabble in user research.",
-  },
-  {
-    label: "Stack",
-    value: "Cursor, Claude Code, Figma, and more.",
+    value: "Enterprise SaaS, B2B AI tools, and consumer products at scale — with user research as a core part of the process.",
   },
   {
     label: "Experience",
-    value: "8+ years designing digital products for product based companies in complex enterprise apps to consumer mobile app ranging more than 50m users. — influencing roadmaps, mentoring designers, and collaborating across cross-functional teams.",
+    value: "8+ years designing complex enterprise apps to consumer mobile app influencing roadmaps, mentoring designers, and collaborating across cross-functional teams.",
   },
   {
     label: "Superpower",
@@ -41,127 +36,123 @@ const infoCards = [
 
 export default function Hero() {
   return (
-    <section
-      style={{ paddingTop: "96px", paddingBottom: "0" }}
-    >
+    <section style={{ paddingTop: "96px", paddingBottom: "0" }}>
       <div className="page-pad">
         <motion.div
           variants={container}
           initial="hidden"
           animate="show"
-          style={{ display: "flex", flexDirection: "column", gap: "0" }}
+          style={{ display: "flex", flexDirection: "column" }}
         >
-          {/* Intro — MC's conversational opening */}
-          <motion.p
+          {/* Headline */}
+          <motion.h1
             variants={item}
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "clamp(22px, 3vw, 28px)",
-              fontWeight: 400,
-              lineHeight: 1.55,
+              fontSize: "clamp(26px, 4vw, 40px)",
+              fontWeight: 500,
+              lineHeight: 1.2,
+              letterSpacing: "-0.03em",
               color: "var(--text)",
               marginBottom: "20px",
-              letterSpacing: "-0.02em",
             }}
           >
             Hey, I&apos;m Arun.{" "}
             <span style={{ color: "var(--muted)" }}>
               I design products at the intersection of UX, product thinking, and AI.
             </span>
-          </motion.p>
+          </motion.h1>
 
+          {/* Subheader */}
           <motion.p
             variants={item}
             style={{
               fontFamily: "var(--font-body)",
               fontSize: "15px",
-              fontWeight: 400,
               lineHeight: 1.65,
               color: "var(--muted)",
               marginBottom: "48px",
-              letterSpacing: "-0.01em",
               maxWidth: "520px",
             }}
           >
             I&apos;m based in Hyderabad, India with my wife and our son — figuring out the balance between designing products, catching up with AI, and raising a tiny human. I&apos;m learning a lot from both.
           </motion.p>
 
-          {/* CTA row */}
+          {/* Info grid — 2×2 + last spans full */}
+          <motion.div variants={item}>
+            <div style={{ borderTop: "1px solid var(--border)" }} />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                borderBottom: "1px solid var(--border)",
+              }}
+              className="info-grid"
+            >
+              {infoCards.map((card, i) => {
+                const total = infoCards.length;
+                const isLastOdd = total % 2 === 1 && i === total - 1;
+                const isLeft = i % 2 === 0;
+                const isLastRow = i >= total - (isLastOdd ? 1 : 2);
+                return (
+                  <div
+                    key={card.label}
+                    style={{
+                      padding: "18px 0",
+                      paddingRight: !isLastOdd && isLeft ? "28px" : "0",
+                      paddingLeft: !isLastOdd && !isLeft ? "28px" : "0",
+                      borderRight: !isLastOdd && isLeft ? "1px solid var(--border)" : "none",
+                      borderBottom: !isLastRow ? "1px solid var(--border)" : "none",
+                      gridColumn: isLastOdd ? "1 / -1" : "auto",
+                    }}
+                  >
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "10px",
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      color: "var(--muted)", marginBottom: "6px",
+                    }}>
+                      {card.label}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "14px",
+                      color: "var(--text)", lineHeight: 1.55,
+                      letterSpacing: "-0.01em",
+                    }}>
+                      {card.value}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* CTAs */}
           <motion.div
             variants={item}
-            style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "56px" }}
+            style={{ display: "flex", alignItems: "center", gap: "24px", marginTop: "32px" }}
           >
             <Link
               href="/#work"
               style={{
                 fontFamily: "var(--font-mono)", fontSize: "11px",
-                letterSpacing: "0.04em", color: "var(--muted)",
-                textDecoration: "underline", textDecorationColor: "var(--border)",
-                transition: "color 0.15s",
+                letterSpacing: "0.05em", textTransform: "uppercase",
+                color: "var(--text)", transition: "opacity 0.15s",
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+              onMouseEnter={e => (e.currentTarget.style.opacity = "0.5")}
+              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
             >
               View work ↓
             </Link>
-            <Link
-              href="mailto:hello@arungaddam.com"
-              style={{
-                fontFamily: "var(--font-mono)", fontSize: "11px",
-                letterSpacing: "0.04em", color: "var(--muted)",
-                textDecoration: "underline", textDecorationColor: "var(--border)",
-                transition: "color 0.15s",
-              }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
-            >
-              Get in touch →
-            </Link>
-          </motion.div>
-
-          {/* Info rows — linear stacked */}
-          <motion.div variants={item}>
-            <div>
-              {infoCards.map((card, i) => (
-                <div
-                  key={card.label}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "96px 1fr",
-                    gap: "16px",
-                    padding: "16px 0",
-                    borderTop: "1px solid var(--border)",
-                    alignItems: "baseline",
-                  }}
-                >
-                  <p style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: "var(--muted)",
-                    paddingTop: "2px",
-                  }}>
-                    {card.label}
-                  </p>
-                  <p style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "14px",
-                    fontWeight: 400,
-                    color: "var(--text)",
-                    lineHeight: 1.6,
-                    letterSpacing: "-0.01em",
-                  }}>
-                    {card.value}
-                  </p>
-                </div>
-              ))}
-              <div style={{ borderTop: "1px solid var(--border)" }} />
-            </div>
           </motion.div>
         </motion.div>
       </div>
 
+      <style>{`
+        @media (max-width: 500px) {
+          .info-grid { grid-template-columns: 1fr !important; }
+          .info-grid > div { padding-left: 0 !important; padding-right: 0 !important; border-right: none !important; border-bottom: 1px solid var(--border) !important; }
+        }
+      `}</style>
     </section>
   );
 }

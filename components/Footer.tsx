@@ -3,9 +3,9 @@
 import Link from "next/link";
 
 const links = [
-  { label: "Email", href: "mailto:hello@arungaddam.com" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/arungaddam", external: true },
-  { label: "Medium", href: "https://medium.com/@arungaddam", external: true },
+  { label: "Email", href: "mailto:akgaddam02@gmail.com" },
+  { label: "LinkedIn", href: "https://linkedin.com/in/akgaddam", external: true },
+  { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
   { label: "ADPList", href: "https://adplist.org/mentors/arun-gaddam", external: true },
 ];
 
@@ -21,7 +21,7 @@ export default function Footer() {
         {/* Top row */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "24px", marginBottom: "32px" }}>
           <div>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 600, color: "var(--text)", letterSpacing: "-0.01em", marginBottom: "4px" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, color: "var(--text)", letterSpacing: "-0.01em", marginBottom: "4px" }}>
               Arun Gaddam
             </p>
             <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--muted)", lineHeight: 1.5 }}>
@@ -65,7 +65,7 @@ export default function Footer() {
               </Link>
             ))}
           </nav>
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--muted)", letterSpacing: "0.04em" }}>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--muted)", letterSpacing: "0.06em" }}>
             © {new Date().getFullYear()} · Hyderabad, India
           </p>
         </div>

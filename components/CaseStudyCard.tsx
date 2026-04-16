@@ -6,28 +6,141 @@ import type { CaseStudy } from "@/lib/caseStudies";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/* ── Plain thumbnail ───────────────────────────────── */
-function Thumbnail({ index }: { index: number }) {
-  const bgs = ["#f0f0ee", "#eeeef0", "#eef0ee", "#f0eeee"];
+/* ── Plain thumbnail ── */
+function Thumbnail({ index, featured }: { index: number; featured?: boolean }) {
+  const bgs = ["#ebebea", "#eaeaeb", "#eaebea", "#ebeaea", "#eaeaeb", "#eaebeb"];
   return (
     <div style={{ width: "100%", height: "100%", background: bgs[index % bgs.length] }} />
   );
 }
 
-/* ── Card ──────────────────────────────────────────── */
-export default function CaseStudyCard({ cs, index }: { cs: CaseStudy; index: number }) {
+/* ── Card ── */
+export default function CaseStudyCard({
+  cs,
+  index,
+  featured,
+}: {
+  cs: CaseStudy;
+  index: number;
+  featured?: boolean;
+}) {
   const href = cs.confidential ? "/contact" : `/work/${cs.slug}`;
 
+  if (featured) {
+    return (
+      <Link href={href}>
+        <motion.div
+          whileHover={{ y: -3 }}
+          transition={{ type: "spring", stiffness: 280, damping: 28 }}
+          style={{
+            background: "var(--surface)",
+            borderRadius: "12px",
+            overflow: "hidden",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+          }}
+          className="featured-card"
+        >
+          {/* Thumbnail — left side */}
+          <div style={{ height: "320px", position: "relative", overflow: "hidden" }}>
+            <Thumbnail index={index} featured />
+            {cs.confidential && (
+              <div style={{
+                position: "absolute", top: "12px", right: "12px",
+                background: "rgba(22,163,74,0.9)", backdropFilter: "blur(8px)",
+                borderRadius: "6px", padding: "3px 10px",
+                fontFamily: "var(--font-mono)", fontSize: "9px",
+                letterSpacing: "0.08em", textTransform: "uppercase", color: "#fff",
+              }}>
+                Confidential
+              </div>
+            )}
+          </div>
+
+          {/* Body — right side */}
+          <div style={{
+            padding: "32px 28px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}>
+            <div>
+              {/* Number + type */}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", color: "var(--muted)" }}>
+                  {cs.number}
+                </span>
+                <span style={{ width: "1px", height: "10px", background: "var(--border)" }} />
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)" }}>
+                  {cs.type}
+                </span>
+              </div>
+
+              <h2 style={{
+                fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2vw, 24px)",
+                fontWeight: 600, lineHeight: 1.25, letterSpacing: "-0.025em",
+                color: "var(--text)", marginBottom: "12px",
+              }}>
+                {cs.title}
+              </h2>
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "14px",
+                lineHeight: 1.65, color: "var(--muted2)", marginBottom: "28px",
+              }}>
+                {cs.summary}
+              </p>
+
+              {/* Metrics */}
+              <div style={{ display: "flex", gap: "20px", marginBottom: "28px" }}>
+                {cs.metrics.slice(0, 2).map(m => (
+                  <div key={m.label}>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "18px", fontWeight: 700,
+                      letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1, marginBottom: "3px",
+                    }}>{m.value}</p>
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em",
+                      color: "var(--muted)", textTransform: "uppercase",
+                    }}>{m.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA */}
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: "4px",
+              padding: "8px 16px", alignSelf: "flex-start",
+              background: cs.confidential ? "var(--surface2)" : "var(--text)",
+              color: cs.confidential ? "var(--muted)" : "var(--bg)",
+              borderRadius: "6px",
+              fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 500,
+              letterSpacing: "-0.01em",
+            }}>
+              {cs.confidential ? "Request access" : "View case study"}
+              <span style={{ opacity: 0.6, fontSize: "11px" }}>{cs.confidential ? "→" : "↗"}</span>
+            </span>
+          </div>
+        </motion.div>
+
+        <style>{`
+          @media (max-width: 640px) { .featured-card { grid-template-columns: 1fr !important; } }
+        `}</style>
+      </Link>
+    );
+  }
+
+  /* Regular card */
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.7, ease: EASE, delay: (index % 2) * 0.08 }}
+      transition={{ duration: 0.65, ease: EASE, delay: (index % 2) * 0.07 }}
     >
       <Link href={href}>
         <motion.div
-          whileHover={{ y: -4 }}
+          whileHover={{ y: -3 }}
           transition={{ type: "spring", stiffness: 280, damping: 28 }}
           style={{
             background: "var(--surface)",
@@ -38,7 +151,7 @@ export default function CaseStudyCard({ cs, index }: { cs: CaseStudy; index: num
           }}
         >
           {/* Thumbnail */}
-          <div style={{ height: "260px", position: "relative", overflow: "hidden" }}>
+          <div style={{ height: "220px", position: "relative", overflow: "hidden" }}>
             <Thumbnail index={index} />
             {cs.confidential && (
               <div style={{
@@ -53,14 +166,17 @@ export default function CaseStudyCard({ cs, index }: { cs: CaseStudy; index: num
             )}
           </div>
 
-          {/* Card body */}
+          {/* Body */}
           <div style={{ padding: "16px 20px 20px" }}>
-            {/* Tags */}
-            <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
-              {cs.tags.slice(0, 2).map(tag => (
+            {/* Number + tags */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)" }}>
+                {cs.number}
+              </span>
+              {cs.tags.slice(0, 1).map(tag => (
                 <span key={tag} style={{
                   fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em",
-                  padding: "3px 8px", background: "var(--surface2)",
+                  padding: "2px 7px", background: "var(--surface2)",
                   color: "var(--muted)", borderRadius: "4px",
                 }}>
                   {tag}
@@ -70,9 +186,8 @@ export default function CaseStudyCard({ cs, index }: { cs: CaseStudy; index: num
 
             {/* Title */}
             <h3 style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "16px", fontWeight: 600,
-              lineHeight: 1.35, letterSpacing: "-0.02em",
+              fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 600,
+              lineHeight: 1.3, letterSpacing: "-0.02em",
               color: "var(--text)", marginBottom: "16px",
             }}>
               {cs.title}
@@ -81,14 +196,14 @@ export default function CaseStudyCard({ cs, index }: { cs: CaseStudy; index: num
             {/* Metrics + CTA */}
             <div style={{
               display: "flex", justifyContent: "space-between",
-              alignItems: "center", flexWrap: "wrap", gap: "10px",
-              paddingTop: "14px", borderTop: "1px solid var(--border)",
+              alignItems: "center", flexWrap: "wrap", gap: "8px",
+              paddingTop: "12px", borderTop: "1px solid var(--border)",
             }}>
-              <div style={{ display: "flex", gap: "16px" }}>
+              <div style={{ display: "flex", gap: "14px" }}>
                 {cs.metrics.slice(0, 2).map(m => (
                   <div key={m.label}>
                     <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "16px",
+                      fontFamily: "var(--font-body)", fontSize: "15px",
                       fontWeight: 700, letterSpacing: "-0.03em",
                       color: "var(--text)", lineHeight: 1, marginBottom: "2px",
                     }}>{m.value}</p>
@@ -103,15 +218,15 @@ export default function CaseStudyCard({ cs, index }: { cs: CaseStudy; index: num
 
               <span style={{
                 display: "inline-flex", alignItems: "center", gap: "4px",
-                padding: "7px 14px",
+                padding: "6px 12px",
                 background: cs.confidential ? "var(--surface2)" : "var(--text)",
                 color: cs.confidential ? "var(--muted)" : "var(--bg)",
                 borderRadius: "6px",
-                fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 500,
+                fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 500,
                 whiteSpace: "nowrap", letterSpacing: "-0.01em",
               }}>
                 {cs.confidential ? "Request access" : "View case study"}
-                <span style={{ opacity: 0.6, fontSize: "11px" }}>{cs.confidential ? "→" : "↗"}</span>
+                <span style={{ opacity: 0.6, fontSize: "10px" }}>{cs.confidential ? "→" : "↗"}</span>
               </span>
             </div>
           </div>

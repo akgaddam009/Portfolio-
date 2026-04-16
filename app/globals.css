@@ -9,9 +9,11 @@
   --text:     #0a0a0a;
   --muted:    #737373;
   --muted2:   #404040;
+  --chrome:   #eeeeed;
 
   --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Fira Mono', monospace;
+  --font-logo: var(--font-instrument-serif), 'Instrument Serif', Georgia, serif;
 
   --ease-expo:   cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out:    cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -19,6 +21,33 @@
   --dur-fast: 180ms;
   --dur-base: 320ms;
   --dur-slow: 650ms;
+}
+
+/* ─── Dark theme ─────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:       #111111;
+  --surface:  #1c1c1c;
+  --surface2: #252525;
+  --border:   #2e2e2e;
+  --text:     #efefef;
+  --muted:    #888888;
+  --muted2:   #b8b8b8;
+  --chrome:   #0d0d0d;
+}
+
+/* ─── Nav frosted glass — theme-aware ───────────────── */
+.nav-glass {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+}
+[data-theme="dark"] .nav-glass {
+  background: rgba(13, 13, 13, 0.92);
+}
+
+/* ─── Panel sticky header — fully opaque so scroll content never bleeds through ── */
+.panel-header-glass {
+  background: var(--bg);
 }
 
 /* ─── Base ───────────────────────────────────────────── */
@@ -165,6 +194,86 @@ a { color: inherit; text-decoration: none; }
   to   { transform: translateX(-50%); }
 }
 .marquee-track { animation: marquee 40s linear infinite; }
+
+/* ─── Text highlighter — sticky to element ──────────── */
+@keyframes highlight-sweep {
+  from { background-size: 0% 100%; }
+  to   { background-size: 100% 100%; }
+}
+.text-highlight {
+  background-image: linear-gradient(
+    transparent 18%,
+    rgba(251, 191, 36, 0.28) 18%,
+    rgba(251, 191, 36, 0.28) 88%,
+    transparent 88%
+  );
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  background-position: left center;
+  animation: highlight-sweep 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+}
+
+/* ─── Paper grain texture — theme-aware ─────────────── */
+.paper-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.75;
+  background:
+    repeating-linear-gradient(0deg,   rgba(0,0,0,0.10) 0px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg,  rgba(0,0,0,0.10) 0px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(45deg,  rgba(0,0,0,0.05) 0px, transparent 1px, transparent 5px);
+}
+[data-theme="dark"] .paper-grain {
+  background:
+    repeating-linear-gradient(0deg,   rgba(255,255,255,0.08) 0px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg,  rgba(255,255,255,0.08) 0px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(45deg,  rgba(255,255,255,0.04) 0px, transparent 1px, transparent 5px);
+}
+
+/* ─── Availability pulse dot ─────────────────────────── */
+@keyframes availability-pulse {
+  0%, 100% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.45); }
+  60%       { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);   }
+}
+.availability-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  display: inline-block;
+  flex-shrink: 0;
+  animation: availability-pulse 2.5s ease-out infinite;
+}
+
+/* ─── Mobile responsive layout ───────────────────────── */
+@media (max-width: 640px) {
+  .home-main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .panels-right-fade {
+    display: none !important;
+  }
+  .panels-container {
+    flex-direction: column !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    scroll-snap-type: none !important;
+    padding: 8px 12px 32px !important;
+    gap: 12px !important;
+    height: auto !important;
+  }
+  .panel {
+    min-width: unset !important;
+    width: 100% !important;
+    height: auto !important;
+    flex: none !important;
+    scroll-snap-align: none !important;
+  }
+  .desktop-nav-arrows { display: none !important; }
+  .panel-dots { display: none !important; }
+}
 
 /* ─── Reduced motion ─────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

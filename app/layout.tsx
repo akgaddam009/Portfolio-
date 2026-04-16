@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, DM_Mono } from "next/font/google";
+import { Inter, DM_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -12,6 +12,14 @@ const inter = Inter({
 const dmMono = DM_Mono({
   variable: "--font-dm-mono",
   subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  style: ["italic"],
   weight: ["400"],
   display: "swap",
 });
@@ -34,8 +42,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${dmMono.variable}`}>
-      <body>{children}</body>
+    <html lang="en" className={`${inter.variable} ${dmMono.variable} ${instrumentSerif.variable}`}>
+      <body>
+        {/* Sync theme before first paint — prevents flash behind the loader */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');}catch(e){}`,
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
