@@ -351,6 +351,7 @@ type CareerItem = {
   subtitle?: string;
   dateLabel?: string;
   impact?: string;
+  logoDomain?: string;
 };
 
 // Month helper: year + (month-1)/12
@@ -358,15 +359,15 @@ type CareerItem = {
 // Jul=0.5, Aug=0.583, Sep=0.667, Oct=0.75, Nov=0.833, Dec=0.917
 const careerItems: CareerItem[] = [
   // Work — newest first
-  { type: "role",      startYear: 2025.167, endYear: 2025.583, title: "Senior Product Designer",  subtitle: "Planful Software",       dateLabel: "Mar 2025 — Aug 2025", impact: "−30% training time" },
-  { type: "role",      startYear: 2024.25,  endYear: 2025.083, title: "Senior UX Designer",       subtitle: "Reputation.com",         dateLabel: "Apr 2024 — Feb 2025", impact: "−40% task time" },
-  { type: "role",      startYear: 2022.417, endYear: 2023.833, title: "Senior Product Designer",  subtitle: "Zetwerk",                dateLabel: "Jun 2022 — Nov 2023", impact: "~6× revenue growth" },
-  { type: "role",      startYear: 2020.583, endYear: 2022.25,  title: "Manager UX Designer",      subtitle: "FanCode / Dream Sports", dateLabel: "Aug 2020 — Apr 2022", impact: "+18% retention" },
+  { type: "role",      startYear: 2025.167, endYear: 2025.583, title: "Senior Product Designer",  subtitle: "Planful Software",       dateLabel: "Mar 2025 — Aug 2025", impact: "−30% training time",  logoDomain: "planful.com" },
+  { type: "role",      startYear: 2024.25,  endYear: 2025.083, title: "Senior UX Designer",       subtitle: "Reputation.com",         dateLabel: "Apr 2024 — Feb 2025", impact: "−40% task time",      logoDomain: "reputation.com" },
+  { type: "role",      startYear: 2022.417, endYear: 2023.833, title: "Senior Product Designer",  subtitle: "Zetwerk",                dateLabel: "Jun 2022 — Nov 2023", impact: "~6× revenue growth",  logoDomain: "zetwerk.com" },
+  { type: "role",      startYear: 2020.583, endYear: 2022.25,  title: "Manager UX Designer",      subtitle: "FanCode / Dream Sports", dateLabel: "Aug 2020 — Apr 2022", impact: "+18% retention",      logoDomain: "fancode.com" },
   { type: "role",      startYear: 2016.667, endYear: 2020.5,   title: "UX Designer (Founder)",    subtitle: "Quazire Consulting",     dateLabel: "Sep 2016 — Jul 2020", impact: "0→1 founder" },
   // Education
-  { type: "education", startYear: 2020.917, endYear: 2021.333, title: "Program in UX Design",         subtitle: "IIT Bombay",  dateLabel: "Dec 2020 — May 2021" },
-  { type: "education", startYear: 2019,     endYear: 2019.5,   title: "PM Certification",             subtitle: "",            dateLabel: "2019"                },
-  { type: "education", startYear: 2017,     endYear: 2017.5,   title: "Design Thinking & Leadership", subtitle: "DSIL Global", dateLabel: "2017"                },
+  { type: "education", startYear: 2020.917, endYear: 2021.333, title: "Program in UX Design",         subtitle: "IIT Bombay",  dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in" },
+  { type: "education", startYear: 2019,     endYear: 2019.5,   title: "PM Certification",             subtitle: "",            dateLabel: "2019" },
+  { type: "education", startYear: 2017,     endYear: 2017.5,   title: "Design Thinking & Leadership", subtitle: "DSIL Global", dateLabel: "2017" },
 ];
 
 const testimonials = [
@@ -466,6 +467,28 @@ function CareerPanel() {
             </p>
           )}
         </div>
+
+        {/* Company logo — Clearbit, graceful fallback */}
+        {item.logoDomain && (
+          <div style={{
+            flexShrink: 0,
+            width: "24px", height: "24px",
+            borderRadius: "6px",
+            border: "1px solid var(--border)",
+            background: "#ffffff",
+            overflow: "hidden",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <img
+              src={`https://logo.clearbit.com/${item.logoDomain}`}
+              alt={item.subtitle}
+              width={20}
+              height={20}
+              style={{ objectFit: "contain", display: "block" }}
+              onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = "none"; }}
+            />
+          </div>
+        )}
       </motion.div>
     );
   };
