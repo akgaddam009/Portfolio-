@@ -425,7 +425,7 @@ function CareerPanel() {
         initial={{ opacity: 0, x: isEdu ? 8 : -8 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
-        whileHover={{ scale: 1.02 }}
+        whileHover={{ y: -2 }}
         transition={{ duration: 0.45, ease: EASE, delay: index * 0.055 }}
         onMouseEnter={() => setHoveredItem(item)}
         onMouseLeave={() => setHoveredItem(null)}
@@ -437,8 +437,8 @@ function CareerPanel() {
             ? { left: "calc(58% + 4px)", right: "16px" }
             : { left: "22px", right: "calc(42% + 8px)" }),
           borderRadius: "7px",
-          background: isEdu ? "var(--surface2)" : "var(--surface)",
-          border: `1px ${isEdu ? "dashed" : "solid"} ${isHovered ? "var(--muted)" : "var(--border)"}`,
+          background: "var(--surface)",
+          border: `1px solid ${isHovered ? "var(--muted)" : "var(--border)"}`,
           padding: "8px 12px",
           display: "flex",
           alignItems: "center",
@@ -458,24 +458,24 @@ function CareerPanel() {
           }}>
             {item.title}
           </p>
-          {/* Company / institution — Inter, proper noun, secondary */}
+          {/* Company / institution — DM Mono 8px uppercase per spec */}
           {item.subtitle && (
             <p style={{
-              fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "8px", fontWeight: 400,
               color: isHovered ? "var(--muted2)" : "var(--muted)",
-              letterSpacing: "-0.01em", lineHeight: 1.2, marginTop: "3px",
+              letterSpacing: "0.08em", textTransform: "uppercase", lineHeight: 1.2, marginTop: "3px",
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               transition: "color 0.15s",
             }}>
               {item.subtitle}
             </p>
           )}
-          {/* Date / impact — swaps on hover */}
+          {/* Date / impact — swaps on hover, mono uppercase per spec */}
           {(item.dateLabel || item.impact) && (
             <p style={{
               fontFamily: "var(--font-mono)", fontSize: "8px",
               color: isHovered && item.impact ? "var(--text)" : "var(--muted)",
-              letterSpacing: "0.06em", marginTop: "3px",
+              letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "3px",
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               transition: "color 0.2s",
             }}>
@@ -491,7 +491,7 @@ function CareerPanel() {
             width: "24px", height: "24px",
             borderRadius: "6px",
             border: "1px solid var(--border)",
-            background: "#ffffff",
+            background: "var(--bg)",
             overflow: "hidden",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
@@ -519,7 +519,7 @@ function CareerPanel() {
           <div style={{ width: "52px", flexShrink: 0 }} />
           <div style={{ flex: 1, display: "flex" }}>
             <div style={{
-              flex: 1, paddingLeft: "22px", paddingBottom: "10px",
+              flex: 1, paddingLeft: "24px", paddingBottom: "10px",
               borderBottom: "1px solid var(--border)",
             }}>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>Work</span>
@@ -593,11 +593,29 @@ function CareerPanel() {
                 background: "#ef4444", flexShrink: 0,
               }} />
               <span style={{
-                fontFamily: "var(--font-mono)", fontSize: "7px",
+                fontFamily: "var(--font-mono)", fontSize: "8px",
                 letterSpacing: "0.1em", textTransform: "uppercase",
                 color: "#ef4444", opacity: 0.75,
               }}>Now</span>
             </div>
+
+            {/* Rail connector dots — mark each card's start year on the vertical rail */}
+            {[...workItems, ...eduItems].map(item => {
+              const dotY = (CAL_END - item.startYear) * YEAR_PX + TOP_OFFSET;
+              const isActive = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
+              return (
+                <div key={`dot-${item.title}-${item.startYear}`} style={{
+                  position: "absolute",
+                  left: "7px", top: `${dotY - 3}px`,
+                  width: "6px", height: "6px",
+                  borderRadius: "50%",
+                  background: isActive ? "var(--muted2)" : "var(--border)",
+                  border: `1px solid ${isActive ? "var(--muted)" : "var(--border)"}`,
+                  transition: "background 0.2s, border-color 0.2s",
+                  zIndex: 2,
+                }} />
+              );
+            })}
 
             {/* Work cards — stacked positions, 0px gap */}
             {stackedWorkPositions.map(({ item, top }, i) => renderCard(item, false, i, top))}
