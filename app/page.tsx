@@ -6,6 +6,7 @@ import { useRef, useCallback, useState, useEffect } from "react";
 import Cursor from "@/components/Cursor";
 import ThemeToggle from "@/components/ThemeToggle";
 import LoadingScreen from "@/components/LoadingScreen";
+import CareerDetailSheet from "@/components/CareerDetailSheet";
 import { caseStudies } from "@/lib/caseStudies";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -352,6 +353,9 @@ type CareerItem = {
   dateLabel?: string;
   impact?: string;
   logoDomain?: string;
+  description?: string;
+  highlights?: string[];
+  learnings?: string[];
 };
 
 // Month helper: year + (month-1)/12
@@ -359,11 +363,86 @@ type CareerItem = {
 // Jul=0.5, Aug=0.583, Sep=0.667, Oct=0.75, Nov=0.833, Dec=0.917
 const careerItems: CareerItem[] = [
   // Work — newest first
-  { type: "role",      startYear: 2025.167, endYear: 2025.583, title: "Senior Product Designer",  subtitle: "Planful Software",       dateLabel: "Mar 2025 — Aug 2025", impact: "−30% training time",  logoDomain: "planful.com" },
-  { type: "role",      startYear: 2024.25,  endYear: 2025.083, title: "Senior UX Designer",       subtitle: "Reputation.com",         dateLabel: "Apr 2024 — Feb 2025", impact: "−40% task time",      logoDomain: "reputation.com" },
-  { type: "role",      startYear: 2022.417, endYear: 2023.833, title: "Senior Product Designer",  subtitle: "Zetwerk",                dateLabel: "Jun 2022 — Nov 2023", impact: "~6× revenue growth",  logoDomain: "zetwerk.com" },
-  { type: "role",      startYear: 2020.583, endYear: 2022.25,  title: "Manager UX Designer",      subtitle: "FanCode / Dream Sports", dateLabel: "Aug 2020 — Apr 2022", impact: "+18% retention",      logoDomain: "fancode.com" },
-  { type: "role",      startYear: 2016.667, endYear: 2020.5,   title: "UX Designer (Founder)",    subtitle: "Quazire Consulting",     dateLabel: "Sep 2016 — Jul 2020", impact: "0→1 founder" },
+  {
+    type: "role", startYear: 2025.167, endYear: 2025.583,
+    title: "Senior Product Designer", subtitle: "Planful Software",
+    dateLabel: "Mar 2025 — Aug 2025", impact: "−30% training time", logoDomain: "planful.com",
+    description: "Led end-to-end design for Planful's AI-powered FP&A platform — translating the complexity of enterprise financial planning into interfaces finance teams actually want to use.",
+    highlights: [
+      "Redesigned the scenario planning module, cutting user training time by 30%",
+      "Built a component library adopted by 3 product teams within a single quarter",
+      "Ran user research with 15+ enterprise finance directors across North America",
+    ],
+    learnings: [
+      "Enterprise finance workflows have deep domain complexity — skip the assumptions, go talk to the CFO",
+      "Design systems pay back fastest when you build them for engineers first, designers second",
+      "In FP&A tools, trust is the product — every UI decision is a trust decision",
+    ],
+  },
+  {
+    type: "role", startYear: 2024.25, endYear: 2025.083,
+    title: "Senior UX Designer", subtitle: "Reputation.com",
+    dateLabel: "Apr 2024 — Feb 2025", impact: "−40% task time", logoDomain: "reputation.com",
+    description: "Designed core features for Reputation's enterprise CX platform — helping global brands manage their online presence across thousands of locations at scale.",
+    highlights: [
+      "Cut average task completion time by 40% across key multi-location workflows",
+      "Rebuilt the reviews management dashboard for enterprise accounts with 500+ locations",
+      "Shipped a new analytics reporting suite used by 500+ enterprise clients at launch",
+    ],
+    learnings: [
+      "Multi-location products need radical information hierarchy — geography is the primary axis",
+      "Dashboards succeed when they tell a story, not just render a dataset",
+      "Tight, daily PM collaboration is a design force multiplier",
+    ],
+  },
+  {
+    type: "role", startYear: 2022.417, endYear: 2023.833,
+    title: "Senior Product Designer", subtitle: "Zetwerk",
+    dateLabel: "Jun 2022 — Nov 2023", impact: "~6× revenue growth", logoDomain: "zetwerk.com",
+    description: "Shaped the UX of Zetwerk's B2B manufacturing marketplace through a period of exceptional scale — from Series D through ~6× revenue growth.",
+    highlights: [
+      "Designed the supplier onboarding flow adopted by 10,000+ manufacturers across India",
+      "Led design for the procurement tracking and order management suite",
+      "Built and scaled a cross-platform design system from first token to full adoption",
+    ],
+    learnings: [
+      "Supply chain is incredibly domain-specific — embed with the ops team before touching Figma",
+      "At scale, consistency beats cleverness every single time",
+      "A design system is a company asset, not a design team deliverable",
+    ],
+  },
+  {
+    type: "role", startYear: 2020.583, endYear: 2022.25,
+    title: "Manager UX Designer", subtitle: "FanCode / Dream Sports",
+    dateLabel: "Aug 2020 — Apr 2022", impact: "+18% retention", logoDomain: "fancode.com",
+    description: "Led the UX team at FanCode — a sports commerce and content platform by Dream Sports — driving an 18% improvement in user retention through design and product decisions.",
+    highlights: [
+      "Managed a team of 4 designers across iOS, Android, and web",
+      "Redesigned the live sports viewing experience for mobile — the core engagement surface",
+      "Shipped FanCode Store, a 0→1 sports merchandise platform, in 3 months",
+    ],
+    learnings: [
+      "Managing designers means creating clarity, not controlling output",
+      "Sports fans are a uniquely passionate audience — design for the emotional peak, not the average moment",
+      "Retention is a habit loop problem, not a feature problem",
+    ],
+  },
+  {
+    type: "role", startYear: 2016.667, endYear: 2020.5,
+    title: "UX Designer (Founder)", subtitle: "Quazire Consulting",
+    dateLabel: "Sep 2016 — Jul 2020", impact: "0→1 founder",
+    description: "Founded and ran a boutique UX consultancy working with early-stage startups and SMEs across India — building 0→1 digital products from concept to launch.",
+    highlights: [
+      "Designed and shipped 12+ products across fintech, edtech, and healthtech verticals",
+      "Worked directly with founders to define product strategy alongside visual design",
+      "Grew a small team of 3 designers and managed all client relationships solo",
+    ],
+    learnings: [
+      "Running a business taught me to design for outcomes, not deliverables",
+      "The best founders trust the process — and make you faster because of it",
+      "Working across industries early in your career builds a breadth of intuition that's impossible to learn any other way",
+    ],
+  },
   // Education
   { type: "education", startYear: 2020.917, endYear: 2021.333, title: "Program in UX Design",         subtitle: "IIT Bombay",  dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in" },
   { type: "education", startYear: 2019,     endYear: 2019.5,   title: "PM Certification",             subtitle: "",            dateLabel: "2019" },
@@ -381,7 +460,14 @@ function CareerPanel() {
   const allYears = Array.from({ length: CAL_END - CAL_START + 1 }, (_, i) => CAL_END - i);
   const workItems = careerItems.filter(i => i.type === "role");
   const eduItems  = careerItems.filter(i => i.type === "education");
-  const [hoveredItem, setHoveredItem] = useState<CareerItem | null>(null);
+  const [hoveredItem, setHoveredItem]   = useState<CareerItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<CareerItem | null>(null);
+
+  const selectedIdx = selectedItem ? workItems.findIndex(w => w.title === selectedItem.title && w.startYear === selectedItem.startYear) : -1;
+  const openSheet  = (item: CareerItem) => setSelectedItem(item);
+  const closeSheet = () => setSelectedItem(null);
+  const prevSheet  = () => { if (selectedIdx > 0) setSelectedItem(workItems[selectedIdx - 1]); };
+  const nextSheet  = () => { if (selectedIdx < workItems.length - 1) setSelectedItem(workItems[selectedIdx + 1]); };
 
   // Which years fall within the hovered card's span
   const isYearActive = (yr: number) => {
@@ -409,7 +495,7 @@ function CareerPanel() {
     return computed;
   })();
 
-  const renderCard = (item: CareerItem, isEdu: boolean, index: number, overrideTop?: number) => {
+  const renderCard = (item: CareerItem, isEdu: boolean, index: number, overrideTop?: number, onClick?: () => void) => {
     const endYr    = item.endYear ?? (item.startYear + 0.5);
     const span     = endYr - item.startYear;
     const naturalH = span * YEAR_PX - 4;
@@ -429,6 +515,7 @@ function CareerPanel() {
         transition={{ duration: 0.45, ease: EASE, delay: index * 0.055 }}
         onMouseEnter={() => setHoveredItem(item)}
         onMouseLeave={() => setHoveredItem(null)}
+        onClick={onClick}
         style={{
           position: "absolute",
           top: `${top}px`,
@@ -444,7 +531,7 @@ function CareerPanel() {
           alignItems: "center",
           gap: "8px",
           overflow: "hidden",
-          cursor: "default",
+          cursor: onClick ? "pointer" : "default",
           zIndex: isHovered ? 5 : 1,
           transition: "border-color 0.15s",
         }}
@@ -617,8 +704,8 @@ function CareerPanel() {
               );
             })}
 
-            {/* Work cards — stacked positions, 0px gap */}
-            {stackedWorkPositions.map(({ item, top }, i) => renderCard(item, false, i, top))}
+            {/* Work cards — stacked positions, 0px gap, clickable */}
+            {stackedWorkPositions.map(({ item, top }, i) => renderCard(item, false, i, top, () => openSheet(item)))}
 
             {/* Education cards */}
             {eduItems.map((item, i) => renderCard(item, true, i))}
@@ -626,6 +713,16 @@ function CareerPanel() {
           </div>
         </div>
       </div>
+
+      {/* Detail bottom sheet */}
+      <CareerDetailSheet
+        item={selectedItem}
+        onClose={closeSheet}
+        onPrev={prevSheet}
+        onNext={nextSheet}
+        hasPrev={selectedIdx > 0}
+        hasNext={selectedIdx < workItems.length - 1}
+      />
     </div>
   );
 }
