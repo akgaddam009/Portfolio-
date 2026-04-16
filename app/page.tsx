@@ -339,7 +339,7 @@ function WorkPanel() {
 
 /* ── Panel 3: Career ── */
 const YEAR_PX    = 56;   // px per year
-const CAL_START  = 2012;
+const CAL_START  = 2016;
 const CAL_END    = 2027;
 const TOP_OFFSET = 20;   // px breathing room above the topmost card
 
