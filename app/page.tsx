@@ -39,13 +39,13 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
             padding: "6px 12px",
             borderRadius: "8px",
             border: "1px solid var(--border)",
-            background: "var(--bg)",
-            boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
+            background: "transparent",
+            boxShadow: "none",
             transition: "background 0.15s, opacity 0.15s",
             display: "inline-block",
           }}
           onMouseEnter={e => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.borderColor = "rgba(0,0,0,0.12)"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "var(--bg)"; e.currentTarget.style.borderColor = "var(--border)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "var(--border)"; }}
         >
           Arun Gaddam
         </Link>
