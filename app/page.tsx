@@ -44,8 +44,8 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
             transition: "background 0.15s, opacity 0.15s",
             display: "inline-block",
           }}
-          onMouseEnter={e => (e.currentTarget.style.background = "var(--surface)")}
-          onMouseLeave={e => (e.currentTarget.style.background = "var(--bg)")}
+          onMouseEnter={e => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.borderColor = "rgba(0,0,0,0.12)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "var(--bg)"; e.currentTarget.style.borderColor = "var(--border)"; }}
         >
           Arun Gaddam
         </Link>
