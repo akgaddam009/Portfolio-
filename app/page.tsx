@@ -37,6 +37,10 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
             fontWeight: 500,
             color: "var(--text)",
             letterSpacing: "-0.03em",
+            padding: "6px 12px",
+            borderRadius: "8px",
+            border: "1px solid var(--border)",
+            background: "transparent",
             display: "inline-block",
             pointerEvents: "none",
             userSelect: "none",
@@ -147,28 +151,46 @@ function AboutPanel() {
       <PanelHeader label="About me" />
       <div style={{ padding: "28px 24px 48px" }}>
 
-        {/* Availability badge */}
+        {/* Portrait + availability badge — inline row */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: EASE }}
-          style={{
+          transition={{ duration: 0.45, ease: EASE }}
+          style={{ display: "flex", alignItems: "flex-end", gap: "12px", marginBottom: "16px" }}
+        >
+          {/* Portrait */}
+          <div style={{
+            flexShrink: 0,
+            width: "72px",
+            height: "84px",
+            borderRadius: "10px",
+            overflow: "hidden",
+            border: "1px solid var(--border)",
+          }}>
+            <img
+              src="/arun.png"
+              alt="Arun Gaddam"
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", filter: "grayscale(100%)" }}
+            />
+          </div>
+
+          {/* Availability badge */}
+          <div style={{
             display: "inline-flex", alignItems: "center", gap: "7px",
-            marginBottom: "20px",
             padding: "5px 10px",
             borderRadius: "6px",
             border: "1px solid var(--border)",
             background: "var(--surface)",
-          }}
-        >
-          <span className="availability-dot" />
-          <span style={{
-            fontFamily: "var(--font-mono)", fontSize: "8px",
-            letterSpacing: "0.08em", textTransform: "uppercase",
-            color: "var(--muted)",
           }}>
-            Open to opportunities
-          </span>
+            <span className="availability-dot" />
+            <span style={{
+              fontFamily: "var(--font-mono)", fontSize: "8px",
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+            }}>
+              Open to opportunities
+            </span>
+          </div>
         </motion.div>
 
         {/* Hero headline */}
