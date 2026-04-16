@@ -578,7 +578,7 @@ function CareerPanel() {
                 flexShrink: 0, width: "20px", height: "20px",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: "var(--muted)",
-                opacity: isHovered || isExpanded ? 1 : 0,
+                opacity: isExpanded ? 1 : 0,
                 transition: "opacity 0.15s",
               }}
             >
