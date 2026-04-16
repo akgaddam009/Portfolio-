@@ -504,32 +504,35 @@ function CareerPanel() {
     return (
       <motion.div
         key={item.title + item.startYear}
+        layout
         initial={{ opacity: 0, x: isEdu ? 8 : -8 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
-        animate={{
-          left: isExpanded ? "22px" : isEdu ? "calc(58% + 4px)" : "22px",
-          right: isExpanded ? "16px" : isEdu ? "16px" : "calc(42% + 8px)",
+        whileHover={!isExpanded && !isEdu ? { y: -2 } : {}}
+        transition={{
+          layout: { type: "spring", stiffness: 320, damping: 32 },
+          opacity: { duration: 0.4, ease: EASE },
+          x:       { duration: 0.4, ease: EASE, delay: index * 0.055 },
         }}
-        transition={{ duration: 0.35, ease: EASE, delay: isExpanded ? 0 : index * 0.055 }}
         onMouseEnter={() => !isExpanded && setHoveredItem(item)}
         onMouseLeave={() => setHoveredItem(null)}
         onClick={() => !isEdu && toggleCard(item)}
         style={{
           position: "absolute",
           top: `${top}px`,
+          left: isExpanded ? "22px" : isEdu ? "calc(58% + 4px)" : "22px",
+          right: isExpanded ? "16px" : isEdu ? "16px" : "calc(42% + 8px)",
           borderRadius: "10px",
           background: isExpanded ? "var(--bg)" : "var(--surface)",
-          border: `1px solid ${isExpanded ? "var(--border)" : isHovered ? "var(--muted)" : "var(--border)"}`,
+          border: `1px solid ${isHovered && !isExpanded ? "var(--muted)" : "var(--border)"}`,
           overflow: "hidden",
           cursor: isEdu ? "default" : "pointer",
           zIndex: isExpanded ? 10 : isHovered ? 5 : 1,
-          boxShadow: isExpanded ? "0 4px 24px rgba(0,0,0,0.08)" : "none",
-          transition: "background 0.2s, box-shadow 0.2s, border-color 0.15s",
+          boxShadow: isExpanded ? "0 4px 32px rgba(0,0,0,0.09)" : "none",
         }}
       >
         {/* ── Compact header row — always visible ── */}
-        <div style={{
+        <motion.div layout="position" style={{
           display: "flex", alignItems: "center", gap: "8px",
           padding: "8px 12px",
           borderBottom: isExpanded ? "1px solid var(--border)" : "none",
@@ -566,15 +569,17 @@ function CareerPanel() {
           </div>
 
 
-          {/* Collapse chevron when expanded */}
-          {isExpanded && (
+          {/* Chevron — always present for work cards, rotates on expand */}
+          {!isEdu && (
             <motion.div
-              initial={{ rotate: 0 }}
-              animate={{ rotate: 180 }}
+              animate={{ rotate: isExpanded ? 180 : 0 }}
+              transition={{ type: "spring", stiffness: 320, damping: 28 }}
               style={{
                 flexShrink: 0, width: "20px", height: "20px",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: "var(--muted)",
+                opacity: isHovered || isExpanded ? 1 : 0,
+                transition: "opacity 0.15s",
               }}
             >
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -582,17 +587,16 @@ function CareerPanel() {
               </svg>
             </motion.div>
           )}
-        </div>
+        </motion.div>
 
         {/* ── Expanded detail content ── */}
         <AnimatePresence>
           {isExpanded && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.35, ease: EASE }}
-              style={{ overflow: "hidden" }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.3, ease: EASE, delay: 0.12 }}
             >
               <div style={{ padding: "16px 12px 12px" }}>
 
