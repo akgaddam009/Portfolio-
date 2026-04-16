@@ -138,6 +138,59 @@ function PanelHeader({ label }: { label: string }) {
 }
 
 /* ── Panel 1: About ── */
+/* ── Portrait with magnifying glass lens ── */
+function PortraitMagnify() {
+  const [lens, setLens] = useState<{ x: number; y: number; visible: boolean }>({ x: 0, y: 0, visible: false });
+  const W = 72, H = 84, ZOOM = 2.8, LENS = 88;
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    setLens({ x: e.clientX - r.left, y: e.clientY - r.top, visible: true });
+  };
+
+  // Background position: centres the zoomed point inside the lens circle
+  const bgX = LENS / 2 - lens.x * ZOOM;
+  const bgY = LENS / 2 - lens.y * ZOOM;
+
+  return (
+    <div
+      onMouseMove={onMove}
+      onMouseLeave={() => setLens(l => ({ ...l, visible: false }))}
+      style={{ position: "relative", width: `${W}px`, height: `${H}px`, flexShrink: 0 }}
+    >
+      {/* Base image */}
+      <div style={{ width: "100%", height: "100%", borderRadius: "10px", overflow: "hidden", border: "1px solid var(--border)" }}>
+        <img
+          src="/arun.png"
+          alt="Arun Gaddam"
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", filter: "grayscale(100%)", display: "block" }}
+        />
+      </div>
+
+      {/* Lens */}
+      {lens.visible && (
+        <div style={{
+          position: "absolute",
+          width: `${LENS}px`,
+          height: `${LENS}px`,
+          borderRadius: "50%",
+          border: "1px solid var(--border)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+          backgroundImage: "url(/arun.png)",
+          backgroundSize: `${W * ZOOM}px auto`,
+          backgroundPosition: `${bgX}px ${bgY}px`,
+          backgroundRepeat: "no-repeat",
+          filter: "grayscale(100%)",
+          left: `${lens.x - LENS / 2}px`,
+          top: `${lens.y - LENS / 2}px`,
+          pointerEvents: "none",
+          zIndex: 30,
+        }} />
+      )}
+    </div>
+  );
+}
+
 const infoRows = [
   { label: "Role", value: "Senior Product Designer. I own the full design process — from discovery and strategy to final pixel." },
   { label: "Focus", value: "Enterprise SaaS, B2B AI tools, and consumer products at scale — with user research as a core part of the process." },
@@ -149,45 +202,19 @@ function AboutPanel() {
   return (
     <div>
       <PanelHeader label="About me" />
-      <div style={{ padding: "28px 24px 48px" }}>
+      <div style={{ padding: "24px 24px 48px" }}>
 
-        {/* Portrait + availability badge — inline row */}
+        {/* Portrait + availability badge */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE }}
           style={{ display: "flex", alignItems: "flex-end", gap: "12px", marginBottom: "16px" }}
         >
-          {/* Portrait */}
-          <div style={{
-            flexShrink: 0,
-            width: "72px",
-            height: "84px",
-            borderRadius: "10px",
-            overflow: "hidden",
-            border: "1px solid var(--border)",
-          }}>
-            <img
-              src="/arun.png"
-              alt="Arun Gaddam"
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", filter: "grayscale(100%)" }}
-            />
-          </div>
-
-          {/* Availability badge */}
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: "7px",
-            padding: "5px 10px",
-            borderRadius: "6px",
-            border: "1px solid var(--border)",
-            background: "var(--surface)",
-          }}>
+          <PortraitMagnify />
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "7px", padding: "5px 10px", borderRadius: "6px", border: "1px solid var(--border)", background: "var(--surface)" }}>
             <span className="availability-dot" />
-            <span style={{
-              fontFamily: "var(--font-mono)", fontSize: "8px",
-              letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
-            }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
               Open to opportunities
             </span>
           </div>
@@ -270,7 +297,7 @@ function AboutPanel() {
                 {label}
               </Link>
               {i < arr.length - 1 && (
-                <span style={{ color: "var(--border)", fontFamily: "var(--font-mono)", fontSize: "9px", userSelect: "none" }}>·</span>
+                <span style={{ color: "var(--muted)", fontFamily: "var(--font-mono)", fontSize: "9px", userSelect: "none", opacity: 0.4 }}>·</span>
               )}
             </span>
           ))}
@@ -304,7 +331,7 @@ function AboutPanel() {
                     data-label="true"
                     style={{
                       fontFamily: "var(--font-mono)", fontSize: "9px",
-                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      letterSpacing: "0.1em", textTransform: "uppercase",
                       color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
                       transition: "color 0.2s",
                     }}
@@ -316,7 +343,7 @@ function AboutPanel() {
                 <p style={{
                   fontFamily: "var(--font-body)", fontSize: "14px",
                   letterSpacing: "-0.01em",
-                  color: "var(--muted2)", lineHeight: 1.6, fontWeight: 400,
+                  color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
                 }}>
                   {row.value}
                 </p>
@@ -487,23 +514,30 @@ function WorkPanel() {
                 key={cs.slug}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -2 }}
                 viewport={{ once: true, margin: "-20px" }}
-                transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}
+                transition={{
+                  opacity: { duration: 0.5, ease: EASE, delay: i * 0.06 },
+                  y: { type: "spring", stiffness: 320, damping: 28 },
+                }}
               >
                 <Link href={href}>
-                  <motion.div
-                    whileHover={{ y: -2, boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}
-                    transition={{ type: "spring", stiffness: 320, damping: 28 }}
+                  <div
                     style={{
                       background: "var(--surface)",
                       borderRadius: "12px",
                       overflow: "hidden",
                       border: "1px solid var(--border)",
-                      cursor: "pointer",
-                      transition: "border-color 0.2s cubic-bezier(0.22,1,0.36,1)",
+                      transition: "border-color 0.2s cubic-bezier(0.22,1,0.36,1), box-shadow 0.2s cubic-bezier(0.22,1,0.36,1)",
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--muted)")}
-                    onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.borderColor = "var(--muted)";
+                      e.currentTarget.style.boxShadow = "0 2px 16px rgba(0,0,0,0.07)";
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.borderColor = "var(--border)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
                   >
                     {/* Mesh thumbnail */}
                     <MeshThumbnail
@@ -578,7 +612,7 @@ function WorkPanel() {
                         ))}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 </Link>
               </motion.div>
             );

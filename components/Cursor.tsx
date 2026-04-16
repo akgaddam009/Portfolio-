@@ -8,7 +8,7 @@ export default function Cursor() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0, frame: number;
+    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0, ringSize = 36, frame: number;
 
     const onMove = (e: MouseEvent) => {
       mouseX = e.clientX; mouseY = e.clientY;
@@ -21,16 +21,19 @@ export default function Cursor() {
     const animate = () => {
       ringX = lerp(ringX, mouseX, 0.11);
       ringY = lerp(ringY, mouseY, 0.11);
+      // always centre on cursor using current ring size
       if (ringRef.current)
-        ringRef.current.style.transform = `translate(${ringX - 18}px, ${ringY - 18}px)`;
+        ringRef.current.style.transform = `translate(${ringX - ringSize / 2}px, ${ringY - ringSize / 2}px)`;
       frame = requestAnimationFrame(animate);
     };
 
     const onEnter = () => {
-      if (ringRef.current) { ringRef.current.style.width = "40px"; ringRef.current.style.height = "40px"; ringRef.current.style.borderColor = "rgba(10,10,10,0.4)"; }
+      ringSize = 40;
+      if (ringRef.current) { ringRef.current.style.width = "40px"; ringRef.current.style.height = "40px"; ringRef.current.style.borderColor = "rgba(10,10,10,0.5)"; }
       if (dotRef.current) dotRef.current.style.opacity = "0";
     };
     const onLeave = () => {
+      ringSize = 36;
       if (ringRef.current) { ringRef.current.style.width = "36px"; ringRef.current.style.height = "36px"; ringRef.current.style.borderColor = "rgba(10,10,10,0.15)"; }
       if (dotRef.current) dotRef.current.style.opacity = "1";
     };
