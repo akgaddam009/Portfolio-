@@ -826,6 +826,14 @@ function CareerPanel() {
               );
             })}
 
+            {/* Dismiss overlay — catches outside clicks when a card is expanded */}
+            {selectedItem && (
+              <div
+                onClick={collapseCard}
+                style={{ position: "absolute", inset: 0, zIndex: 9, cursor: "default" }}
+              />
+            )}
+
             {/* Work cards — stacked positions, 0px gap */}
             {stackedWorkPositions.map(({ item, top }, i) => renderCard(item, false, i, top))}
 
