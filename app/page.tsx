@@ -443,7 +443,16 @@ const careerItems: CareerItem[] = [
     ],
   },
   // Education & Side roles
-  { type: "education", startYear: 2023.833, title: "Super Mentor", subtitle: "ADPList", dateLabel: "Nov 2023 — Present", impact: "Top 1% · 3K+ mins" },
+  {
+    type: "education", startYear: 2023.833, title: "Super Mentor", subtitle: "ADPList",
+    dateLabel: "Nov 2023 — Present", impact: "Top 1% · 3K+ mins",
+    description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList — mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
+    highlights: [
+      "Top 1% Mentor Recognition — Feb, Mar, May & Jun 2024 (Expertise of Design)",
+      "3,000+ mentorship minutes milestone — Feb 2026",
+      "Ongoing 1:1 sessions on product design, career strategy, and portfolio critique",
+    ],
+  },
   { type: "education", startYear: 2020.917, endYear: 2021.333, title: "Program in UX Design",         subtitle: "IIT Bombay",  dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in" },
   { type: "education", startYear: 2019,     endYear: 2019.5,   title: "PM Certification",             subtitle: "IIT Guwahati", dateLabel: "2019" },
   { type: "education", startYear: 2017,     endYear: 2017.5,   title: "Design Thinking & Leadership", subtitle: "DSIL Global", dateLabel: "2017" },
@@ -499,8 +508,9 @@ function CareerPanel() {
     const endYr     = item.endYear ?? (item.startYear + 0.5);
     const naturalH  = Math.max((endYr - item.startYear) * YEAR_PX - 4, 20);
     const top       = overrideTop ?? Math.max((CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - naturalH, NOW_Y + 10);
-    const isHovered  = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
-    const isExpanded = !isEdu && selectedItem?.title === item.title && selectedItem?.startYear === item.startYear;
+    const isClickable = !isEdu || !!item.description;
+    const isHovered   = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
+    const isExpanded  = isClickable && selectedItem?.title === item.title && selectedItem?.startYear === item.startYear;
 
     return (
       <motion.div
@@ -509,7 +519,7 @@ function CareerPanel() {
         initial={{ opacity: 0, x: isEdu ? 8 : -8 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
-        whileHover={!isExpanded && !isEdu ? { y: -2 } : {}}
+        whileHover={!isExpanded && isClickable ? { y: -2 } : {}}
         transition={{
           layout: { type: "spring", stiffness: 320, damping: 32 },
           opacity: { duration: 0.4, ease: EASE },
@@ -517,7 +527,7 @@ function CareerPanel() {
         }}
         onMouseEnter={() => !isExpanded && setHoveredItem(item)}
         onMouseLeave={() => setHoveredItem(null)}
-        onClick={() => !isEdu && toggleCard(item)}
+        onClick={() => isClickable && toggleCard(item)}
         style={{
           position: "absolute",
           top: `${top}px`,
@@ -527,7 +537,7 @@ function CareerPanel() {
           background: isExpanded ? "var(--bg)" : "var(--surface)",
           border: `1px solid ${isHovered && !isExpanded ? "var(--muted)" : "var(--border)"}`,
           overflow: "hidden",
-          cursor: isEdu ? "default" : "pointer",
+          cursor: isClickable ? "pointer" : "default",
           zIndex: isExpanded ? 10 : isHovered ? 5 : 1,
           boxShadow: isExpanded ? "0 4px 32px rgba(0,0,0,0.09)" : "none",
         }}
@@ -673,8 +683,25 @@ function CareerPanel() {
                   </div>
                 )}
 
-                {/* Prev / Next navigation */}
-                <div style={{
+                {/* ADPList reviews widget — only for ADPList card */}
+                {item.subtitle === "ADPList" && (
+                  <div style={{
+                    borderRadius: "8px", overflow: "hidden",
+                    border: "1px solid var(--border)",
+                    marginBottom: "12px", height: "360px",
+                  }}>
+                    <iframe
+                      src="https://adplist.org/widgets/reviews?src=arun-gaddam"
+                      title="ADPList Reviews"
+                      width="100%" height="100%"
+                      loading="lazy"
+                      style={{ border: "none", display: "block" }}
+                    />
+                  </div>
+                )}
+
+                {/* Prev / Next navigation — only for work cards */}
+                {!isEdu && <div style={{
                   display: "flex", gap: "6px", paddingTop: "12px",
                   borderTop: "1px solid var(--border)",
                 }}>
@@ -712,7 +739,7 @@ function CareerPanel() {
                   >
                     Next ›
                   </motion.button>
-                </div>
+                </div>}
               </div>
             </motion.div>
           )}
@@ -860,58 +887,6 @@ function TestimonialsPanel() {
         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, color: "var(--muted)", marginBottom: "24px", fontWeight: 400 }}>
           What people I&apos;ve worked closely with have said.
         </p>
-
-        {/* ADPList Super Mentor badge */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: "10px",
-          padding: "10px 14px",
-          borderRadius: "10px",
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          marginBottom: "24px",
-        }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1.3 }}>
-              ADPList Super Mentor
-            </p>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "3px" }}>
-              Top 1% · 4× Recognition · 3,000+ Mentorship Mins
-            </p>
-          </div>
-          <a
-            href="https://adplist.org/mentors/arun-gaddam"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              flexShrink: 0,
-              fontFamily: "var(--font-mono)", fontSize: "8px",
-              letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)", transition: "color 0.15s",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
-            onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
-          >
-            View ↗
-          </a>
-        </div>
-
-        {/* ADPList reviews widget */}
-        <div style={{
-          borderRadius: "12px",
-          overflow: "hidden",
-          border: "1px solid var(--border)",
-          marginBottom: "24px",
-          height: "400px",
-        }}>
-          <iframe
-            src="https://adplist.org/widgets/reviews?src=arun-gaddam"
-            title="ADPList Reviews"
-            width="100%"
-            height="100%"
-            loading="lazy"
-            style={{ border: "none", display: "block" }}
-          />
-        </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {testimonials.map((t, i) => (
