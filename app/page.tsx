@@ -28,8 +28,7 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
     }}>
       {/* Name + theme toggle */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <Link
-          href="/"
+        <span
           style={{
             fontFamily: "var(--font-logo)",
             fontSize: "13px",
@@ -40,15 +39,13 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
             borderRadius: "8px",
             border: "1px solid var(--border)",
             background: "transparent",
-            boxShadow: "none",
-            transition: "background 0.15s, opacity 0.15s",
             display: "inline-block",
+            pointerEvents: "none",
+            userSelect: "none",
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.borderColor = "rgba(0,0,0,0.12)"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "var(--border)"; }}
         >
           Arun Gaddam
-        </Link>
+        </span>
         <ThemeToggle />
       </div>
 
