@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useCallback, useState, useEffect } from "react";
 import Cursor from "@/components/Cursor";
 import ThemeToggle from "@/components/ThemeToggle";
 import LoadingScreen from "@/components/LoadingScreen";
-import CareerDetailSheet from "@/components/CareerDetailSheet";
 import { caseStudies } from "@/lib/caseStudies";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -463,11 +462,11 @@ function CareerPanel() {
   const [hoveredItem, setHoveredItem]   = useState<CareerItem | null>(null);
   const [selectedItem, setSelectedItem] = useState<CareerItem | null>(null);
 
-  const selectedIdx = selectedItem ? workItems.findIndex(w => w.title === selectedItem.title && w.startYear === selectedItem.startYear) : -1;
-  const openSheet  = (item: CareerItem) => setSelectedItem(item);
-  const closeSheet = () => setSelectedItem(null);
-  const prevSheet  = () => { if (selectedIdx > 0) setSelectedItem(workItems[selectedIdx - 1]); };
-  const nextSheet  = () => { if (selectedIdx < workItems.length - 1) setSelectedItem(workItems[selectedIdx + 1]); };
+  const selectedIdx   = selectedItem ? workItems.findIndex(w => w.title === selectedItem.title && w.startYear === selectedItem.startYear) : -1;
+  const toggleCard    = (item: CareerItem) => setSelectedItem(prev => prev?.title === item.title ? null : item);
+  const collapseCard  = () => setSelectedItem(null);
+  const prevCard      = () => { if (selectedIdx > 0) setSelectedItem(workItems[selectedIdx - 1]); };
+  const nextCard      = () => { if (selectedIdx < workItems.length - 1) setSelectedItem(workItems[selectedIdx + 1]); };
 
   // Which years fall within the hovered card's span
   const isYearActive = (yr: number) => {
@@ -495,15 +494,12 @@ function CareerPanel() {
     return computed;
   })();
 
-  const renderCard = (item: CareerItem, isEdu: boolean, index: number, overrideTop?: number, onClick?: () => void) => {
-    const endYr    = item.endYear ?? (item.startYear + 0.5);
-    const span     = endYr - item.startYear;
-    const naturalH = span * YEAR_PX - 4;
-    const height   = Math.max(naturalH, 64);
-    const bottomPos = (CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET;
-    const rawTop   = bottomPos - height;
-    const top      = overrideTop ?? Math.max(rawTop, NOW_Y + 10);
-    const isHovered = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
+  const renderCard = (item: CareerItem, isEdu: boolean, index: number, overrideTop?: number) => {
+    const endYr     = item.endYear ?? (item.startYear + 0.5);
+    const naturalH  = Math.max((endYr - item.startYear) * YEAR_PX - 4, 64);
+    const top       = overrideTop ?? Math.max((CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - naturalH, NOW_Y + 10);
+    const isHovered  = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
+    const isExpanded = !isEdu && selectedItem?.title === item.title && selectedItem?.startYear === item.startYear;
 
     return (
       <motion.div
@@ -511,87 +507,232 @@ function CareerPanel() {
         initial={{ opacity: 0, x: isEdu ? 8 : -8 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
-        whileHover={{ y: -2 }}
-        transition={{ duration: 0.45, ease: EASE, delay: index * 0.055 }}
-        onMouseEnter={() => setHoveredItem(item)}
+        animate={{
+          left: isExpanded ? "22px" : isEdu ? "calc(58% + 4px)" : "22px",
+          right: isExpanded ? "16px" : isEdu ? "16px" : "calc(42% + 8px)",
+        }}
+        transition={{ duration: 0.35, ease: EASE, delay: isExpanded ? 0 : index * 0.055 }}
+        onMouseEnter={() => !isExpanded && setHoveredItem(item)}
         onMouseLeave={() => setHoveredItem(null)}
-        onClick={onClick}
+        onClick={() => !isEdu && toggleCard(item)}
         style={{
           position: "absolute",
           top: `${top}px`,
-          height: `${height}px`,
-          ...(isEdu
-            ? { left: "calc(58% + 4px)", right: "16px" }
-            : { left: "22px", right: "calc(42% + 8px)" }),
-          borderRadius: "7px",
-          background: "var(--surface)",
-          border: `1px solid ${isHovered ? "var(--muted)" : "var(--border)"}`,
-          padding: "8px 12px",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
+          borderRadius: "10px",
+          background: isExpanded ? "var(--bg)" : "var(--surface)",
+          border: `1px solid ${isExpanded ? "var(--border)" : isHovered ? "var(--muted)" : "var(--border)"}`,
           overflow: "hidden",
-          cursor: onClick ? "pointer" : "default",
-          zIndex: isHovered ? 5 : 1,
-          transition: "border-color 0.15s",
+          cursor: isEdu ? "default" : "pointer",
+          zIndex: isExpanded ? 10 : isHovered ? 5 : 1,
+          boxShadow: isExpanded ? "0 4px 24px rgba(0,0,0,0.08)" : "none",
+          transition: "background 0.2s, box-shadow 0.2s, border-color 0.15s",
         }}
       >
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {/* Job title — Inter, human descriptor, primary */}
-          <p style={{
-            fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
-            color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1.25,
-            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-          }}>
-            {item.title}
-          </p>
-          {/* Company / institution — DM Mono 8px uppercase per spec */}
-          {item.subtitle && (
+        {/* ── Compact header row — always visible ── */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: "8px",
+          padding: "8px 12px",
+          borderBottom: isExpanded ? "1px solid var(--border)" : "none",
+        }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
-              fontFamily: "var(--font-mono)", fontSize: "8px", fontWeight: 400,
-              color: isHovered ? "var(--muted2)" : "var(--muted)",
-              letterSpacing: "0.08em", textTransform: "uppercase", lineHeight: 1.2, marginTop: "3px",
+              fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+              color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1.25,
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-              transition: "color 0.15s",
             }}>
-              {item.subtitle}
+              {item.title}
             </p>
+            {item.subtitle && (
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "8px",
+                color: "var(--muted)", letterSpacing: "0.08em",
+                textTransform: "uppercase", lineHeight: 1.2, marginTop: "3px",
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              }}>
+                {item.subtitle}
+              </p>
+            )}
+            {!isExpanded && (item.dateLabel || item.impact) && (
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "8px",
+                color: isHovered && item.impact ? "var(--text)" : "var(--muted)",
+                letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "3px",
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                transition: "color 0.2s",
+              }}>
+                {isHovered && item.impact ? item.impact : item.dateLabel}
+              </p>
+            )}
+          </div>
+
+          {/* Logo — compact: 24px, expanded: 32px */}
+          {item.logoDomain && (
+            <div style={{
+              flexShrink: 0,
+              width: isExpanded ? "32px" : "24px",
+              height: isExpanded ? "32px" : "24px",
+              borderRadius: isExpanded ? "8px" : "6px",
+              border: "1px solid var(--border)",
+              background: "var(--bg)",
+              overflow: "hidden",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              transition: "width 0.25s, height 0.25s, border-radius 0.25s",
+            }}>
+              <img
+                src={`https://logo.clearbit.com/${item.logoDomain}`}
+                alt={item.subtitle}
+                width={isExpanded ? 26 : 20}
+                height={isExpanded ? 26 : 20}
+                style={{ objectFit: "contain", display: "block" }}
+                onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = "none"; }}
+              />
+            </div>
           )}
-          {/* Date / impact — swaps on hover, mono uppercase per spec */}
-          {(item.dateLabel || item.impact) && (
-            <p style={{
-              fontFamily: "var(--font-mono)", fontSize: "8px",
-              color: isHovered && item.impact ? "var(--text)" : "var(--muted)",
-              letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "3px",
-              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-              transition: "color 0.2s",
-            }}>
-              {isHovered && item.impact ? item.impact : item.dateLabel}
-            </p>
+
+          {/* Collapse chevron when expanded */}
+          {isExpanded && (
+            <motion.div
+              initial={{ rotate: 0 }}
+              animate={{ rotate: 180 }}
+              style={{
+                flexShrink: 0, width: "20px", height: "20px",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "var(--muted)",
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 4.5L6 8L10 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </motion.div>
           )}
         </div>
 
-        {/* Company logo — Clearbit, graceful fallback */}
-        {item.logoDomain && (
-          <div style={{
-            flexShrink: 0,
-            width: "24px", height: "24px",
-            borderRadius: "6px",
-            border: "1px solid var(--border)",
-            background: "var(--bg)",
-            overflow: "hidden",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <img
-              src={`https://logo.clearbit.com/${item.logoDomain}`}
-              alt={item.subtitle}
-              width={20}
-              height={20}
-              style={{ objectFit: "contain", display: "block" }}
-              onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = "none"; }}
-            />
-          </div>
-        )}
+        {/* ── Expanded detail content ── */}
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.35, ease: EASE }}
+              style={{ overflow: "hidden" }}
+            >
+              <div style={{ padding: "16px 12px 12px" }}>
+
+                {/* Date label */}
+                {item.dateLabel && (
+                  <p style={{
+                    fontFamily: "var(--font-mono)", fontSize: "8px",
+                    letterSpacing: "0.1em", textTransform: "uppercase",
+                    color: "var(--muted)", marginBottom: "12px",
+                  }}>
+                    {item.dateLabel}
+                  </p>
+                )}
+
+                {/* Description */}
+                {item.description && (
+                  <p style={{
+                    fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                    letterSpacing: "-0.01em", lineHeight: 1.65,
+                    color: "var(--muted2)", marginBottom: "16px",
+                  }}>
+                    {item.description}
+                  </p>
+                )}
+
+                {/* Highlights */}
+                {item.highlights && item.highlights.length > 0 && (
+                  <div style={{ marginBottom: "16px" }}>
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "7px",
+                      letterSpacing: "0.1em", textTransform: "uppercase",
+                      color: "var(--muted)", marginBottom: "8px",
+                    }}>
+                      Worked on
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      {item.highlights.map((h, i) => (
+                        <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                          <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, flexShrink: 0 }}>·</span>
+                          <p style={{
+                            fontFamily: "var(--font-body)", fontSize: "12px",
+                            letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--text)",
+                          }}>{h}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Learnings */}
+                {item.learnings && item.learnings.length > 0 && (
+                  <div style={{ marginBottom: "12px" }}>
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "7px",
+                      letterSpacing: "0.1em", textTransform: "uppercase",
+                      color: "var(--muted)", marginBottom: "8px",
+                    }}>
+                      Learned
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      {item.learnings.map((l, i) => (
+                        <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                          <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, flexShrink: 0 }}>·</span>
+                          <p style={{
+                            fontFamily: "var(--font-body)", fontSize: "12px",
+                            letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--text)",
+                          }}>{l}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Prev / Next navigation */}
+                <div style={{
+                  display: "flex", gap: "6px", paddingTop: "12px",
+                  borderTop: "1px solid var(--border)",
+                }}>
+                  <motion.button
+                    onClick={e => { e.stopPropagation(); prevCard(); }}
+                    disabled={selectedIdx <= 0}
+                    whileTap={selectedIdx > 0 ? { scale: 0.9 } : {}}
+                    style={{
+                      flex: 1, height: "28px",
+                      borderRadius: "6px", border: "1px solid var(--border)",
+                      background: "var(--surface)", color: "var(--text)",
+                      fontFamily: "var(--font-mono)", fontSize: "8px",
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      cursor: selectedIdx > 0 ? "pointer" : "default",
+                      opacity: selectedIdx > 0 ? 1 : 0.3,
+                      transition: "opacity 0.15s",
+                    }}
+                  >
+                    ‹ Prev
+                  </motion.button>
+                  <motion.button
+                    onClick={e => { e.stopPropagation(); nextCard(); }}
+                    disabled={selectedIdx >= workItems.length - 1}
+                    whileTap={selectedIdx < workItems.length - 1 ? { scale: 0.9 } : {}}
+                    style={{
+                      flex: 1, height: "28px",
+                      borderRadius: "6px", border: "1px solid var(--border)",
+                      background: "var(--surface)", color: "var(--text)",
+                      fontFamily: "var(--font-mono)", fontSize: "8px",
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      cursor: selectedIdx < workItems.length - 1 ? "pointer" : "default",
+                      opacity: selectedIdx < workItems.length - 1 ? 1 : 0.3,
+                      transition: "opacity 0.15s",
+                    }}
+                  >
+                    Next ›
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     );
   };
@@ -704,8 +845,8 @@ function CareerPanel() {
               );
             })}
 
-            {/* Work cards — stacked positions, 0px gap, clickable */}
-            {stackedWorkPositions.map(({ item, top }, i) => renderCard(item, false, i, top, () => openSheet(item)))}
+            {/* Work cards — stacked positions, 0px gap */}
+            {stackedWorkPositions.map(({ item, top }, i) => renderCard(item, false, i, top))}
 
             {/* Education cards */}
             {eduItems.map((item, i) => renderCard(item, true, i))}
@@ -714,15 +855,6 @@ function CareerPanel() {
         </div>
       </div>
 
-      {/* Detail bottom sheet */}
-      <CareerDetailSheet
-        item={selectedItem}
-        onClose={closeSheet}
-        onPrev={prevSheet}
-        onNext={nextSheet}
-        hasPrev={selectedIdx > 0}
-        hasNext={selectedIdx < workItems.length - 1}
-      />
     </div>
   );
 }
