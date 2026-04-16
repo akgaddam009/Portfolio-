@@ -15,19 +15,21 @@ const PANEL_LABELS = ["About", "Work", "Career", "Testimonials", "AI"];
 
 function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: () => void; activePanel: number }) {
   return (
-    <header style={{
-      position: "fixed",
-      top: 0, left: 0, right: 0,
-      zIndex: 200,
-      height: "52px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "0 24px",
-      background: "var(--chrome)",
-    }}>
+    <header
+      style={{
+        position: "fixed",
+        top: 0, left: 0, right: 0,
+        zIndex: 200,
+        height: "52px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 24px",
+        background: "transparent",
+      }}
+    >
       {/* Name + theme toggle */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         <span
           style={{
             fontFamily: "var(--font-logo)",
@@ -35,10 +37,6 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
             fontWeight: 500,
             color: "var(--text)",
             letterSpacing: "-0.03em",
-            padding: "6px 12px",
-            borderRadius: "8px",
-            border: "1px solid var(--border)",
-            background: "transparent",
             display: "inline-block",
             pointerEvents: "none",
             userSelect: "none",
@@ -81,6 +79,8 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
                 onClick={disabled ? undefined : fn}
                 whileTap={disabled ? {} : { scale: 0.88 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                title={dir === "prev" ? "Previous panel" : "Next panel"}
+                aria-label={dir === "prev" ? "Previous panel" : "Next panel"}
                 style={{
                   width: "32px",
                   height: "32px",
@@ -123,7 +123,7 @@ function PanelHeader({ label }: { label: string }) {
       <p style={{
         fontFamily: "var(--font-mono)",
         fontSize: "9px",
-        letterSpacing: "0.1em",
+        letterSpacing: "0.08em",
         textTransform: "uppercase",
         color: "var(--muted)",
       }}>
@@ -146,92 +146,311 @@ function AboutPanel() {
     <div>
       <PanelHeader label="About me" />
       <div style={{ padding: "28px 24px 48px" }}>
-        <h1 style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "clamp(20px, 2.8vw, 28px)",
-          fontWeight: 300,
-          lineHeight: 1.25,
-          letterSpacing: "-0.03em",
-          color: "var(--text)",
-          marginBottom: "16px",
-        }}>
+
+        {/* Availability badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: EASE }}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "7px",
+            marginBottom: "20px",
+            padding: "5px 10px",
+            borderRadius: "6px",
+            border: "1px solid var(--border)",
+            background: "var(--surface)",
+          }}
+        >
+          <span className="availability-dot" />
+          <span style={{
+            fontFamily: "var(--font-mono)", fontSize: "8px",
+            letterSpacing: "0.08em", textTransform: "uppercase",
+            color: "var(--muted)",
+          }}>
+            Open to opportunities
+          </span>
+        </motion.div>
+
+        {/* Hero headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "clamp(20px, 2.8vw, 28px)",
+            fontWeight: 300,
+            lineHeight: 1.25,
+            letterSpacing: "-0.03em",
+            color: "var(--text)",
+            marginBottom: "16px",
+          }}
+        >
           <span className="text-highlight">Hey, I&apos;m Arun.</span>{" "}
           <span style={{ color: "var(--muted)" }}>
             I design products at the intersection of UX, product thinking, and AI.
           </span>
-        </h1>
+        </motion.h1>
 
-        <p style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "14px",
-          lineHeight: 1.65,
-          color: "var(--muted)",
-          marginBottom: "32px",
-        }}>
+        {/* Bio */}
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE, delay: 0.1 }}
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "14px",
+            lineHeight: 1.65,
+            letterSpacing: "-0.01em",
+            color: "var(--muted)",
+            marginBottom: "24px",
+          }}
+        >
           I&apos;m based in Hyderabad, India with my wife and our son — figuring out the balance between designing products, catching up with AI, and raising a tiny human. I&apos;m learning a lot from both.
-        </p>
-
-        {/* Info rows */}
-        <div>
-          {infoRows.map((row) => (
-            <div
-              key={row.label}
-              style={{ padding: "12px 0", transition: "opacity 0.15s" }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = "0.75")}
-              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
-                <p style={{
-                  fontFamily: "var(--font-mono)", fontSize: "9px",
-                  letterSpacing: "0.06em", textTransform: "uppercase",
-                  color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
-                  transition: "color 0.15s",
-                }}>
-                  {row.label}
-                </p>
-                <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
-              </div>
-              <p style={{
-                fontFamily: "var(--font-body)", fontSize: "14px",
-                color: "var(--muted2)", lineHeight: 1.6, fontWeight: 400,
-              }}>
-                {row.value}
-              </p>
-            </div>
-          ))}
-        </div>
+        </motion.p>
 
         {/* Links */}
-        <div style={{ marginTop: "32px", display: "flex", gap: "20px", flexWrap: "wrap" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
+          style={{ marginBottom: "32px", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}
+        >
           {[
             { label: "LinkedIn ↗", href: "https://linkedin.com/in/akgaddam", external: true },
             { label: "Medium ↗", href: "https://medium.com/@akgaddam", external: true },
+            { label: "CV ↗", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
             { label: "Email", href: "mailto:akgaddam02@gmail.com", external: false },
-          ].map(({ label, href, external }) => (
-            <Link
-              key={label}
-              href={href}
-              target={external ? "_blank" : undefined}
-              rel={external ? "noopener noreferrer" : undefined}
-              style={{
-                fontFamily: "var(--font-mono)", fontSize: "10px",
-                letterSpacing: "0.05em", textTransform: "uppercase",
-                color: "var(--muted)", transition: "color 0.15s",
-              }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+          ].map(({ label, href, external }, i, arr) => (
+            <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              <Link
+                href={href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                style={{
+                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  letterSpacing: "0.08em", textTransform: "uppercase",
+                  color: "var(--muted)",
+                  padding: "4px 8px",
+                  borderRadius: "4px",
+                  display: "inline-block",
+                  transition: "color 0.18s, background 0.18s",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.color = "var(--text)";
+                  e.currentTarget.style.background = "var(--surface)";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.color = "var(--muted)";
+                  e.currentTarget.style.background = "transparent";
+                }}
+              >
+                {label}
+              </Link>
+              {i < arr.length - 1 && (
+                <span style={{ color: "var(--border)", fontFamily: "var(--font-mono)", fontSize: "9px", userSelect: "none" }}>·</span>
+              )}
+            </span>
+          ))}
+        </motion.div>
+
+        {/* Info rows */}
+        <div>
+          {infoRows.map((row, i) => (
+            <motion.div
+              key={row.label}
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: EASE, delay: i * 0.06 }}
             >
-              {label}
-            </Link>
+              <div
+                style={{ padding: "12px 0", transition: "opacity 0.2s" }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.opacity = "0.6";
+                  const label = e.currentTarget.querySelector<HTMLElement>("[data-label]");
+                  if (label) label.style.color = "var(--text)";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.opacity = "1";
+                  const label = e.currentTarget.querySelector<HTMLElement>("[data-label]");
+                  if (label) label.style.color = "var(--muted)";
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                  <p
+                    data-label="true"
+                    style={{
+                      fontFamily: "var(--font-mono)", fontSize: "9px",
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+                      transition: "color 0.2s",
+                    }}
+                  >
+                    {row.label}
+                  </p>
+                  <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+                </div>
+                <p style={{
+                  fontFamily: "var(--font-body)", fontSize: "14px",
+                  letterSpacing: "-0.01em",
+                  color: "var(--muted2)", lineHeight: 1.6, fontWeight: 400,
+                }}>
+                  {row.value}
+                </p>
+              </div>
+            </motion.div>
           ))}
         </div>
+
       </div>
     </div>
   );
 }
 
+/* ── Mesh thumbnail — mouse-reactive radial gradient orbs ── */
+const meshPalettes = {
+  light: [
+    { base: "#f0ede8", orbs: ["#e8d5c4", "#d4c5e0", "#c4d8e0"] },
+    { base: "#e8ecf0", orbs: ["#c4d4e8", "#d4e8d0", "#e0d4c4"] },
+    { base: "#edf0e8", orbs: ["#d4e8c4", "#c4d8e0", "#e0c4d8"] },
+    { base: "#f0e8ed", orbs: ["#e0c4d4", "#d4c4e8", "#c4e0d4"] },
+    { base: "#e8f0ee", orbs: ["#c4e0d8", "#d8d4c4", "#d4c4e0"] },
+    { base: "#f0ede8", orbs: ["#e0d4c0", "#c4d0e0", "#d8c4d8"] },
+  ],
+  dark: [
+    { base: "#1a1714", orbs: ["#3d2e20", "#2a2040", "#1e3040"] },
+    { base: "#14171a", orbs: ["#1e2e40", "#243820", "#402e1e"] },
+    { base: "#151a14", orbs: ["#243820", "#1e2840", "#38182e"] },
+    { base: "#1a1418", orbs: ["#3a1e2a", "#241838", "#183828"] },
+    { base: "#14171a", orbs: ["#1e3040", "#382e18", "#281838"] },
+    { base: "#1a1714", orbs: ["#382e1e", "#1e2e40", "#2e1e38"] },
+  ],
+};
+
+function MeshThumbnail({ index, type, number, confidential }: {
+  index: number; type: string; number: string; confidential?: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const raf = useRef<number | null>(null);
+  const mouse = useRef({ x: 50, y: 50 });
+  const current = useRef({ x: 50, y: 50, x2: 30, y2: 70, x3: 70, y3: 30 });
+  const [isDark, setIsDark] = useState(false);
+
+  // Watch data-theme attribute changes
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.dataset.theme === "dark");
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
+  const palette = isDark
+    ? meshPalettes.dark[index % meshPalettes.dark.length]
+    : meshPalettes.light[index % meshPalettes.light.length];
+
+  const update = () => {
+    const c = current.current;
+    const m = mouse.current;
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    c.x  = lerp(c.x,  m.x,       0.06);
+    c.y  = lerp(c.y,  m.y,       0.06);
+    c.x2 = lerp(c.x2, 100 - m.x, 0.04);
+    c.y2 = lerp(c.y2, m.y * 0.7, 0.04);
+    c.x3 = lerp(c.x3, m.x * 0.6, 0.035);
+    c.y3 = lerp(c.y3, 100 - m.y, 0.035);
+
+    if (ref.current) {
+      const p = document.documentElement.dataset.theme === "dark"
+        ? meshPalettes.dark[index % meshPalettes.dark.length]
+        : meshPalettes.light[index % meshPalettes.light.length];
+      ref.current.style.background = [
+        `radial-gradient(ellipse 60% 55% at ${c.x}% ${c.y}%, ${p.orbs[0]}ee, transparent 70%)`,
+        `radial-gradient(ellipse 50% 60% at ${c.x2}% ${c.y2}%, ${p.orbs[1]}bb, transparent 65%)`,
+        `radial-gradient(ellipse 55% 50% at ${c.x3}% ${c.y3}%, ${p.orbs[2]}aa, transparent 60%)`,
+        p.base,
+      ].join(", ");
+    }
+    raf.current = requestAnimationFrame(update);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouse.current = {
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top)  / rect.height) * 100,
+    };
+  };
+
+  const startRaf = () => { if (!raf.current) raf.current = requestAnimationFrame(update); };
+  const stopRaf  = () => {
+    if (raf.current) { cancelAnimationFrame(raf.current); raf.current = null; }
+    mouse.current = { x: 50, y: 50 };
+  };
+
+  useEffect(() => () => { if (raf.current) cancelAnimationFrame(raf.current); }, []);
+
+  // Theme-aware colour values
+  const numColor      = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)";
+  const labelColor    = isDark ? "rgba(255,255,255,0.3)"  : "rgba(0,0,0,0.4)";
+  const badgeBg       = isDark ? "rgba(0,0,0,0.4)"        : "rgba(255,255,255,0.6)";
+  const badgeColor    = isDark ? "rgba(255,255,255,0.35)"  : "rgba(0,0,0,0.4)";
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={startRaf}
+      onMouseLeave={stopRaf}
+      style={{
+        height: "120px",
+        background: palette.base,
+        position: "relative", overflow: "hidden",
+        display: "flex", alignItems: "flex-end",
+        padding: "12px 16px",
+      }}
+    >
+      <div className="paper-grain" />
+      {/* Large faint number */}
+      <span style={{
+        position: "absolute", right: "12px", top: "50%",
+        transform: "translateY(-50%)",
+        fontFamily: "var(--font-body)", fontSize: "64px", fontWeight: 300,
+        letterSpacing: "-0.04em", lineHeight: 1,
+        color: numColor,
+        userSelect: "none", pointerEvents: "none",
+        transition: "color 0.3s",
+      }}>
+        {number}
+      </span>
+      {/* Domain label */}
+      <span style={{
+        fontFamily: "var(--font-mono)", fontSize: "8px",
+        letterSpacing: "0.08em", textTransform: "uppercase",
+        color: labelColor, position: "relative", zIndex: 1,
+        transition: "color 0.3s",
+      }}>
+        {type.split("—")[0].trim()}
+      </span>
+      {confidential && (
+        <div style={{
+          position: "absolute", top: "10px", right: "10px",
+          background: badgeBg,
+          borderRadius: "4px", padding: "3px 8px",
+          fontFamily: "var(--font-mono)", fontSize: "8px",
+          letterSpacing: "0.08em", textTransform: "uppercase",
+          color: badgeColor,
+          transition: "background 0.3s, color 0.3s",
+        }}>
+          Confidential
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Panel 2: Selected Work ── */
-const cardBgs = ["var(--surface2)", "var(--surface)", "var(--surface2)", "var(--surface)", "var(--surface2)", "var(--surface)"];
 
 function WorkPanel() {
   return (
@@ -245,43 +464,45 @@ function WorkPanel() {
               <motion.div
                 key={cs.slug}
                 initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: EASE, delay: i * 0.04 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-20px" }}
+                transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}
               >
                 <Link href={href}>
                   <motion.div
-                    whileHover={{ y: -2 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    whileHover={{ y: -2, boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}
+                    transition={{ type: "spring", stiffness: 320, damping: 28 }}
                     style={{
                       background: "var(--surface)",
                       borderRadius: "12px",
                       overflow: "hidden",
+                      border: "1px solid var(--border)",
+                      cursor: "pointer",
+                      transition: "border-color 0.2s cubic-bezier(0.22,1,0.36,1)",
                     }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--muted)")}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}
                   >
-                    {/* Thumbnail */}
-                    <div style={{ height: "130px", background: cardBgs[i % cardBgs.length], position: "relative", overflow: "hidden" }}>
-                      {/* Paper grain texture overlay — theme-aware via CSS class */}
-                      <div className="paper-grain" />
-                      {cs.confidential && (
-                        <div style={{
-                          position: "absolute", top: "10px", right: "10px",
-                          background: "var(--surface2)",
-                          borderRadius: "5px", padding: "3px 9px",
-                          fontFamily: "var(--font-mono)", fontSize: "8px",
-                          letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)",
-                        }}>
-                          Confidential
-                        </div>
-                      )}
-                    </div>
+                    {/* Mesh thumbnail */}
+                    <MeshThumbnail
+                      index={i}
+                      type={cs.type}
+                      number={cs.number}
+                      confidential={cs.confidential}
+                    />
 
                     {/* Body */}
                     <div style={{ padding: "12px 16px 16px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)" }}>
+                      {/* Number + tags row */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
+                        <span style={{
+                          fontFamily: "var(--font-mono)", fontSize: "9px",
+                          letterSpacing: "0.06em", color: "var(--muted)",
+                        }}>
                           {cs.number}
                         </span>
-                        {cs.tags.slice(0, 1).map(tag => (
+                        <span style={{ color: "var(--border)", fontFamily: "var(--font-mono)", fontSize: "9px" }}>·</span>
+                        {cs.tags.slice(0, 2).map(tag => (
                           <span key={tag} style={{
                             fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em",
                             padding: "2px 7px", background: "var(--surface2)",
@@ -292,38 +513,47 @@ function WorkPanel() {
                         ))}
                       </div>
 
+                      {/* Title */}
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
                         lineHeight: 1.3, letterSpacing: "-0.02em",
-                        color: "var(--text)", marginBottom: "12px",
+                        color: "var(--text)", marginBottom: "4px",
                       }}>
                         {cs.title}
                       </h3>
 
-                      <div style={{
-                        display: "flex", justifyContent: "space-between", alignItems: "center",
-                        paddingTop: "12px", borderTop: "1px solid var(--border)",
+                      {/* Subtitle */}
+                      <p style={{
+                        fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                        lineHeight: 1.4, letterSpacing: "-0.01em",
+                        color: "var(--muted)", marginBottom: "12px",
                       }}>
-                        <div style={{ display: "flex", gap: "12px" }}>
-                          {cs.metrics.slice(0, 2).map(m => (
-                            <div key={m.label}>
-                              <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1, marginBottom: "2px" }}>
-                                {m.value}
-                              </p>
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.06em", color: "var(--muted)", textTransform: "uppercase" }}>
-                                {m.label}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                        <span style={{
-                          fontFamily: "var(--font-body)", fontSize: "10px", fontWeight: 400,
-                          padding: "6px 12px", borderRadius: "5px", whiteSpace: "nowrap",
-                          background: cs.confidential ? "var(--surface2)" : "var(--text)",
-                          color: cs.confidential ? "var(--muted)" : "var(--bg)",
-                        }}>
-                          {cs.confidential ? "Request access →" : "View ↗"}
-                        </span>
+                        {cs.subtitle}
+                      </p>
+
+                      {/* Metrics */}
+                      <div style={{
+                        paddingTop: "12px", borderTop: "1px solid var(--border)",
+                        display: "flex", gap: "16px",
+                      }}>
+                        {cs.metrics.slice(0, 2).map(m => (
+                          <div key={m.label}>
+                            <p style={{
+                              fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
+                              letterSpacing: "-0.03em", color: "var(--text)",
+                              lineHeight: 1, marginBottom: "3px",
+                            }}>
+                              {m.value}
+                            </p>
+                            <p style={{
+                              fontFamily: "var(--font-mono)", fontSize: "8px",
+                              letterSpacing: "0.06em", color: "var(--muted)",
+                              textTransform: "uppercase",
+                            }}>
+                              {m.label}
+                            </p>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </motion.div>
@@ -339,7 +569,7 @@ function WorkPanel() {
 
 /* ── Panel 3: Career ── */
 const YEAR_PX    = 56;   // px per year
-const CAL_START  = 2016;
+const CAL_START  = 2012;
 const CAL_END    = 2027;
 const TOP_OFFSET = 20;   // px breathing room above the topmost card
 
@@ -355,6 +585,7 @@ type CareerItem = {
   description?: string;
   highlights?: string[];
   learnings?: string[];
+  minHeight?: number;
 };
 
 // Month helper: year + (month-1)/12
@@ -364,7 +595,7 @@ const careerItems: CareerItem[] = [
   // Work — newest first
   {
     type: "role", startYear: 2025.167, endYear: 2025.583,
-    title: "Senior Product Designer", subtitle: "Planful Software",
+    title: "Senior Product Designer", subtitle: "Planful Software", minHeight: 72,
     dateLabel: "Mar 2025 — Aug 2025", impact: "−30% training time", logoDomain: "planful.com",
     description: "Led end-to-end design for Planful's AI-powered FP&A platform — translating the complexity of enterprise financial planning into interfaces finance teams actually want to use.",
     highlights: [
@@ -380,7 +611,7 @@ const careerItems: CareerItem[] = [
   },
   {
     type: "role", startYear: 2024.25, endYear: 2025.083,
-    title: "Senior UX Designer", subtitle: "Reputation.com",
+    title: "Senior UX Designer", subtitle: "Reputation.com", minHeight: 72,
     dateLabel: "Apr 2024 — Feb 2025", impact: "−40% task time", logoDomain: "reputation.com",
     description: "Designed core features for Reputation's enterprise CX platform — helping global brands manage their online presence across thousands of locations at scale.",
     highlights: [
@@ -444,7 +675,7 @@ const careerItems: CareerItem[] = [
   },
   // Education & Side roles
   {
-    type: "education", startYear: 2023.833, title: "Super Mentor", subtitle: "ADPList",
+    type: "education", startYear: 2023.833, title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
     dateLabel: "Nov 2023 — Present", impact: "Top 1% · 3K+ mins",
     description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList — mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
     highlights: [
@@ -453,9 +684,9 @@ const careerItems: CareerItem[] = [
       "Ongoing 1:1 sessions on product design, career strategy, and portfolio critique",
     ],
   },
-  { type: "education", startYear: 2020.917, endYear: 2021.333, title: "Program in UX Design",         subtitle: "IIT Bombay",  dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in" },
-  { type: "education", startYear: 2019,     endYear: 2019.5,   title: "PM Certification",             subtitle: "IIT Guwahati", dateLabel: "2019" },
-  { type: "education", startYear: 2017,     endYear: 2017.5,   title: "Design Thinking & Leadership", subtitle: "DSIL Global", dateLabel: "2017" },
+  { type: "education", startYear: 2020.917, endYear: 2021.333, title: "Program in UX Design",         subtitle: "IIT Bombay",   dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in", minHeight: 72 },
+  { type: "education", startYear: 2019,     endYear: 2019.5,   title: "PM Certification",             subtitle: "IIT Guwahati", dateLabel: "2019",               minHeight: 72 },
+  { type: "education", startYear: 2017,     endYear: 2017.5,   title: "Design Thinking & Leadership", subtitle: "DSIL Global",  dateLabel: "2017",               minHeight: 72 },
 ];
 
 const testimonials = [
@@ -487,26 +718,53 @@ function CareerPanel() {
 
   const NOW_Y = (CAL_END - 2026.25) * YEAR_PX + TOP_OFFSET; // y-position of the "Now" dot
 
-  // Pre-compute stacked positions for work cards — 0px gap, no overlap
+  const CARD_OVERLAP = 6; // px of overlap between adjacent cards
+
+  // Pre-compute stacked positions for work cards — slight negative gap
   const stackedWorkPositions = (() => {
     const computed = workItems.map(item => {
       const endYr  = item.endYear ?? (item.startYear + 0.5);
-      const height = Math.max((endYr - item.startYear) * YEAR_PX - 4, 20);
+      const height = Math.max((endYr - item.startYear) * YEAR_PX - 4, item.minHeight ?? 36);
       const rawTop = (CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - height;
       return { item, top: Math.max(rawTop, NOW_Y + 10), height };
     });
-    // Sort topmost first, then push down any card that overlaps the previous
     computed.sort((a, b) => a.top - b.top);
     for (let i = 1; i < computed.length; i++) {
       const prevBottom = computed[i - 1].top + computed[i - 1].height;
-      if (computed[i].top < prevBottom) computed[i].top = prevBottom;
+      const gap = computed[i].top - prevBottom;
+      if (gap < 20) {
+        computed[i].top = prevBottom - CARD_OVERLAP; // overlap adjacent cards
+      } else if (gap < 0) {
+        computed[i].top = prevBottom; // prevent full collision on distant cards
+      }
+    }
+    return computed;
+  })();
+
+  // Pre-compute stacked positions for education cards — same overlap logic
+  const stackedEduPositions = (() => {
+    const computed = eduItems.map(item => {
+      const endYr  = item.endYear ?? (item.startYear + 0.5);
+      const height = Math.max((endYr - item.startYear) * YEAR_PX - 4, item.minHeight ?? 44);
+      const rawTop = (CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - height;
+      return { item, top: Math.max(rawTop, 0), height };
+    });
+    computed.sort((a, b) => a.top - b.top);
+    for (let i = 1; i < computed.length; i++) {
+      const prevBottom = computed[i - 1].top + computed[i - 1].height;
+      const gap = computed[i].top - prevBottom;
+      if (gap < 20) {
+        computed[i].top = prevBottom - CARD_OVERLAP;
+      } else if (gap < 0) {
+        computed[i].top = prevBottom;
+      }
     }
     return computed;
   })();
 
   const renderCard = (item: CareerItem, isEdu: boolean, index: number, overrideTop?: number) => {
     const endYr     = item.endYear ?? (item.startYear + 0.5);
-    const naturalH  = Math.max((endYr - item.startYear) * YEAR_PX - 4, 20);
+    const naturalH  = Math.max((endYr - item.startYear) * YEAR_PX - 4, item.minHeight ?? (isEdu ? 44 : 36));
     const top       = overrideTop ?? Math.max((CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - naturalH, NOW_Y + 10);
     const isClickable = !isEdu || !!item.description;
     const isHovered   = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
@@ -543,9 +801,9 @@ function CareerPanel() {
         }}
       >
         {/* ── Compact header row — always visible ── */}
-        <motion.div layout="position" style={{
+        <motion.div layout style={{
           display: "flex", alignItems: "center", gap: "8px",
-          padding: naturalH < 40 ? "4px 10px" : "8px 12px",
+          padding: isExpanded ? "8px 12px" : naturalH < 40 ? "4px 10px" : "8px 12px",
           height: isExpanded ? "auto" : `${naturalH}px`,
           overflow: "hidden",
           borderBottom: isExpanded ? "1px solid var(--border)" : "none",
@@ -603,13 +861,13 @@ function CareerPanel() {
         </motion.div>
 
         {/* ── Expanded detail content ── */}
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
           {isExpanded && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 6 }}
-              transition={{ duration: 0.3, ease: EASE, delay: 0.12 }}
+              exit={{ opacity: 0, transition: { duration: 0.08, ease: EASE } }}
+              transition={{ duration: 0.28, ease: EASE, delay: 0.1 }}
             >
               <div style={{ padding: "16px 12px 12px" }}>
 
@@ -643,7 +901,7 @@ function CareerPanel() {
                       letterSpacing: "0.1em", textTransform: "uppercase",
                       color: "var(--muted)", marginBottom: "8px",
                     }}>
-                      Worked on
+                      {item.subtitle === "ADPList" ? "Achievements" : "Worked on"}
                     </p>
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       {item.highlights.map((h, i) => (
@@ -683,20 +941,81 @@ function CareerPanel() {
                   </div>
                 )}
 
-                {/* ADPList reviews widget — only for ADPList card */}
+                {/* ADPList mentee reviews — native design language */}
                 {item.subtitle === "ADPList" && (
-                  <div style={{
-                    borderRadius: "8px", overflow: "hidden",
-                    border: "1px solid var(--border)",
-                    marginBottom: "12px", height: "360px",
-                  }}>
-                    <iframe
-                      src="https://adplist.org/widgets/reviews?src=arun-gaddam"
-                      title="ADPList Reviews"
-                      width="100%" height="100%"
-                      loading="lazy"
-                      style={{ border: "none", display: "block" }}
-                    />
+                  <div style={{ marginBottom: "12px" }}>
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "7px",
+                      letterSpacing: "0.1em", textTransform: "uppercase",
+                      color: "var(--muted)", marginBottom: "10px",
+                    }}>
+                      Mentee reviews
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      {[
+                        {
+                          quote: "I got a lot of value from just one hour session. I was feeling stuck navigating my self taught UX journey and Arun cleared a lot of doubts and helped improve my confidence. His tips and guidance are incredibly helpful.",
+                          initials: "SD", role: "Senior Analyst", company: "Ernst & Young", date: "Mar 2026",
+                        },
+                        {
+                          quote: "Arun was incredibly helpful during my job hunt! He listened to what I needed and made suggestions on different approaches I could take to find more jobs and improve my applications. He also thought ahead and anticipated other needs — I would highly recommend booking a session.",
+                          initials: "AZ", role: "Freelance UX/UI Designer", company: "Self Employed", date: "Jun 2024",
+                        },
+                        {
+                          quote: "I have learned a lot of things from Arun in just one meet. He has great product thinking and analytical thinking — showed me frameworks to build a good product along with real life examples.",
+                          initials: "JS", role: "UI/UX Designer", company: "Goldenflitch", date: "May 2024",
+                        },
+                        {
+                          quote: "Arun's attention to detail, proactive approach, and analytic mindset were truly impressive. His positive attitude, constructive feedback, and receptiveness to new ideas created a collaborative and growth-oriented environment.",
+                          initials: "DG", role: "Senior UX Designer", company: "Salesforce", date: "Dec 2023",
+                        },
+                      ].map((r, i) => (
+                        <div key={i} style={{
+                          background: "var(--surface)", borderRadius: "8px",
+                          padding: "10px 12px", border: "1px solid var(--border)",
+                        }}>
+                          <p style={{
+                            fontFamily: "var(--font-body)", fontSize: "12px",
+                            color: "var(--muted2)", lineHeight: 1.6,
+                            letterSpacing: "-0.01em", marginBottom: "8px",
+                          }}>
+                            &ldquo;{r.quote}&rdquo;
+                          </p>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                              <div style={{
+                                width: "20px", height: "20px", borderRadius: "50%",
+                                background: "var(--surface2)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                flexShrink: 0,
+                              }}>
+                                <span style={{
+                                  fontFamily: "var(--font-mono)", fontSize: "7px",
+                                  color: "var(--muted)", letterSpacing: "0.04em",
+                                }}>{r.initials}</span>
+                              </div>
+                              <div>
+                                <span style={{
+                                  fontFamily: "var(--font-mono)", fontSize: "8px",
+                                  color: "var(--muted)", letterSpacing: "0.06em",
+                                  textTransform: "uppercase", display: "block",
+                                }}>{r.role}</span>
+                                <span style={{
+                                  fontFamily: "var(--font-mono)", fontSize: "8px",
+                                  color: "var(--text)", letterSpacing: "0.06em",
+                                  textTransform: "uppercase", display: "block", marginTop: "1px",
+                                }}>{r.company}</span>
+                              </div>
+                            </div>
+                            <span style={{
+                              fontFamily: "var(--font-mono)", fontSize: "7px",
+                              color: "var(--muted)", letterSpacing: "0.06em",
+                              textTransform: "uppercase", flexShrink: 0,
+                            }}>{r.date}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -864,11 +1183,11 @@ function CareerPanel() {
               />
             )}
 
-            {/* Work cards — stacked positions, 0px gap */}
+            {/* Work cards — stacked with slight overlap */}
             {stackedWorkPositions.map(({ item, top }, i) => renderCard(item, false, i, top))}
 
-            {/* Education cards */}
-            {eduItems.map((item, i) => renderCard(item, true, i))}
+            {/* Education cards — stacked with slight overlap */}
+            {stackedEduPositions.map(({ item, top }, i) => renderCard(item, true, i, top))}
 
           </div>
         </div>
@@ -884,62 +1203,80 @@ function TestimonialsPanel() {
     <div>
       <PanelHeader label="Testimonials" />
       <div style={{ padding: "24px 24px 48px" }}>
-        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, color: "var(--muted)", marginBottom: "24px", fontWeight: 400 }}>
-          What people I&apos;ve worked closely with have said.
-        </p>
+
+        {/* Intro */}
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: EASE }}
+          style={{
+            fontFamily: "var(--font-body)", fontSize: "13px",
+            lineHeight: 1.65, letterSpacing: "-0.01em",
+            color: "var(--muted)", marginBottom: "24px", fontWeight: 400,
+          }}
+        >
+          From colleagues and managers I&apos;ve worked closely with.
+        </motion.p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20px" }}
-              whileHover={{ y: -2 }}
-              transition={{ duration: 0.55, ease: EASE, delay: i * 0.07 }}
+              transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}
               style={{
                 borderRadius: "12px",
                 background: "var(--surface)",
+                border: "1px solid var(--border)",
                 padding: "20px",
               }}
             >
               {/* Quote mark */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 0.15 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: EASE, delay: i * 0.07 + 0.2 }}
-                style={{
-                  fontFamily: "var(--font-body)", fontSize: "28px", lineHeight: 1,
-                  color: "var(--text)", marginBottom: "8px",
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                &ldquo;
-              </motion.p>
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
-                lineHeight: 1.7, color: "var(--text)", marginBottom: "24px",
+                fontFamily: "var(--font-body)", fontSize: "28px", lineHeight: 1,
+                color: "var(--text)", marginBottom: "8px",
+                letterSpacing: "-0.02em", opacity: 0.2,
+              }}>
+                &ldquo;
+              </p>
+
+              {/* Quote body — primary content, var(--text) */}
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+                lineHeight: 1.7, color: "var(--text)", marginBottom: "16px",
                 letterSpacing: "-0.01em",
               }}>
                 {t.quote}
               </p>
-              {/* Author */}
+
+              {/* Author — no border, spacing does the separation */}
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <div style={{
-                  width: "36px", height: "36px", borderRadius: "50%",
+                  width: "32px", height: "32px", borderRadius: "50%",
                   background: "var(--surface2)",
                   display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
                 }}>
-                  <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400, color: "var(--text)" }}>
+                  <span style={{
+                    fontFamily: "var(--font-mono)", fontSize: "8px",
+                    fontWeight: 400, color: "var(--muted)", letterSpacing: "0.08em",
+                  }}>
                     {t.initials}
                   </span>
                 </div>
                 <div>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, color: "var(--text)", lineHeight: 1.3 }}>
+                  <p style={{
+                    fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                    letterSpacing: "-0.01em", color: "var(--muted2)", lineHeight: 1.3,
+                  }}>
                     {t.name}
                   </p>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--muted)", marginTop: "2px", lineHeight: 1.3 }}>
+                  <p style={{
+                    fontFamily: "var(--font-mono)", fontSize: "8px", fontWeight: 400,
+                    letterSpacing: "0.08em", textTransform: "uppercase",
+                    color: "var(--muted)", marginTop: "3px", lineHeight: 1.3,
+                  }}>
                     {t.role} · {t.company}
                   </p>
                 </div>
@@ -1003,11 +1340,17 @@ function AIExplorationsPanel() {
     <div>
       <PanelHeader label="AI Explorations" />
       <div style={{ padding: "16px 24px 48px" }}>
-        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, color: "var(--muted)", marginBottom: "24px", fontWeight: 400 }}>
-          Side experiments at the intersection of AI and design practice. Some are workflows, some are tools, some are just curiosity.
-        </p>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: EASE }}
+          style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)", marginBottom: "24px", fontWeight: 400 }}
+        >
+          Side experiments at the intersection of AI and design practice. Some are workflows, some are tools, some are just curiosity.
+        </motion.p>
+
+        <div style={{ borderTop: "1px solid var(--border)" }}>
           {aiExplorations.map((item, i) => (
             <motion.div
               key={item.number}
@@ -1016,21 +1359,28 @@ function AIExplorationsPanel() {
               viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}
               style={{
-                padding: "24px 0",
+                padding: "20px 0",
                 borderBottom: "1px solid var(--border)",
-                borderTop: i === 0 ? "1px solid var(--border)" : "none",
-                transition: "opacity 0.18s",
+                transition: "opacity 0.2s cubic-bezier(0.22,1,0.36,1)",
               }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
-              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+              onMouseEnter={e => {
+                e.currentTarget.style.opacity = "0.6";
+                const label = e.currentTarget.querySelector<HTMLElement>("[data-label]");
+                if (label) label.style.color = "var(--text)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.opacity = "1";
+                const label = e.currentTarget.querySelector<HTMLElement>("[data-label]");
+                if (label) label.style.color = "var(--muted)";
+              }}
             >
               {/* Number + status */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)" }}>
+                <span data-label="true" style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", transition: "color 0.2s cubic-bezier(0.22,1,0.36,1)" }}>
                   {item.number}
                 </span>
                 <span style={{
-                  fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.06em",
+                  fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em",
                   padding: "3px 8px", borderRadius: "4px",
                   background: statusColors[item.status] + "18",
                   color: statusColors[item.status],
@@ -1041,17 +1391,17 @@ function AIExplorationsPanel() {
               </div>
 
               {/* Title */}
-              <h3 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, color: "var(--text)", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: "8px" }}>
+              <h3 style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 400, color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "8px" }}>
                 {item.title}
               </h3>
 
               {/* Tags */}
-              <div style={{ display: "flex", gap: "6px", marginBottom: "8px", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: "6px", marginBottom: "10px", flexWrap: "wrap" }}>
                 {item.tags.map(tag => (
                   <span key={tag} style={{
-                    fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.05em",
+                    fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em",
                     padding: "2px 7px", background: "var(--surface2)",
-                    color: "var(--muted)", borderRadius: "4px",
+                    color: "var(--muted)", borderRadius: "4px", textTransform: "uppercase",
                   }}>
                     {tag}
                   </span>
@@ -1059,7 +1409,7 @@ function AIExplorationsPanel() {
               </div>
 
               {/* Body */}
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, color: "var(--muted2)", fontWeight: 400 }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", fontWeight: 400 }}>
                 {item.body}
               </p>
             </motion.div>
@@ -1068,18 +1418,23 @@ function AIExplorationsPanel() {
 
         {/* Contact CTA */}
         <div style={{ marginTop: "32px" }}>
-          <h2 style={{ fontFamily: "var(--font-body)", fontSize: "20px", fontWeight: 400, letterSpacing: "-0.025em", lineHeight: 1.25, color: "var(--text)", marginBottom: "8px" }}>
+          <motion.h2
+            initial={{ opacity: 0, y: 6 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, ease: EASE }}
+            style={{ fontFamily: "var(--font-body)", fontSize: "20px", fontWeight: 400, letterSpacing: "-0.025em", lineHeight: 1.25, color: "var(--text)", marginBottom: "8px" }}
+          >
             Have a hard problem?
-          </h2>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted)", marginBottom: "24px", fontWeight: 400 }}>
+          </motion.h2>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)", marginBottom: "20px", fontWeight: 400 }}>
             I&apos;m always interested in complex design challenges at the intersection of product, data, and AI.
           </p>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             <a
               href="mailto:akgaddam02@gmail.com"
-              style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, padding: "10px 20px", background: "var(--text)", color: "var(--bg)", borderRadius: "7px", letterSpacing: "-0.01em", transition: "opacity 0.15s" }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = "0.75")}
-              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+              className="btn-primary"
+              style={{ fontSize: "13px", padding: "10px 20px", borderRadius: "7px" }}
             >
               Say hello →
             </a>
@@ -1087,9 +1442,8 @@ function AIExplorationsPanel() {
               href="https://linkedin.com/in/akgaddam"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, padding: "10px 20px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "7px", letterSpacing: "-0.01em", transition: "opacity 0.15s" }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
-              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+              className="btn-secondary"
+              style={{ fontSize: "13px", padding: "10px 20px", borderRadius: "7px" }}
             >
               LinkedIn ↗
             </Link>
@@ -1098,7 +1452,7 @@ function AIExplorationsPanel() {
 
         {/* Footer */}
         <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "1px solid var(--border)" }}>
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)" }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--muted)", lineHeight: 1.3 }}>
             © 2026 · Arun Gaddam · Hyderabad, India
           </p>
         </div>
@@ -1107,31 +1461,59 @@ function AIExplorationsPanel() {
   );
 }
 
+/* ── Panel shadow helpers ── */
+const PANEL_SHADOW_LIGHT = "0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06)";
+const PANEL_SHADOW_ACTIVE_LIGHT = "0 2px 4px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.10)";
+const PANEL_SHADOW_DARK  = "0 0 0 1px rgba(255,255,255,0.06), 0 6px 24px rgba(0,0,0,0.5)";
+const PANEL_SHADOW_ACTIVE_DARK = "0 0 0 1px rgba(255,255,255,0.09), 0 12px 40px rgba(0,0,0,0.7)";
+
+const PANEL_CONFIGS = [
+  { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
+  { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
+  { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
+  { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
+  { label: "AI Explorations",width: "420px", minWidth: "380px", Component: AIExplorationsPanel },
+];
+
 /* ── Home ── */
 export default function Home() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef  = useRef<HTMLDivElement>(null);
   const [activePanel, setActivePanel] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]         = useState(true);
+  const [revealed, setRevealed]       = useState(false);
+  const [isDark, setIsDark]           = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1300);
+    const check = () => setIsDark(document.documentElement.dataset.theme === "dark");
+    check();
+    const obs = new MutationObserver(check);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setLoading(false);
+      setTimeout(() => setRevealed(true), 80); // slight delay so panels animate after loader exits
+    }, 1300);
     return () => clearTimeout(t);
   }, []);
 
   const scrollByPanel = useCallback((dir: 1 | -1) => {
     const el = containerRef.current;
     if (!el) return;
-    const panelWidth = el.querySelector(".panel")?.clientWidth ?? 420;
-    el.scrollBy({ left: dir * (panelWidth + 10), behavior: "smooth" });
-  }, []);
+    const panels = el.querySelectorAll<HTMLElement>(".panel");
+    const current = panels[activePanel];
+    if (!current) return;
+    el.scrollBy({ left: dir * (current.offsetWidth + 8), behavior: "smooth" });
+  }, [activePanel]);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const handler = () => {
       const panels = el.querySelectorAll<HTMLElement>(".panel");
-      let closest = 0;
-      let minDist = Infinity;
+      let closest = 0, minDist = Infinity;
       panels.forEach((p, i) => {
         const dist = Math.abs(p.getBoundingClientRect().left - 24);
         if (dist < minDist) { minDist = dist; closest = i; }
@@ -1142,7 +1524,6 @@ export default function Home() {
     return () => el.removeEventListener("scroll", handler);
   }, []);
 
-  // Keyboard navigation — ← → arrow keys (#3)
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") scrollByPanel(1);
@@ -1152,20 +1533,44 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [scrollByPanel]);
 
+  // Add scrolled class to panel headers when panel scrolls
+  useEffect(() => {
+    const panels = containerRef.current?.querySelectorAll<HTMLElement>(".panel");
+    if (!panels) return;
+    const cleanups: (() => void)[] = [];
+    panels.forEach(panel => {
+      const handler = () => {
+        const header = panel.querySelector<HTMLElement>(".panel-header-glass");
+        if (header) header.classList.toggle("scrolled", panel.scrollTop > 4);
+      };
+      panel.addEventListener("scroll", handler, { passive: true });
+      cleanups.push(() => panel.removeEventListener("scroll", handler));
+    });
+    return () => cleanups.forEach(fn => fn());
+  }, [revealed]);
+
+  const isLastPanel = activePanel === PANEL_CONFIGS.length - 1;
+
   return (
     <>
       <LoadingScreen visible={loading} />
       <Cursor />
       <HomeNav onPrev={() => scrollByPanel(-1)} onNext={() => scrollByPanel(1)} activePanel={activePanel} />
-      {/* Right-edge fade — signals more panels */}
-      <div className="panels-right-fade" style={{
-        position: "fixed", top: "52px", right: 0,
-        width: "64px", height: "calc(100vh - 52px)",
-        background: "linear-gradient(to right, transparent, var(--chrome))",
-        pointerEvents: "none", zIndex: 100,
-      }} />
+
+      {/* Right-edge fade — hides on last panel */}
+      <motion.div
+        className="panels-right-fade"
+        animate={{ opacity: isLastPanel ? 0 : 1 }}
+        transition={{ duration: 0.3, ease: EASE }}
+        style={{
+          position: "fixed", top: "52px", right: 0,
+          width: "80px", height: "calc(100vh - 52px)",
+          background: "linear-gradient(to right, transparent, var(--chrome))",
+          pointerEvents: "none", zIndex: 100,
+        }}
+      />
+
       <main className="home-main" style={{ paddingTop: "52px", height: "100vh", overflow: "hidden", background: "var(--chrome)" }}>
-        {/* 4-panel horizontal layout */}
         <div
           ref={containerRef}
           className="panels-container"
@@ -1175,85 +1580,44 @@ export default function Home() {
             overflowX: "auto",
             overflowY: "hidden",
             gap: "8px",
-            padding: "8px 0 16px 24px",
+            padding: "12px 0 16px 24px",
             boxSizing: "border-box",
-            scrollSnapType: "x mandatory",
+            scrollSnapType: "x proximity",
+            scrollPaddingLeft: "24px",
           }}
         >
-          {/* Panel 1 — About */}
-          <div className="panel" style={{
-            minWidth: "380px",
-            width: "420px",
-            flex: "0 0 auto",
-            height: "100%",
-            overflowY: "auto",
-            borderRadius: "18px",
-            background: "var(--bg)",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 20px rgba(0,0,0,0.04)",
-            scrollSnapAlign: "start",
-          }}>
-            <AboutPanel />
-          </div>
+          {PANEL_CONFIGS.map(({ width, minWidth, Component }, i) => {
+            const isActive = activePanel === i;
+            const shadow = isDark
+              ? (isActive ? PANEL_SHADOW_ACTIVE_DARK  : PANEL_SHADOW_DARK)
+              : (isActive ? PANEL_SHADOW_ACTIVE_LIGHT : PANEL_SHADOW_LIGHT);
+            return (
+              <motion.div
+                key={i}
+                className="panel"
+                initial={{ opacity: 0, y: 16 }}
+                animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+                transition={{ duration: 0.55, ease: EASE, delay: i * 0.07 }}
+                style={{
+                  minWidth,
+                  width,
+                  flex: "0 0 auto",
+                  height: "100%",
+                  overflowY: "auto",
+                  borderRadius: "18px",
+                  background: "var(--bg)",
+                  boxShadow: shadow,
+                  scrollSnapAlign: "start",
+                  transition: "box-shadow 0.35s cubic-bezier(0.22,1,0.36,1)",
+                }}
+              >
+                <Component />
+              </motion.div>
+            );
+          })}
 
-          {/* Panel 2 — Work */}
-          <div className="panel" style={{
-            minWidth: "380px",
-            width: "440px",
-            flex: "0 0 auto",
-            height: "100%",
-            overflowY: "auto",
-            borderRadius: "18px",
-            background: "var(--bg)",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 20px rgba(0,0,0,0.04)",
-            scrollSnapAlign: "start",
-          }}>
-            <WorkPanel />
-          </div>
-
-          {/* Panel 3 — Career */}
-          <div className="panel" style={{
-            minWidth: "380px",
-            width: "420px",
-            flex: "0 0 auto",
-            height: "100%",
-            overflowY: "auto",
-            borderRadius: "18px",
-            background: "var(--bg)",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 20px rgba(0,0,0,0.04)",
-            scrollSnapAlign: "start",
-          }}>
-            <CareerPanel />
-          </div>
-
-          {/* Panel 4 — Testimonials */}
-          <div className="panel" style={{
-            minWidth: "360px",
-            width: "400px",
-            flex: "0 0 auto",
-            height: "100%",
-            overflowY: "auto",
-            borderRadius: "18px",
-            background: "var(--bg)",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 20px rgba(0,0,0,0.04)",
-            scrollSnapAlign: "start",
-          }}>
-            <TestimonialsPanel />
-          </div>
-
-          {/* Panel 5 — AI Explorations */}
-          <div className="panel" style={{
-            minWidth: "380px",
-            width: "420px",
-            flex: "0 0 auto",
-            height: "100%",
-            overflowY: "auto",
-            borderRadius: "18px",
-            background: "var(--bg)",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 20px rgba(0,0,0,0.04)",
-            scrollSnapAlign: "start",
-          }}>
-            <AIExplorationsPanel />
-          </div>
+          {/* Trailing spacer so last panel gets 24px right breathing room */}
+          <div style={{ minWidth: "24px", flexShrink: 0 }} />
         </div>
       </main>
 
@@ -1264,13 +1628,12 @@ export default function Home() {
         .panel { -ms-overflow-style: none; scrollbar-width: none; }
 
         @keyframes today-pulse {
-          0%   { box-shadow: 0 0 0 0px rgba(239,68,68,0.5); }
-          60%  { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+          0%   { box-shadow: 0 0 0 0px rgba(239,68,68,0.4); }
+          60%  { box-shadow: 0 0 0 5px rgba(239,68,68,0); }
           100% { box-shadow: 0 0 0 0px rgba(239,68,68,0); }
         }
         .today-dot {
-          box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
-          animation: today-pulse 2.8s ease-out infinite;
+          animation: today-pulse 3.5s ease-out infinite;
         }
 
         @media (max-width: 640px) {

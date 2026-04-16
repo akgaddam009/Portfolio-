@@ -26,9 +26,9 @@
 /* ─── Dark theme ─────────────────────────────────────── */
 [data-theme="dark"] {
   --bg:       #111111;
-  --surface:  #1c1c1c;
-  --surface2: #252525;
-  --border:   #2e2e2e;
+  --surface:  #1e1e1e;
+  --surface2: #272727;
+  --border:   #303030;
   --text:     #efefef;
   --muted:    #888888;
   --muted2:   #b8b8b8;
@@ -45,9 +45,16 @@
   background: rgba(13, 13, 13, 0.92);
 }
 
-/* ─── Panel sticky header — fully opaque so scroll content never bleeds through ── */
+/* ─── Panel sticky header — opaque + scroll shadow via scroll-driven JS class ── */
 .panel-header-glass {
   background: var(--bg);
+  transition: box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.panel-header-glass.scrolled {
+  box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.04);
+}
+[data-theme="dark"] .panel-header-glass.scrolled {
+  box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.3);
 }
 
 /* ─── Base ───────────────────────────────────────────── */
@@ -127,6 +134,7 @@ a { color: inherit; text-decoration: none; }
   border-radius: 12px;
   overflow: hidden;
 }
+
 
 /* ─── Buttons ────────────────────────────────────────── */
 .btn-primary {
@@ -233,8 +241,8 @@ a { color: inherit; text-decoration: none; }
 
 /* ─── Availability pulse dot ─────────────────────────── */
 @keyframes availability-pulse {
-  0%, 100% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.45); }
-  60%       { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);   }
+  0%, 100% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.35); }
+  60%       { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0);   }
 }
 .availability-dot {
   width: 6px;
@@ -243,7 +251,15 @@ a { color: inherit; text-decoration: none; }
   background: #22c55e;
   display: inline-block;
   flex-shrink: 0;
-  animation: availability-pulse 2.5s ease-out infinite;
+  animation: availability-pulse 4s ease-out infinite;
+  animation-delay: 2s;
+}
+
+/* ─── Keyboard focus ring ─────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* ─── Mobile responsive layout ───────────────────────── */

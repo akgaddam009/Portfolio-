@@ -28,7 +28,7 @@ export default function LoadingScreen({ visible }: { visible: boolean }) {
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.1 }}
+            transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
             style={{
               fontFamily: "var(--font-body)",
               fontSize: "16px",
@@ -54,7 +54,7 @@ export default function LoadingScreen({ visible }: { visible: boolean }) {
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ duration: 0.9, ease: EASE, delay: 0.12 }}
+              transition={{ duration: 0.85, ease: EASE, delay: 0.1 }}
               style={{
                 height: "100%",
                 background: "var(--text)",
