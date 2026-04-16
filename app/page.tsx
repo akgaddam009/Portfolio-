@@ -569,21 +569,21 @@ function CareerPanel() {
           </div>
 
 
-          {/* Chevron — always present for work cards, rotates on expand */}
-          {!isEdu && (
+          {/* Close — only visible when expanded */}
+          {isExpanded && (
             <motion.div
-              animate={{ rotate: isExpanded ? 180 : 0 }}
-              transition={{ type: "spring", stiffness: 320, damping: 28 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.15 }}
               style={{
                 flexShrink: 0, width: "20px", height: "20px",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: "var(--muted)",
-                opacity: isExpanded ? 1 : 0,
-                transition: "opacity 0.15s",
               }}
             >
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M2 4.5L6 8L10 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </motion.div>
           )}
