@@ -392,15 +392,31 @@ function CareerPanel() {
 
   const NOW_Y = (CAL_END - 2026.25) * YEAR_PX + TOP_OFFSET; // y-position of the "Now" dot
 
-  const renderCard = (item: CareerItem, isEdu: boolean, index: number) => {
+  // Pre-compute stacked positions for work cards — 0px gap, no overlap
+  const stackedWorkPositions = (() => {
+    const computed = workItems.map(item => {
+      const endYr  = item.endYear ?? (item.startYear + 0.5);
+      const height = Math.max((endYr - item.startYear) * YEAR_PX - 4, 64);
+      const rawTop = (CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - height;
+      return { item, top: Math.max(rawTop, NOW_Y + 10), height };
+    });
+    // Sort topmost first, then push down any card that overlaps the previous
+    computed.sort((a, b) => a.top - b.top);
+    for (let i = 1; i < computed.length; i++) {
+      const prevBottom = computed[i - 1].top + computed[i - 1].height;
+      if (computed[i].top < prevBottom) computed[i].top = prevBottom;
+    }
+    return computed;
+  })();
+
+  const renderCard = (item: CareerItem, isEdu: boolean, index: number, overrideTop?: number) => {
     const endYr    = item.endYear ?? (item.startYear + 0.5);
     const span     = endYr - item.startYear;
     const naturalH = span * YEAR_PX - 4;
     const height   = Math.max(naturalH, 64);
     const bottomPos = (CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET;
     const rawTop   = bottomPos - height;
-    // Keep card at least 10px below the "Now" marker so they never collide
-    const top      = Math.max(rawTop, NOW_Y + 10);
+    const top      = overrideTop ?? Math.max(rawTop, NOW_Y + 10);
     const isHovered = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
 
     return (
@@ -583,8 +599,8 @@ function CareerPanel() {
               }}>Now</span>
             </div>
 
-            {/* Work cards */}
-            {workItems.map((item, i) => renderCard(item, false, i))}
+            {/* Work cards — stacked positions, 0px gap */}
+            {stackedWorkPositions.map(({ item, top }, i) => renderCard(item, false, i, top))}
 
             {/* Education cards */}
             {eduItems.map((item, i) => renderCard(item, true, i))}
