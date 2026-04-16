@@ -443,7 +443,7 @@ const careerItems: CareerItem[] = [
     ],
   },
   // Education & Side roles
-  { type: "education", startYear: 2023.833,                    title: "Design Mentor",                subtitle: "ADPList",      dateLabel: "Nov 2023 — Present" },
+  { type: "education", startYear: 2023.833, title: "Super Mentor", subtitle: "ADPList", dateLabel: "Nov 2023 — Present", impact: "Top 1% · 3K+ mins" },
   { type: "education", startYear: 2020.917, endYear: 2021.333, title: "Program in UX Design",         subtitle: "IIT Bombay",  dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in" },
   { type: "education", startYear: 2019,     endYear: 2019.5,   title: "PM Certification",             subtitle: "IIT Guwahati", dateLabel: "2019" },
   { type: "education", startYear: 2017,     endYear: 2017.5,   title: "Design Thinking & Leadership", subtitle: "DSIL Global", dateLabel: "2017" },
@@ -860,6 +860,58 @@ function TestimonialsPanel() {
         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, color: "var(--muted)", marginBottom: "24px", fontWeight: 400 }}>
           What people I&apos;ve worked closely with have said.
         </p>
+
+        {/* ADPList Super Mentor badge */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: "10px",
+          padding: "10px 14px",
+          borderRadius: "10px",
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          marginBottom: "24px",
+        }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1.3 }}>
+              ADPList Super Mentor
+            </p>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "3px" }}>
+              Top 1% · 4× Recognition · 3,000+ Mentorship Mins
+            </p>
+          </div>
+          <a
+            href="https://adplist.org/mentors/arun-gaddam"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              flexShrink: 0,
+              fontFamily: "var(--font-mono)", fontSize: "8px",
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)", transition: "color 0.15s",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+          >
+            View ↗
+          </a>
+        </div>
+
+        {/* ADPList reviews widget */}
+        <div style={{
+          borderRadius: "12px",
+          overflow: "hidden",
+          border: "1px solid var(--border)",
+          marginBottom: "24px",
+          height: "400px",
+        }}>
+          <iframe
+            src="https://adplist.org/widgets/reviews?src=arun-gaddam"
+            title="ADPList Reviews"
+            width="100%"
+            height="100%"
+            loading="lazy"
+            style={{ border: "none", display: "block" }}
+          />
+        </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {testimonials.map((t, i) => (
