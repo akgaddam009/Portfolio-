@@ -32,11 +32,10 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
           href="/"
           style={{
             fontFamily: "var(--font-logo)",
-            fontStyle: "italic",
-            fontSize: "17px",
-            fontWeight: 400,
+            fontSize: "14px",
+            fontWeight: 500,
             color: "var(--text)",
-            letterSpacing: "-0.01em",
+            letterSpacing: "-0.03em",
             transition: "opacity 0.15s",
           }}
           onMouseEnter={e => (e.currentTarget.style.opacity = "0.5")}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, DM_Mono, Instrument_Serif } from "next/font/google";
+import { Inter, DM_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,11 +16,10 @@ const dmMono = DM_Mono({
   display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
-  style: ["italic"],
-  weight: ["400"],
+  weight: ["400", "500"],
   display: "swap",
 });
 
@@ -42,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${dmMono.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" className={`${inter.variable} ${dmMono.variable} ${dmSans.variable}`}>
       <body>
         {/* Sync theme before first paint — prevents flash behind the loader */}
         <script

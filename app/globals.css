@@ -13,7 +13,7 @@
 
   --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Fira Mono', monospace;
-  --font-logo: var(--font-instrument-serif), 'Instrument Serif', Georgia, serif;
+  --font-logo: var(--font-dm-sans), 'DM Sans', -apple-system, sans-serif;
 
   --ease-expo:   cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out:    cubic-bezier(0.25, 0.1, 0.25, 1);
