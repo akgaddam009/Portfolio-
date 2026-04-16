@@ -565,29 +565,6 @@ function CareerPanel() {
             )}
           </div>
 
-          {/* Logo — compact: 24px, expanded: 32px */}
-          {item.logoDomain && (
-            <div style={{
-              flexShrink: 0,
-              width: isExpanded ? "32px" : "24px",
-              height: isExpanded ? "32px" : "24px",
-              borderRadius: isExpanded ? "8px" : "6px",
-              border: "1px solid var(--border)",
-              background: "var(--bg)",
-              overflow: "hidden",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              transition: "width 0.25s, height 0.25s, border-radius 0.25s",
-            }}>
-              <img
-                src={`https://logo.clearbit.com/${item.logoDomain}`}
-                alt={item.subtitle}
-                width={isExpanded ? 26 : 20}
-                height={isExpanded ? 26 : 20}
-                style={{ objectFit: "contain", display: "block" }}
-                onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = "none"; }}
-              />
-            </div>
-          )}
 
           {/* Collapse chevron when expanded */}
           {isExpanded && (
