@@ -443,7 +443,7 @@ const careerItems: CareerItem[] = [
     ],
   },
   // Education & Side roles
-  { type: "education", startYear: 2023.833, endYear: 2025.167, title: "Design Mentor",                subtitle: "ADPList",      dateLabel: "Nov 2023 — Mar 2025" },
+  { type: "education", startYear: 2023.833,                    title: "Design Mentor",                subtitle: "ADPList",      dateLabel: "Nov 2023 — Present" },
   { type: "education", startYear: 2020.917, endYear: 2021.333, title: "Program in UX Design",         subtitle: "IIT Bombay",  dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in" },
   { type: "education", startYear: 2019,     endYear: 2019.5,   title: "PM Certification",             subtitle: "IIT Guwahati", dateLabel: "2019" },
   { type: "education", startYear: 2017,     endYear: 2017.5,   title: "Design Thinking & Leadership", subtitle: "DSIL Global", dateLabel: "2017" },
@@ -482,7 +482,7 @@ function CareerPanel() {
   const stackedWorkPositions = (() => {
     const computed = workItems.map(item => {
       const endYr  = item.endYear ?? (item.startYear + 0.5);
-      const height = Math.max((endYr - item.startYear) * YEAR_PX - 4, 64);
+      const height = Math.max((endYr - item.startYear) * YEAR_PX - 4, 20);
       const rawTop = (CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - height;
       return { item, top: Math.max(rawTop, NOW_Y + 10), height };
     });
@@ -497,7 +497,7 @@ function CareerPanel() {
 
   const renderCard = (item: CareerItem, isEdu: boolean, index: number, overrideTop?: number) => {
     const endYr     = item.endYear ?? (item.startYear + 0.5);
-    const naturalH  = Math.max((endYr - item.startYear) * YEAR_PX - 4, 64);
+    const naturalH  = Math.max((endYr - item.startYear) * YEAR_PX - 4, 20);
     const top       = overrideTop ?? Math.max((CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - naturalH, NOW_Y + 10);
     const isHovered  = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
     const isExpanded = !isEdu && selectedItem?.title === item.title && selectedItem?.startYear === item.startYear;
@@ -535,7 +535,9 @@ function CareerPanel() {
         {/* ── Compact header row — always visible ── */}
         <motion.div layout="position" style={{
           display: "flex", alignItems: "center", gap: "8px",
-          padding: "8px 12px",
+          padding: naturalH < 40 ? "4px 10px" : "8px 12px",
+          height: isExpanded ? "auto" : `${naturalH}px`,
+          overflow: "hidden",
           borderBottom: isExpanded ? "1px solid var(--border)" : "none",
         }}>
           <div style={{ flex: 1, minWidth: 0 }}>
