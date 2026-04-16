@@ -32,14 +32,20 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
           href="/"
           style={{
             fontFamily: "var(--font-logo)",
-            fontSize: "14px",
+            fontSize: "13px",
             fontWeight: 500,
             color: "var(--text)",
             letterSpacing: "-0.03em",
-            transition: "opacity 0.15s",
+            padding: "6px 12px",
+            borderRadius: "8px",
+            border: "1px solid var(--border)",
+            background: "var(--bg)",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
+            transition: "background 0.15s, opacity 0.15s",
+            display: "inline-block",
           }}
-          onMouseEnter={e => (e.currentTarget.style.opacity = "0.5")}
-          onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+          onMouseEnter={e => (e.currentTarget.style.background = "var(--surface)")}
+          onMouseLeave={e => (e.currentTarget.style.background = "var(--bg)")}
         >
           Arun Gaddam
         </Link>
