@@ -25,7 +25,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "planful-esm",
     number: "01",
     title: "Core Finance Workflows",
-    subtitle: "Designed for security, accuracy, and trust in core financial workflows",
+    subtitle: "When errors cost the business, the system has to earn trust first",
     company: "Planful",
     type: "Enterprise SaaS — Fintech",
     role: "Senior Product Designer",
@@ -36,8 +36,8 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "Updating critical financial planning data took hours to weeks and was error-prone, limiting work to a few experts. Shifted to a system where changes could be validated before going live. Result: hours/weeks → minutes · Enabled broader team participation.",
     metrics: [
-      { value: "~99%", label: "Less time on every update — what took days now takes minutes" },
-      { value: "0", label: "Mistakes published to the financial plan" },
+      { value: "~99%", label: "Faster per update" },
+      { value: "0", label: "Errors reaching the live plan" },
     ],
     problem:
       "Financial planning at Planful ran on a fragile stack — Excel, a legacy desktop app, and manual workflows. Every update directly modified the live financial plan. Errors propagated silently across reports with no validation or recovery. Users moved slowly, double-checked everything, and relied on a handful of experts. Simple updates took 4–5 hours. Complex workflows took days to weeks. Non-finance users were effectively locked out.",
