@@ -24,8 +24,8 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "planful-esm",
     number: "01",
-    title: "Core Finance Workflows",
-    subtitle: "When errors cost the business, the system has to earn trust first",
+    title: "No Room for Mistakes",
+    subtitle: "Designed a critical workflow so teams could move fast without breaking things",
     company: "Planful",
     type: "Enterprise SaaS — Fintech",
     role: "Senior Product Designer",
