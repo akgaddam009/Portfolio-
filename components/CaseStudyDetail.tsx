@@ -191,6 +191,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               <ImageBlock image={cs.outcomesImage} placeholder="Final design — bulk update or published state" />
             </CsSection>
 
+            {cs.contribution && (
+              <CsSection label="What I owned">
+                <BodyText>{cs.contribution}</BodyText>
+              </CsSection>
+            )}
+
             {cs.lesson && (
               <CsSection label="What I learned">
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "580px" }}>

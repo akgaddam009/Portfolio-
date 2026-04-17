@@ -25,6 +25,7 @@ export type CaseStudy = {
   outcomesImage?: CaseStudyImage;
   outcomes: string[];
   lesson?: string;
+  contribution?: string;
   confidential?: boolean;
   heroLabel: string;
 };
@@ -34,7 +35,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "planful-esm",
     number: "01",
     title: "Financial Data Management",
-    subtitle: "Designed a critical workflow so teams could move fast without breaking things",
+    subtitle: "Designing for trust in a system where mistakes have real consequences",
     company: "Planful",
     type: "Enterprise SaaS — Fintech",
     role: "Senior Product Designer",
@@ -43,9 +44,10 @@ export const caseStudies: CaseStudy[] = [
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design", "Trust Design"],
     heroLabel: "Real Work",
     summary:
-      "Financial planning software holds the data a company makes decisions from. The old workflow ran through Excel Spotlight — a Windows-only tool that only a handful of specialists could confidently use. I designed a safer, modern alternative so the whole team could contribute.",
+      "Most tools put the burden of accuracy on the user. This one should have protected them from it. I redesigned how financial data gets updated — separating where work happens from what becomes official, so teams could move freely without risking the numbers the company runs on.",
     metrics: [
       { value: "~99%", label: "Reduction in time on task" },
+      { value: "4", label: "Teams now contributing — Finance, HR, Ops, Sales" },
     ],
     problem:
       "The tool — Excel Spotlight — was Windows-only, required advanced spreadsheet knowledge to operate, and had no real-time collaboration. Building or updating a financial model felt like starting from scratch every time. Only a handful of power users could confidently work in it. ==Simple updates took 4–5 hours. Complex ones took weeks.== That told me everything I needed to know.",
@@ -73,11 +75,11 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "Nothing goes live until it's ready",
-        body: "We introduced a draft mode — a private copy of the financial data where teams could make changes freely, check everything, and only publish when they were sure. Editing the live plan directly was no longer possible.",
+        body: "The draft-first model was the central design decision. We removed the ability to edit the live financial model directly — every change happens in a private workspace instead. Users can prepare, check, and revise freely. Only a deliberate publish action moves data to the live plan. We considered allowing admin-level direct edits as an escape hatch. We said no — one exception becomes the norm, and the safety guarantee disappears.",
       },
       {
         title: "Lock in the right foundation before building",
-        body: "We made a key decision early: choose a grid system that already met enterprise requirements, rather than building from scratch. It narrowed some design options, but meant we could ship faster and avoid blockers during rollout.",
+        body: "I pushed for choosing a grid system that already had enterprise compliance built in, rather than designing custom interactions and retrofitting governance later. It meant some interaction patterns I wanted were off the table. But it gave users something more valuable than polish — a tool they could trust was auditable and secure from day one.",
         image: {
           src: "/images/planful/formula-feedback.png",
           alt: "Formula bar with live colour highlights showing affected cells",
@@ -100,12 +102,13 @@ export const caseStudies: CaseStudy[] = [
       caption: "Bulk updates in seconds — overwrite or append without recreating tables",
     },
     outcomes: [
-      "Updates that used to take 3.5 hours now take about 4 minutes",
-      "Teams outside of finance — HR, Operations, Sales — could now contribute to planning directly",
-      "No incorrect data reaches the live financial plan",
-      "Finance stopped being the bottleneck for every business decision that touched numbers",
-      "Workflows that were previously avoided entirely became part of the regular planning cycle",
+      "Task time dropped from 3.5 hours to ~4 minutes — a ~99% reduction",
+      "Four teams now contribute to financial planning directly — Finance, HR, Operations, and Sales",
+      "Finance is no longer the bottleneck — business teams update the plan independently",
+      "The draft workspace eliminated the category of errors that previously reached the live model",
     ],
+    contribution:
+      "I led problem framing, task flow architecture, and error state design end-to-end. I defined the draft-to-publish model with the PM and set the grid technology constraints with engineering before any interface work began. Navigation placement, formula feedback, bulk update patterns, and the lock/publish flows were all under my ownership.",
     lesson:
       "The interface wasn't the problem. The stakes were. When a single mistake can ripple across an entire company's financials, no one moves with confidence. The real design challenge was building a system people could trust — not just one they could use.",
   },
