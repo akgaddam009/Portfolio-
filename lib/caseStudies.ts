@@ -25,7 +25,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "planful-esm",
     number: "01",
     title: "Core Finance Workflows",
-    subtitle: "Designed an easy-to-use, trustworthy workflow for managing core financial data",
+    subtitle: "Designed for security, accuracy, and trust in core financial workflows",
     company: "Planful",
     type: "Enterprise SaaS — Fintech",
     role: "Senior Product Designer",
