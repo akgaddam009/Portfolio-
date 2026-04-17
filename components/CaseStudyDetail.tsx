@@ -5,7 +5,8 @@ import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
 import Nav from "@/components/Nav";
 import { motion } from "framer-motion";
-import type { CaseStudy } from "@/lib/caseStudies";
+import { useState } from "react";
+import type { CaseStudy, CaseStudyImage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -115,7 +116,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           <div className="page-pad">
 
             <CsSection label="Overview"><BodyText>{cs.summary}</BodyText></CsSection>
-            <CsSection label="The Problem"><BodyText>{cs.problem}</BodyText></CsSection>
+
+            <CsSection label="The Problem">
+              <BodyText>{cs.problem}</BodyText>
+              {cs.problemImage && <ImageBlock image={cs.problemImage} />}
+            </CsSection>
 
             {cs.insight && (
               <section style={{ padding: "48px 0", borderBottom: "1px solid var(--border)" }}>
@@ -131,6 +136,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     {cs.insight}
                   </p>
                 </motion.div>
+                {cs.insightImage && <ImageBlock image={cs.insightImage} />}
               </section>
             )}
 
@@ -155,6 +161,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, color: "var(--muted2)" }}>
                         {d.body}
                       </p>
+                      {d.image && <ImageBlock image={d.image} />}
                     </div>
                   </motion.div>
                 ))}
@@ -181,6 +188,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 ))}
               </div>
+              {cs.outcomesImage && <ImageBlock image={cs.outcomesImage} />}
             </CsSection>
 
             {cs.lesson && (
@@ -209,6 +217,67 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       </main>
       <Footer />
     </>
+  );
+}
+
+function ImageBlock({ image }: { image: CaseStudyImage }) {
+  const [errored, setErrored] = useState(false);
+  return (
+    <motion.figure
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.65, ease: EASE }}
+      style={{ margin: "24px 0 0", padding: 0 }}
+    >
+      <div style={{
+        borderRadius: "12px",
+        overflow: "hidden",
+        border: "1px solid var(--border)",
+        background: "var(--surface)",
+      }}>
+        {errored ? (
+          <div style={{
+            minHeight: "220px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+            padding: "48px 24px",
+            borderRadius: "12px",
+            border: "1px dashed var(--border)",
+          }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", opacity: 0.5 }}>
+              Add image / artifact here
+            </span>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", textAlign: "center", maxWidth: "320px", lineHeight: 1.6, opacity: 0.6 }}>
+              {image.alt}
+            </span>
+          </div>
+        ) : (
+          <img
+            src={image.src}
+            alt={image.alt}
+            onError={() => setErrored(true)}
+            style={{ width: "100%", display: "block", objectFit: "cover" }}
+          />
+        )}
+      </div>
+      {image.caption && (
+        <figcaption style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: "9px",
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+          color: "var(--muted)",
+          marginTop: "10px",
+          textAlign: "center",
+        }}>
+          {image.caption}
+        </figcaption>
+      )}
+    </motion.figure>
   );
 }
 
