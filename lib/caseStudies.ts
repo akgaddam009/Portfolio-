@@ -24,7 +24,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "planful-esm",
     number: "01",
-    title: "ESM Tables",
+    title: "Financial Data Management",
     subtitle: "Transforming Core Financial Workflows",
     company: "Planful",
     type: "Enterprise SaaS — Fintech",
