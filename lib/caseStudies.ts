@@ -34,42 +34,42 @@ export const caseStudies: CaseStudy[] = [
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design", "Trust Design"],
     heroLabel: "Real Work",
     summary:
-      "Updating critical financial planning data took hours to weeks and was error-prone, limiting work to a few experts. Shifted to a system where changes could be validated before going live. Result: hours/weeks → minutes · Enabled broader team participation.",
+      "Finance teams were spending hours on updates that should take minutes — and one wrong edit could silently corrupt reports across the whole company. I redesigned how financial data gets updated: changes happen in a safe workspace first, get checked for errors, then go live.",
     metrics: [
       { value: "~99%", label: "Faster per update" },
       { value: "0", label: "Errors reaching the live plan" },
     ],
     problem:
-      "Financial planning at Planful ran on a fragile stack — Excel, a legacy desktop app, and manual workflows. Every update directly modified the live financial plan. Errors propagated silently across reports with no validation or recovery. Users moved slowly, double-checked everything, and relied on a handful of experts. Simple updates took 4–5 hours. Complex workflows took days to weeks. Non-finance users were effectively locked out.",
+      "Finance teams had no safety net. Any change went directly into the live data the whole company depended on. Mistakes would spread across reports before anyone noticed. So people moved carefully, checked everything twice, and only a handful of specialists felt confident enough to touch the system. A simple update could take half a day. Complex ones took weeks.",
     insight:
-      "The issue wasn't usability — it was trust. The system forced users to edit high-stakes data without a safety net. The breakthrough reframe: stop optimizing the live model. Make the draft the product. A hidden staging layer (ESM) became the primary experience.",
+      "The problem wasn't that the tool was hard to use — it was that there was no room to make mistakes. Every edit was high stakes. The fix wasn't a better interface. It was a safer system: give people a private workspace to prepare changes, catch errors, and only push live when confident.",
     decisions: [
       {
-        title: "Preserve familiarity, layer improvement",
-        body: "Kept the spreadsheet mental model — grid, formulas, columns — and introduced modern UX patterns within that familiar structure. Less novelty meant faster adoption. Finance teams had years of muscle memory with spreadsheets; working with that, not against it, was the only viable path.",
+        title: "Keep what people know, fix what's broken underneath",
+        body: "Finance teams had been using spreadsheets for years. Replacing that familiarity entirely would have caused more problems than it solved. So we kept the grid and spreadsheet structure people already knew, and quietly improved everything around it.",
       },
       {
-        title: "Enforce draft → publish architecture",
-        body: "Locked direct edits to the master plan. Made draft the only editable surface. This reduced flexibility but dramatically increased confidence — users could work freely knowing nothing reached the live plan until they were ready to publish.",
+        title: "Nothing goes live until it's ready",
+        body: "We introduced a draft mode — a private copy of the financial data where teams could make changes freely, check everything, and only publish when they were sure. Editing the live plan directly was no longer possible.",
       },
       {
-        title: "Choose enterprise-ready grid tech early",
-        body: "Adopted a compliant grid system with built-in governance. Co-defined UX and engineering constraints upfront. Some custom interactions were ruled out, but we avoided the compliance risk that would have blocked enterprise rollout entirely.",
+        title: "Lock in the right foundation before building",
+        body: "Early on, we chose a grid system built for enterprise software — one that already had the compliance and security requirements baked in. It meant some design flexibility was off the table, but it saved months of engineering work and removed a major risk for rollout.",
       },
       {
-        title: "Design error recovery as core flow",
-        body: "Column-level error indicators and cell-level tooltips with actionable feedback. Full navigation within error states. Users could understand and fix problems without losing their work — a critical shift from the old approach of silent, propagating failure.",
+        title: "Make mistakes easy to catch and fix",
+        body: "When something was wrong, users needed to know exactly what, where, and how to fix it — without losing their work. Clear error markers and specific guidance meant no one was ever stuck or forced to start over.",
       },
     ],
     outcomes: [
-      "Update time reduced from 3.5 hours to ~4 minutes — approximately 99% faster",
-      "Access expanded from finance experts to cross-functional teams: Finance, HR, Ops, Sales",
-      "Manual, error-prone workflow replaced with a validated, recoverable staged pipeline",
-      "Finance stopped being the bottleneck — business teams contributed to planning independently",
-      "Previously blocked workflows (e.g. grant planning) became scalable",
+      "Updates that used to take 3.5 hours now take about 4 minutes",
+      "Teams outside of finance — HR, Operations, Sales — could now contribute to planning directly",
+      "No incorrect data reaches the live financial plan",
+      "Finance stopped being the bottleneck for every business decision that touched numbers",
+      "Workflows that were previously too risky to attempt, like grant planning, became routine",
     ],
     lesson:
-      "The breakthrough wasn't interface redesign — it was changing the system users trusted. By separating where work happens from what becomes official, financial modeling went from a risky, expert-only task to a reliable, self-serve workflow.",
+      "The interface wasn't the problem. The stakes were. When a single mistake can ripple across an entire company's financials, no one moves with confidence. The real design challenge was building a system people could trust — not just one they could use.",
   },
   {
     slug: "ai-workspace",
