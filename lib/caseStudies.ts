@@ -22,8 +22,59 @@ export type CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [
   {
-    slug: "ai-workspace",
+    slug: "planful-esm",
     number: "01",
+    title: "ESM Tables",
+    subtitle: "Making financial modeling trustworthy, fast, and accessible",
+    company: "Planful",
+    type: "Enterprise SaaS — Financial Planning & Analysis",
+    role: "Senior Product Designer",
+    timeline: "2025",
+    team: "PM, Engineering, Finance SMEs",
+    tags: ["Enterprise SaaS", "FP&A", "Workflow Design", "Trust Design"],
+    heroLabel: "Real Work",
+    summary:
+      "Enterprise finance teams spent 3.5–4 hours on routine updates due to a fragile stack and no safety net. I reframed the problem from UI migration to system trust — and shipped a draft-first workflow that reduced update time to ~4 minutes (~99% faster) while opening access to teams beyond finance.",
+    metrics: [
+      { value: "~99%", label: "Faster — 3.5h → ~4 min" },
+      { value: "4+", label: "Teams unblocked (Finance, HR, Ops, Sales)" },
+      { value: "0", label: "Errors reaching the live plan" },
+    ],
+    problem:
+      "Financial planning at Planful ran on a fragile stack — Excel, a legacy desktop app, and manual workflows. Every update directly modified the live financial plan. Errors propagated silently across reports with no validation or recovery. Users moved slowly, double-checked everything, and relied on a handful of experts. Simple updates took 4–5 hours. Complex workflows took days to weeks. Non-finance users were effectively locked out.",
+    insight:
+      "The issue wasn't usability — it was trust. The system forced users to edit high-stakes data without a safety net. The breakthrough reframe: stop optimizing the live model. Make the draft the product. A hidden staging layer (ESM) became the primary experience.",
+    decisions: [
+      {
+        title: "Preserve familiarity, layer improvement",
+        body: "Kept the spreadsheet mental model — grid, formulas, columns — and introduced modern UX patterns within that familiar structure. Less novelty meant faster adoption. Finance teams had years of muscle memory with spreadsheets; working with that, not against it, was the only viable path.",
+      },
+      {
+        title: "Enforce draft → publish architecture",
+        body: "Locked direct edits to the master plan. Made draft the only editable surface. This reduced flexibility but dramatically increased confidence — users could work freely knowing nothing reached the live plan until they were ready to publish.",
+      },
+      {
+        title: "Choose enterprise-ready grid tech early",
+        body: "Adopted a compliant grid system with built-in governance. Co-defined UX and engineering constraints upfront. Some custom interactions were ruled out, but we avoided the compliance risk that would have blocked enterprise rollout entirely.",
+      },
+      {
+        title: "Design error recovery as core flow",
+        body: "Column-level error indicators and cell-level tooltips with actionable feedback. Full navigation within error states. Users could understand and fix problems without losing their work — a critical shift from the old approach of silent, propagating failure.",
+      },
+    ],
+    outcomes: [
+      "Update time reduced from 3.5 hours to ~4 minutes — approximately 99% faster",
+      "Access expanded from finance experts to cross-functional teams: Finance, HR, Ops, Sales",
+      "Manual, error-prone workflow replaced with a validated, recoverable staged pipeline",
+      "Finance stopped being the bottleneck — business teams contributed to planning independently",
+      "Previously blocked workflows (e.g. grant planning) became scalable",
+    ],
+    lesson:
+      "The breakthrough wasn't interface redesign — it was changing the system users trusted. By separating where work happens from what becomes official, financial modeling went from a risky, expert-only task to a reliable, self-serve workflow.",
+  },
+  {
+    slug: "ai-workspace",
+    number: "02",
     title: "AI Workspace Assistant",
     subtitle: "Designing ambient intelligence for enterprise teams",
     type: "B2B AI Tool — Enterprise Productivity",
@@ -70,7 +121,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "ai-decision",
-    number: "02",
+    number: "03",
     title: "AI Decision Companion",
     subtitle: "Making AI trustworthy in high-stakes consumer decisions",
     type: "B2C AI Tool — Consumer Decision Support",
@@ -117,7 +168,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "compass",
-    number: "03",
+    number: "04",
     title: "Compass",
     subtitle: "Rebuilding competitive intelligence for four stakeholder types",
     company: "Reputation.com",
@@ -167,7 +218,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "cx-enterprise",
-    number: "04",
+    number: "05",
     title: "CX Enterprise App",
     subtitle: "Multi-tenant platform for four stakeholder tiers",
     type: "Enterprise SaaS — Customer Experience Management",
@@ -211,7 +262,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "design-system",
-    number: "05",
+    number: "06",
     title: "Enterprise Design System",
     subtitle: "Building the foundation that scales across 6 product surfaces",
     type: "Design Infrastructure — Component Library",
@@ -246,7 +297,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "mentorship-platform",
-    number: "06",
+    number: "07",
     title: "Mentorship Platform Redesign",
     subtitle: "Redesigning booking and discovery for 50M+ users",
     type: "Consumer Product — Mobile & Web",
