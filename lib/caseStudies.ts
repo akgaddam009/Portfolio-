@@ -43,7 +43,7 @@ export const caseStudies: CaseStudy[] = [
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design", "Trust Design"],
     heroLabel: "Real Work",
     summary:
-      "Financial planning applications hold the data a company runs on. The old workflow ran through a tool called Excel Spotlight — a Windows-only application that was complex, hard to use, and built for specialists. I designed a modern workspace in between, so anyone on the team could contribute without needing to be an expert.",
+      "Financial planning software holds the data a company makes decisions from. The old workflow ran through Excel Spotlight — a Windows-only tool that only a handful of specialists could confidently use. I designed a safer, modern alternative so the whole team could contribute.",
     metrics: [
       { value: "~99%", label: "Reduction in time on task" },
     ],
@@ -55,7 +55,7 @@ export const caseStudies: CaseStudy[] = [
       caption: "The new workflow — four clear stages replacing an open-ended, error-prone process",
     },
     insight:
-      "The problem wasn't just usability — it was where the responsibility sat. The system offloaded critical tasks to users: validation, error detection, and coordination. Every update required intense focus, because mistakes weren't caught by the system. What looked like complexity was actually cognitive burden. The solution wasn't a better interface, but a system that took responsibility — providing a workspace to prepare changes, catch errors early, and reduce the mental load required to do the job.",
+      "The problem wasn't just usability — it was where the responsibility sat. Every update required intense focus because the system never caught mistakes — it offloaded validation, error detection, and coordination entirely to the user. What looked like complexity was actually cognitive burden.",
     insightImage: {
       src: "/images/planful/data-model-comparison.png",
       alt: "OLAP core model vs ESM staging model comparison",
@@ -77,7 +77,7 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "Lock in the right foundation before building",
-        body: "Early on, we chose a grid system built for enterprise software — one that already had the compliance and security requirements baked in. It meant some design flexibility was off the table, but it saved months of engineering work and removed a major risk for rollout.",
+        body: "We made a key decision early: choose a grid system that already met enterprise requirements, rather than building from scratch. It narrowed some design options, but meant we could ship faster and avoid blockers during rollout.",
         image: {
           src: "/images/planful/formula-feedback.png",
           alt: "Formula bar with live colour highlights showing affected cells",
@@ -104,7 +104,7 @@ export const caseStudies: CaseStudy[] = [
       "Teams outside of finance — HR, Operations, Sales — could now contribute to planning directly",
       "No incorrect data reaches the live financial plan",
       "Finance stopped being the bottleneck for every business decision that touched numbers",
-      "Workflows that were previously too risky to attempt, like grant planning, became routine",
+      "Workflows that were previously avoided entirely became part of the regular planning cycle",
     ],
     lesson:
       "The interface wasn't the problem. The stakes were. When a single mistake can ripple across an entire company's financials, no one moves with confidence. The real design challenge was building a system people could trust — not just one they could use.",

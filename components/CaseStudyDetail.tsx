@@ -38,7 +38,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               <motion.div variants={fadeUp}>
                 <Link
                   href="/#work"
-                  style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "36px", transition: "color 0.15s" }}
+                  style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "32px", transition: "color 0.15s" }}
                   onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
                   onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
                 >
@@ -59,7 +59,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 )}
               </motion.div>
 
-              <motion.p variants={fadeUp} style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>
+              <motion.p variants={fadeUp} style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>
                 {cs.number}
               </motion.p>
 
@@ -132,7 +132,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ background: "var(--surface)", borderRadius: "10px", padding: "24px" }}
                 >
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "14px" }}>Core Insight</p>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.45, letterSpacing: "-0.02em", color: "var(--text)" }}>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)" }}>
                     {cs.insight}
                   </p>
                 </motion.div>
@@ -161,7 +161,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, color: "var(--muted2)" }}>
                         {d.body}
                       </p>
-                      <ImageBlock image={d.image} placeholder="Wireframe, prototype or design artifact" />
+                      {d.image && <ImageBlock image={d.image} placeholder="Wireframe, prototype or design artifact" />}
                     </div>
                   </motion.div>
                 ))}
@@ -192,19 +192,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             </CsSection>
 
             {cs.lesson && (
-              <section style={{ padding: "48px 0", borderBottom: "1px solid var(--border)" }}>
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65, ease: EASE }}
-                >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>What I learned</p>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.45, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "600px" }}>
-                    {cs.lesson}
-                  </p>
-                </motion.div>
-              </section>
+              <CsSection label="What I learned">
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "580px" }}>
+                  {cs.lesson}
+                </p>
+              </CsSection>
             )}
 
             {/* Navigation */}
@@ -329,7 +321,7 @@ function parseHighlights(text: string): React.ReactNode[] {
 function BodyText({ children }: { children: React.ReactNode }) {
   const content = typeof children === "string" ? parseHighlights(children) : children;
   return (
-    <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.75, color: "var(--muted2)", maxWidth: "580px" }}>
+    <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.65, color: "var(--muted2)", maxWidth: "580px" }}>
       {content}
     </p>
   );
