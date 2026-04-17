@@ -47,7 +47,6 @@ export const caseStudies: CaseStudy[] = [
       "Most tools put the burden of accuracy on the user. This one should have protected them from it. I redesigned how financial data gets updated — separating where work happens from what becomes official, so teams could move freely without risking the numbers the company runs on.",
     metrics: [
       { value: "~99%", label: "Reduction in time on task" },
-      { value: "4", label: "Teams now contributing — Finance, HR, Ops, Sales" },
     ],
     problem:
       "The tool — Excel Spotlight — was Windows-only, required advanced spreadsheet knowledge to operate, and had no real-time collaboration. Building or updating a financial model felt like starting from scratch every time. Only a handful of power users could confidently work in it. ==Simple updates took 4–5 hours. Complex ones took weeks.== That told me everything I needed to know.",
