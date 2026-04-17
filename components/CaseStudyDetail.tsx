@@ -227,10 +227,42 @@ function CsSection({ label, children }: { label: string; children: React.ReactNo
   );
 }
 
+function Highlight({ children }: { children: React.ReactNode }) {
+  return (
+    <span style={{ position: "relative", display: "inline" }}>
+      <motion.span
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+        style={{
+          position: "absolute",
+          inset: "0 -3px",
+          background: "rgba(255, 213, 0, 0.32)",
+          borderRadius: "3px",
+          transformOrigin: "left center",
+          zIndex: 0,
+        }}
+      />
+      <span style={{ position: "relative", zIndex: 1 }}>{children}</span>
+    </span>
+  );
+}
+
+function parseHighlights(text: string): React.ReactNode[] {
+  const parts = text.split(/(==.+?==)/g);
+  return parts.map((part, i) =>
+    part.startsWith("==") && part.endsWith("==")
+      ? <Highlight key={i}>{part.slice(2, -2)}</Highlight>
+      : part
+  );
+}
+
 function BodyText({ children }: { children: React.ReactNode }) {
+  const content = typeof children === "string" ? parseHighlights(children) : children;
   return (
     <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.75, color: "var(--muted2)", maxWidth: "580px" }}>
-      {children}
+      {content}
     </p>
   );
 }

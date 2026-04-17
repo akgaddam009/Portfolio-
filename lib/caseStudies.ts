@@ -48,14 +48,14 @@ export const caseStudies: CaseStudy[] = [
       { value: "~99%", label: "Reduction in time on task" },
     ],
     problem:
-      "The tool — Excel Spotlight — was Windows-only, required advanced spreadsheet knowledge to operate, and had no real-time collaboration. Building or updating a financial model felt like starting from scratch every time. Only a handful of power users could confidently work in it. Simple updates took 4–5 hours. Complex ones took weeks. That told me everything I needed to know.",
+      "The tool — Excel Spotlight — was Windows-only, required advanced spreadsheet knowledge to operate, and had no real-time collaboration. Building or updating a financial model felt like starting from scratch every time. Only a handful of power users could confidently work in it. ==Simple updates took 4–5 hours. Complex ones took weeks.== That told me everything I needed to know.",
     problemImage: {
       src: "/images/planful/task-flow.png",
       alt: "4-step task flow: Create → Prepare → Review → Publish",
       caption: "The new workflow — four clear stages replacing an open-ended, error-prone process",
     },
     insight:
-      "The problem wasn't that the tool was hard to use — it was that there was no room to make mistakes. Every edit was high stakes. The fix wasn't a better interface. It was a safer system: give people a private workspace to prepare changes, catch errors, and only push live when confident.",
+      "The problem wasn't just usability — it was where the responsibility sat. The system offloaded critical tasks to users: validation, error detection, and coordination. Every update required intense focus, because mistakes weren't caught by the system. What looked like complexity was actually cognitive burden. The solution wasn't a better interface, but a system that took responsibility — providing a workspace to prepare changes, catch errors early, and reduce the mental load required to do the job.",
     insightImage: {
       src: "/images/planful/data-model-comparison.png",
       alt: "OLAP core model vs ESM staging model comparison",
