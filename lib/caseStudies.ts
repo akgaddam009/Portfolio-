@@ -1,3 +1,9 @@
+export type CaseStudyImage = {
+  src: string;
+  alt: string;
+  caption?: string;
+};
+
 export type CaseStudy = {
   slug: string;
   number: string;
@@ -12,8 +18,11 @@ export type CaseStudy = {
   summary: string;
   metrics: { value: string; label: string }[];
   problem: string;
+  problemImage?: CaseStudyImage;
   insight?: string;
-  decisions: { title: string; body: string }[];
+  insightImage?: CaseStudyImage;
+  decisions: { title: string; body: string; image?: CaseStudyImage }[];
+  outcomesImage?: CaseStudyImage;
   outcomes: string[];
   lesson?: string;
   confidential?: boolean;
@@ -34,18 +43,33 @@ export const caseStudies: CaseStudy[] = [
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design", "Trust Design"],
     heroLabel: "Real Work",
     summary:
-      "Finance teams were spending hours on updates that should take minutes — and one wrong edit could silently corrupt reports across the whole company. I redesigned how financial data gets updated: changes happen in a safe workspace first, get checked for errors, then go live.",
+      "Financial planning applications hold the data a company runs on. The old workflow ran through a tool called Excel Spotlight — a Windows-only application that was complex, hard to use, and built for specialists. I designed a modern workspace in between, so anyone on the team could contribute without needing to be an expert.",
     metrics: [
       { value: "~99%", label: "Reduction in time on task" },
     ],
     problem:
-      "Finance teams had no safety net. Any change went directly into the live data the whole company depended on. Mistakes would spread across reports before anyone noticed. So people moved carefully, checked everything twice, and only a handful of specialists felt confident enough to touch the system. A simple update could take half a day. Complex ones took weeks.",
+      "The tool — Excel Spotlight — ran on Windows only, had no collaboration support, and required advanced spreadsheet knowledge just to operate. Every edit went straight into the live financial model. Users had no way to preview what a change would affect before it happened. Mistakes spread silently across reports before anyone noticed. So only a handful of power users dared touch it — and even they moved slowly. Simple updates: 4–5 hours. Complex ones: weeks.",
+    problemImage: {
+      src: "/images/planful/task-flow.png",
+      alt: "4-step task flow: Create → Prepare → Review → Publish",
+      caption: "The new workflow — four clear stages replacing an open-ended, error-prone process",
+    },
     insight:
       "The problem wasn't that the tool was hard to use — it was that there was no room to make mistakes. Every edit was high stakes. The fix wasn't a better interface. It was a safer system: give people a private workspace to prepare changes, catch errors, and only push live when confident.",
+    insightImage: {
+      src: "/images/planful/data-model-comparison.png",
+      alt: "OLAP core model vs ESM staging model comparison",
+      caption: "The ESM sits in front of the core financial model — same data, safer to work with",
+    },
     decisions: [
       {
         title: "Keep what people know, fix what's broken underneath",
         body: "Finance teams had been using spreadsheets for years. Replacing that familiarity entirely would have caused more problems than it solved. So we kept the grid and spreadsheet structure people already knew, and quietly improved everything around it.",
+        image: {
+          src: "/images/planful/landing-page.png",
+          alt: "ESM Tables landing page — list of models, easy to find or start a new one",
+          caption: "The landing page — familiar list view, no complex folder navigation",
+        },
       },
       {
         title: "Nothing goes live until it's ready",
@@ -54,12 +78,27 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Lock in the right foundation before building",
         body: "Early on, we chose a grid system built for enterprise software — one that already had the compliance and security requirements baked in. It meant some design flexibility was off the table, but it saved months of engineering work and removed a major risk for rollout.",
+        image: {
+          src: "/images/planful/formula-feedback.png",
+          alt: "Formula bar with live colour highlights showing affected cells",
+          caption: "Live formula feedback — colour highlights show what's changing as you type",
+        },
       },
       {
         title: "Make mistakes easy to catch and fix",
         body: "When something was wrong, users needed to know exactly what, where, and how to fix it — without losing their work. Clear error markers and specific guidance meant no one was ever stuck or forced to start over.",
+        image: {
+          src: "/images/planful/error-handling.png",
+          alt: "Inline error validation surfacing data format mismatches contextually",
+          caption: "Errors caught in the workspace — not after publishing to the live model",
+        },
       },
     ],
+    outcomesImage: {
+      src: "/images/planful/bulk-update.png",
+      alt: "Overwrite and append flow — bulk data updates in a few clicks",
+      caption: "Bulk updates in seconds — overwrite or append without recreating tables",
+    },
     outcomes: [
       "Updates that used to take 3.5 hours now take about 4 minutes",
       "Teams outside of finance — HR, Operations, Sales — could now contribute to planning directly",
