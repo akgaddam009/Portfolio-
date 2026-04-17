@@ -36,7 +36,7 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "Updating critical financial planning data took hours to weeks and was error-prone, limiting work to a few experts. Shifted to a system where changes could be validated before going live. Result: hours/weeks → minutes · Enabled broader team participation.",
     metrics: [
-      { value: "~99%", label: "Faster — 3.5h → ~4 min" },
+      { value: "~99%", label: "Faster — hours/weeks → minutes · Enabled broader team participation" },
       { value: "4+", label: "Teams unblocked (Finance, HR, Ops, Sales)" },
       { value: "0", label: "Errors reaching the live plan" },
     ],
