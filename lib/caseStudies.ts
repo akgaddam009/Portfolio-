@@ -48,7 +48,7 @@ export const caseStudies: CaseStudy[] = [
       { value: "~99%", label: "Reduction in time on task" },
     ],
     problem:
-      "The tool — Excel Spotlight — ran on Windows only, had no collaboration support, and required advanced spreadsheet knowledge just to operate. Every edit went straight into the live financial model. Users had no way to preview what a change would affect before it happened. Mistakes spread silently across reports before anyone noticed. So only a handful of power users dared touch it — and even they moved slowly. Simple updates: 4–5 hours. Complex ones: weeks.",
+      "The tool — Excel Spotlight — was Windows-only, required advanced spreadsheet knowledge to operate, and had no real-time collaboration. Building or updating a financial model felt like starting from scratch every time. Only a handful of power users could confidently work in it. Simple updates took 4–5 hours. Complex ones took weeks.",
     problemImage: {
       src: "/images/planful/task-flow.png",
       alt: "4-step task flow: Create → Prepare → Review → Publish",
