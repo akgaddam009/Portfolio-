@@ -36,8 +36,7 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "Finance teams were spending hours on updates that should take minutes — and one wrong edit could silently corrupt reports across the whole company. I redesigned how financial data gets updated: changes happen in a safe workspace first, get checked for errors, then go live.",
     metrics: [
-      { value: "~99%", label: "Faster per update" },
-      { value: "0", label: "Errors reaching the live plan" },
+      { value: "~99%", label: "Reduction in time on task" },
     ],
     problem:
       "Finance teams had no safety net. Any change went directly into the live data the whole company depended on. Mistakes would spread across reports before anyone noticed. So people moved carefully, checked everything twice, and only a handful of specialists felt confident enough to touch the system. A simple update could take half a day. Complex ones took weeks.",
