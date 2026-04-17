@@ -119,7 +119,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             <CsSection label="The Problem">
               <BodyText>{cs.problem}</BodyText>
-              {cs.problemImage && <ImageBlock image={cs.problemImage} />}
+              <ImageBlock image={cs.problemImage} placeholder="Legacy tool — Excel Spotlight screenshots or flow diagram" />
             </CsSection>
 
             {cs.insight && (
@@ -136,7 +136,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     {cs.insight}
                   </p>
                 </motion.div>
-                {cs.insightImage && <ImageBlock image={cs.insightImage} />}
+                <ImageBlock image={cs.insightImage} placeholder="OLAP vs ESM model comparison diagram" />
               </section>
             )}
 
@@ -161,7 +161,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, color: "var(--muted2)" }}>
                         {d.body}
                       </p>
-                      {d.image && <ImageBlock image={d.image} />}
+                      <ImageBlock image={d.image} placeholder="Wireframe, prototype or design artifact" />
                     </div>
                   </motion.div>
                 ))}
@@ -188,7 +188,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 ))}
               </div>
-              {cs.outcomesImage && <ImageBlock image={cs.outcomesImage} />}
+              <ImageBlock image={cs.outcomesImage} placeholder="Final design — bulk update or published state" />
             </CsSection>
 
             {cs.lesson && (
@@ -220,8 +220,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   );
 }
 
-function ImageBlock({ image }: { image: CaseStudyImage }) {
+function ImageBlock({ image, placeholder }: { image?: CaseStudyImage; placeholder?: string }) {
   const [errored, setErrored] = useState(false);
+  const isEmpty = !image || errored;
+
   return (
     <motion.figure
       initial={{ opacity: 0, y: 12 }}
@@ -232,39 +234,36 @@ function ImageBlock({ image }: { image: CaseStudyImage }) {
     >
       <div style={{
         borderRadius: "12px",
+        minHeight: "240px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: isEmpty ? "center" : undefined,
+        justifyContent: isEmpty ? "center" : undefined,
         overflow: "hidden",
-        border: "1px solid var(--border)",
+        border: isEmpty ? "1.5px dashed var(--border)" : "1px solid var(--border)",
         background: "var(--surface)",
       }}>
-        {errored ? (
-          <div style={{
-            minHeight: "220px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-            padding: "48px 24px",
-            borderRadius: "12px",
-            border: "1px dashed var(--border)",
-          }}>
+        {isEmpty ? (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", padding: "48px 24px", textAlign: "center" }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ opacity: 0.25 }}>
+              <rect x="1" y="1" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+              <circle cx="6.5" cy="6.5" r="1.5" fill="currentColor" />
+              <path d="M1 13l5-4 4 3.5 3-2.5 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+            </svg>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", opacity: 0.5 }}>
-              Add image / artifact here
-            </span>
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", textAlign: "center", maxWidth: "320px", lineHeight: 1.6, opacity: 0.6 }}>
-              {image.alt}
+              {placeholder ?? "Add image or artifact"}
             </span>
           </div>
         ) : (
           <img
-            src={image.src}
-            alt={image.alt}
+            src={image!.src}
+            alt={image!.alt}
             onError={() => setErrored(true)}
             style={{ width: "100%", display: "block", objectFit: "cover" }}
           />
         )}
       </div>
-      {image.caption && (
+      {!isEmpty && image?.caption && (
         <figcaption style={{
           fontFamily: "var(--font-mono)",
           fontSize: "9px",
