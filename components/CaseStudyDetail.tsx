@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
-import Nav from "@/components/Nav";
+import ThemeToggle from "@/components/ThemeToggle";
 import { motion, AnimatePresence, useMotionTemplate } from "framer-motion";
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
@@ -26,6 +26,18 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   const next = caseStudies[currentIndex + 1];
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const [lensLightboxSrc, setLensLightboxSrc] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string>("");
+  const [navVisible, setNavVisible] = useState(false);
+
+  const NAV_SECTIONS = [
+    { id: "cs-overview",  label: "Overview"  },
+    { id: "cs-problem",   label: "Problem"   },
+    { id: "cs-insight",   label: "Insight"   },
+    { id: "cs-workflow",  label: "Workflow"  },
+    { id: "decisions",    label: "Decisions" },
+    { id: "outcomes",     label: "Outcomes"  },
+    { id: "ownership",    label: "Ownership" },
+  ].filter(s => typeof document === "undefined" ? true : !!document.getElementById(s.id));
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -35,10 +47,76 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    NAV_SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+        { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    const onScroll = () => setNavVisible(window.scrollY > 200);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => {
+      observers.forEach(o => o.disconnect());
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
     <>
       <Cursor />
-      <Nav />
+
+      {/* Minimal nav — matches HomeNav */}
+      <motion.header
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE }}
+        style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0,
+          zIndex: 200,
+          height: "52px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 24px",
+          background: "transparent",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Link
+            href="/"
+            style={{
+              fontFamily: "var(--font-logo)",
+              fontSize: "13px",
+              fontWeight: 500,
+              color: "var(--text)",
+              letterSpacing: "-0.03em",
+              height: "32px",
+              padding: "0 12px",
+              borderRadius: "8px",
+              border: "1px solid var(--border)",
+              background: "transparent",
+              display: "inline-flex",
+              alignItems: "center",
+              textDecoration: "none",
+            }}
+          >
+            Arun Gaddam
+          </Link>
+          <ThemeToggle />
+        </div>
+      </motion.header>
+
       <main style={{ paddingTop: "52px" }}>
 
         {/* Hero */}
@@ -140,7 +218,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         <article style={{ padding: "0" }}>
           <div className="page-pad">
 
-            <CsSection label="Overview">
+            <CsSection label="Overview" id="cs-overview">
               {cs.context && <BodyText>{cs.context}</BodyText>}
               <div style={{ marginTop: cs.context ? "16px" : 0 }}>
                 <BodyText>{cs.summary}</BodyText>
@@ -160,6 +238,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   <div style={{ display: "flex", alignItems: "stretch", gap: "0" }}>
                     {/* ESM Box */}
                     <div style={{ flex: 1, padding: "20px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px 0 0 8px" }}>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--muted)", marginBottom: "10px", display: "block" }}>
+                        <rect x="2" y="3" width="12" height="10" rx="1"/><path d="M2 7h12M7 7v6"/>
+                      </svg>
                       <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>
                         This project
                       </p>
@@ -178,6 +259,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
                     {/* Core Model Box */}
                     <div style={{ flex: 1, padding: "20px 24px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "0 8px 8px 0", borderLeft: "none" }}>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--muted)", marginBottom: "10px", display: "block" }}>
+                        <ellipse cx="8" cy="5" rx="5" ry="2"/><path d="M3 5v6a5 2 0 0 0 10 0V5"/><path d="M3 8a5 2 0 0 0 10 0"/>
+                      </svg>
                       <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>
                         Always live
                       </p>
@@ -193,7 +277,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               )}
             </CsSection>
 
-            <CsSection label="The Problem">
+            <CsSection label="The Problem" id="cs-problem">
               <BodyText>{cs.problem}</BodyText>
 
               {cs.problemBreakdown && (
@@ -207,16 +291,26 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
                     Legacy Spotlight
                   </p>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                    {cs.problemBreakdown.points.map((point, i) => (
-                      <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "8px", padding: "14px 16px" }}>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--border)", marginBottom: "8px" }}>
-                          {String(i + 1).padStart(2, "0")}
-                        </p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{point}</p>
+                  {(() => {
+                    const problemIcons = [
+                      <svg key={0} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="2" width="14" height="10" rx="1"/><path d="M5 15h6M8 12v3"/></svg>,
+                      <svg key={1} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 8A6 6 0 1 1 8 2"/><path d="M14 2v4h-4"/><path d="M8 6v2.5l2 1.5"/></svg>,
+                      <svg key={2} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-2.5 2-4 5-4"/><path d="M12 9l3 3m0-3l-3 3"/></svg>,
+                      <svg key={3} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="8 1 15 5 8 9 1 5"/><polyline points="1 9 8 13 15 9"/><line x1="8" y1="9" x2="8" y2="13"/></svg>,
+                      <svg key={4} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 1h6l4 4v10H4z"/><polyline points="10 1 10 5 14 5"/><line x1="6" y1="9" x2="10" y2="13"/><line x1="10" y1="9" x2="6" y2="13"/></svg>,
+                      <svg key={5} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 1L1 14h14L8 1z"/><line x1="8" y1="6" x2="8" y2="9"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>,
+                    ];
+                    return (
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                        {cs.problemBreakdown!.points.map((point, i) => (
+                          <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "8px", padding: "14px 16px" }}>
+                            <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{problemIcons[i]}</div>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{point}</p>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })()}
                   <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}>
                     <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>Impact</p>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{cs.problemBreakdown.impact}</p>
@@ -228,7 +322,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             </CsSection>
 
             {cs.insight && (
-              <section style={{ padding: "48px 0" }}>
+              <section id="cs-insight" style={{ padding: "48px 0" }}>
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -264,7 +358,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {cs.taskFlow && (
-              <section style={{ padding: "48px 0" }}>
+              <section id="cs-workflow" style={{ padding: "48px 0" }}>
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -279,7 +373,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </section>
             )}
 
-            <CsSection label="Key Design Decisions">
+            <CsSection label="Key Design Decisions" id="decisions">
               <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
                 {cs.decisions.map((d, i) => (
                   <motion.div
@@ -352,7 +446,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </div>
             </CsSection>
 
-            <CsSection label="Outcomes">
+            <CsSection label="Outcomes" id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                 {/* Before → After display */}
                 {cs.outcomes[0] && (
@@ -375,7 +469,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       </svg>
                       {/* After */}
                       <div>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>After</p>
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#16a34a", background: "#16a34a18", borderRadius: "4px", padding: "3px 7px", display: "inline-block", marginBottom: "8px" }}>After</span>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 300, letterSpacing: "-0.04em", color: "var(--text)", lineHeight: 1 }}>10–15 min</p>
                       </div>
                     </div>
@@ -403,7 +497,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             <div style={{ borderTop: "1px solid var(--border)" }} />
 
             {cs.contribution && (
-              <CsSection label="What I owned">
+              <CsSection label="What I owned" id="ownership">
                 <BodyText>{cs.contribution}</BodyText>
                 {cs.contributionArtifacts && cs.contributionArtifacts.length > 0 && (
                   <motion.div
@@ -506,6 +600,69 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       <Footer />
       <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
       <LensLightbox src={lensLightboxSrc} onClose={() => setLensLightboxSrc(null)} />
+
+      {/* Section nav */}
+      <AnimatePresence>
+        {navVisible && (
+          <motion.nav
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 12 }}
+            transition={{ duration: 0.25, ease: EASE }}
+            style={{
+              position: "fixed",
+              right: "24px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              zIndex: 30,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              gap: "2px",
+            }}
+          >
+            {NAV_SECTIONS.map(({ id, label }) => {
+              const isActive = activeSection === id;
+              return (
+                <a
+                  key={id}
+                  href={`#${id}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    textDecoration: "none",
+                    padding: "4px 0",
+                    transition: "opacity 0.15s",
+                    opacity: isActive ? 1 : 0.4,
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = "1")}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = isActive ? "1" : "0.4")}
+                >
+                  <span style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "8px",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    color: isActive ? "var(--text)" : "var(--muted)",
+                    transition: "color 0.15s",
+                  }}>
+                    {label}
+                  </span>
+                  <span style={{
+                    width: "6px",
+                    height: "6px",
+                    borderRadius: "50%",
+                    background: isActive ? "var(--text)" : "var(--border)",
+                    flexShrink: 0,
+                    transition: "background 0.15s",
+                  }} />
+                </a>
+              );
+            })}
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </>
   );
 }
@@ -582,9 +739,10 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
   );
 }
 
-function CsSection({ label, children }: { label: string; children: React.ReactNode }) {
+function CsSection({ label, children, id }: { label: string; children: React.ReactNode; id?: string }) {
   return (
     <motion.section
+      id={id}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -760,6 +918,30 @@ function VideoBlock({ src }: { src: string }) {
   );
 }
 
+const TASK_ICONS: Record<string, React.ReactNode> = {
+  Define: (
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="5" height="5" rx="0.5"/><rect x="9" y="2" width="5" height="5" rx="0.5"/>
+      <rect x="2" y="9" width="5" height="5" rx="0.5"/><rect x="9" y="9" width="5" height="5" rx="0.5"/>
+    </svg>
+  ),
+  Prepare: (
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 11V4M5 7l3-3 3 3"/><path d="M3 13h10"/>
+    </svg>
+  ),
+  Validate: (
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="8" cy="8" r="6"/><path d="M5.5 8.5l2 2 3-3"/>
+    </svg>
+  ),
+  Publish: (
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2L7 9M14 2l-4.5 12L7 9 2.5 6.5 14 2z"/>
+    </svg>
+  ),
+};
+
 function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
   return (
     <div style={{ position: "relative" }}>
@@ -786,8 +968,8 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
           >
             {/* Step dot */}
             <div style={{
-              width: "22px",
-              height: "22px",
+              width: "28px",
+              height: "28px",
               borderRadius: "50%",
               border: "1px solid var(--border)",
               background: "var(--bg)",
@@ -796,10 +978,13 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
               justifyContent: "center",
               flexShrink: 0,
               marginBottom: "16px",
+              color: "var(--muted)",
             }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.06em", color: "var(--muted)" }}>
-                {stage.number}
-              </span>
+              {TASK_ICONS[stage.label] ?? (
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.06em", color: "var(--muted)" }}>
+                  {stage.number}
+                </span>
+              )}
             </div>
 
             {/* Stage label */}
@@ -930,7 +1115,7 @@ function ZoomLensImage({ image, onOpen }: { image: CaseStudyImage; onOpen?: (src
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
         onMouseMove={handleMouseMove}
-        style={{ position: "relative", borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--surface)", cursor: "crosshair" }}
+        style={{ position: "relative", borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--surface2)", cursor: "crosshair" }}
       >
         <img src={image.src} alt={image.alt} style={{ width: "100%", display: "block", objectFit: "contain" }} />
         <AnimatePresence>
