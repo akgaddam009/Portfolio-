@@ -43,6 +43,8 @@ export type CaseStudy = {
   outcomes: string[];
   insightDiagram?: "olap-vs-esm";
   researchEvidence?: string;
+  approach?: string;
+  researchFindings?: { title: string; body: string }[];
   scrappedDirections?: { title: string; reason: string }[];
   reflection?: string;
   lesson?: string;
@@ -231,51 +233,153 @@ export const caseStudies: CaseStudy[] = [
       "The real challenge wasn't moving features. It was translating decades of spreadsheet habits into a clean, intuitive web experience. This project taught me that enterprise UX is about balance: giving experts power, while making complex systems approachable for everyone.",
   },
   {
-    slug: "ai-workspace",
+    slug: "fancode-ftux",
     number: "02",
-    title: "AI Workspace Assistant",
-    subtitle: "Designing ambient intelligence for enterprise teams",
-    type: "B2B AI Tool — Enterprise Productivity",
-    role: "Lead Product Designer (0→1)",
-    tags: ["AI/ML", "Enterprise", "B2B", "Design Leadership"],
-    heroLabel: "B2B Hero",
+    title: "First-Time User Experience",
+    subtitle: "Users were deleting the app within 2 hours of download. The product worked. The first minute didn't.",
+    company: "FanCode",
+    type: "Consumer Mobile App — Sports & Media",
+    role: "Manager UX",
+    timeline: "2021",
+    team: "Product, Engineering, Marketing, Content, UI Design",
+    tags: ["Consumer Mobile", "Retention Design", "FTUX", "Research"],
+    heroLabel: "Real Work",
+    confidential: false,
+
     summary:
-      "Enterprise teams were drowning in context-switching across Slack, email, Jira, docs, and meeting tools. I led the 0→1 design of an AI workspace that reduced cognitive load without removing human judgment from the loop.",
+      "During IPL, FanCode was acquiring users fast and losing them faster. New users downloaded the app expecting to watch live cricket. Most found no live match. Those who did hit an immediate paywall. The app had no answer for the gap between what users expected and what they actually got. I led the research and redesign across onboarding, the match page, and the homepage to change what new users saw, felt, and decided in those first 60 seconds.",
+
     metrics: [
-      { value: "↓38%", label: "Context switches per task" },
-      { value: "↑52%", label: "Meeting-to-action conversion" },
-      { value: "↓41%", label: "Time-to-decision" },
+      { value: "~2 hrs", label: "Time before new IPL users deleted the app" },
+      { value: "15", label: "Remote user interviews across Tier 1 and Tier 2 cities" },
     ],
+
+    context:
+      "FanCode is India's premier sports streaming app. It serves two very different users: cricket fans who want live scores and match coverage, and fantasy players building teams for real money. Both arrive through the same front door. During IPL, that door saw its highest traffic of the year — and the highest churn.",
+
     problem:
-      "Enterprise teams were drowning in context-switching — moving between Slack, email, Jira, docs, and meeting tools with no unified workspace. Productivity tools existed but none were designed for how enterprise teams actually collaborate. The result was cognitive overload, dropped context, and decisions that required 3x the coordination effort they should.",
+      "A user downloads the app to watch something live. There is no live match at that exact moment. Even if there is, clicking it shows a paywall. No instant value. No reason to trust a brand they don't know. ==Users were deleting the app within 2 hours of downloading it.== Competitors like Cricbuzz and Cricinfo didn't have this problem — not because they had better content, but because new users knew what they were getting from the first tap.",
+
+    approach:
+      "Before any design, I needed to understand why users were leaving and whether the problem was the product or the experience. I chose remote user interviews over surveys because I wanted to observe behaviour, not collect opinions. I recruited two specific groups: primary Cricbuzz users who had also installed FanCode, and FanCode users who had downloaded and not returned. Both groups had experienced the same first-minute gap from different sides. After synthesis, I ran a stakeholder workshop with product, marketing, and engineering before presenting recommendations — so the findings shaped decisions together rather than being handed down. The output wasn't a report. It was a shared roadmap.",
+
+    researchEvidence:
+      "Fifteen interviews, 1 hour each, across 16 cities — Tier 1 and Tier 2. During sessions I asked users to open both apps and show me how they normally used them. They didn't narrate. They navigated. On Cricbuzz, users moved quickly and confidently. On FanCode, they slowed down, looked around, and stopped. The pattern was the same across every session: land on the homepage, tap a match, hit the paywall, pause. The decision to delete wasn't made after extended use. It was made in that one sequence.",
+
+    researchFindings: [
+      {
+        title: "Trust before transaction",
+        body: "Users compared FanCode against apps they already trusted. They were running a trust audit in the first minute. The paywall arrived before they had any reason to believe the product was worth it.",
+      },
+      {
+        title: "Perception of speed",
+        body: "Empty screens during loading read as broken, not slow. The old splash showed player images that users tapped past quickly — landing on a homepage that hadn't finished loading.",
+      },
+      {
+        title: "Conflicting personas, one front door",
+        body: "Cricket fans and fantasy players had fundamentally different first tasks. The experience was built for neither. For new users who came for live cricket, the default Fantasy tab on the match page was the wrong place to start.",
+      },
+      {
+        title: "Ads don't matter until trust is established",
+        body: "Users said they disliked ads. But observation showed they ignored them entirely on Cricbuzz because the core product had already earned their attention. Ads-free was not a reason to switch.",
+      },
+    ],
+
     insight:
-      "The failure mode in enterprise AI is not capability — it's trust. Teams rejected AI suggestions not because they were wrong, but because they felt authoritative. I reframed the product around AI as ambient intelligence: always present, never blocking.",
+      "The problem wasn't the paywall. Users had no reason to trust FanCode before they hit it. Every session showed the same pattern: a trust audit in the first 60 seconds. We weren't giving them anything to pass it.",
+
     decisions: [
       {
-        title: "AI as whispers, not commands",
-        body: "Suggestions were designed to be visible but dismissible — appearing in context without interrupting flow. No modal overlays, no mandatory review steps. The AI informed; the human decided.",
+        title: "Logo animation as the illusion of speed",
+        body: "The old splash used player imagery. Users tapped through it and landed on a homepage still loading — an empty screen that read as broken. We replaced it with a logo animation: the FC mark expanding to the FANCODE wordmark on the brand's orange. The homepage preloaded behind it. Users perceived the app as fast. The tradeoff was losing player faces at the very top of the funnel. We accepted it because brand recall and perceived speed mattered more at this stage than imagery.",
+        image: {
+          src: "/images/fancode/splash-animation.png",
+          alt: "Old player-led splash versus new FC logo animation expanding to FANCODE wordmark on orange",
+          caption: "Old splash vs new: logo animation buys time for the homepage to load",
+        },
       },
       {
-        title: "Confidence-banded outputs",
-        body: "Every AI output showed a confidence band. Instead of hiding uncertainty, we surfaced it. Teams trusted the system more when it admitted what it didn't know.",
+        title: "5 minutes free before the paywall",
+        body: "New users had no basis to judge whether FanCode was worth paying for. We introduced a 5-minute free trial on live match pages: Watch Free Now, Free Preview, Playing Video, Free Trial Ended, Buy a Pass. Users could see and verify the actual stream quality before any money changed hands. The tradeoff was giving away paid content. We accepted it because trust had to come before transaction, and a user who experienced the product was far more likely to pay than one who hadn't.",
+        image: {
+          src: "/images/fancode/free-trial-flow.png",
+          alt: "5-minute free trial sequence from Watch Free Now through to Free Trial Ended and Buy a Pass",
+          caption: "Free trial flow: Watch Free Now to Free Preview to trial end to purchase prompt",
+        },
       },
       {
-        title: "Persistent context sidebar",
-        body: "A sidebar aggregated signals across connected tools without requiring manual input — surfacing relevant Jira tickets, Slack threads, and meeting notes automatically based on current task context.",
+        title: "Info tab first, Fantasy tab second",
+        body: "When a user tapped a match before it started, they landed on the Fantasy tab by default. For non-fantasy users — the majority of new arrivals — this was the wrong starting point. It assumed context they didn't have. We changed the default pre-match landing to the Info tab: teams, match details, tournament context. Pure cricket fans could orient. Fantasy users still had their tab one tap away. The tradeoff was leading with the tab that doesn't drive FanCode's primary monetisation. We accepted it because for a first-time user, context had to come before conversion.",
+        image: {
+          src: "/images/fancode/match-tab-default.png",
+          alt: "Match detail page: Info tab default for FTU left, Fantasy tab default right",
+          caption: "Info tab as the default: orient the new user before asking them to transact",
+        },
       },
       {
-        title: "Override-and-train flows",
-        body: "Every AI suggestion had a one-click override. Each override was a training signal. The system improved based on team behavior, not global model updates.",
+        title: "Upfront registration as a retention bet",
+        body: "Data showed registered users had significantly higher retention than guests. The existing app let anyone browse without registering. We designed an upfront registration flow — splash, welcome screen, phone number, OTP, homepage — and ran it as an A/B test. The tradeoff was early friction. Some users would drop before completing registration. But the users who completed it were more likely to come back. We accepted the tradeoff because the goal was retention, not just installs.",
+        image: {
+          src: "/images/fancode/registration-ab.png",
+          alt: "Upfront registration A/B test flow: splash to welcome to phone entry to OTP to homepage",
+          caption: "Registration A/B: early commitment in exchange for higher long-term retention",
+        },
+      },
+      {
+        title: "Homepage restructured around Watch Live",
+        body: "The existing homepage buried live content inside a nav tab. New users arrived looking for live cricket and couldn't find it immediately. We restructured for the first-time experience: Watch Live card prominent at the top, personalised content segments below, and a bottom bar that surfaced Live before Fantasy Stats and Shop. We also explored moving Profile and Explore to the top nav. The tradeoff was running multiple navigation experiments in parallel, which risked muddying the signal. We scoped the first release to the live card and bottom bar only, and deferred the top nav change.",
+        image: {
+          src: "/images/fancode/homepage-nav.png",
+          alt: "Homepage navigation redesign: Watch Live card at top and restructured bottom navigation bar",
+          caption: "Watch Live as the first thing users see: what they came for, where they expect it",
+        },
       },
     ],
+
+    scrappedDirections: [
+      {
+        title: "Multisport as a retention hook",
+        reason: "Research showed the overwhelming majority of users came for cricket. Surfacing Football and Kabaddi content during onboarding added noise without value for the primary user. Multisport was deprioritised from the first-time experience entirely.",
+      },
+      {
+        title: "Ads-free experience as a value proposition",
+        reason: "We considered leading with FanCode's cleaner ad experience in onboarding. Research showed users had tuned out ads on Cricbuzz entirely — they didn't notice them because the core product had already earned their trust. Ads-free was not a reason to switch.",
+      },
+      {
+        title: "Multi-language onboarding",
+        reason: "We explored onboarding in Hindi and regional languages. Research showed most users in Tier 2 cities still preferred English. The complexity of localisation wasn't justified by the lift it would have produced at this stage.",
+      },
+    ],
+
     outcomes: [
-      "Reduced context switches per task by 38%",
-      "Increased meeting-to-action conversion by 52%",
-      "Decreased time-to-decision for cross-functional teams by 41%",
-      "Adopted by 3 enterprise pilot teams within 60 days of beta launch",
+      "Research delivered end-to-end: brief, 15 interviews, affinity mapping, user journey map, and an executive summary that became the input for the product roadmap",
+      "Shaped what didn't get built: multisport deprioritised for FTUX, Tour 360 Experience sequenced into the next product cycle — the research gave the team a shared basis for those decisions",
+      "Splash redesign shipped: logo animation replaced player imagery, eliminating the empty homepage state on arrival",
+      "5-minute free trial introduced on live match pages, giving new users a chance to experience the product before being asked to pay",
+      "Match page default landing tab changed from Fantasy to Info for first-time users",
+      "Upfront registration A/B test launched to measure the retention impact of early commitment",
+      "Homepage restructured with Watch Live as the primary entry point for new users",
     ],
+
+    contribution:
+      "I owned the full arc from research planning to shipped designs. I wrote the research brief, defined the recruitment criteria, moderated all 15 interviews, and led synthesis sessions with cross-functional team members as note takers. I facilitated the stakeholder workshop that aligned product, marketing, and engineering on priority order before any design began. I designed the FTUX wireframes, the free trial flow, the match page tab logic, and the homepage restructure. I set the scope constraints that kept navigation experiments phased — one surface at a time — to avoid conflating signals across tests.",
+
+    contributionArtifacts: [
+      "Research brief",
+      "User interviews",
+      "Affinity mapping",
+      "Journey mapping",
+      "Stakeholder workshop",
+      "Wireframes",
+      "Interaction design",
+      "Prototyping",
+    ],
+
     lesson:
-      "Enterprise AI fails when it tries to replace judgment. It succeeds when it reduces the friction around judgment. Every design decision I made optimized for trust, not capability.",
+      "New users don't evaluate apps on features. They evaluate them on trust. Every decision in this project was ultimately answering one question: why should I believe this app is worth my time right now? Getting the org aligned on that question — before any design started — was the most valuable thing I did.",
+
+    reflection:
+      "I'd involve the growth team earlier in the free trial design. We landed on 5 minutes without access to their conversion window data. That data would have shaped the decision from the start instead of being factored in after the fact.",
   },
   {
     slug: "ai-decision",

@@ -321,6 +321,36 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               <ImageBlock image={cs.problemImage} placeholder="Legacy tool — Excel Spotlight screenshot" onOpen={setLightboxSrc} />
             </CsSection>
 
+            {/* My Approach — renders when present (research-led case studies) */}
+            {cs.approach && (
+              <CsSection label="My Approach">
+                <BodyText>{cs.approach}</BodyText>
+              </CsSection>
+            )}
+
+            {/* Research — renders as its own section when approach is present */}
+            {cs.approach && cs.researchEvidence && (
+              <CsSection label="Research">
+                <BodyText>{cs.researchEvidence}</BodyText>
+                {cs.researchFindings && cs.researchFindings.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE }}
+                    style={{ marginTop: "24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}
+                  >
+                    {cs.researchFindings.map((f, i) => (
+                      <div key={i} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", padding: "16px 18px" }}>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>{f.title}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{f.body}</p>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </CsSection>
+            )}
+
             {cs.insight && (
               <section id="cs-insight" style={{ padding: "48px 0" }}>
                 <motion.div
@@ -349,7 +379,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   ? <OlapVsEsmDiagram />
                   : <ImageBlock image={cs.insightImage} placeholder="OLAP vs ESM model comparison diagram" onOpen={setLightboxSrc} />
                 }
-                {cs.researchEvidence && (
+                {!cs.approach && cs.researchEvidence && (
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", lineHeight: 1.7, marginTop: "20px" }}>
                     {cs.researchEvidence}
                   </p>
@@ -448,8 +478,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             <CsSection label="Outcomes" id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                {/* Before → After display */}
-                {cs.outcomes[0] && (
+                {/* Before → After display — Planful only */}
+                {cs.slug === "planful-esm" && (
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -458,29 +488,45 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "12px", padding: "28px 32px" }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
-                      {/* Before */}
                       <div>
                         <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>Before</p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 300, letterSpacing: "-0.04em", color: "var(--muted)", lineHeight: 1 }}>3.5 hrs</p>
                       </div>
-                      {/* Arrow */}
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0, color: "var(--border)", marginTop: "20px" }}>
                         <path d="M3 10h14M13 5l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
-                      {/* After */}
                       <div>
                         <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#16a34a", background: "#16a34a18", borderRadius: "4px", padding: "3px 7px", display: "inline-block", marginBottom: "8px" }}>After</span>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 300, letterSpacing: "-0.04em", color: "var(--text)", lineHeight: 1 }}>10–15 min</p>
                       </div>
                     </div>
-                    {/* Label */}
                     <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "20px" }}>
                       Reduction in time on task
                     </p>
                   </motion.div>
                 )}
-                {/* Qualitative outcome */}
-                {cs.outcomes[1] && (
+
+                {/* All outcomes as a numbered list — all other case studies */}
+                {cs.slug !== "planful-esm" && cs.outcomes.map((outcome, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
+                    style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: "12px", alignItems: "start" }}
+                  >
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--border)", paddingTop: "3px" }}>
+                      {String(i + 1).padStart(2, "0")}
+                    </p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
+                      {outcome}
+                    </p>
+                  </motion.div>
+                ))}
+
+                {/* Planful qualitative outcome (second item) */}
+                {cs.slug === "planful-esm" && cs.outcomes[1] && (
                   <motion.p
                     initial={{ opacity: 0, y: 8 }}
                     whileInView={{ opacity: 1, y: 0 }}
