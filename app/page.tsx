@@ -3,15 +3,23 @@
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useCallback, useState, useEffect } from "react";
-import Cursor from "@/components/Cursor";
 import ThemeToggle from "@/components/ThemeToggle";
 import LoadingScreen from "@/components/LoadingScreen";
+import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
+import ISTClock from "@/components/ISTClock";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/* ── Haptic utility — silently ignored on desktop ── */
+const haptic = (pattern: number | number[]) => {
+  if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+    navigator.vibrate(pattern);
+  }
+};
+
 /* ── Home nav — name + panel arrows ── */
-const PANEL_LABELS = ["About", "Work", "Career", "Testimonials", "AI"];
+const PANEL_LABELS = ["About", "Work", "AI", "Career", "Testimonials", "Contact"];
 
 function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: () => void; activePanel: number }) {
   return (
@@ -20,7 +28,7 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
         position: "fixed",
         top: 0, left: 0, right: 0,
         zIndex: 200,
-        height: "52px",
+        height: "64px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -30,26 +38,33 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
     >
       {/* Name + theme toggle */}
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <span
+        <Link
+          href="/"
+          aria-label="Home — Arun Gaddam"
           style={{
             fontFamily: "var(--font-logo)",
-            fontSize: "13px",
+            fontSize: "12px",
             fontWeight: 500,
             color: "var(--text)",
-            letterSpacing: "-0.03em",
-            height: "32px",
-            padding: "0 12px",
-            borderRadius: "8px",
-            border: "1px solid var(--border)",
-            background: "transparent",
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            height: "44px",
+            padding: "0 14px",
+            borderRadius: "12px",
+            border: "none",
+            background: "var(--surface)",
+            boxShadow: "var(--card-shadow)",
             display: "inline-flex",
             alignItems: "center",
-            pointerEvents: "none",
+            textDecoration: "none",
             userSelect: "none",
+            transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
           }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
         >
           Arun Gaddam
-        </span>
+        </Link>
         <ThemeToggle />
       </div>
 
@@ -82,27 +97,28 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
             return (
               <motion.button
                 key={dir}
-                onClick={disabled ? undefined : fn}
+                onClick={disabled ? undefined : () => { haptic(8); fn(); }}
                 whileTap={disabled ? {} : { scale: 0.88 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 title={dir === "prev" ? "Previous panel" : "Next panel"}
                 aria-label={dir === "prev" ? "Previous panel" : "Next panel"}
+                aria-disabled={disabled}
                 style={{
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "8px",
-                  border: "1px solid var(--border)",
-                  background: "var(--bg)",
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "12px",
+                  border: "none",
+                  background: "var(--surface)",
+                  boxShadow: "var(--card-shadow)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transition: "background 0.15s, opacity 0.2s",
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
+                  transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), opacity 0.2s",
                   opacity: disabled ? 0.3 : 1,
                   cursor: disabled ? "default" : "none",
                 }}
-                onMouseEnter={e => { if (!disabled) e.currentTarget.style.background = "var(--surface2)"; }}
-                onMouseLeave={e => { if (!disabled) e.currentTarget.style.background = "var(--bg)"; }}
+                onMouseEnter={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+                onMouseLeave={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                   <path d={d} />
@@ -124,11 +140,12 @@ function PanelHeader({ label }: { label: string }) {
       top: 0,
       zIndex: 20,
       padding: "12px 24px",
-      borderBottom: "1px solid var(--border)",
+      borderBottom: "1px solid color-mix(in srgb, var(--border) 50%, transparent)",
     }}>
       <p style={{
         fontFamily: "var(--font-mono)",
-        fontSize: "9px",
+        fontSize: "10px",
+        fontWeight: 400,
         letterSpacing: "0.08em",
         textTransform: "uppercase",
         color: "var(--muted)",
@@ -140,86 +157,104 @@ function PanelHeader({ label }: { label: string }) {
 }
 
 /* ── Panel 1: About ── */
-/* ── Portrait with magnifying glass lens ── */
+/* ── Portrait: illustration by default, real photo on hover ── */
 function PortraitMagnify() {
-  const [lens, setLens] = useState<{ x: number; y: number; visible: boolean }>({ x: 0, y: 0, visible: false });
-  const W = 72, H = 84, ZOOM = 2.8, LENS = 88;
+  const [hovered, setHovered] = useState(false);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [leaving, setLeaving] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    setLens({ x: e.clientX - r.left, y: e.clientY - r.top, visible: true });
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const nx = (e.clientX - rect.left) / rect.width  - 0.5; // -0.5 → 0.5
+    const ny = (e.clientY - rect.top)  / rect.height - 0.5;
+    setTilt({ x: nx * 14, y: -ny * 10 }); // rotateY, rotateX
+    setLeaving(false);
   };
 
-  // Background position: centres the zoomed point inside the lens circle
-  const bgX = LENS / 2 - lens.x * ZOOM;
-  const bgY = LENS / 2 - lens.y * ZOOM;
+  const handleMouseLeave = () => {
+    setHovered(false);
+    setLeaving(true);
+    setTilt({ x: 0, y: 0 });
+  };
 
   return (
-    <div
-      onMouseMove={onMove}
-      onMouseLeave={() => setLens(l => ({ ...l, visible: false }))}
-      style={{ position: "relative", width: `${W}px`, height: `${H}px`, flexShrink: 0 }}
-    >
-      {/* Base image */}
-      <div style={{ width: "100%", height: "100%", borderRadius: "10px", overflow: "hidden", border: "1px solid var(--border)" }}>
+    <div style={{ perspective: "700px", width: "100%", aspectRatio: "4 / 3" }}>
+      <div
+        ref={containerRef}
+        onMouseEnter={() => { setHovered(true); setLeaving(false); }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          position: "relative",
+          width: "100%", height: "100%",
+          cursor: "pointer",
+          borderRadius: "16px",
+          overflow: "hidden",
+          transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
+          transition: leaving ? "transform 0.55s cubic-bezier(0.22,1,0.36,1)" : "transform 0.08s linear",
+          willChange: "transform",
+        }}
+      >
+        {/* Illustrated portrait — default */}
         <img
-          src="/arun.png"
+          src="/Illustration image .png"
+          alt="Arun Gaddam illustration"
+          style={{
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "cover", objectPosition: "center top",
+            opacity: hovered ? 0 : 1,
+            transition: "opacity 0.35s ease",
+            display: "block",
+          }}
+        />
+        {/* Real photo — revealed on hover */}
+        <img
+          src="/arun.JPG"
           alt="Arun Gaddam"
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", filter: "grayscale(100%)", display: "block" }}
+          style={{
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "cover", objectPosition: "center top",
+            filter: "grayscale(100%)",
+            opacity: hovered ? 1 : 0,
+            transition: "opacity 0.35s ease",
+            display: "block",
+          }}
         />
       </div>
-
-      {/* Lens */}
-      {lens.visible && (
-        <div style={{
-          position: "absolute",
-          width: `${LENS}px`,
-          height: `${LENS}px`,
-          borderRadius: "50%",
-          border: "1px solid var(--border)",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
-          backgroundImage: "url(/arun.png)",
-          backgroundSize: `${W * ZOOM}px auto`,
-          backgroundPosition: `${bgX}px ${bgY}px`,
-          backgroundRepeat: "no-repeat",
-          filter: "grayscale(100%)",
-          left: `${lens.x - LENS / 2}px`,
-          top: `${lens.y - LENS / 2}px`,
-          pointerEvents: "none",
-          zIndex: 30,
-        }} />
-      )}
     </div>
   );
 }
 
-const infoRows = [
+const infoRows: { label: string; value: string; chips?: string[] }[] = [
   { label: "Role", value: "Senior Product Designer. I own the full design process — from discovery and strategy to final pixel." },
-  { label: "Focus", value: "Enterprise SaaS, B2B AI tools, and consumer products at scale — with user research as a core part of the process." },
-  { label: "Experience", value: "8+ years designing complex enterprise apps to consumer mobile app influencing roadmaps, mentoring designers, and collaborating across cross-functional teams." },
-  { label: "Superpower", value: "I can hold the big picture and still get into the details that matter." },
+  { label: "Focus", value: "Enterprise SaaS and consumer products at scale — driven by design, strategy, and research." },
+  {
+    label: "Experience",
+    value: "Nearly a decade designing products for startups and large-scale platforms with millions of users. I focus on building scalable systems that solve real-world problems.",
+    chips: ["Fintech", "Manufacturing", "Healthcare", "HRIS", "Entertainment", "ERP", "Customer Experience"],
+  },
+  { label: "Superpower", value: "Turning strategy into execution, ensuring clarity at the top and precision where it matters." },
 ];
 
 function AboutPanel() {
   return (
     <div>
       <PanelHeader label="About me" />
-      <div style={{ padding: "24px 24px 48px" }}>
+      <div style={{ padding: "16px 24px 48px" }}>
 
-        {/* Portrait + availability badge */}
+        {/* Portrait */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE }}
-          style={{ display: "flex", alignItems: "flex-end", gap: "12px", marginBottom: "16px" }}
+          style={{ marginBottom: "24px" }}
         >
           <PortraitMagnify />
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "7px", padding: "5px 10px", borderRadius: "6px", border: "1px solid var(--border)", background: "var(--surface)" }}>
-            <span className="availability-dot" />
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-              Open to opportunities
-            </span>
-          </div>
         </motion.div>
 
         {/* Hero headline */}
@@ -229,18 +264,15 @@ function AboutPanel() {
           transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "clamp(20px, 2.8vw, 28px)",
-            fontWeight: 300,
-            lineHeight: 1.25,
-            letterSpacing: "-0.03em",
+            fontSize: "24px",
+            fontWeight: 400,
+            lineHeight: 1.3,
+            letterSpacing: "-0.012em",
             color: "var(--text)",
-            marginBottom: "16px",
+            marginBottom: "20px",
           }}
         >
-          <span className="text-highlight">Hey, I&apos;m Arun.</span>{" "}
-          <span style={{ color: "var(--muted)" }}>
-            I design products at the intersection of UX, product thinking, and AI.
-          </span>
+          I design products at the intersection of design, product thinking, and now vibe coding.
         </motion.h1>
 
         {/* Bio */}
@@ -250,14 +282,14 @@ function AboutPanel() {
           transition={{ duration: 0.5, ease: EASE, delay: 0.1 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "14px",
+            fontSize: "15px",
             lineHeight: 1.65,
-            letterSpacing: "-0.01em",
+            letterSpacing: "-0.011em",
             color: "var(--muted)",
-            marginBottom: "24px",
+            marginBottom: "16px",
           }}
         >
-          I&apos;m based in Hyderabad, India with my wife and our son — figuring out the balance between designing products, catching up with AI, and raising a tiny human. I&apos;m learning a lot from both.
+          I&apos;m hands-on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
         </motion.p>
 
         {/* Links */}
@@ -265,13 +297,12 @@ function AboutPanel() {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
-          style={{ marginBottom: "32px", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}
+          style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}
         >
           {[
             { label: "LinkedIn ↗", href: "https://linkedin.com/in/akgaddam", external: true },
             { label: "Medium ↗", href: "https://medium.com/@akgaddam", external: true },
             { label: "CV ↗", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
-            { label: "Email", href: "mailto:akgaddam02@gmail.com", external: false },
           ].map(({ label, href, external }, i, arr) => (
             <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
               <Link
@@ -283,7 +314,7 @@ function AboutPanel() {
                   letterSpacing: "0.08em", textTransform: "uppercase",
                   color: "var(--muted)",
                   padding: "4px 8px",
-                  borderRadius: "4px",
+                  borderRadius: "6px",
                   display: "inline-block",
                   transition: "color 0.18s, background 0.18s",
                 }}
@@ -346,9 +377,25 @@ function AboutPanel() {
                   fontFamily: "var(--font-body)", fontSize: "14px",
                   letterSpacing: "-0.01em",
                   color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
+                  marginBottom: row.chips ? "10px" : 0,
                 }}>
                   {row.value}
                 </p>
+                {row.chips && (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                    {row.chips.map(chip => (
+                      <span key={chip} style={{
+                        fontFamily: "var(--font-mono)", fontSize: "8px",
+                        letterSpacing: "0.07em", textTransform: "uppercase",
+                        padding: "3px 8px", borderRadius: "6px",
+                        background: "var(--surface2)", color: "var(--muted)",
+                        border: "1px solid var(--border)",
+                      }}>
+                        {chip}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           ))}
@@ -379,13 +426,11 @@ const meshPalettes = {
   ],
 };
 
-function MeshThumbnail({ index, type, number, confidential }: {
-  index: number; type: string; number: string; confidential?: boolean;
+function MeshThumbnail({ index, type, confidential }: {
+  index: number; type?: string; confidential?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const raf = useRef<number | null>(null);
-  const mouse = useRef({ x: 50, y: 50 });
-  const current = useRef({ x: 50, y: 50, x2: 30, y2: 70, x3: 70, y3: 30 });
   const [isDark, setIsDark] = useState(false);
 
   // Watch data-theme attribute changes
@@ -401,96 +446,29 @@ function MeshThumbnail({ index, type, number, confidential }: {
     ? meshPalettes.dark[index % meshPalettes.dark.length]
     : meshPalettes.light[index % meshPalettes.light.length];
 
-  const update = () => {
-    const c = current.current;
-    const m = mouse.current;
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-    c.x  = lerp(c.x,  m.x,       0.06);
-    c.y  = lerp(c.y,  m.y,       0.06);
-    c.x2 = lerp(c.x2, 100 - m.x, 0.04);
-    c.y2 = lerp(c.y2, m.y * 0.7, 0.04);
-    c.x3 = lerp(c.x3, m.x * 0.6, 0.035);
-    c.y3 = lerp(c.y3, 100 - m.y, 0.035);
-
-    if (ref.current) {
-      const p = document.documentElement.dataset.theme === "dark"
-        ? meshPalettes.dark[index % meshPalettes.dark.length]
-        : meshPalettes.light[index % meshPalettes.light.length];
-      ref.current.style.background = [
-        `radial-gradient(ellipse 60% 55% at ${c.x}% ${c.y}%, ${p.orbs[0]}ee, transparent 70%)`,
-        `radial-gradient(ellipse 50% 60% at ${c.x2}% ${c.y2}%, ${p.orbs[1]}bb, transparent 65%)`,
-        `radial-gradient(ellipse 55% 50% at ${c.x3}% ${c.y3}%, ${p.orbs[2]}aa, transparent 60%)`,
-        p.base,
-      ].join(", ");
-    }
-    raf.current = requestAnimationFrame(update);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    mouse.current = {
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top)  / rect.height) * 100,
-    };
-  };
-
-  const startRaf = () => { if (!raf.current) raf.current = requestAnimationFrame(update); };
-  const stopRaf  = () => {
-    if (raf.current) { cancelAnimationFrame(raf.current); raf.current = null; }
-    mouse.current = { x: 50, y: 50 };
-  };
-
   useEffect(() => () => { if (raf.current) cancelAnimationFrame(raf.current); }, []);
 
   // Theme-aware colour values
-  const numColor      = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)";
-  const labelColor    = isDark ? "rgba(255,255,255,0.3)"  : "rgba(0,0,0,0.4)";
-  const badgeBg       = isDark ? "rgba(0,0,0,0.4)"        : "rgba(255,255,255,0.6)";
-  const badgeColor    = isDark ? "rgba(255,255,255,0.35)"  : "rgba(0,0,0,0.4)";
+  const badgeBg   = isDark ? "rgba(0,0,0,0.4)"        : "rgba(255,255,255,0.6)";
+  const badgeColor = isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.4)";
 
   return (
     <div
       ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={startRaf}
-      onMouseLeave={stopRaf}
       style={{
-        height: "120px",
+        height: "200px",
         background: palette.base,
         position: "relative", overflow: "hidden",
-        display: "flex", alignItems: "flex-end",
-        padding: "12px 16px",
       }}
     >
       <div className="paper-grain" />
-      {/* Large faint number */}
-      <span style={{
-        position: "absolute", right: "12px", top: "50%",
-        transform: "translateY(-50%)",
-        fontFamily: "var(--font-body)", fontSize: "64px", fontWeight: 300,
-        letterSpacing: "-0.04em", lineHeight: 1,
-        color: numColor,
-        userSelect: "none", pointerEvents: "none",
-        transition: "color 0.3s",
-      }}>
-        {number}
-      </span>
-      {/* Domain label */}
-      <span style={{
-        fontFamily: "var(--font-mono)", fontSize: "8px",
-        letterSpacing: "0.08em", textTransform: "uppercase",
-        color: labelColor, position: "relative", zIndex: 1,
-        transition: "color 0.3s",
-      }}>
-        {type.split("—")[0].trim()}
-      </span>
       {confidential && (
         <div style={{
           position: "absolute", top: "10px", right: "10px",
           background: badgeBg,
-          borderRadius: "4px", padding: "3px 8px",
-          fontFamily: "var(--font-mono)", fontSize: "8px",
-          letterSpacing: "0.08em", textTransform: "uppercase",
+          borderRadius: "6px", padding: "3px 8px",
+          fontFamily: "var(--font-body)", fontSize: "11px",
+          fontWeight: 510, letterSpacing: "-0.01em",
           color: badgeColor,
           transition: "background 0.3s, color 0.3s",
         }}>
@@ -503,14 +481,147 @@ function MeshThumbnail({ index, type, number, confidential }: {
 
 /* ── Panel 2: Selected Work ── */
 
+const WORK_THUMBS: Record<string, string> = {
+  "astra":                "/images/astra/cover.png",
+  "planful-esm":          "/images/planful/landing-page.jpg",
+  "reputation-listings":  "/images/reputation/Thumbnail .png",
+  "fancode-ftux":         "/images/fancode/user-journey-map.jpg",
+  "zetwerk-dc":           "/images/zetwerk/cover.png",
+  "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
+};
+
+/* ── Count-up animation for metric values ── */
+function MetricValue({ value }: { value: string }) {
+  const [display, setDisplay] = useState(value);
+  const ref   = useRef<HTMLSpanElement>(null);
+  const fired = useRef(false);
+
+  useEffect(() => {
+    const match = value.match(/^([^0-9]*)(\d+)(.*)$/);
+    if (!match) return;
+    const [, prefix, numStr, suffix] = match;
+    const target = parseInt(numStr, 10);
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || fired.current) return;
+        fired.current = true;
+        const duration = 1000;
+        const start = performance.now();
+        const tick = (now: number) => {
+          const p = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(2, -10 * p); // ease-out-expo
+          setDisplay(p >= 1 ? value : `${prefix}${Math.round(eased * target)}${suffix}`);
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value]);
+
+  return <span ref={ref}>{display}</span>;
+}
+
+/* ─── Featured Design System card — leads the Selected Work panel ─────
+   The design system extracted from this portfolio. Documents the actual
+   tokens, components, and patterns in the live codebase — no speculation. */
+function SystemFeatureCard() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-20px" }}
+      transition={{
+        opacity: { duration: 0.5, ease: EASE },
+        y: { type: "spring", stiffness: 320, damping: 28 },
+      }}
+    >
+      <Link href="/system">
+        <div
+          className="work-card"
+          style={{
+            background: "var(--surface)",
+            borderRadius: "16px",
+            overflow: "hidden",
+            boxShadow: "var(--card-shadow)",
+            transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+        >
+          {/* Thumbnail — screenshot of the live /system page */}
+          <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+            <img
+              className="work-thumb"
+              src="/images/system/cover.png"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center top",
+                display: "block",
+                borderRadius: "8px 8px 0 0",
+              }}
+            />
+          </div>
+
+          {/* Body */}
+          <div style={{ padding: "12px 16px 16px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+              {["Design Language", "Built with Claude"].map(tag => (
+                <span key={tag} style={{
+                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  letterSpacing: "0.06em", textTransform: "uppercase",
+                  padding: "3px 8px", background: "var(--surface2)",
+                  color: "var(--muted)", borderRadius: "8px",
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <h3 style={{
+              fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 590,
+              lineHeight: 1.3, letterSpacing: "-0.012em",
+              color: "var(--text)", marginBottom: "4px",
+            }}>
+              Portfolio Design Language
+            </h3>
+
+            <p style={{
+              fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+              lineHeight: 1.4, letterSpacing: "-0.13px",
+              color: "var(--muted)", marginBottom: "12px",
+            }}>
+              Tokens, motion vocab, and interaction patterns — documented as they exist in the live site.
+            </p>
+
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
 function WorkPanel() {
   return (
     <div id="work-panel">
       <PanelHeader label="Selected Work" />
       <div style={{ padding: "16px 24px 32px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {caseStudies.map((cs, i) => {
-            const href = cs.confidential ? "/contact" : `/work/${cs.slug}`;
+
+          {caseStudies.filter(cs => cs.slug !== "astra").map((cs, i) => {
+            const href = `/work/${cs.slug}`;
             return (
               <motion.div
                 key={cs.slug}
@@ -525,46 +636,63 @@ function WorkPanel() {
               >
                 <Link href={href}>
                   <div
+                    className="work-card"
                     style={{
                       background: "var(--surface)",
-                      borderRadius: "12px",
+                      borderRadius: "16px",
                       overflow: "hidden",
-                      border: "1px solid var(--border)",
-                      transition: "border-color 0.2s cubic-bezier(0.22,1,0.36,1), box-shadow 0.2s cubic-bezier(0.22,1,0.36,1)",
+                      boxShadow: "var(--card-shadow)",
+                      transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = "var(--muted)";
-                      e.currentTarget.style.boxShadow = "0 2px 16px rgba(0,0,0,0.07)";
+                      e.currentTarget.style.boxShadow = "var(--card-shadow-hover)";
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = "var(--border)";
-                      e.currentTarget.style.boxShadow = "none";
+                      e.currentTarget.style.boxShadow = "var(--card-shadow)";
                     }}
                   >
-                    {/* Mesh thumbnail */}
-                    <MeshThumbnail
-                      index={i}
-                      type={cs.type}
-                      number={cs.number}
-                      confidential={cs.confidential}
-                    />
+                    {/* Thumbnail — always-visible image, mesh as fallback */}
+                    <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                      {WORK_THUMBS[cs.slug] ? (
+                        <>
+                          <img
+                            className="work-thumb"
+                            src={WORK_THUMBS[cs.slug]}
+                            alt=""
+                            aria-hidden="true"
+                            loading="lazy"
+                            decoding="async"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              objectPosition: "center top",
+                              display: "block",
+                              borderRadius: "8px 8px 0 0",
+                            }}
+                          />
+                        </>
+                      ) : (
+                        <MeshThumbnail
+                          index={i}
+                          type={cs.type}
+                          confidential={cs.confidential}
+                        />
+                      )}
+                    </div>
 
                     {/* Body */}
                     <div style={{ padding: "12px 16px 16px" }}>
-                      {/* Number + tags row */}
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
-                        <span style={{
-                          fontFamily: "var(--font-mono)", fontSize: "9px",
-                          letterSpacing: "0.06em", color: "var(--muted)",
-                        }}>
-                          {cs.number}
-                        </span>
-                        <span style={{ color: "var(--border)", fontFamily: "var(--font-mono)", fontSize: "9px" }}>·</span>
+                      {/* Tags row — mono uppercase to match the system used everywhere
+                          else (case study tags, panel headers). The numeric counter is
+                          dropped: the cards already have a clear visual order. */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
                         {cs.tags.slice(0, 2).map(tag => (
                           <span key={tag} style={{
-                            fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em",
-                            padding: "2px 7px", background: "var(--surface2)",
-                            color: "var(--muted)", borderRadius: "4px",
+                            fontFamily: "var(--font-mono)", fontSize: "9px",
+                            letterSpacing: "0.06em", textTransform: "uppercase",
+                            padding: "3px 8px", background: "var(--surface2)",
+                            color: "var(--muted)", borderRadius: "8px",
                           }}>
                             {tag}
                           </span>
@@ -573,8 +701,8 @@ function WorkPanel() {
 
                       {/* Title */}
                       <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
-                        lineHeight: 1.3, letterSpacing: "-0.02em",
+                        fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 590,
+                        lineHeight: 1.3, letterSpacing: "-0.012em",
                         color: "var(--text)", marginBottom: "4px",
                       }}>
                         {cs.title}
@@ -582,37 +710,41 @@ function WorkPanel() {
 
                       {/* Subtitle */}
                       <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                        fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
                         lineHeight: 1.4, letterSpacing: "-0.01em",
                         color: "var(--muted)", marginBottom: "12px",
                       }}>
                         {cs.subtitle}
                       </p>
 
-                      {/* Metrics */}
-                      <div style={{
-                        paddingTop: "12px", borderTop: "1px solid var(--border)",
-                        display: "flex", gap: "16px",
-                      }}>
-                        {cs.metrics.slice(0, 2).map(m => (
-                          <div key={m.label}>
-                            <p style={{
-                              fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
-                              letterSpacing: "-0.03em", color: "var(--text)",
-                              lineHeight: 1, marginBottom: "3px",
-                            }}>
-                              {m.value}
-                            </p>
-                            <p style={{
-                              fontFamily: "var(--font-mono)", fontSize: "8px",
-                              letterSpacing: "0.06em", color: "var(--muted)",
-                              textTransform: "uppercase",
-                            }}>
-                              {m.label}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
+                      {/* Primary metric — elevated */}
+                      {cs.metrics && cs.metrics[0] && (
+                        <div style={{ paddingTop: "12px", borderTop: "1px solid var(--border)" }}>
+                          <p style={{
+                            fontFamily: "var(--font-body)",
+                            fontSize: "18px",
+                            fontWeight: 400,
+                            letterSpacing: "-0.03em",
+                            color: "var(--text)",
+                            lineHeight: 1,
+                            marginBottom: "4px",
+                          }}>
+                            <MetricValue value={cs.metrics[0].value} />
+                          </p>
+                          <p style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "-0.01em",
+                            color: "var(--muted)",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          } as React.CSSProperties}>
+                            {cs.metrics[0].label}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Link>
@@ -642,7 +774,10 @@ type CareerItem = {
   logoDomain?: string;
   description?: string;
   highlights?: string[];
+  highlightLink?: string;
   learnings?: string[];
+  link?: string;
+  images?: string[];
   minHeight?: number;
 };
 
@@ -655,86 +790,67 @@ const careerItems: CareerItem[] = [
     type: "role", startYear: 2025.167, endYear: 2025.583,
     title: "Senior Product Designer", subtitle: "Planful Software", minHeight: 72,
     dateLabel: "Mar 2025 — Aug 2025", impact: "−30% training time", logoDomain: "planful.com",
-    description: "Led end-to-end design for Planful's AI-powered FP&A platform — translating the complexity of enterprise financial planning into interfaces finance teams actually want to use.",
+    link: "https://planful.com/",
+    description: "Led end-to-end design of two finance planning features, reducing training time ~30% and supporting migration of core finance workflows from legacy tools to a modern web interface.",
     highlights: [
-      "Redesigned the scenario planning module, cutting user training time by 30%",
-      "Built a component library adopted by 3 product teams within a single quarter",
-      "Ran user research with 15+ enterprise finance directors across North America",
-    ],
-    learnings: [
-      "Enterprise finance workflows have deep domain complexity — skip the assumptions, go talk to the CFO",
-      "Design systems pay back fastest when you build them for engineers first, designers second",
-      "In FP&A tools, trust is the product — every UI decision is a trust decision",
+      "Designed two finance planning features end-to-end, reducing training time by ~30%",
     ],
   },
   {
-    type: "role", startYear: 2024.25, endYear: 2025.083,
+    type: "role", startYear: 2024.167, endYear: 2025.083,
     title: "Senior UX Designer", subtitle: "Reputation.com", minHeight: 72,
-    dateLabel: "Apr 2024 — Feb 2025", impact: "−40% task time", logoDomain: "reputation.com",
-    description: "Designed core features for Reputation's enterprise CX platform — helping global brands manage their online presence across thousands of locations at scale.",
+    dateLabel: "Mar 2024 — Feb 2025", impact: "−40% task time", logoDomain: "reputation.com",
+    link: "https://reputation.com/",
+    description: "Led design across three core product verticals — Insights, Reporting, Business Listings, and Reviews — directly supporting primary revenue drivers and AI feature initiatives.",
     highlights: [
-      "Cut average task completion time by 40% across key multi-location workflows",
-      "Rebuilt the reviews management dashboard for enterprise accounts with 500+ locations",
-      "Shipped a new analytics reporting suite used by 500+ enterprise clients at launch",
+      "Designed a unified Competitive Insights workflow that reduced task time by 40%, increased active usage, and contributed to higher customer retention and monetisation",
+      "Implemented design QA, reducing design defects by ~25% and improving release quality",
     ],
-    learnings: [
-      "Multi-location products need radical information hierarchy — geography is the primary axis",
-      "Dashboards succeed when they tell a story, not just render a dataset",
-      "Tight, daily PM collaboration is a design force multiplier",
-    ],
+    highlightLink: "https://reputation.com/resources/reports-guides/competitive-intelligence-stand-out-from-competition",
   },
   {
-    type: "role", startYear: 2022.417, endYear: 2023.833,
+    type: "role", startYear: 2022.25, endYear: 2023.833,
     title: "Senior Product Designer", subtitle: "Zetwerk",
-    dateLabel: "Jun 2022 — Nov 2023", impact: "~6× revenue growth", logoDomain: "zetwerk.com",
-    description: "Shaped the UX of Zetwerk's B2B manufacturing marketplace through a period of exceptional scale — from Series D through ~6× revenue growth.",
+    dateLabel: "Apr 2022 — Nov 2023", impact: "~6× revenue growth", logoDomain: "zetwerk.com",
+    link: "https://www.zetwerk.com/",
+    images: ["/images/career/zetwerk-team.jpg"],
+    description: "Led product design initiatives for Zetwerk's Order Management System (OMS), improving workflows to support business operations during a ~6× revenue growth phase.",
     highlights: [
-      "Designed the supplier onboarding flow adopted by 10,000+ manufacturers across India",
-      "Led design for the procurement tracking and order management suite",
-      "Built and scaled a cross-platform design system from first token to full adoption",
-    ],
-    learnings: [
-      "Supply chain is incredibly domain-specific — embed with the ops team before touching Figma",
-      "At scale, consistency beats cleverness every single time",
-      "A design system is a company asset, not a design team deliverable",
+      "Mentored three designers and partnered with leadership to establish UX practices — research, concept validation, usability testing",
+      "Replaced guesswork with evidence-based design, improving product quality and reducing backlog ~20–30%",
     ],
   },
   {
     type: "role", startYear: 2020.583, endYear: 2022.25,
     title: "Manager UX Designer", subtitle: "FanCode / Dream Sports",
     dateLabel: "Aug 2020 — Apr 2022", impact: "+18% retention", logoDomain: "fancode.com",
-    description: "Led the UX team at FanCode — a sports commerce and content platform by Dream Sports — driving an 18% improvement in user retention through design and product decisions.",
+    link: "https://play.google.com/store/apps/details?id=com.dream11sportsguru&hl=en_IN",
+    images: ["/images/career/fancode-team.jpg"],
+    description: "Owned UX for a core product initiative, designing multiple features that drove adoption, retention, and growth across a ~50M user base.",
     highlights: [
-      "Managed a team of 4 designers across iOS, Android, and web",
-      "Redesigned the live sports viewing experience for mobile — the core engagement surface",
-      "Shipped FanCode Store, a 0→1 sports merchandise platform, in 3 months",
-    ],
-    learnings: [
-      "Managing designers means creating clarity, not controlling output",
-      "Sports fans are a uniquely passionate audience — design for the emotional peak, not the average moment",
-      "Retention is a habit loop problem, not a feature problem",
+      "Led research and concept validation to solve new-user retention, informing a 12-month roadmap and increasing retention by 18% while boosting subscriptions",
+      "Redesign of FanCode homepage experience led to an increase in user engagement by 20%",
+      "Designed and delivered new sports experiences as part of growth initiatives, driving adoption in football and kabaddi",
+      "Uncovered and improved interconnected fan journeys across key touchpoints, increasing time spent by ~20%",
     ],
   },
   {
     type: "role", startYear: 2016.667, endYear: 2020.5,
     title: "UX Designer (Founder)", subtitle: "Quazire Consulting",
     dateLabel: "Sep 2016 — Jul 2020", impact: "0→1 founder",
-    description: "Founded and ran a boutique UX consultancy working with early-stage startups and SMEs across India — building 0→1 digital products from concept to launch.",
+    description: "Founded and ran a boutique UX consultancy, designing 0→1 digital products across healthcare, HRIS, and fintech verticals for early-stage startups and SMEs.",
     highlights: [
-      "Designed and shipped 12+ products across fintech, edtech, and healthtech verticals",
-      "Worked directly with founders to define product strategy alongside visual design",
-      "Grew a small team of 3 designers and managed all client relationships solo",
-    ],
-    learnings: [
-      "Running a business taught me to design for outcomes, not deliverables",
-      "The best founders trust the process — and make you faster because of it",
-      "Working across industries early in your career builds a breadth of intuition that's impossible to learn any other way",
+      "Designed an award-winning suite of hospital applications (Ehnote), improving operational efficiency, patient management, and clinical decision-making",
+      "Designed SwarmHR, an HRIS and applicant tracking system that streamlined recruitment workflows and enhanced hiring team collaboration",
+      "Designed Instabee, a mobile ERP solution for MSMEs in India",
     ],
   },
-  // Education & Side roles
+  // Other — education & side roles
   {
-    type: "education", startYear: 2023.833, title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
+    type: "education", startYear: 2023.833, endYear: 2026.25,
+    title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
     dateLabel: "Nov 2023 — Present", impact: "Top 1% · 3K+ mins",
+    link: "https://adplist.org/",
     description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList — mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
     highlights: [
       "Top 1% Mentor Recognition — Feb, Mar, May & Jun 2024 (Expertise of Design)",
@@ -742,16 +858,70 @@ const careerItems: CareerItem[] = [
       "Ongoing 1:1 sessions on product design, career strategy, and portfolio critique",
     ],
   },
-  { type: "education", startYear: 2020.917, endYear: 2021.333, title: "Program in UX Design",         subtitle: "IIT Bombay",   dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in", minHeight: 72 },
-  { type: "education", startYear: 2019,     endYear: 2019.5,   title: "PM Certification",             subtitle: "IIT Guwahati", dateLabel: "2019",               minHeight: 72 },
-  { type: "education", startYear: 2017,     endYear: 2017.5,   title: "Design Thinking & Leadership", subtitle: "DSIL Global",  dateLabel: "2017",               minHeight: 72 },
+  {
+    type: "education", startYear: 2023.75, endYear: 2025.083,
+    title: "Product Management", subtitle: "IIT Guwahati · Accredian",
+    dateLabel: "Oct 2023 — Feb 2025", logoDomain: "accredian.com", minHeight: 72,
+    description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati), focused on applying data, product strategy, and user-centric approaches across the product lifecycle. Covered customer research, analytics, product strategy, and experimentation — translating insights into product roadmaps, metrics, and iterative, data-informed decisions.",
+  },
+  {
+    type: "education", startYear: 2020.917, endYear: 2021.333,
+    title: "Program in UX Design", subtitle: "IIT Bombay",
+    dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
+    description: "Program in User Experience Design from IDC School of Design, IIT Bombay — covering the end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation. Completed a hands-on, project-based curriculum including a field research project using contextual inquiry to uncover real-world user behaviours and translate insights into iterative design solutions.",
+    images: ["/images/career/iitb-1.jpg", "/images/career/iitb-2.jpg"],
+  },
+  {
+    type: "education", startYear: 2019.583, endYear: 2019.75,
+    title: "Conducting Usability Testing", subtitle: "Interaction Design Foundation",
+    dateLabel: "Aug 2019", logoDomain: "interaction-design.org", minHeight: 72,
+    description: "Usability Testing certification from Interaction Design Foundation — focused on planning, conducting, and analysing user tests to drive data-informed design improvements.",
+  },
+  {
+    type: "education", startYear: 2019.5, endYear: 2019.583,
+    title: "Industry Jury", subtitle: "Institute of Product Leadership",
+    dateLabel: "Jul 2019", minHeight: 72,
+    description: "At the Institute of Product Leadership, examinations are replaced with Skillathons. Top Product Lab UX ideas are presented to a live jury of hiring managers and industry experts — the best voted team wins the Skill Champion Trophy and cash award.",
+  },
+  {
+    type: "education", startYear: 2017, endYear: 2017.5,
+    title: "Design Thinking & Leadership", subtitle: "DSIL Global",
+    dateLabel: "2017", minHeight: 72,
+    description: "Global certification in social innovation and leadership — applying human-centered methods and systems thinking through field immersions and cross-sector collaboration to address complex, real-world problems. Worked closely with local communities, social enterprises, and ecosystem leaders across Southeast Asia: conducting contextual research, facilitating design sprints, and translating insights into actionable solutions through iterative prototyping and real-world validation.",
+    images: ["/images/career/dsil-1.jpg", "/images/career/dsil-2.jpg"],
+  },
 ];
 
-const testimonials = [
+type Testimonial = {
+  quote: string;
+  name: string;
+  role: string;
+  company: string;
+  initials: string;
+  /** Optional headshot path, e.g. "/images/testimonials/raissa.jpg".
+      When present the avatar renders the photo; otherwise it falls back to the
+      tinted-monogram avatar built from `initials`. */
+  image?: string;
+};
+
+const testimonials: Testimonial[] = [
   { quote: "Arun possesses a remarkable understanding of user needs, seamlessly navigating between design strategy and hands-on execution. His strategic mindset significantly impacted our efforts to enhance retention metrics.", name: "Raissa Fichardo", role: "Director of UX", company: "Fancode", initials: "RF" },
   { quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.", name: "Jeff Orshalick", role: "UX Design Manager", company: "Reputation", initials: "JO" },
   { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "Fancode", initials: "VK" },
+  { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research. He was integral throughout the process, actively shaping the product. A true advocate for the customer's voice, and a definite asset to any team.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB" },
+  { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX — as a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB" },
 ];
+
+/** Deterministic hue (0-360) derived from initials so each person gets a
+    stable, unique tint without us having to hand-pick colours. Used to softly
+    tint the monogram avatar background. */
+const hueFromInitials = (initials: string): number => {
+  let hash = 0;
+  for (let i = 0; i < initials.length; i++) {
+    hash = (hash * 31 + initials.charCodeAt(i)) >>> 0;
+  }
+  return hash % 360;
+};
 
 function CareerPanel() {
   const totalH = (CAL_END - CAL_START) * YEAR_PX + TOP_OFFSET;
@@ -824,7 +994,7 @@ function CareerPanel() {
     const endYr     = item.endYear ?? (item.startYear + 0.5);
     const naturalH  = Math.max((endYr - item.startYear) * YEAR_PX - 4, item.minHeight ?? (isEdu ? 44 : 36));
     const top       = overrideTop ?? Math.max((CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - naturalH, NOW_Y + 10);
-    const isClickable = !isEdu || !!item.description;
+    const isClickable = true;
     const isHovered   = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
     const isExpanded  = isClickable && selectedItem?.title === item.title && selectedItem?.startYear === item.startYear;
 
@@ -849,36 +1019,44 @@ function CareerPanel() {
           top: `${top}px`,
           left: isExpanded ? "22px" : isEdu ? "calc(58% + 4px)" : "22px",
           right: isExpanded ? "16px" : isEdu ? "16px" : "calc(42% + 8px)",
-          borderRadius: "10px",
+          borderRadius: "14px",
           background: isExpanded ? "var(--bg)" : "var(--surface)",
-          border: `1px solid ${isHovered && !isExpanded ? "var(--muted)" : "var(--border)"}`,
+          // Expanded state keeps a border because its bg matches the canvas;
+          // collapsed cards use shadow-only depth like the Work cards.
+          border: isExpanded ? "1px solid var(--border)" : "none",
           overflow: "hidden",
           cursor: isClickable ? "pointer" : "default",
           zIndex: isExpanded ? 10 : isHovered ? 5 : 1,
-          boxShadow: isExpanded ? "0 4px 32px rgba(0,0,0,0.09)" : "none",
+          boxShadow: isExpanded
+            ? "0 4px 32px rgba(0,0,0,0.09)"
+            : isHovered
+              ? "var(--card-shadow-hover)"
+              : "var(--card-shadow)",
+          transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
         }}
       >
         {/* ── Compact header row — always visible ── */}
         <motion.div layout style={{
           display: "flex", alignItems: "center", gap: "8px",
           padding: isExpanded ? "8px 12px" : naturalH < 40 ? "4px 10px" : "8px 12px",
-          height: isExpanded ? "auto" : `${naturalH}px`,
+          minHeight: isExpanded ? undefined : `${naturalH}px`,
           overflow: "hidden",
           borderBottom: isExpanded ? "1px solid var(--border)" : "none",
         }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
-              fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+              fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500,
               color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1.25,
-              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              overflow: "hidden", display: "-webkit-box",
+              WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
             }}>
               {item.title}
             </p>
             {item.subtitle && (
               <p style={{
-                fontFamily: "var(--font-mono)", fontSize: "8px",
-                color: "var(--muted)", letterSpacing: "0.08em",
-                textTransform: "uppercase", lineHeight: 1.2, marginTop: "3px",
+                fontFamily: "var(--font-body)", fontSize: "11px",
+                fontWeight: 510, letterSpacing: "-0.01em",
+                color: "var(--muted)", lineHeight: 1.2, marginTop: "3px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               }}>
                 {item.subtitle}
@@ -886,9 +1064,9 @@ function CareerPanel() {
             )}
             {!isExpanded && (item.dateLabel || item.impact) && (
               <p style={{
-                fontFamily: "var(--font-mono)", fontSize: "8px",
-                color: isHovered && item.impact ? "var(--text)" : "var(--muted)",
-                letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "3px",
+                fontFamily: "var(--font-body)", fontSize: "11px",
+                fontWeight: 510, letterSpacing: "-0.01em",
+                color: isHovered && item.impact ? "var(--text)" : "var(--muted)", marginTop: "3px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                 transition: "color 0.2s",
               }}>
@@ -927,17 +1105,55 @@ function CareerPanel() {
               exit={{ opacity: 0, transition: { duration: 0.08, ease: EASE } }}
               transition={{ duration: 0.28, ease: EASE, delay: 0.1 }}
             >
+
               <div style={{ padding: "16px 12px 12px" }}>
+
+                {/* Company / project link — top */}
+                {item.link && (
+                  <div style={{ marginBottom: "12px" }}>
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: "4px",
+                        fontFamily: "var(--font-body)", fontSize: "12px",
+                        fontWeight: 510, letterSpacing: "-0.01em",
+                        color: "var(--muted)", textDecoration: "none",
+                        transition: "color 0.15s",
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
+                      onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+                    >
+                      Visit site ↗
+                    </a>
+                  </div>
+                )}
 
                 {/* Date label */}
                 {item.dateLabel && (
                   <p style={{
-                    fontFamily: "var(--font-mono)", fontSize: "8px",
-                    letterSpacing: "0.1em", textTransform: "uppercase",
+                    fontFamily: "var(--font-body)", fontSize: "11px",
+                    fontWeight: 510, letterSpacing: "-0.01em",
                     color: "var(--muted)", marginBottom: "12px",
                   }}>
                     {item.dateLabel}
                   </p>
+                )}
+
+                {/* Images */}
+                {item.images && item.images.length > 0 && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
+                    {item.images.map((src, i) => (
+                      <img
+                        key={i}
+                        src={src}
+                        alt=""
+                        style={{ width: "100%", height: "auto", display: "block", borderRadius: "8px", filter: "grayscale(15%)" }}
+                      />
+                    ))}
+                  </div>
                 )}
 
                 {/* Description */}
@@ -955,8 +1171,8 @@ function CareerPanel() {
                 {item.highlights && item.highlights.length > 0 && (
                   <div style={{ marginBottom: "16px" }}>
                     <p style={{
-                      fontFamily: "var(--font-mono)", fontSize: "7px",
-                      letterSpacing: "0.1em", textTransform: "uppercase",
+                      fontFamily: "var(--font-body)", fontSize: "11px",
+                      fontWeight: 510, letterSpacing: "-0.01em",
                       color: "var(--muted)", marginBottom: "8px",
                     }}>
                       {item.subtitle === "ADPList" ? "Achievements" : "Worked on"}
@@ -972,6 +1188,27 @@ function CareerPanel() {
                         </div>
                       ))}
                     </div>
+                    {/* Highlight reference link (e.g. Competitive Insights report) */}
+                    {item.highlightLink && (
+                      <a
+                        href={item.highlightLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        style={{
+                          display: "inline-flex", alignItems: "center", gap: "4px",
+                          marginTop: "8px",
+                          fontFamily: "var(--font-body)", fontSize: "12px",
+                          fontWeight: 510, letterSpacing: "-0.01em",
+                          color: "var(--muted)", textDecoration: "none",
+                          transition: "color 0.15s",
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
+                        onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+                      >
+                        Read the CI report ↗
+                      </a>
+                    )}
                   </div>
                 )}
 
@@ -979,8 +1216,8 @@ function CareerPanel() {
                 {item.learnings && item.learnings.length > 0 && (
                   <div style={{ marginBottom: "12px" }}>
                     <p style={{
-                      fontFamily: "var(--font-mono)", fontSize: "7px",
-                      letterSpacing: "0.1em", textTransform: "uppercase",
+                      fontFamily: "var(--font-body)", fontSize: "11px",
+                      fontWeight: 510, letterSpacing: "-0.01em",
                       color: "var(--muted)", marginBottom: "8px",
                     }}>
                       Learned
@@ -999,12 +1236,12 @@ function CareerPanel() {
                   </div>
                 )}
 
-                {/* ADPList mentee reviews — native design language */}
+                {/* ADPList mentee reviews */}
                 {item.subtitle === "ADPList" && (
                   <div style={{ marginBottom: "12px" }}>
                     <p style={{
-                      fontFamily: "var(--font-mono)", fontSize: "7px",
-                      letterSpacing: "0.1em", textTransform: "uppercase",
+                      fontFamily: "var(--font-body)", fontSize: "11px",
+                      fontWeight: 510, letterSpacing: "-0.01em",
                       color: "var(--muted)", marginBottom: "10px",
                     }}>
                       Mentee reviews
@@ -1012,24 +1249,24 @@ function CareerPanel() {
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                       {[
                         {
-                          quote: "I got a lot of value from just one hour session. I was feeling stuck navigating my self taught UX journey and Arun cleared a lot of doubts and helped improve my confidence. His tips and guidance are incredibly helpful.",
-                          initials: "SD", role: "Senior Analyst", company: "Ernst & Young", date: "Mar 2026",
-                        },
-                        {
-                          quote: "Arun was incredibly helpful during my job hunt! He listened to what I needed and made suggestions on different approaches I could take to find more jobs and improve my applications. He also thought ahead and anticipated other needs — I would highly recommend booking a session.",
-                          initials: "AZ", role: "Freelance UX/UI Designer", company: "Self Employed", date: "Jun 2024",
+                          quote: "Arun's attention to detail, proactive approach, and analytic mindset were truly impressive. His positive attitude, constructive feedback, and receptiveness to new ideas created a collaborative and growth-oriented environment.",
+                          initials: "DG", role: "Senior UX Designer", company: "Salesforce", date: "Dec 2023",
                         },
                         {
                           quote: "I have learned a lot of things from Arun in just one meet. He has great product thinking and analytical thinking — showed me frameworks to build a good product along with real life examples.",
                           initials: "JS", role: "UI/UX Designer", company: "Goldenflitch", date: "May 2024",
                         },
                         {
-                          quote: "Arun's attention to detail, proactive approach, and analytic mindset were truly impressive. His positive attitude, constructive feedback, and receptiveness to new ideas created a collaborative and growth-oriented environment.",
-                          initials: "DG", role: "Senior UX Designer", company: "Salesforce", date: "Dec 2023",
+                          quote: "Arun was incredibly helpful during my job hunt! He listened to what I needed and made suggestions on different approaches I could take to find more jobs and improve my applications. He also thought ahead and anticipated other needs — I would highly recommend booking a session.",
+                          initials: "AZ", role: "Freelance UX/UI Designer", company: "Self Employed", date: "Jun 2024",
+                        },
+                        {
+                          quote: "I got a lot of value from just one hour session. I was feeling stuck navigating my self taught UX journey and Arun cleared a lot of doubts and helped improve my confidence. His tips and guidance are incredibly helpful.",
+                          initials: "SD", role: "Senior Analyst", company: "Ernst & Young", date: "Mar 2026",
                         },
                       ].map((r, i) => (
                         <div key={i} style={{
-                          background: "var(--surface)", borderRadius: "8px",
+                          background: "var(--surface)", borderRadius: "10px",
                           padding: "10px 12px", border: "1px solid var(--border)",
                         }}>
                           <p style={{
@@ -1048,27 +1285,28 @@ function CareerPanel() {
                                 flexShrink: 0,
                               }}>
                                 <span style={{
-                                  fontFamily: "var(--font-mono)", fontSize: "7px",
-                                  color: "var(--muted)", letterSpacing: "0.04em",
+                                  fontFamily: "var(--font-body)", fontSize: "10px",
+                                  fontWeight: 510, letterSpacing: "-0.01em",
+                                  color: "var(--muted)",
                                 }}>{r.initials}</span>
                               </div>
                               <div>
                                 <span style={{
-                                  fontFamily: "var(--font-mono)", fontSize: "8px",
-                                  color: "var(--muted)", letterSpacing: "0.06em",
-                                  textTransform: "uppercase", display: "block",
+                                  fontFamily: "var(--font-body)", fontSize: "11px",
+                                  fontWeight: 400, letterSpacing: "-0.01em",
+                                  color: "var(--muted)", display: "block",
                                 }}>{r.role}</span>
                                 <span style={{
-                                  fontFamily: "var(--font-mono)", fontSize: "8px",
-                                  color: "var(--text)", letterSpacing: "0.06em",
-                                  textTransform: "uppercase", display: "block", marginTop: "1px",
+                                  fontFamily: "var(--font-body)", fontSize: "11px",
+                                  fontWeight: 510, letterSpacing: "-0.01em",
+                                  color: "var(--text)", display: "block", marginTop: "1px",
                                 }}>{r.company}</span>
                               </div>
                             </div>
                             <span style={{
-                              fontFamily: "var(--font-mono)", fontSize: "7px",
-                              color: "var(--muted)", letterSpacing: "0.06em",
-                              textTransform: "uppercase", flexShrink: 0,
+                              fontFamily: "var(--font-body)", fontSize: "11px",
+                              fontWeight: 400, letterSpacing: "-0.01em",
+                              color: "var(--muted)", flexShrink: 0,
                             }}>{r.date}</span>
                           </div>
                         </div>
@@ -1087,11 +1325,11 @@ function CareerPanel() {
                     disabled={selectedIdx <= 0}
                     whileTap={selectedIdx > 0 ? { scale: 0.9 } : {}}
                     style={{
-                      flex: 1, height: "28px",
-                      borderRadius: "6px", border: "1px solid var(--border)",
+                      flex: 1, height: "36px",
+                      borderRadius: "8px", border: "1px solid var(--border)",
                       background: "var(--surface)", color: "var(--text)",
-                      fontFamily: "var(--font-mono)", fontSize: "8px",
-                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 510,
+                      letterSpacing: "-0.01em",
                       cursor: selectedIdx > 0 ? "pointer" : "default",
                       opacity: selectedIdx > 0 ? 1 : 0.3,
                       transition: "opacity 0.15s",
@@ -1104,11 +1342,11 @@ function CareerPanel() {
                     disabled={selectedIdx >= workItems.length - 1}
                     whileTap={selectedIdx < workItems.length - 1 ? { scale: 0.9 } : {}}
                     style={{
-                      flex: 1, height: "28px",
-                      borderRadius: "6px", border: "1px solid var(--border)",
+                      flex: 1, height: "36px",
+                      borderRadius: "8px", border: "1px solid var(--border)",
                       background: "var(--surface)", color: "var(--text)",
-                      fontFamily: "var(--font-mono)", fontSize: "8px",
-                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 510,
+                      letterSpacing: "-0.01em",
                       cursor: selectedIdx < workItems.length - 1 ? "pointer" : "default",
                       opacity: selectedIdx < workItems.length - 1 ? 1 : 0.3,
                       transition: "opacity 0.15s",
@@ -1128,23 +1366,19 @@ function CareerPanel() {
   return (
     <div>
       <PanelHeader label="Career" />
-      <div style={{ padding: "12px 0 32px 0" }}>
+      <div style={{ padding: "16px 0 32px 0" }}>
 
-        {/* Column headers — anchored with bottom border */}
-        <div style={{ display: "flex", marginBottom: "0" }}>
+        {/* Column headers — single continuous bottom border spans the full panel
+            width (year axis + Work + Other) so the line aligns with where the
+            year text begins on the left. */}
+        <div style={{ display: "flex", borderBottom: "1px solid var(--border)", paddingBottom: "10px" }}>
           <div style={{ width: "52px", flexShrink: 0 }} />
           <div style={{ flex: 1, display: "flex" }}>
-            <div style={{
-              flex: 1, paddingLeft: "24px", paddingBottom: "10px",
-              borderBottom: "1px solid var(--border)",
-            }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>Work</span>
+            <div style={{ flex: 1, paddingLeft: "24px" }}>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 510, letterSpacing: "-0.01em", color: "var(--muted)" }}>Work</span>
             </div>
-            <div style={{
-              width: "42%", paddingLeft: "8px", paddingBottom: "10px",
-              borderBottom: "1px solid var(--border)",
-            }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>Education</span>
+            <div style={{ width: "42%", paddingLeft: "8px" }}>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 510, letterSpacing: "-0.01em", color: "var(--muted)" }}>Other</span>
             </div>
           </div>
         </div>
@@ -1158,8 +1392,8 @@ function CareerPanel() {
                 width: "100%", textAlign: "right", paddingRight: "10px",
               }}>
                 <span style={{
-                  fontFamily: "var(--font-mono)", fontSize: "9px",
-                  letterSpacing: "0.06em",
+                  fontFamily: "var(--font-body)", fontSize: "11px",
+                  letterSpacing: "-0.01em",
                   color: isYearActive(yr) ? "var(--text)" : yr === 2026 ? "var(--text)" : "var(--muted)",
                   fontWeight: 400,
                   opacity: isYearActive(yr) ? 1 : yr === 2026 ? 1 : 0.55,
@@ -1206,12 +1440,12 @@ function CareerPanel() {
             }}>
               <div className="today-dot" style={{
                 width: "9px", height: "9px", borderRadius: "50%",
-                background: "#ef4444", flexShrink: 0,
+                background: "var(--accent-error)", flexShrink: 0,
               }} />
               <span style={{
-                fontFamily: "var(--font-mono)", fontSize: "8px",
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                color: "#ef4444", opacity: 0.75,
+                fontFamily: "var(--font-body)", fontSize: "11px",
+                fontWeight: 510, letterSpacing: "-0.01em",
+                color: "var(--accent-error)", opacity: 0.75,
               }}>Now</span>
             </div>
 
@@ -1285,9 +1519,9 @@ function TestimonialsPanel() {
               viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}
               style={{
-                borderRadius: "12px",
+                borderRadius: "16px",
                 background: "var(--surface)",
-                border: "1px solid var(--border)",
+                boxShadow: "var(--card-shadow)",
                 padding: "20px",
               }}
             >
@@ -1311,18 +1545,46 @@ function TestimonialsPanel() {
 
               {/* Author — no border, spacing does the separation */}
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{
-                  width: "32px", height: "32px", borderRadius: "50%",
-                  background: "var(--surface2)",
-                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                }}>
-                  <span style={{
-                    fontFamily: "var(--font-mono)", fontSize: "8px",
-                    fontWeight: 400, color: "var(--muted)", letterSpacing: "0.08em",
-                  }}>
-                    {t.initials}
-                  </span>
-                </div>
+                {t.image ? (
+                  <img
+                    src={t.image}
+                    alt={t.name}
+                    loading="lazy"
+                    decoding="async"
+                    style={{
+                      width: "40px", height: "40px", borderRadius: "50%",
+                      objectFit: "cover", flexShrink: 0,
+                      boxShadow: "inset 0 0 0 1px color-mix(in srgb, var(--text) 8%, transparent)",
+                    }}
+                  />
+                ) : (() => {
+                  const hue = hueFromInitials(t.initials);
+                  const tint = `hsl(${hue}, 55%, 55%)`;
+                  return (
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        width: "40px", height: "40px", borderRadius: "50%",
+                        // Soft hue-tinted gradient — color-mix blends with theme surface tones,
+                        // so this stays subtle in both light and dark mode.
+                        background: `linear-gradient(135deg,
+                          color-mix(in srgb, ${tint} 16%, var(--surface2)),
+                          color-mix(in srgb, ${tint} 6%, var(--surface)))`,
+                        boxShadow: "inset 0 0 0 1px color-mix(in srgb, var(--text) 6%, transparent)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <span style={{
+                        fontFamily: "var(--font-body)", fontSize: "13px",
+                        fontWeight: 590, letterSpacing: "-0.01em",
+                        color: `color-mix(in srgb, ${tint} 65%, var(--text))`,
+                      }}>
+                        {t.initials}
+                      </span>
+                    </div>
+                  );
+                })()}
                 <div>
                   <p style={{
                     fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
@@ -1331,8 +1593,8 @@ function TestimonialsPanel() {
                     {t.name}
                   </p>
                   <p style={{
-                    fontFamily: "var(--font-mono)", fontSize: "8px", fontWeight: 400,
-                    letterSpacing: "0.08em", textTransform: "uppercase",
+                    fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 400,
+                    letterSpacing: "-0.01em",
                     color: "var(--muted)", marginTop: "3px", lineHeight: 1.3,
                   }}>
                     {t.role} · {t.company}
@@ -1369,6 +1631,7 @@ const aiExplorations = [
     tags: ["Claude Code", "Next.js"],
     body: "Designed and shipped entirely using Claude Code. No separate dev handoff — I wrote the brief, Claude wrote the code, I directed the output. Proof that a designer with the right tools can own the full stack.",
     status: "Shipped",
+    href: "/ai",
   },
   {
     number: "04",
@@ -1387,150 +1650,369 @@ const aiExplorations = [
 ];
 
 const statusColors: Record<string, string> = {
-  "In use":   "#16a34a",
+  "In use":   "var(--accent-success)",
   "Ongoing":  "#2563eb",
   "Shipped":  "#7c3aed",
   "Prototype":"#d97706",
 };
 
-function AIExplorationsPanel() {
-  return (
-    <div>
-      <PanelHeader label="AI Explorations" />
-      <div style={{ padding: "16px 24px 48px" }}>
+function ContactPanel() {
+  const [copied, setCopied] = useState(false);
 
+  const copyEmail = () => {
+    navigator.clipboard.writeText("akgaddam02@gmail.com");
+    haptic([10, 40, 10]); // double-tap success pattern
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <PanelHeader label="Contact" />
+      <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
+
+        {/* Headline */}
+        <motion.h2
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "24px",
+            fontWeight: 400,
+            letterSpacing: "-0.012em",
+            lineHeight: 1.2,
+            color: "var(--text)",
+            marginBottom: "10px",
+          }}
+        >
+          Let&apos;s create stories together
+        </motion.h2>
+
+        {/* Subtext */}
         <motion.p
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: EASE }}
-          style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)", marginBottom: "24px", fontWeight: 400 }}
+          transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}
+          style={{
+            fontFamily: "var(--font-body)", fontSize: "12px",
+            lineHeight: 1.65, letterSpacing: "-0.01em",
+            color: "var(--muted)", fontWeight: 400,
+            marginBottom: "20px",
+          }}
         >
-          Side experiments at the intersection of AI and design practice. Some are workflows, some are tools, some are just curiosity.
+          Open to senior IC and lead roles, consulting engagements, and conversations about design, AI-assisted workflows, or vibe coding.
         </motion.p>
 
-        <div style={{ borderTop: "1px solid var(--border)" }}>
-          {aiExplorations.map((item, i) => (
+        {/* CTAs — always visible */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: EASE, delay: 0.16 }}
+          style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "0" }}
+        >
+          <button
+            onClick={copyEmail}
+            aria-label={copied ? "Email copied" : "Copy email address"}
+            style={{
+              fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+              letterSpacing: "-0.01em",
+              color: copied ? "var(--accent-success)" : "var(--muted)",
+              padding: "8px 14px",
+              borderRadius: "8px",
+              border: "1px solid var(--border)",
+              background: "transparent",
+              cursor: "pointer",
+              display: "inline-flex", alignItems: "center", gap: "5px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s",
+            }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; } }}
+          >
+            {copied ? "Copied ✓" : "Copy email"}
+          </button>
+
+          <Link
+            href="https://www.linkedin.com/in/akgaddam/"
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+              letterSpacing: "-0.01em",
+              color: "var(--muted)",
+              padding: "8px 14px",
+              borderRadius: "8px",
+              border: "1px solid var(--border)",
+              background: "transparent",
+              display: "inline-flex", alignItems: "center", gap: "5px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
+          >
+            <span style={{ fontSize: "11px" }}>↗</span>
+            LinkedIn
+          </Link>
+        </motion.div>
+
+        {/* Skills ticker — first element of the bottom group. marginTop: auto
+            absorbs all the vertical slack above so this + location + footer
+            sit anchored to the panel's base. */}
+        {(() => {
+          const skills = [
+            "Figma", "UX Design", "UX Strategy", "UX Research",
+            "Design Systems", "Prototyping", "Service Design",
+            "Usability Testing", "Contextual Inquiry", "Service Blueprints",
+            "AI UX Design", "Agentic AI", "Claude Code", "Vibe Coding",
+            "Dovetail", "Framer", "Jobs-to-be-Done",
+            "Information Architecture", "Interaction Design",
+            "Cursor", "Next.js",
+          ];
+          const ticker = [...skills, ...skills];
+          return (
             <motion.div
-              key={item.number}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}
-              style={{
-                padding: "20px 0",
-                borderBottom: "1px solid var(--border)",
-                transition: "opacity 0.2s cubic-bezier(0.22,1,0.36,1)",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.opacity = "0.6";
-                const label = e.currentTarget.querySelector<HTMLElement>("[data-label]");
-                if (label) label.style.color = "var(--text)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.opacity = "1";
-                const label = e.currentTarget.querySelector<HTMLElement>("[data-label]");
-                if (label) label.style.color = "var(--muted)";
-              }}
+              className="skills-ticker"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, ease: EASE, delay: 0.18 }}
+              style={{ marginTop: "auto", marginBottom: "16px", overflow: "hidden", position: "relative" }}
             >
-              {/* Number + status */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-                <span data-label="true" style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", transition: "color 0.2s cubic-bezier(0.22,1,0.36,1)" }}>
-                  {item.number}
-                </span>
-                <span style={{
-                  fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em",
-                  padding: "3px 8px", borderRadius: "4px",
-                  background: statusColors[item.status] + "18",
-                  color: statusColors[item.status],
-                  textTransform: "uppercase",
-                }}>
-                  {item.status}
-                </span>
-              </div>
-
-              {/* Title */}
-              <h3 style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 400, color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "8px" }}>
-                {item.title}
-              </h3>
-
-              {/* Tags */}
-              <div style={{ display: "flex", gap: "6px", marginBottom: "10px", flexWrap: "wrap" }}>
-                {item.tags.map(tag => (
-                  <span key={tag} style={{
-                    fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em",
-                    padding: "2px 7px", background: "var(--surface2)",
-                    color: "var(--muted)", borderRadius: "4px", textTransform: "uppercase",
-                  }}>
-                    {tag}
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px", fontWeight: 400 }}>
+                Skills &amp; Tools
+              </p>
+              <div style={{ position: "absolute", left: 0, top: "24px", bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+              <div style={{ position: "absolute", right: 0, top: "24px", bottom: 0, width: "32px", background: "linear-gradient(to left, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+              <div
+                className="marquee-track"
+                style={{
+                  // CSS variable consumed by .marquee-track in globals.css —
+                  // overrides the default 40s duration for this instance.
+                  ["--marquee-duration" as string]: "28s",
+                  display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
+                }}
+              >
+                {ticker.map((skill, i) => (
+                  <span key={`${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                    <span style={{
+                      fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                      letterSpacing: "-0.01em", color: "var(--muted2)",
+                      padding: "4px 10px",
+                      border: "1px solid var(--border)",
+                      borderRadius: "9999px",
+                      background: "var(--surface)",
+                      marginRight: "6px",
+                      whiteSpace: "nowrap",
+                    }}>
+                      {skill}
+                    </span>
                   </span>
                 ))}
               </div>
-
-              {/* Body */}
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", fontWeight: 400 }}>
-                {item.body}
-              </p>
             </motion.div>
-          ))}
-        </div>
+          );
+        })()}
 
-        {/* Contact CTA */}
-        <div style={{ marginTop: "32px" }}>
-          <motion.h2
-            initial={{ opacity: 0, y: 6 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, ease: EASE }}
-            style={{ fontFamily: "var(--font-body)", fontSize: "20px", fontWeight: 400, letterSpacing: "-0.025em", lineHeight: 1.25, color: "var(--text)", marginBottom: "8px" }}
-          >
-            Have a hard problem?
-          </motion.h2>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)", marginBottom: "20px", fontWeight: 400 }}>
-            I&apos;m always interested in complex design challenges at the intersection of product, data, and AI.
-          </p>
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-            <a
-              href="mailto:akgaddam02@gmail.com"
-              className="btn-primary"
-              style={{ fontSize: "13px", padding: "10px 20px", borderRadius: "7px" }}
-            >
-              Say hello →
-            </a>
-            <Link
-              href="https://linkedin.com/in/akgaddam"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary"
-              style={{ fontSize: "13px", padding: "10px 20px", borderRadius: "7px" }}
-            >
-              LinkedIn ↗
-            </Link>
+        {/* Location card */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: EASE, delay: 0.2 }}
+          style={{
+            borderRadius: "12px",
+            overflow: "hidden",
+            boxShadow: "var(--card-shadow)",
+          }}
+        >
+          {/* Map area — MapLibre GL */}
+          <div style={{ position: "relative", overflow: "hidden" }}>
+            <MapLibreMap height={190} />
           </div>
-        </div>
+          <div style={{ padding: "8px 12px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "var(--muted)", flexShrink: 0 }}>
+                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)" }}>Hyderabad, India</span>
+            </div>
+            <ISTClock style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.05em", color: "var(--muted)", textTransform: "uppercase" }} />
+          </div>
+        </motion.div>
 
         {/* Footer */}
-        <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "1px solid var(--border)" }}>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--muted)", lineHeight: 1.3 }}>
-            © 2026 · Arun Gaddam · Hyderabad, India
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, ease: EASE, delay: 0.25 }}
+          style={{ paddingTop: "16px", borderTop: "1px solid var(--border)", marginTop: "20px" }}
+        >
+          <p style={{
+            fontFamily: "var(--font-body)", fontSize: "11px",
+            fontWeight: 400, letterSpacing: "-0.01em",
+            color: "var(--muted)", lineHeight: 1.3,
+            marginBottom: "4px",
+          }}>
+            © 2026 · Arun Gaddam ツ
           </p>
-        </div>
+          <p style={{
+            fontFamily: "var(--font-body)", fontSize: "11px",
+            fontWeight: 400, letterSpacing: "-0.01em",
+            color: "var(--muted)", lineHeight: 1.3,
+            opacity: 0.6,
+          }}>
+            Designed with <svg width="11" height="11" viewBox="0 0 24 24" style={{ display: "inline", verticalAlign: "middle", marginBottom: "1px" }} fill="var(--muted)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> using Claude Code
+          </p>
+        </motion.div>
+
       </div>
     </div>
   );
 }
 
 /* ── Panel shadow helpers ── */
+/* ── AI Explorations panel ── */
+function ExplorationItem({ item }: { item: (typeof aiExplorations)[0] }) {
+  return (
+    <div style={{
+      padding: "12px 14px",
+      background: "var(--surface)",
+      borderRadius: "12px",
+      boxShadow: "var(--card-shadow)",
+    }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px", marginBottom: "6px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted2)", letterSpacing: "0.04em" }}>{item.number}</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 590, letterSpacing: "-0.01em", color: "var(--text)" }}>{item.title}</span>
+        </div>
+        <span style={{
+          flexShrink: 0,
+          fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.04em", textTransform: "uppercase",
+          padding: "2px 7px", borderRadius: "6px",
+          color: statusColors[item.status] ?? "var(--muted)",
+          background: `color-mix(in srgb, ${statusColors[item.status] ?? "var(--muted)"} 12%, transparent)`,
+        }}>
+          {item.status}
+        </span>
+      </div>
+      <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginBottom: "6px" }}>
+        {item.tags.map(tag => (
+          <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.04em", textTransform: "uppercase", padding: "2px 6px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "6px" }}>
+            {tag}
+          </span>
+        ))}
+      </div>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, color: "var(--muted)", margin: 0 }}>{item.body}</p>
+    </div>
+  );
+}
+
+function AiExplorationsPanel() {
+  const astra = caseStudies.find(cs => cs.slug === "astra");
+  return (
+    <div>
+      <PanelHeader label="AI Explorations" />
+      <div style={{ padding: "16px 24px 32px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+
+          {/* Featured: AI Contract Review — live React prototype built with Claude */}
+          {astra && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -2 }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ opacity: { duration: 0.5, ease: EASE }, y: { type: "spring", stiffness: 320, damping: 28 } }}
+            >
+              <Link href={`/work/${astra.slug}`}>
+                <div
+                  className="work-card"
+                  style={{
+                    background: "var(--surface)", borderRadius: "16px", overflow: "hidden",
+                    boxShadow: "var(--card-shadow)",
+                    transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+                >
+                  <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                    {WORK_THUMBS[astra.slug] ? (
+                      <img
+                        className="work-thumb"
+                        src={WORK_THUMBS[astra.slug]}
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                        style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block", borderRadius: "8px 8px 0 0" }}
+                      />
+                    ) : (
+                      <MeshThumbnail index={0} type={astra.type} confidential={astra.confidential} />
+                    )}
+                  </div>
+                  <div style={{ padding: "12px 16px 16px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "8px" }}>
+                        Live Prototype
+                      </span>
+                      {astra.tags.slice(0, 2).map(tag => (
+                        <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "8px" }}>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 590, lineHeight: 1.3, letterSpacing: "-0.012em", color: "var(--text)", marginBottom: "4px" }}>
+                      {astra.title}
+                    </h3>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, lineHeight: 1.4, letterSpacing: "-0.01em", color: "var(--muted)" }}>
+                      {astra.subtitle}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          )}
+
+          {/* Portfolio Design Language — meta artifact */}
+          <SystemFeatureCard />
+
+          {/* Text-based explorations */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            {aiExplorations.map((item, i) => (
+              <motion.div
+                key={item.number}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10px" }}
+                transition={{ opacity: { duration: 0.4, ease: EASE, delay: i * 0.05 }, y: { type: "spring", stiffness: 320, damping: 28 } }}
+              >
+                {"href" in item && item.href ? (
+                  <Link href={item.href as string}><ExplorationItem item={item} /></Link>
+                ) : (
+                  <ExplorationItem item={item} />
+                )}
+              </motion.div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const PANEL_SHADOW_LIGHT = "0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06)";
 const PANEL_SHADOW_ACTIVE_LIGHT = "0 2px 4px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.10)";
-const PANEL_SHADOW_DARK  = "0 0 0 1px rgba(255,255,255,0.06), 0 6px 24px rgba(0,0,0,0.5)";
-const PANEL_SHADOW_ACTIVE_DARK = "0 0 0 1px rgba(255,255,255,0.09), 0 12px 40px rgba(0,0,0,0.7)";
+/* Dark panels sit on #050507 canvas — drop shadows are invisible on near-black.
+   A white hairline ring defines the panel edge; the surface step (#1c1c1e panel
+   vs #050507 canvas) provides the perceived lift. */
+const PANEL_SHADOW_DARK  = "0 0 0 1px rgba(255,255,255,0.06), 0 2px 8px rgba(0,0,0,0.5), 0 8px 32px rgba(0,0,0,0.4)";
+const PANEL_SHADOW_ACTIVE_DARK = "0 0 0 1px rgba(255,255,255,0.09), 0 4px 12px rgba(0,0,0,0.6), 0 16px 48px rgba(0,0,0,0.5)";
 
 const PANEL_CONFIGS = [
   { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
   { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
+  { label: "AI",             width: "440px", minWidth: "380px", Component: AiExplorationsPanel },
   { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
   { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
-  { label: "AI Explorations",width: "420px", minWidth: "380px", Component: AIExplorationsPanel },
+  { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },
 ];
 
 /* ── Home ── */
@@ -1550,11 +2032,27 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const t = setTimeout(() => {
+    // Honest timer: loader exits when fonts have actually loaded AND the
+    // typewriter reveal animation has had time to play. Hard-capped at
+    // SAFETY_CAP so a hung font request can't trap the user on the loader.
+    const ANIMATION_MIN = 1300; // typewriter + transform + role-fade total
+    const SAFETY_CAP    = 1500;
+
+    let resolved = false;
+    const finish = () => {
+      if (resolved) return;
+      resolved = true;
       setLoading(false);
-      setTimeout(() => setRevealed(true), 80); // slight delay so panels animate after loader exits
-    }, 1300);
-    return () => clearTimeout(t);
+      setTimeout(() => setRevealed(true), 60); // slight delay so panels animate after loader exits
+    };
+
+    const fontsReady = document.fonts?.ready ?? Promise.resolve();
+    const minTime    = new Promise<void>(r => setTimeout(r, ANIMATION_MIN));
+
+    const cap = setTimeout(finish, SAFETY_CAP);
+    Promise.all([fontsReady, minTime]).then(finish);
+
+    return () => clearTimeout(cap);
   }, []);
 
   const scrollByPanel = useCallback((dir: 1 | -1) => {
@@ -1612,7 +2110,6 @@ export default function Home() {
   return (
     <>
       <LoadingScreen visible={loading} />
-      <Cursor />
       <HomeNav onPrev={() => scrollByPanel(-1)} onNext={() => scrollByPanel(1)} activePanel={activePanel} />
 
       {/* Right-edge fade — hides on last panel */}
@@ -1621,20 +2118,20 @@ export default function Home() {
         animate={{ opacity: isLastPanel ? 0 : 1 }}
         transition={{ duration: 0.3, ease: EASE }}
         style={{
-          position: "fixed", top: "52px", right: 0,
-          width: "80px", height: "calc(100vh - 52px)",
+          position: "fixed", top: "64px", right: 0,
+          width: "80px", height: "calc(100dvh - 64px)",
           background: "linear-gradient(to right, transparent, var(--chrome))",
           pointerEvents: "none", zIndex: 100,
         }}
       />
 
-      <main className="home-main" style={{ paddingTop: "52px", height: "100vh", overflow: "hidden", background: "var(--chrome)" }}>
+      <main id="main-content" className="home-main" style={{ paddingTop: "64px", height: "100dvh", overflow: "hidden", background: "var(--chrome)" }}>
         <div
           ref={containerRef}
           className="panels-container"
           style={{
             display: "flex",
-            height: "calc(100vh - 52px)",
+            height: "calc(100dvh - 64px)",
             overflowX: "auto",
             overflowY: "hidden",
             gap: "8px",
@@ -1653,9 +2150,11 @@ export default function Home() {
               <motion.div
                 key={i}
                 className="panel"
-                initial={{ opacity: 0, y: 16 }}
-                animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-                transition={{ duration: 0.55, ease: EASE, delay: i * 0.07 }}
+                initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+                animate={revealed
+                  ? { opacity: 1, y: 0,  filter: "blur(0px)" }
+                  : { opacity: 0, y: 20, filter: "blur(6px)" }}
+                transition={{ duration: 0.7, ease: EASE, delay: i * 0.12 }}
                 style={{
                   minWidth,
                   width,

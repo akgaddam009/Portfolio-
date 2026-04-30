@@ -2,7 +2,6 @@
 
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import Cursor from "@/components/Cursor";
 import ContactCTA from "@/components/ContactCTA";
 import PageTransition from "@/components/PageTransition";
 import Link from "next/link";
@@ -97,9 +96,8 @@ function SectionLabel({ children }: { children: string }) {
 export default function AboutPage() {
   return (
     <>
-      <Cursor />
       <Nav />
-      <main style={{ paddingTop: "52px" }}>
+      <main style={{ paddingTop: "64px" }}>
       <PageTransition>
 
         {/* Intro */}

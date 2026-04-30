@@ -35,7 +35,7 @@ export default function Awards() {
             gap: "20px",
             padding: "20px 24px",
             background: "var(--surface)",
-            borderRadius: "10px",
+            borderRadius: "14px",
           }}
         >
           {/* Badge */}
@@ -71,7 +71,7 @@ export default function Awards() {
                 <span key={m} style={{
                   fontFamily: "var(--font-mono)", fontSize: "10px",
                   color: "var(--muted2)", letterSpacing: "0.04em",
-                  padding: "4px 10px", background: "var(--surface2)", borderRadius: "4px",
+                  padding: "4px 10px", background: "var(--surface2)", borderRadius: "6px",
                 }}>
                   {m}
                 </span>

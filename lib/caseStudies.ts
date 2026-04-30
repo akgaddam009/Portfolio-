@@ -21,13 +21,14 @@ export type CaseStudy = {
   title: string;
   subtitle: string;
   company?: string;
-  type: string;
+  type?: string;
   role: string;
   timeline?: string;
   team?: string;
   tags: string[];
   summary: string;
-  metrics: { value: string; label: string }[];
+  tldr?: { problem: string; approach: string; outcome: string };
+  metrics?: { value: string; label: string }[];
   context?: string;
   contextImage?: CaseStudyImage;
   problem: string;
@@ -35,9 +36,21 @@ export type CaseStudy = {
   problemImage?: CaseStudyImage;
   insight?: string;
   insightImage?: CaseStudyImage;
-  decisions: { title: string; body: string; image?: CaseStudyImage; images?: CaseStudyImage[] }[];
+  decisions: { title: string; body: string; image?: CaseStudyImage; images?: CaseStudyImage[]; imageStack?: boolean; persona?: { name: string; role: string; goal: string; pain: string; quote: string } }[];
   taskFlow?: { heading?: string; stages: TaskFlowStage[] };
   prototypeVideo?: string;
+  /** One or more interactive prototypes embedded as iframes. Each block
+      renders inline in the Prototype section, with its label as a sub-heading.
+      `screens` is an optional jump-navigation: a tab strip the visitor can
+      use to scrub directly to a specific screen via postMessage to the iframe.
+      The target page must listen for `{ type: 'astra-nav', screen, role? }`
+      messages — see /app/astra/p1/page.tsx for the reference implementation. */
+  prototypeIframes?: {
+    label: string;
+    src: string;
+    height?: string;
+    screens?: { label: string; screen: string; role?: "procurement" | "legal" }[];
+  }[];
   outcomesImage?: CaseStudyImage;
   outcomesImages?: CaseStudyImage[];
   outcomes: string[];
@@ -50,11 +63,85 @@ export type CaseStudy = {
   lesson?: string;
   contribution?: string;
   contributionArtifacts?: string[];
+  references?: { label: string; url: string }[];
   confidential?: boolean;
   heroLabel: string;
 };
 
 export const caseStudies: CaseStudy[] = [
+  {
+    slug: "astra",
+    number: "00",
+    title: "AI Contract Review & Approval Workflow",
+    subtitle: "What does 85–90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
+    company: "Speculative · Built with Claude",
+    type: "AI · B2B SaaS · Speculative",
+    role: "Solo · designer who codes",
+    timeline: "2026 · Weekend build",
+    team: "Solo (designer + Claude Code)",
+    tags: ["AI UX", "B2B SaaS", "Speculative", "Built with Claude", "Contract Intelligence", "Designer Who Codes"],
+    heroLabel: "AI Exploration",
+    confidential: false,
+
+    summary:
+      "==When an AI is right 85–90% of the time, what does the remaining 10–15% look like in the interface?== Two flows, built in a weekend with Claude Code — working through that answer.",
+
+    context:
+      "B2B contract intelligence: AI extracts 30–40 fields from a vendor contract, a human reviews and corrects, approval routes through a configured workflow. The design problem isn't the upload or the dashboard — it's the seam between what the model extracted and what the reviewer actually trusts.",
+
+
+    tldr: {
+      problem:  "At 85–90% accuracy, every extracted field is either trusted, flagged, or missing. The interface has to make sweeping those decisions fast — without the reviewer re-reading a 40-page contract.",
+      approach: "Two flows, designed as a system. Contract intake as a role-based handoff — procurement resolves, legal approves — and workflow configuration as a plain-language builder. Neither works without the other.",
+      outcome:  "Live interactive prototype — click through both flows above. Three-state field resolution, role switching, and a workflow builder that compiles every rule into a sentence a human can actually read.",
+    },
+
+    problem:
+      "Most AI products treat model uncertainty as a footnote — a confidence percentage tucked into a tooltip the reviewer never opens. ==That's not a UX solution. It's a UX abdication.==\n\nAt 85–90% accuracy, every extracted field is a micro-decision: trust it, flag it, or fix it. That decision needs to be cheap, visible, and impossible to accidentally skip. Designing that interaction — and the routing layer that governs what happens after — is the actual product.",
+
+    insight:
+      "==This isn't a screen for reviewing AI output. It's the moment a contract enters the company.== Procurement and legal read the same document with different jobs. One shared review surface buries that handoff under an output list.",
+
+    decisions: [
+      {
+        title: "Two roles, two tracks — same contract, different emphasis",
+        body:
+          "Procurement resolves factual gaps; legal scrutinizes indemnity, SLAs, and liability terms. A shared screen forces each role to scroll past noise they don't own. The flow separates them: procurement clears the unresolved queue and hands off — legal sees only what matters to them, in the order it matters.",
+      },
+      {
+        title: "Three explicit field states — not a confidence score",
+        body:
+          "Confident, needs review, missing — every extracted field carries one. The reviewer sweeps unresolved fields first. The title bar shows a live count. Approval is gated on zero remaining. ==The queue is the work, not the document.==",
+      },
+      {
+        title: "Every workflow rule compiles to a sentence a human can read",
+        body:
+          "An admin building 10–15 approval paths shouldn't have to parse condition logic in their head. At every step of the builder, the configured rule renders as plain English: 'Software contracts under $50K go to direct manager only.' That sentence is the verification surface during build — and the artifact they scan on the landing page a month later.",
+      },
+    ],
+
+    // Live React routes — fully interactive, role-switched, mock-data-driven.
+    prototypeIframes: [
+      { label: "Flow 1 — AI Contract Review (procurement + legal)", src: "/astra/p1", height: "820px" },
+      { label: "Flow 2 — Approval Workflow Configuration (admin)",  src: "/astra/p2", height: "820px" },
+    ],
+
+    approach:
+      "==6–8 hours, problem to live React prototype, with Claude Code.==\n\nClaude was the thought partner throughout — not just for code. Structuring the problem space, pressure-testing interaction hypotheses, iterating wireframes fast enough to throw most of them away. The role-based handoff insight didn't come from a brief; it surfaced asking whose attention an unresolved indemnity clause actually needs.\n\nThe wireframes were the exploration. The React build is the artifact — both flows are above.",
+
+    outcomes: [
+      "AI uncertainty as first-class UX: three field states that make the model's gaps actionable, not invisible",
+      "The real insight wasn't in the problem statement — procurement and legal read the same contract differently. The interface separates them because the work does",
+      "Claude as design collaborator, not code generator — from problem framing to wireframes to shipped prototype, in a weekend",
+      "Two flows as a system beat two polished screens built in isolation. The coupling between intake and routing is the product thinking",
+    ],
+
+    lesson:
+      "AI UX isn't about making the model look smarter. It's about making the human's correction work feel effortless. ==The interface that earns trust makes uncertainty visible, actionable, and impossible to skip.==",
+
+    reflection:
+      "The role-based handoff is a hypothesis, not a finding. The real question — do procurement and legal want separate surfaces or a shared negotiation space — needs users, not wireframes. Speculative work earns its keep by making the bet explicit enough to disprove.",
+  },
   {
     slug: "planful-esm",
     number: "01",
@@ -67,6 +154,7 @@ export const caseStudies: CaseStudy[] = [
     team: "PM, Engineering, Finance SMEs",
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design", "Trust Design"],
     heroLabel: "Real Work",
+    confidential: true,
     context:
       "Planful is a financial planning and analysis platform. Companies use it to build and manage the financial models that drive budgets, forecasts, and headcount plans. As business needs change, the data inside those models has to change too. Rather than editing the core financial model directly, teams load updated data through an External Source Model: a controlled workspace that feeds into it without touching what is already there.",
     summary:
@@ -87,11 +175,6 @@ export const caseStudies: CaseStudy[] = [
       ],
       impact:
         "This created a bottleneck where only a few finance power users could confidently build or update models, slowing decision-making across departments.",
-    },
-    problemImage: {
-      src: "/images/planful/data-model-comparison.png",
-      alt: "Excel Spotlight, the legacy tool it replaced",
-      caption: "Excel Spotlight, the tool teams were using before",
     },
     insight:
       "The tool wasn't the bottleneck. The workflow was. Every stage of updating a financial model required a human to make a judgement the system could have made instead. Is this valid? Is this the right version? Did this reach the right place? The design opportunity was to answer those questions before the user had to ask them.",
@@ -232,6 +315,134 @@ export const caseStudies: CaseStudy[] = [
     lesson:
       "The real challenge wasn't moving features. It was translating decades of spreadsheet habits into a clean, intuitive web experience. This project taught me that enterprise UX is about balance: giving experts power, while making complex systems approachable for everyone.",
   },
+  {
+    slug: "reputation-listings",
+    number: "05",
+    title: "Listings Analytics Across Google, Apple, Facebook and Bing",
+    subtitle: "Adding Apple to a dashboard already running Google, Facebook, and Bing. Easy on paper. Not in practice.",
+    company: "Reputation.com",
+    type: "Enterprise SaaS · Analytics & Insights",
+    role: "Senior UX Designer",
+    timeline: "2024",
+    team: "Cross-functional team of 9 · External: Apple Inc.",
+    tags: ["Enterprise SaaS", "Analytics", "Data Visualisation", "Dashboard Design"],
+    heroLabel: "Real Work",
+    confidential: true,
+
+    summary:
+      "Businesses with listings across online platforms want to track their performance in one place. ==This project added Apple to that mix.==",
+
+    context:
+      "A hospital network or a car dealership chain manages hundreds of locations. Every one of those locations has a listing on Google, Apple Maps, Facebook, and Bing. When a customer searches nearby, whether they call, get directions, or visit the website depends on whether that listing is accurate and visible. The Listings Performance dashboard is how users track whether any of that is working. Google, Facebook, and Bing data was already there. Apple wasn't.",
+
+    contextImage: {
+      src: "/images/reputation/Thumbnail .png",
+      alt: "Listings Performance dashboard",
+    },
+
+    problem:
+      "Apple Maps wasn't in the dashboard at all. The widgets for the existing platforms were inconsistent: each one tracked different actions, so the same metric meant slightly different things depending on the source. ==The real problem wasn't missing data. Each platform has its own definition of what a customer action is.== You can't just add a new source to a dashboard like this. You have to decide what the page is actually saying.",
+
+    insight:
+      "==The dashboard's most important feature was never the interactivity. It was the screenshot.== Marketing managers don't demo this to leadership. They paste it into a slide. The principle that emerged: static has to carry the full value. Interaction can add, but never replace.",
+
+    decisions: [
+      {
+        title: "Data inventory with the PM before touching any layout",
+        body:
+          "Before drawing a single widget, the PM and I built a complete data inventory: every action type each platform tracked, whether it was exclusive or shared, and whether data existed to power it. ==Three actions appeared across all four platforms: calls, directions, website. Beyond that, divergence.== Apple tracked eight unique action types. Google split Maps and Search. Bing had its own taxonomy. This prevented designing widgets with no data behind them and made clear why tabs would never work.",
+        image: {
+          src: "/images/reputation/Data points .png",
+          alt: "Spreadsheet mapping action types across Google, Apple, and Bing: three shared action types highlighted, platform-exclusive actions listed below",
+          caption: "Three shared actions across all platforms. Everything else diverged.",
+        },
+      },
+      {
+        title: "Tabs per platform: rejected",
+        body:
+          "Cleanest direction: a tab per source. Tidy and scalable. Killed because a marketing manager comparing Google search volume to Apple Maps growth would have to hold one tab's numbers in their head while reading another. That's not analysis. That's cognitive overhead.",
+        image: {
+          src: "/images/reputation/multi tab exploration.png",
+          alt: "Rejected tab-based architecture with All, Google, Apple, and Bing tabs",
+          caption: "Tabbed exploration: clean, but each platform's data lived in isolation",
+        },
+      },
+      {
+        title: "Cross-platform treemap: rejected",
+        body:
+          "An interactive treemap sized by action volume, with drill-through to source-level detail. It looked good. It was useless in a screenshot. Extracting value required interaction. Dev complexity was high. Both arguments pointed the same way.",
+        image: {
+          src: "/images/reputation/Interactive Treemap.png",
+          alt: "Rejected interactive treemap: source actions and drill-down exploration",
+        },
+      },
+      {
+        title: "Additional Actions: the final call",
+        body:
+          "A static section at the bottom of the page. No tabs, no interaction required, always visible. It shows the source-level breakdown of actions across every platform that has data. The full page reads: common metrics, then Google, then Discovery, then Additional Actions. Common metrics come first because they apply to every user. Source-level detail sits at the bottom because not every user uses every source. The sequence isn't decoration. It's the logic of who sees what and when.",
+        image: {
+          src: "/images/reputation/Additional Actions.png",
+          alt: "Additional Actions section: source-level breakdown of actions, always visible, no interaction required",
+        },
+      },
+      {
+        title: "Overview cards: brand colour removed",
+        body:
+          "The original overview card section leaned heavily on brand colour. It looked polished and on-brand. ==It made the data harder to read.== Colour was doing decoration instead of communication, drawing attention to the card rather than to the number inside it. My recommendation: strip the colour back. Neutral backgrounds, high-contrast values, consistent type scale. The core job of this section is to let a user land on the page and read the headline numbers at a glance. Brand colour wasn't helping with that.",
+        image: {
+          src: "/images/reputation/overview before:after .png",
+          alt: "Overview cards before and after: brand colour removed in favour of neutral, data-legible design",
+        },
+      },
+      {
+        title: "Drill-down on the donut: interaction as additive, not required",
+        body:
+          "The Actions donut shows total volume split by type: Calls, Directions, Website. That's the static view and it's complete on its own. Click any segment and it breaks down by source, Google versus Apple versus Facebook versus Bing, with a breadcrumb back. ==The static view tells the story. The interaction just goes deeper.== This is the opposite of the treemap, where you needed the interaction to get any value at all.",
+        image: {
+          src: "/images/reputation/Sunburst Chart Interaction.jpg",
+          alt: "Sunburst chart interaction: top-level Actions breakdown, click-through showing source-level distribution",
+          caption: "Click a segment, the chart shows source-level breakdown. The screenshot still works without it.",
+        },
+      },
+      {
+        title: "Honest about what Apple can't show",
+        body:
+          "After the pilot launch, we tested the data and noticed Apple metrics weren't moving for some users. The zeros looked like a bug. We reached out to the Apple team to find out why. ==The answer: Apple suppresses metrics below a privacy threshold and reports them as zero to protect individual customer privacy.== We added a notice at the top of the Apple section explaining this in plain language, with a specific action a user could take (try a longer date range), nothing alarming. The zeros don't mean the listing isn't working.",
+        image: {
+          src: "/images/reputation/Honest about what Apple can't show.jpg",
+          alt: "Apple data suppression notice on the Listings Performance dashboard",
+        },
+      },
+      {
+        title: "What shipped",
+        body:
+          "Same dashboard, redrawn. ==The data didn't change. The order did.== Before: Google-heavy, Apple absent, brand colour over readability. After: cross-platform parity, Apple Insights surfaced in context, suppression notice in plain language at the top, source-level breakdown in Additional Actions at the bottom.",
+        image: {
+          src: "/images/reputation/Before:After image .jpg",
+          alt: "Before and after of the Listings Performance dashboard, showing the redesigned page with Apple Insights, neutral overview cards, and the Additional Actions section",
+        },
+      },
+    ],
+
+    approach:
+      "The design work was fast. The coordination wasn't. Nine people across product, engineering, QA, marketing, and leadership, plus direct work with Apple on platform compliance. ==The decision process was iterative and incremental.== Each direction came out of a working session with the team, got tested against constraints, and either survived or was killed. Every structural decision had to hold up against that many people before it shipped. The one that never moved: the page has to work as a screenshot.",
+
+    outcomes: [
+      "Easier to use, easier to consume, more engaging. Users could land on the page and read the headline data at a glance, and the page held them longer than the version it replaced",
+      "Successful launch. The release hit its targets on the three signals we tracked: page visits, engagement with the Apple Insights widgets, and Apple delegation completions. Specific numbers confidential",
+    ],
+
+    lesson:
+      "One page. Eight design decisions. Forty-five days. What made it hard wasn't the design. It was navigating everything around it: what each platform's data actually means, which interactions are safe to depend on, how much dev time each decision costs, what users actually do with this page after they close it. ==The details nobody sees are what held it together.== Labels, tooltips, copy, the order things appear in. None of that shows up in a case study presentation. All of it is in the product.",
+
+    references: [
+      { label: "Reputation launches integration with Apple Business Connect (Reputation press room)", url: "https://reputation.com/press-room/reputation-launches-integration-with-apple-business-connect/" },
+      { label: "Three big customer benefits of Reputation's integration with Apple Business Connect", url: "https://reputation.com/resources/articles/reputation-integration-with-apple-business-connect" },
+      { label: "Reputation launches integration with Apple Business Connect (PR Newswire)", url: "https://www.prnewswire.com/news-releases/reputation-launches-integration-with-apple-business-connect-301720451.html" },
+      { label: "Introducing Apple Business Connect (Apple Newsroom)", url: "https://www.apple.com/newsroom/2023/01/introducing-apple-business-connect/" },
+    ],
+  },
+
   {
     slug: "fancode-ftux",
     number: "02",
@@ -382,214 +593,416 @@ export const caseStudies: CaseStudy[] = [
       "I'd involve the growth team earlier in the free trial design. We landed on 5 minutes without access to their conversion window data. That data would have shaped the decision from the start instead of being factored in after the fact.",
   },
   {
-    slug: "ai-decision",
+    slug: "zetwerk-dc",
     number: "03",
-    title: "AI Decision Companion",
-    subtitle: "Making AI trustworthy in high-stakes consumer decisions",
-    type: "B2C AI Tool — Consumer Decision Support",
-    role: "Lead Product Designer (0→1)",
-    tags: ["AI/ML", "B2C", "Trust Design", "Consumer"],
-    heroLabel: "B2C Hero",
-    summary:
-      "Consumers facing high-stakes decisions — financial, medical, career — were overwhelmed and paralyzed by existing tools that either oversimplified or overwhelmed. I designed a companion that made AI feel trustworthy, not authoritative.",
-    metrics: [
-      { value: "↑67%", label: "Decision completion rate" },
-      { value: "↓44%", label: "Decision reversal within 48h" },
-      { value: "4.8★", label: "Trust score (exit survey)" },
-    ],
-    problem:
-      "Consumers faced with high-stakes decisions (financial, medical, career) were overwhelmed by information and paralyzed by choice. Existing tools either oversimplified (single recommendation) or overwhelmed (100-page reports). The psychological burden of uncertainty was not addressed by any product on the market.",
-    insight:
-      "The line between helpful and paternalistic is extremely thin in consumer AI. When the AI speaks with too much confidence, users feel manipulated. When it speaks with too little, they feel abandoned. The design challenge was calibrating authority to match the emotional state of the user.",
-    decisions: [
-      {
-        title: "Perspective mode over single recommendations",
-        body: "Instead of one answer, the product showed multiple valid viewpoints — framed as 'perspectives from people who've faced this decision.' Users chose their own frame rather than accepting a prescribed one.",
-      },
-      {
-        title: "Confidence transparency",
-        body: "The AI explicitly stated what it didn't know. 'I don't have enough information about your risk tolerance to weigh in on this' was a feature, not a failure mode. It built trust by demonstrating intellectual honesty.",
-      },
-      {
-        title: "Emotional state detection",
-        body: "A lightweight emotional state detector (3 questions, not a survey) modulated information density. Users in high-anxiety states saw simplified views; users in research mode saw full depth.",
-      },
-      {
-        title: "Human escalation always visible",
-        body: "Every screen had a 'Talk to a human' path. Not buried. Not a last resort. A visible option that communicated: we know AI has limits. This reduced anxiety and paradoxically increased AI engagement.",
-      },
-    ],
-    outcomes: [
-      "Decision completion rate increased 67% vs. incumbent tool",
-      "Decision reversals within 48h dropped 44%",
-      "Trust score of 4.8★ in post-decision exit surveys",
-      "Selected as finalist for Fast Company Innovation by Design 2024",
-    ],
-    lesson:
-      "Trust in AI is not built by capability — it's built by honesty about limitation. Every design decision that acknowledged what the AI didn't know increased user trust more than any feature we added.",
-  },
-  {
-    slug: "compass",
-    number: "04",
-    title: "Compass",
-    subtitle: "Rebuilding competitive intelligence for four stakeholder types",
-    company: "Reputation.com",
-    type: "B2B SaaS — Competitive Intelligence Platform",
-    role: "Sr. UX Designer — Wireframe, Prototype, Interaction Design",
-    timeline: "3 months",
-    team: "PM, Engineering, Data Science, Marketing",
-    tags: ["B2B SaaS", "Competitive Intelligence", "Data Visualization"],
+    title: "Supply Chain for Manufacturing",
+    subtitle:
+      "Zetwerk's rapid expansion exposed inefficiencies in its delivery processes — before, during, and after movement of goods.",
+    company: "Zetwerk",
+    type: "Enterprise Application — Supply Chain",
+    role: "Sr. Product Designer",
+    timeline: "2 Months",
+    team: "PM, Development, QA, Business Analyst, Data Science, Business Operations",
+    tags: ["Enterprise SaaS", "Supply Chain", "Workflow Design", "Operations"],
     heroLabel: "Real Work",
+
+    context:
+      "Zetwerk is a fast-growing manufacturing unicorn that simplifies the manufacturing process through a suite of seven proprietary applications. With ~493% YoY growth, its manual delivery operations couldn't keep pace — a 500+ supplier network, 800+ monthly challan requests, and 8 employees bottlenecked in a process that was entirely paper-based, handwritten across multiple languages, and reconciled through spreadsheets and email.",
+
     summary:
-      "Customers found Reputation.com's CI platform too complex, fragmented, and limited. Low adoption was creating significant revenue risk. I consolidated four fragmented experiences into one coherent system serving four fundamentally different user mental models.",
+      "Zetwerk needed to digitise its delivery challan workflow — the legal compliance document that travels with every goods shipment. I led end-to-end design of the Delivery Challan module, from user research through Design QA, turning a paper-based, error-prone process into a structured digital workflow embedded in Zetwerk's enterprise supply chain platform.",
+
     metrics: [
-      { value: "↑40%", label: "Adoption target (achieved)" },
-      { value: "4→1", label: "Fragmented views consolidated" },
-      { value: "0", label: "Excel exports needed post-launch" },
+      { value: "90%", label: "User adoption in first 3 months" },
+      { value: "800+", label: "Monthly challan requests handled" },
+      { value: "26", label: "Design QA improvements shipped" },
     ],
+
     problem:
-      "Customers found the existing CI platform too complex, fragmented across tenants, limited in insights, with poor performance. The platform had grown organically — four separate tabs serving four user types with no shared context or filters. Result: low adoption, significant churn risk, and users exporting to Excel to do analysis the product should have provided.",
+      "Every goods shipment at Zetwerk required a Delivery Challan — a legal compliance document. But the process was entirely paper-based, handwritten in multiple languages, and reconciled through spreadsheets and emails. ==With ~493% YoY growth, 8 employees were spending significant time creating challans, errors were causing incorrect shipments, and the tax team had no reliable way to track compliance status.==",
+
+    problemBreakdown: {
+      points: [
+        "Manual data entry prone to errors and typos",
+        "No real-time visibility into delivery or inventory status",
+        "Paper challans in multiple languages, hard to standardise",
+        "Slow, error-prone communication across warehouse, quality, and logistics teams",
+        "8 employees tied up in challan creation for 800+ monthly requests",
+        "Compliance risk: delayed or inaccurate tax filings due to missing data",
+      ],
+      impact:
+        "Zetwerk's ~493% YoY growth outpaced its manual delivery processes, creating operational bottlenecks and compliance risks across a 500+ supplier network.",
+    },
+
+    approach:
+      "Before designing anything, I ran structured user research across two groups with fundamentally different goals: Business Operations (who create challans daily) and Tax Specialists (who use them for GST compliance months later). I chose different methods for each: 1:1 in-depth interviews for the 5 Business Ops users to trace their individual workflows step by step, and a group interview for the 4 Tax Specialists to surface conflicting pain points in one session. I collaborated with data science and product to anchor observations in 4 months of operational data before any design began.",
+
+    researchEvidence:
+      "Nine users across two sessions: 5 Business Operations team members in 1:1 in-depth interviews, and 4 Tax Specialists (Chartered Accountants) in a group interview. I also gathered relevant data from the Government GST Portal and existing paper delivery challan documents to understand compliance requirements alongside user workflows.",
+
+    researchFindings: [
+      {
+        title: "Paper is the root of the error chain",
+        body: "The reliance on paper-based processes introduced frequent typos and inconsistencies, compounded by challans being handwritten in multiple languages across India. Each manual error downstream required reconciliation through slow email chains, often delaying shipments and tax filings alike.",
+      },
+      {
+        title: "No visibility meant no accountability",
+        body: "Business Operations had no way to track delivery status in real time. Tax Specialists couldn't cross-reference challan data for GST reporting without hunting through physical documents. Neither team could close the loop without the other — and neither had the tools to do it.",
+      },
+    ],
+
     insight:
-      "Enterprise product failures are almost always information architecture problems masquerading as UI problems. The visual design was fine. The mental model was wrong. Four user types had four fundamentally different goals — and the product treated them as one.",
+      "The challan wasn't just an operational document — it was a compliance artifact with a second life months later. Every design decision had to serve two completely different users simultaneously: the Business Ops team member creating it under time pressure, and the Tax Specialist who would use it for a government filing. ==Designing for speed without designing for accuracy would have just digitised the chaos.==",
+
+    taskFlow: {
+      heading: "Create a challan: five clear stages",
+      stages: [
+        {
+          number: "01",
+          label: "DC Page",
+          description:
+            "View all active, closed, and cancelled delivery challans. Filter, search, export — or create a new one.",
+          meta: [
+            { label: "Who", value: "Business Ops" },
+            { label: "Output", value: "Challan list" },
+          ],
+        },
+        {
+          number: "02",
+          label: "Create DC",
+          description:
+            "Enter transaction type, supply type, linked PO, and Bill From / Bill To parties. Auto-populated from the order system.",
+          meta: [
+            { label: "Who", value: "Business Ops" },
+            { label: "Output", value: "DC draft" },
+          ],
+        },
+        {
+          number: "03",
+          label: "Fill Details",
+          description:
+            "Add DC items: material codes, quantities, CGST/SGST. All fields validated inline before proceeding.",
+          meta: [
+            { label: "Who", value: "Business Ops" },
+            { label: "Output", value: "Validated items" },
+          ],
+        },
+        {
+          number: "04",
+          label: "Preview & Download",
+          description:
+            "A formatted PDF preview of the challan before it is created — catch errors before they become compliance issues.",
+          meta: [
+            { label: "Who", value: "Business Ops" },
+            { label: "Output", value: "Verified challan" },
+          ],
+        },
+        {
+          number: "05",
+          label: "DC Summary",
+          description:
+            "The created challan with document attached, E-way bill linked, and transport details recorded. Ready for dispatch.",
+          meta: [
+            { label: "Who", value: "Business Ops / Tax" },
+            { label: "Output", value: "Compliance record" },
+          ],
+        },
+      ],
+    },
+
     decisions: [
       {
-        title: "Single navigation with global filters",
-        body: "Consolidated 4 fragmented tabs into a single navigation layer with persistent global filters (Location, Sub-brands, Competitor Location, City, Business Type). Any user type could orient in under 10 seconds.",
+        title: "A list-first landing page with clear status filters",
+        body: "The existing process had no central view of challans — they lived across emails and spreadsheets. The landing page gives Business Ops a single place to find any challan by status (Active, Closed, Cancelled), search by DC number, filter, or export to CSV. We put 'Create New DC' in the top right. Clear, persistent, not buried. The tradeoff was keeping the list dense — no card view, no summary tiles. For an ops user moving fast through 800+ monthly challans, scan speed mattered more than visual polish.",
+        image: {
+          src: "/images/zetwerk/dc-landing.png",
+          alt: "Delivery Challan landing page showing Active/Closed/Cancelled filter tabs and DC list with Create New DC button",
+          caption: "The DC list: one place for every challan, with status filters and direct creation",
+        },
       },
       {
-        title: "Brand Comparison as centerpiece",
-        body: "The primary view became a ranked competitor table: Reputation Score, Review Volume, Sentiment, Response Rate, Star Rating, Search Impression Score — all sortable, all filterable. Executives got a snapshot; analysts got depth.",
+        title: "Structured creation form linked to the existing order system",
+        body: "Rather than building a standalone form, we integrated the challan creation directly with the existing order system. When a user enters a Supplier PO number, the Bill From and Bill To addresses auto-populate from the order record. This eliminated a major source of manual errors — wrong addresses, mismatched GST numbers — without requiring users to change their mental model of how an order becomes a challan. The tradeoff was a dependency on data quality in the order system. We accepted it because the order system was already the source of truth; keeping it that way was the right call.",
+        image: {
+          src: "/images/zetwerk/dc-create.png",
+          alt: "Create Delivery Challan form showing transaction details, supply type selection, and auto-populated Bill From and Bill To sections",
+          caption: "Create DC form: auto-populate from the order system to eliminate address errors",
+        },
       },
       {
-        title: "Geographic Competitor Groups",
-        body: "A map view with radius-based filtering let regional managers see performance in geographic context — the mental model they actually used, not the database structure the platform was built around.",
+        title: "A formatted preview before the challan is created",
+        body: "A Delivery Challan is a legal document. Once created, it cannot simply be deleted — it becomes a compliance record. We added a preview step that shows the exact formatted PDF the user is about to generate, including all party details, item lines, GST calculations, and transport info. The user can download the preview or go back to edit. The tradeoff was an extra step in the creation flow. We accepted it because the cost of an error in a compliance document far outweighed the cost of an extra screen.",
+        image: {
+          src: "/images/zetwerk/dc-preview.png",
+          alt: "Preview of Delivery Challan showing formatted PDF with CNH Manufacturing as sender, item descriptions, quantities, and GST amounts",
+          caption: "DC preview: see the exact legal document before it becomes a compliance record",
+        },
       },
       {
-        title: "Role-adaptive information density",
-        body: "The same dataset presented at different densities based on the user's role context. Executives saw KPIs; analysts saw trend lines and raw scores; managers saw action items.",
+        title: "One detail page: DC document, E-way bill, and transport details together",
+        body: "After a challan is created, the Business Ops and Tax teams need different things from it: Ops needs the transport details, Tax needs the linked E-way bill and GST amounts. Rather than separate views, we brought everything onto one detail page — the DC document as a downloadable PDF, the linked E-way bill with creation and expiry dates, and transport details. The tradeoff was a denser detail page. We chose density over navigation because these users were reconciling across three documents simultaneously; making them switch contexts would have replicated the spreadsheet problem we were trying to solve.",
+        image: {
+          src: "/images/zetwerk/dc-detail.png",
+          alt: "Delivery Challan detail view showing DC document attached, E-way bill with dates, and transportation details including logistics company",
+          caption: "DC detail: document, E-way bill, and transport details in one place",
+        },
+      },
+      {
+        title: "Return and Dispatch tracking built into the same challan",
+        body: "After goods are dispatched, they sometimes come back — for returns, rework, or job work. The Tax team needed to track these movements for accurate GST compliance. We added a Return or Dispatch tab directly on the DC detail page: users can mark individual goods as dispatched or returned, with each action creating a time-stamped record linked to the original challan and the corresponding invoice. The tradeoff was adding scope mid-project. We accepted it because the tax compliance case — tracking goods movements on job work challans — was a regulatory requirement, not a nice-to-have.",
+        image: {
+          src: "/images/zetwerk/dc-return-dispatch.png",
+          alt: "Return or Dispatch tab on DC detail showing Mark Dispatch and Mark Return actions with reference IDs, dates, and return/dispatch types",
+          caption: "Return or Dispatch: track goods movement on the same challan, with a compliance record for each action",
+        },
       },
     ],
+
     outcomes: [
-      "Adoption target of ↑40% met within 90 days of launch",
-      "Reduced 4 fragmented views to 1 unified interface",
-      "Eliminated Excel export dependency entirely",
-      "Served all 4 stakeholder types from a single interface without divergent codebases",
+      "Achieved 90% user adoption within the first three months, showcasing the system's usability and effectiveness",
+      "Users gained instant access to delivery schedules and status updates — real-time visibility replaced the spreadsheet-and-email loop for Business Operations",
+      "Streamlined communication with transportation partners enabled faster resolution of customer inquiries and reduced disputes",
+      "26 design improvements identified and shipped through a structured Design QA process, in close collaboration with product managers and developers",
     ],
+
+    contribution:
+      "End-to-end design ownership across the full project arc: research planning, moderation of both interview formats (1:1 in-depth and group), synthesis and data collaboration, concept design, usability testing, final designs, and Design QA. I worked across a cross-functional team of PM, Development, QA, Business Analysts, Data Science, and Business Operations throughout.",
+
+    contributionArtifacts: [
+      "User Research",
+      "Concept Design",
+      "Concept Testing",
+      "Prototyping",
+      "Usability Testing",
+      "Design QA",
+    ],
+
     lesson:
-      "Enterprise product failures are almost always information architecture problems masquerading as UI problems. When you fix the mental model, the UI problems often solve themselves.",
+      "In manufacturing, every workflow has a compliance shadow — a tax implication, a government requirement, a supplier dependency. The real lesson at Zetwerk was that earning stakeholder trust meant making empathy visible: showing that deeply understanding user workflows was how you reduced regulatory risk, not just improved satisfaction. Great design here wasn't about solving today's problem — it was about building something that scaled with the company's explosive growth.",
   },
   {
-    slug: "cx-enterprise",
-    number: "05",
-    title: "CX Enterprise App",
-    subtitle: "Multi-tenant platform for four stakeholder tiers",
-    type: "Enterprise SaaS — Customer Experience Management",
-    role: "Sr. UX Designer",
-    tags: ["Enterprise SaaS", "Multi-tenant", "CX Management"],
-    heroLabel: "Confidential",
-    confidential: true,
+    slug: "zetwerk-bu-ecosystem",
+    number: "04",
+    title: "Enterprise — Service Design & Operations Research",
+    subtitle: "Five teams. Five broken workflows. Nobody had ever drawn the full picture.",
+    company: "Zetwerk",
+    type: "User Research",
+    role: "User Research & UX Strategy",
+    team: "PM, UX Designer, OPEX",
+    tags: ["Enterprise SaaS", "Service Design", "Research", "Operations"],
+    heroLabel: "Real Work",
+
+    context:
+      "Every company has an official system and a shadow system. The official one is in the org chart. The shadow system is the spreadsheet three people maintain, the WhatsApp group where decisions actually get made, the person whose phone you call when the platform doesn't have the answer.\n\nZetwerk was growing at nearly 500% year-on-year. That kind of growth doesn't just stress the product — it stresses every process underneath it. The platform built to coordinate five teams across hundreds of monthly orders was being systematically bypassed. Not broken. Bypassed. Everyone had quietly built their own version of how to get work done.",
+
     summary:
-      "Multi-tenant CX management platform serving four stakeholder types — from frontline agents to C-suite — using progressive disclosure architecture to surface the right depth of data for each role without fragmenting the product.",
+      "Zetwerk was growing at nearly 500% year-on-year and the PM team had a backlog. Every team had their own version of what needed fixing. Nobody disagreed there was a problem — they disagreed about where it was. I was brought in to answer one question: why isn't the platform working, and what should we build next?\n\nThe answer required mapping how work actually moved across five teams — not how it was supposed to. The output was a service blueprint, a set of personas, and a prioritised roadmap. For the first time, the PM team had a shared, evidence-based basis for what to build and why.",
+
+    tldr: {
+      problem: "Five teams had quietly bypassed the platform. Nobody had mapped where work actually flowed.",
+      approach: "Role-based interviews + a service blueprint reviewed and corrected by every team.",
+      outcome: "Replaced five competing team backlogs with one evidence-based product roadmap.",
+    },
+
     metrics: [
-      { value: "4", label: "Stakeholder tiers served" },
-      { value: "0→1", label: "Progressive disclosure architecture" },
-      { value: "↑35%", label: "Task completion across roles" },
+      { value: "5 backlogs → 1", label: "Competing team roadmaps replaced by a single sequenced plan the PM team could act on" },
     ],
+
     problem:
-      "A CX management platform needed to serve frontline agents (granular ticket data), team leads (performance trends), CX directors (strategic KPIs), and C-suite (executive dashboards) — all from one product, one codebase, one design system. Previous attempts had created four separate products with mounting maintenance debt.",
+      "The platform had one job: keep five teams working from the same picture. In practice, every team had quietly built their own version. The operations team kept personal spreadsheets because the system couldn't show them only their own orders. Finance ran critical calculations in Excel files that only two people in the company understood. Sales managed new inquiries entirely over WhatsApp. The platform was full of data. ==The system existed. The work happened outside it.==",
+
+    problemBreakdown: {
+      points: [
+        "The system had no way to filter orders by assigned person — everyone saw everything, all the time",
+        "Business Finance managed profit & loss and financial risk positions entirely in personal Excel files",
+        "Procurement negotiated supplier quotes over WhatsApp, leaving no record of the conversation anywhere",
+        "Every invoice had to route through a third-party service — adding 15–20 minutes of waiting per order while loaded vehicles sat idle",
+        "No real-time delivery tracking — operations managers called drivers directly to find out where shipments were",
+        "Sales spent 1 in 4 working hours resolving delivery problems that the system should have prevented",
+      ],
+      impact:
+        "This research gave the PM team their first complete view of how the business operated — replacing five competing team backlogs with a single evidence-based roadmap, and surfacing operational risks the product had never accounted for.",
+    },
+
+    approach:
+      "Before the first session, I wrote three research questions: How does work actually flow across teams versus how the platform assumes it flows? Where are the highest-leverage points of failure — and who currently owns them? What would it take for each team to trust a shared system over the workarounds they'd already built?\n\nI proposed a service blueprint as the primary research artifact — a cross-functional process map that shows not just what each team does, but where their work depends on, blocks, or is invisible to everyone else's. The PM had already tried fixing the screens. It hadn't moved the numbers. The blueprint was the case for going deeper before going further.\n\nI structured sessions by role, not by division — all Operations users together regardless of which part of the business they worked in. Six people across five roles is a small sample for a system this complex. I addressed it by triangulating against four months of operational data from the data science team, and by treating the blueprint as a working document each team reviewed and corrected before it was used to make any decisions.\n\nOne scope decision I got wrong. Finance wasn't in the original research plan. I'd flagged them as relevant before we started — payment approvals appeared in my pre-research mapping of the system. The PM pushed back: Finance doesn't interact with the platform directly. I accepted the constraint. Two weeks of Operations interviews pointing at invoice approvals later, I made the case again and got Finance added. I should have held the line in week one.",
+
+    researchEvidence:
+      "In-person sessions with six people across five roles: Operations (Bhoopendra and Mithilesh, the latter leading a 16-person regional team), Business Finance (Akansha, added mid-project), Procurement (Rama), and Sales (Priya). Each session traced a full day-to-day workflow with specific focus on when and why they reached for something outside the platform. Findings were triangulated against four months of operational data from the data science team. The completed blueprint was reviewed and corrected in a working session with each team before being used as a decision-making tool.",
+
+    researchFindings: [
+      {
+        title: "My opening hypothesis was wrong",
+        body: "I went in expecting the core problem to be the platform's interface — too generic, no role-based filtering, hard to navigate under time pressure. Two sessions in, that hypothesis was wrong. The interface problems were real but secondary. The platform was built to a process model nobody was actually following. Fixing the UI would have made it slightly less frustrating to use a system that wasn't solving the right problem. Catching this early enough to reorient the interview guide was what made the rest of the research useful.",
+      },
+      {
+        title: "The platform was a record-keeper, not a workflow tool",
+        body: "People logged completed actions in the system but did the actual work elsewhere. Bhoopendra kept a personal Excel sheet because the platform couldn't filter to his own orders. Akansha ran financial calculations in spreadsheets only she and one colleague understood. The platform captured what had happened — not what needed to happen next. For five teams coordinating hundreds of moving parts, that distinction isn't a usability issue. It's an operational failure.",
+      },
+      {
+        title: "The invoice delay was a process design failure, not a vendor problem",
+        body: "The invoice delay wasn't a vendor performance problem — it was a structural failure nobody had named yet. Every shipment had to route through a third-party service before a vehicle could move: 15–20 minutes per order, every time. Internally it was treated as a speed problem — pressure the vendor. Research showed it was structural: three parties, one sequential handoff, no shared visibility into where the delay was occurring. When a process requires sequential action with no shared view of progress, delays are guaranteed regardless of how fast any one party moves. The vendor wasn't the problem. The architecture was.",
+      },
+      {
+        title: "Sales was being used as the system's customer service fallback",
+        body: "60–65% of orders escalated back to the Sales team. Priya's team was spending a quarter of their working hours chasing deliveries, not closing new customers. This wasn't just an efficiency problem — it was a misdirection problem. The most expensive resource in the business was being used to compensate for a system that couldn't handle its own error states. Every hour spent on an escalation is an hour not spent on growth.",
+      },
+      {
+        title: "Finance was carrying a risk the product had never accounted for — and I found it two weeks late",
+        body: "This finding arrived later than it should have. Finance wasn't in the original scope — I'd accepted a PM constraint I shouldn't have. When I finally got to Akansha, the risk was deeper than expected: the financial positions protecting the company against material cost swings were managed entirely in a spreadsheet only two people understood. If either was unavailable, those operations stopped. The product had never accounted for it. The delay meant this risk sat undiscovered for longer than it needed to. What I should have done is in the reflection.",
+      },
+    ],
+
     insight:
-      "Progressive disclosure is not about hiding information — it's about sequencing it to match the decision horizon of each role. C-suite doesn't need less data; they need data at the right altitude.",
+      "The platform was built to record what happened. The business was run by the people filling the gaps between records. Every Excel sheet, every WhatsApp group, every direct call to a driver — those weren't workarounds. They were the actual system. ==The blueprint didn't just map what was broken. It showed what the product had never designed for.==",
+
+    insightImage: {
+      src: "/images/zetwerk-bu/service-blueprint.png",
+      alt: "BU Ecosystem service blueprint mapping five workflow stages: Customer/ZW Discovery, Enquiry Side Flow, Order Confirmation, Supply Side Flow, and Collections — showing customer actions, front-stage and back-stage employee interactions, support processes, and opportunity areas",
+      caption: "The service blueprint: five stages, six user types, and every point where the work left the system",
+      width: "100%",
+    },
+
+    taskFlow: {
+      heading: "Five stages, one system",
+      stages: [
+        {
+          number: "01",
+          label: "Discovery",
+          description:
+            "A potential customer is identified. The sales team assesses whether it's worth pursuing — checking creditworthiness, fit, and margin. If yes, they begin onboarding.",
+          meta: [
+            { label: "Who", value: "Sales" },
+            { label: "Tools", value: "WhatsApp, referrals" },
+          ],
+        },
+        {
+          number: "02",
+          label: "Enquiry",
+          description:
+            "Customer asks for a price quote. Procurement contacts 2–3 suppliers over WhatsApp to get prices. Sales negotiates terms. The entire process happens outside any system.",
+          meta: [
+            { label: "Who", value: "Sales, Procurement" },
+            { label: "Tools", value: "Email, WhatsApp, calls" },
+          ],
+        },
+        {
+          number: "03",
+          label: "Order Confirmation",
+          description:
+            "Customer sends a formal purchase order. Sales logs it in the platform. Finance approves it. The order is handed off to Operations to arrange delivery.",
+          meta: [
+            { label: "Who", value: "Sales, Finance" },
+            { label: "Tools", value: "Internal platform" },
+          ],
+        },
+        {
+          number: "04",
+          label: "Fulfilment",
+          description:
+            "Operations arranges the full delivery: confirming supplier orders, waiting for invoices from a third-party service, loading the vehicle, and tracking delivery — almost entirely over phone and WhatsApp.",
+          meta: [
+            { label: "Who", value: "Operations" },
+            { label: "Tools", value: "Platform, Excel, WhatsApp, phone" },
+          ],
+        },
+        {
+          number: "05",
+          label: "Collections",
+          description:
+            "Material delivered. Customer makes payment. The Collections team follows up on any outstanding payments. Finance closes out the order's financials. The cycle ends — or escalates back to Sales if something went wrong.",
+          meta: [
+            { label: "Who", value: "Collections, Finance" },
+            { label: "Tools", value: "Platform, phone" },
+          ],
+        },
+      ],
+    },
+
     decisions: [
       {
-        title: "Progressive disclosure architecture",
-        body: "The same underlying data model was presented at four levels of abstraction — each triggered by role, not by navigation. Frontline agents saw ticket queues; C-suite saw margin impact. Same data, different altitude.",
+        title: "A service blueprint before any wireframes",
+        body: "The blueprint proved my opening hypothesis wrong — in the right direction. I'd expected to find interface failures. What I found instead was that the failures weren't in the screens at all: they lived in the handoffs between teams. The invoice delay lived between Operations and a third-party service. The Sales escalation problem lived between Operations and the customer. The Finance risk lived between two people and a spreadsheet. None of those were fixable by improving a UI. The tradeoff was delaying visible output by several weeks. The PM accepted it because the previous attempt — fixing screens — hadn't changed anything.",
+        image: {
+          src: "/images/zetwerk-bu/service-blueprint.png",
+          alt: "Full BU Ecosystem service blueprint with five workflow stages across customer actions, front-stage interactions, back-stage interactions, support processes, and opportunity areas",
+          caption: "The service blueprint — the primary output that shaped all subsequent product decisions",
+          width: "100%",
+          zoomLens: true,
+        },
       },
       {
-        title: "Role-based entry points",
-        body: "Login context determined the initial view and information density. No settings panel required — the system inferred the correct starting point from the authenticated role.",
+        title: "Researching by role, not by division",
+        body: "Grouping by role instead of by division was a deliberate structural choice — and it paid off. Zetwerk had three divisions. The natural approach was to go division by division. I structured it differently: all Operations users together regardless of division, all Finance together. The same gaps appeared in every group — no order visibility, invoice delays, the spreadsheet dependency. This wasn't a local problem. It was a system failure that had reproduced itself everywhere. The tradeoff was losing the ability to compare how the same role performed differently across divisions. That comparison would have been useful for a different research question. It wasn't the question we were here to answer.",
+        persona: {
+          name: "Bhoopendra",
+          role: "Operations",
+          goal: "Get through his order list and close each one without chasing people manually.",
+          pain: "The system shows every department's orders. There's no way to filter to his own — so he keeps a personal Excel sheet instead.",
+          quote: "I call the driver directly to find out where the truck is. The system doesn't tell me.",
+        },
       },
       {
-        title: "Unified design system across tiers",
-        body: "Rather than building four products, I designed one component library with role-conditional display logic. This reduced engineering complexity by ~60% versus the previous multi-product approach.",
+        title: "Mapping the invoice flow as a systemic failure, not a vendor issue",
+        body: "The invoice delay had been treated as a vendor management problem for months — pressure the third-party service, escalate, move faster. Research showed the problem was structural, which meant vendor pressure would never fix it. Three parties, one sequential handoff, no shared visibility into where the delay was occurring. Operations was spending 15–20 minutes per order waiting for paperwork while loaded vehicles sat idle. The reframe mattered because it changed what solutions were even possible: if it's a vendor problem, you escalate. If it's a structural problem, you redesign the process — including building a flow that lets Zetwerk create invoices directly instead of waiting. The tradeoff was a longer timeline. There was no quick version of this fix, and pretending otherwise would have repeated the mistake.",
+        persona: {
+          name: "Mithilesh",
+          role: "Regional Operations Lead · 16-person team",
+          goal: "Keep vehicles moving and customers satisfied across a team of 16.",
+          pain: "Every invoice requires back-and-forth chasing. Vehicles can't move until paperwork arrives — and the wait happens with a loaded truck sitting at the warehouse.",
+          quote: "I do most of my work in the field. I need this on my phone, not a desktop.",
+        },
+      },
+      {
+        title: "The team nobody thought to include — including me, initially",
+        body: "Finance wasn't in the original scope, and I share responsibility for that. I'd mapped them as relevant before the project started — payment approvals appeared in my pre-research system diagram. The PM reasoned they didn't interact with the platform directly, so they were outside the brief. I accepted that. I shouldn't have. When Operations interviews kept surfacing invoice approval delays as a blocker, I made the case again. This time it landed. When I got to Akansha, the risk was deeper than the invoice flow: the financial positions protecting the company against material cost swings were managed entirely in a spreadsheet only two people understood. If either was unavailable, those operations stopped. The product had never accounted for it. The tradeoff was two additional weeks to synthesis. The alternative was shipping a roadmap with a critical blind spot.",
+        persona: {
+          name: "Akansha",
+          role: "Business Finance",
+          goal: "Manage the company's financial risk positions accurately and respond quickly when leadership needs a report.",
+          pain: "All of her calculations and risk positions live in a personal Excel sheet that only she and one colleague understand. If either is unavailable, those operations stop.",
+          quote: "Whenever Marketing needs a report, I spend two full days recalculating everything from scratch.",
+        },
+      },
+      {
+        title: "One shared map instead of five competing backlogs",
+        body: "The blueprint becoming a roadmap wasn't automatic — it required a two-day prioritisation workshop with all five team leads. Every proposed initiative had to be placed on the map and defend its system-level leverage. Teams argued for their priorities against that evidence. The roadmap that came out wasn't what any single team had wanted. It was what the system showed was needed first.\n\nThe Operations lead said it plainly in the first workshop session: 'This is interesting, but it doesn't help me fix my quarter.' He was right. We spent an additional session with him translating the system findings into near-term priorities his team could act on. That session turned him from a critic of the roadmap into a sponsor of it. Without it, the blueprint would have been an artefact everyone acknowledged and nobody used.\n\nThe tradeoff was that the sequencing made some local fixes look lower priority than they felt to the teams experiencing them. We held the line because the alternative — each team advocating for their own pain — was exactly how decisions had been made before the research. It's why there had been five backlogs and no coherent plan.",
+        persona: {
+          name: "Priya",
+          role: "Sales",
+          goal: "Grow her region by closing new customers — not managing existing deliveries.",
+          pain: "60–65% of orders escalate back to her team. A quarter of her working hours go into resolving delivery problems that should be handled by Operations.",
+          quote: "I want to sell. Right now I'm doing operations work.",
+        },
       },
     ],
+
     outcomes: [
-      "Task completion rate improved 35% across all stakeholder tiers",
-      "Eliminated 3 redundant product codebases",
-      "Design system adopted across 2 additional internal products",
-      "Full case study available on request",
+      "A two-day prioritisation workshop using the blueprint as the working document produced the first roadmap all five teams had agreed on — each initiative sequenced by system-level leverage, not by which team shouted loudest",
+      "An invoice delay blamed on a slow vendor for months was reframed as a structural process failure — opening solutions the business could actually control, including a direct invoice creation flow that shipped as the Delivery Challan module the following quarter",
+      "A critical risk the product had never accounted for was surfaced and escalated: key company operations were running through a spreadsheet only two people could read — this was brought to leadership and added to the risk register",
+      "The blueprint became the standing reference document for product planning — referenced in quarterly roadmap sessions for the two quarters that followed",
+      "Cross-functional system mapping was adopted as a standard step before major feature work — a direct result of the PM team seeing, for the first time, what scoping without that map had been costing them",
     ],
+
+    contribution:
+      "I owned the research strategy, methodology, and execution end-to-end: writing the research questions, scoping the participant set (including making the case for Finance mid-project), designing and moderating all six sessions, building the service blueprint, running the two-day prioritisation workshop with team leads, synthesising into personas and opportunity areas, and presenting the phased roadmap to the product team and leadership. I set the scope, made the methodology calls, and defended the findings when they created friction. A junior UX designer I was mentoring owned design execution throughout — which meant I could stay fully in the research and strategic layer without splitting attention.",
+
+    contributionArtifacts: [
+      "Research Strategy",
+      "In-person Interviews",
+      "Service Blueprint",
+      "Persona Development",
+      "Synthesis",
+      "Initiative Roadmap",
+      "Design Mentorship",
+    ],
+
+    reflection:
+      "I would involve Finance from session one and push harder on that call in week one. The argument I accepted — 'they don't interact with the platform directly' — was never sufficient for a cross-functional system study. I had already noted them in my pre-research mapping. Accepting the constraint meant the Finance research was compressed into one session when two would have produced sharper findings. It also meant a critical risk sat undiscovered for two weeks longer than it needed to. In a project where the entire value is seeing the full system, partial scope is a structural compromise — and I made it when I shouldn't have.",
+
     lesson:
-      "The most powerful enterprise design constraint is also the most invisible: role-based altitude. Design for the decision horizon, not the data volume.",
-  },
-  {
-    slug: "design-system",
-    number: "06",
-    title: "Enterprise Design System",
-    subtitle: "Building the foundation that scales across 6 product surfaces",
-    type: "Design Infrastructure — Component Library",
-    role: "Design System Lead",
-    timeline: "6 months",
-    team: "Engineering, Product, Brand",
-    tags: ["Design Systems", "Figma", "Component Library"],
-    heroLabel: "Infrastructure",
-    summary:
-      "A fragmented product suite with 6 surfaces, 3 teams, and no shared visual language. I led the 0→1 design of an enterprise design system that unified components, tokens, and documentation — reducing design-to-engineering handoff time by half.",
-    metrics: [
-      { value: "↓52%", label: "Design-to-dev handoff time" },
-      { value: "6", label: "Product surfaces unified" },
-      { value: "200+", label: "Components shipped" },
-    ],
-    problem:
-      "Six product surfaces were built independently — each with its own component patterns, spacing systems, and interaction models. Engineers were rebuilding the same components in parallel. Designers were making inconsistent decisions. The product felt like six different companies.",
-    insight:
-      "A design system is not a UI kit. It's an opinion about how the product should feel — encoded in tokens, documented in principles, and enforced through process. The hardest part is not the components. It's getting teams to adopt them.",
-    decisions: [
-      { title: "Tokens first", body: "Before a single component was built, we defined the token layer: color, spacing, radius, elevation. This gave engineering a source of truth that components could reference — and meant global theming was possible from day one." },
-      { title: "Documentation as a product", body: "Each component had decision rationale, accessibility notes, and anti-patterns documented alongside the Figma file. Adoption doubled when teams understood why, not just what." },
-      { title: "Contribution model", body: "Rather than a gated system owned by one designer, we built a contribution model where any team could propose additions with a clear review process. This created ownership without chaos." },
-    ],
-    outcomes: [
-      "Reduced design-to-engineering handoff time by 52%",
-      "Unified 6 product surfaces under one visual language",
-      "Shipped 200+ components with full documentation and accessibility coverage",
-      "Adopted by 3 engineering teams within 4 months of launch",
-    ],
-    lesson: "The best design systems are invisible. When teams stop asking 'what should this look like?' and start shipping, the system is working.",
-  },
-  {
-    slug: "mentorship-platform",
-    number: "07",
-    title: "Mentorship Platform Redesign",
-    subtitle: "Redesigning booking and discovery for 50M+ users",
-    type: "Consumer Product — Mobile & Web",
-    role: "Lead Product Designer",
-    tags: ["Consumer", "Mobile", "Growth"],
-    heroLabel: "Consumer Scale",
-    confidential: true,
-    summary:
-      "A mentorship platform at consumer scale had a discovery and booking experience that hadn't been rethought since launch. I redesigned the core flow — cutting drop-off by 34% and doubling session completion — without changing the underlying matching algorithm.",
-    metrics: [
-      { value: "↓34%", label: "Booking drop-off" },
-      { value: "↑2×", label: "Session completion rate" },
-      { value: "50M+", label: "User base" },
-    ],
-    problem:
-      "The discovery and booking flow was optimized for supply (mentors) rather than demand (mentees). Users landed on a search-heavy interface that assumed they knew what kind of mentor they needed. Most didn't. Drop-off at the first screen was over 60%.",
-    insight:
-      "Consumer products fail at discovery when they put the taxonomy before the need. Users don't know they want a 'senior engineer who specializes in career transitions' — they know they feel stuck and need help. The design challenge was translating an emotional state into a structured search query without making users do the work.",
-    decisions: [
-      { title: "Need-first discovery", body: "Replaced keyword search with 5 goal-oriented prompts that mapped to mentor specialties on the backend. Users picked their situation; the system translated it to filters." },
-      { title: "Social proof in context", body: "Surface-level ratings were replaced with specific session outcomes — '3 people landed offers after working with this mentor' — placed at the moment of decision, not in a separate profile page." },
-      { title: "Friction-free scheduling", body: "Reduced booking from 7 steps to 3. Time zone conversion, calendar sync, and confirmation were handled automatically. Users focused on choosing a mentor, not managing logistics." },
-    ],
-    outcomes: [
-      "Booking drop-off reduced by 34%",
-      "Session completion rate doubled",
-      "Shipped to 50M+ users with zero increase in support tickets",
-      "Full case study available on request",
-    ],
-    lesson: "At consumer scale, every percentage point of drop-off is thousands of people who didn't get help they needed. Designing for emotional states, not taxonomies, is what moves that number.",
+      "The hardest part of this project wasn't building the blueprint. It was holding the line on scope. I let a reasonable-sounding argument override a research instinct I had already documented. Finance was in my pre-research system map. I flagged them. I let the constraint stand anyway. The lesson isn't about service blueprints or synthesis methods. It's about research independence: when you've mapped the system and identified a dependency, 'they don't use the platform directly' is not sufficient grounds for exclusion. Scope decisions made before the research starts should require the same standard of evidence as the findings that come out of it.",
   },
 ];
 

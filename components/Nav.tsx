@@ -45,7 +45,7 @@ export default function Nav() {
             maxWidth: "900px",
             margin: "0 auto",
             padding: "0 24px",
-            height: "52px",
+            height: "64px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -53,24 +53,33 @@ export default function Nav() {
         >
           {/* Name + theme toggle */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span
+            <Link
+              href="/"
+              aria-label="Home — Arun Gaddam"
               style={{
                 fontFamily: "var(--font-logo)",
-                fontSize: "13px",
+                fontSize: "12px",
                 fontWeight: 500,
                 color: "var(--text)",
-                letterSpacing: "-0.03em",
-                padding: "6px 12px",
-                borderRadius: "8px",
-                border: "1px solid var(--border)",
-                background: "transparent",
-                display: "inline-block",
-                pointerEvents: "none",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                height: "44px",
+                padding: "0 14px",
+                borderRadius: "12px",
+                border: "none",
+                background: "var(--surface)",
+                boxShadow: "var(--card-shadow)",
+                display: "inline-flex",
+                alignItems: "center",
+                textDecoration: "none",
                 userSelect: "none",
+                transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
               }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
             >
               Arun Gaddam
-            </span>
+            </Link>
             <ThemeToggle />
           </div>
 
@@ -82,7 +91,7 @@ export default function Nav() {
             {[
               { href: "/#work", label: "Work" },
               { href: "/about", label: "About" },
-              { href: "/contact", label: "Contact" },
+              { href: "/#contact", label: "Contact" },
             ].map(({ href, label }) => (
               <Link key={href} href={href} className="nav-link">
                 {label}
@@ -113,6 +122,7 @@ export default function Nav() {
             {/* Copy email — MC-style affordance */}
             <button
               onClick={copyEmail}
+              aria-label={copied ? "Email copied" : "Copy email address"}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -120,7 +130,7 @@ export default function Nav() {
                 fontFamily: "var(--font-body)",
                 fontSize: "13px",
                 fontWeight: 400,
-                color: copied ? "#16a34a" : "var(--muted)",
+                color: copied ? "var(--accent-success)" : "var(--muted)",
                 background: "none",
                 border: "none",
                 padding: "0",
@@ -168,7 +178,7 @@ export default function Nav() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             style={{
-              position: "fixed", top: "52px", left: 0, right: 0, bottom: 0,
+              position: "fixed", top: "64px", left: 0, right: 0, bottom: 0,
               background: "var(--bg)", zIndex: 199,
               padding: "32px 24px",
               display: "flex", flexDirection: "column", gap: "4px",
@@ -177,7 +187,7 @@ export default function Nav() {
             {[
               { href: "/#work", label: "Work" },
               { href: "/about", label: "About" },
-              { href: "/contact", label: "Contact" },
+              { href: "/#contact", label: "Contact" },
             ].map(({ href, label }, i) => (
               <motion.div
                 key={href}

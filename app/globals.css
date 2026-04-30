@@ -1,15 +1,20 @@
 @import "tailwindcss";
 
-/* ─── Design Tokens — MC-inspired ───────────────────── */
+/* ─── Design Tokens — Apple-inspired light system ────
+   Apple's light theme: pure white is the ELEVATED layer (cards), not the base.
+   The page itself sits on a barely-tinted cool gray. Text is never pure black —
+   the signature #1d1d1f has a subtle warm-cool balance that reads "considered."
+   All grays carry a cool undertone (computed via systemGray rather than
+   chromatic-neutral RGB) which is the technical move that makes Apple "premium." */
 :root {
-  --bg:       #ffffff;
-  --surface:  #f5f5f5;
-  --surface2: #ebebeb;
-  --border:   #e5e5e5;
-  --text:     #0a0a0a;
-  --muted:    #737373;
-  --muted2:   #404040;
-  --chrome:   #eeeeed;
+  --bg:       #fbfbfd;   /* Apple secondary background — barely-tinted cool */
+  --surface:  #ffffff;   /* primary background — for elevated cards */
+  --surface2: #f5f5f7;   /* tertiary — subtle differentiation for hover / inset */
+  --border:   #d2d2d7;   /* opaque separator — visible cool gray */
+  --text:     #1d1d1f;   /* the Apple signature: NOT pure black, has 6% lift */
+  --muted:    #6e6e73;   /* secondary label — cool gray */
+  --muted2:   #424245;   /* tertiary label — deeper cool gray */
+  --chrome:   #f5f5f7;   /* grouped-background canvas — panels float on this */
 
   --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Fira Mono', monospace;
@@ -21,28 +26,66 @@
   --dur-fast: 180ms;
   --dur-base: 320ms;
   --dur-slow: 650ms;
+
+  /* ── Semantic accent tokens — Apple system colors ── */
+  --accent-success: #34c759;  /* Apple systemGreen — copy-success, "In use", "After" */
+  --accent-error:   #ff3b30;  /* Apple systemRed — error states, "Now" marker */
+
+  /* ── Soft hover overlay — theme-aware via color-mix ──
+     Replaces full --surface2 swaps on icon buttons / chrome elements where
+     the original feels too intense. Auto-adapts because --text differs per theme. */
+  --hover: color-mix(in srgb, var(--text) 5%, transparent);
+
+  /* ── Card depth tokens ──
+     Light: pure layered shadow lifts cards off the warm bg, no border needed.
+     Dark: shadow + 1px ring (since shadows don't read on dark — the ring is
+     the edge that prevents the card from bleeding into the canvas). */
+  --card-shadow:       0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.05);
+  --card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.09);
 }
 
-/* ─── Dark theme ─────────────────────────────────────── */
+/* ─── Dark theme — Apple dark system (3-level hierarchy) ─
+   Three distinct depth layers, matching Apple's actual HIG tokens:
+   - Chrome (#050507): the canvas — home page container, deepest layer
+   - Bg (#1c1c1e): panel fills — Apple Secondary System Grouped Background
+   - Surface (#2c2c2e): card fills — Apple Tertiary System Grouped Background
+   Panels lift off the canvas by the surface step alone (23 units).
+   Cards lift off panels by 16 units. Each layer adds a 1px white hairline
+   ring because drop shadows darken, and there's nothing to darken on dark. */
 [data-theme="dark"] {
-  --bg:       #111111;
-  --surface:  #1e1e1e;
-  --surface2: #272727;
-  --border:   #303030;
-  --text:     #efefef;
-  --muted:    #888888;
-  --muted2:   #b8b8b8;
-  --chrome:   #0d0d0d;
+  --bg:       #1c1c1e;   /* Apple Secondary System Grouped Bg — panel fills */
+  --surface:  #2c2c2e;   /* Apple Tertiary System Grouped Bg — card fills */
+  --surface2: #3a3a3c;   /* Hover / inset — one step above surface */
+  --border:   #38383a;   /* Apple Separator (dark) — neutral, no purple tint */
+  --text:     #ffffff;
+  --muted:    #9a9a9f;   /* Lifted from #8e8e93 — passes AA (4.98:1) on card surface */
+  --muted2:   #aeaeb2;
+  --chrome:   #000000;   /* Apple System Background (dark) — true black canvas */
+
+  /* Ring does the edge definition (drop shadows are invisible on dark bg).
+     Soft drop shadow adds ambient depth on the lighter panel backgrounds. */
+  --card-shadow:       0 0 0 1px rgba(255, 255, 255, 0.07),
+                       0 1px 3px rgba(0, 0, 0, 0.45),
+                       0 4px 16px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.10),
+                       0 2px 6px rgba(0, 0, 0, 0.55),
+                       0 12px 28px rgba(0, 0, 0, 0.4);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */
+/* Liquid-glass treatment: blur+saturate gives the frost, the inset 1px highlight
+   simulates physical edge refraction (light catching on the top edge of the
+   surface), and the bottom border replaces the solid one with a softer tint. */
 .nav-glass {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 [data-theme="dark"] .nav-glass {
-  background: rgba(13, 13, 13, 0.92);
+  background: rgba(28, 28, 30, 0.82);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+              0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* ─── Panel sticky header — opaque + scroll shadow via scroll-driven JS class ── */
@@ -86,8 +129,10 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-/* ─── Cursor ─────────────────────────────────────────── */
-*, *::before, *::after { cursor: none !important; }
+/* ─── Cursor — only suppress native cursor on pointer devices ─── */
+@media (hover: hover) and (pointer: fine) {
+  *, *::before, *::after { cursor: none !important; }
+}
 
 /* ─── Links ──────────────────────────────────────────── */
 a { color: inherit; text-decoration: none; }
@@ -201,7 +246,24 @@ a { color: inherit; text-decoration: none; }
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-.marquee-track { animation: marquee 40s linear infinite; }
+.marquee-track {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+/* Pause continuously-moving content on hover so visitors can actually read it. */
+.marquee-track:hover,
+.skills-ticker:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ─── Work card image lift — pairs with the shadow-elevation hover ── */
+.work-thumb {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.work-card:hover .work-thumb {
+  transform: scale(1.04);
+}
+
 
 /* ─── Text highlighter — sticky to element ──────────── */
 @keyframes highlight-sweep {
@@ -241,19 +303,36 @@ a { color: inherit; text-decoration: none; }
 
 /* ─── Availability pulse dot ─────────────────────────── */
 @keyframes availability-pulse {
-  0%, 100% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.35); }
-  60%       { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0);   }
+  0%, 100% { box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent-success) 35%, transparent); }
+  60%       { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-success) 0%, transparent);  }
 }
 .availability-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #22c55e;
+  background: var(--accent-success);
   display: inline-block;
   flex-shrink: 0;
   animation: availability-pulse 4s ease-out infinite;
   animation-delay: 2s;
 }
+
+/* ─── Skip nav — visible on keyboard focus only ──────── */
+.skip-nav {
+  position: fixed;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 0 0 8px 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  transition: top 0.2s;
+}
+.skip-nav:focus { top: 0; }
 
 /* ─── Keyboard focus ring ─────────────────────────────── */
 :focus-visible {
@@ -291,10 +370,70 @@ a { color: inherit; text-decoration: none; }
   .panel-dots { display: none !important; }
 }
 
+/* ─── Film grain overlay ─────────────────────────────── */
+.grain-overlay {
+  position: fixed;
+  /* Oversized by 150px each side so translations never reveal an edge */
+  inset: -150px;
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  opacity: 0.045;
+  pointer-events: none;
+  z-index: 9990;
+  animation: grain-shift 1s steps(10) infinite;
+}
+
+@keyframes grain-shift {
+  0%   { transform: translate(  0px,   0px); }
+  10%  { transform: translate(-22px, -16px); }
+  20%  { transform: translate(-42px,  11px); }
+  30%  { transform: translate( 17px, -38px); }
+  40%  { transform: translate(-18px,  32px); }
+  50%  { transform: translate(-38px,  17px); }
+  60%  { transform: translate( 28px,   0px); }
+  70%  { transform: translate(  0px,  22px); }
+  80%  { transform: translate( 12px, -22px); }
+  90%  { transform: translate(-28px,  12px); }
+  100% { transform: translate(  0px,   0px); }
+}
+
+/* ─── Page transitions — View Transitions API ────────── */
+/*
+ * Next.js 16 calls document.startViewTransition() on every
+ * navigation when experimental.viewTransition is enabled.
+ * We only need CSS — no <ViewTransition> wrapper components.
+ *
+ * Old page fades + scales down slightly (like stepping back).
+ * New page fades + lifts in (like stepping forward).
+ * 100ms delay on the enter lets the exit finish first.
+ */
+::view-transition-old(root) {
+  animation: 200ms ease-in both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 300ms ease-out 120ms both vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* ─── Reduced motion ─────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+  /* View transition pseudo-elements aren't matched by * */
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
 }
+

@@ -15,7 +15,7 @@ export default function ContactCTA() {
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.7, ease: EASE }}
           style={{
-            background: "var(--text)", borderRadius: "12px",
+            background: "var(--text)", borderRadius: "16px",
             padding: "40px 36px",
           }}
         >
@@ -35,7 +35,7 @@ export default function ContactCTA() {
               display: "inline-flex", alignItems: "center", gap: "6px",
               fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
               padding: "9px 20px", background: "var(--bg)", color: "var(--text)",
-              borderRadius: "8px", letterSpacing: "-0.01em", transition: "opacity 0.15s",
+              borderRadius: "10px", letterSpacing: "-0.01em", transition: "opacity 0.15s",
             }}
               onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
               onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
@@ -46,7 +46,7 @@ export default function ContactCTA() {
               display: "inline-flex", alignItems: "center", gap: "6px",
               fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
               padding: "9px 20px", border: "1px solid rgba(245,244,240,0.15)",
-              color: "rgba(245,244,240,0.65)", borderRadius: "8px",
+              color: "rgba(245,244,240,0.65)", borderRadius: "10px",
               letterSpacing: "-0.01em", transition: "border-color 0.15s, color 0.15s",
             }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(245,244,240,0.4)"; e.currentTarget.style.color = "rgba(245,244,240,1)"; }}
