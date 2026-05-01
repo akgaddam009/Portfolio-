@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Large video assets (over GitHub's 100MB limit) — host elsewhere or via Git LFS
+public/images/system/overview.mov
+public/images/astra/overview.mov

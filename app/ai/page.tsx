@@ -4,6 +4,7 @@ import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
+import { ArrowLeft } from "@/components/ui/Icon";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -144,7 +145,7 @@ export default function AIArticlePage() {
                   onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
                   onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
                 >
-                  ← Back
+                  <ArrowLeft size={11} strokeWidth={1.5} /> Back
                 </Link>
               </motion.div>
 

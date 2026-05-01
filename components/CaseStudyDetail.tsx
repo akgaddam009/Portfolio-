@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Footer from "@/components/Footer";
 import ThemeToggle from "@/components/ThemeToggle";
 import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from "framer-motion";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
 
@@ -17,7 +16,7 @@ const ALL_NAV_SECTIONS = [
   { id: "cs-insight",   label: "Insight"   },
   { id: "cs-workflow",  label: "Workflow"  },
   { id: "decisions",    label: "Decisions" },
-  { id: "outcomes",     label: "Outcomes"  },
+  { id: "outcomes",     label: "Impact"  },
   { id: "ownership",    label: "Ownership" },
 ];
 
@@ -49,6 +48,16 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   const [activeSection, setActiveSection] = useState<string>("");
   const [navVisible, setNavVisible] = useState(false);
   const [hoveredPersona, setHoveredPersona] = useState<number | null>(null);
+
+  // Derive a sensible URL for the macOS browser chrome on VideoBlock from the
+  // case study's company name. Strips non-alphanumeric, lowercases, drops common
+  // suffixes like ".com", and reconstructs as "app.{company}.com". For Planful
+  // the well-known path stays so existing behaviour is preserved.
+  const chromeUrl = (() => {
+    if (cs.slug === "planful-esm") return "app.planful.com/esm";
+    const co = (cs.company || "").toLowerCase().replace(/\.com$/, "").replace(/[^a-z0-9]/g, "");
+    return co ? `app.${co}.com` : "app.example.com";
+  })();
 
   // Password gate — any case study with `confidential: true`.
   // Unlock state is per-slug, keyed in sessionStorage so different gated
@@ -261,6 +270,24 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </div>
         )}
 
+        {/* Hero video — placed before TLDR so a recruiter sees the final UI in
+            motion within the first scroll. Asymmetric vertical padding: heavier on
+            top to clearly separate the panel from the metrics bar above, lighter
+            on bottom to lead the eye into the TLDR. */}
+        {cs.contextVideo && (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{ padding: "96px 0 64px" }}
+          >
+            <div className="page-pad">
+              <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
+            </div>
+          </motion.section>
+        )}
+
         {cs.tldr && (
           <motion.section
             initial={{ opacity: 0, y: 12 }}
@@ -277,7 +304,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 {[
                   { label: "Problem",  value: cs.tldr.problem  },
                   { label: "Approach", value: cs.tldr.approach },
-                  { label: "Outcome",  value: cs.tldr.outcome  },
+                  { label: "Impact",  value: cs.tldr.outcome  },
                 ].map(item => (
                   <div key={item.label}>
                     <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>
@@ -293,20 +320,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </motion.section>
         )}
 
-        {cs.prototypeVideo && (
-          <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "48px 0" }}
-          >
-            <div className="page-pad">
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px" }}>Prototype</p>
-              <VideoBlock src={cs.prototypeVideo} />
-            </div>
-          </motion.section>
-        )}
+        {/* Prototype Video used to render here (right after TLDR). Moved into the
+            new "Final Design" section after Decisions so the storytelling flows:
+            TLDR → Process (problem/approach/research/insight) → Design Ideas →
+            Final Design → Impact. */}
 
         {cs.prototypeIframes && cs.prototypeIframes.length > 0 && (
           <motion.section
@@ -345,25 +362,86 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 <BodyText>{cs.summary}</BodyText>
               </div>
 
-              {cs.contextImage && (
+              {/* contextVideo and contextImage used to render here inside Overview.
+                  Removed because the contextVideo already renders as the hero panel
+                  above (right under metrics, before TLDR), and re-rendering both
+                  cluttered the Overview reading flow. The hero placement is the
+                  only place these need to appear. */}
+
+              {/* OLAP vs ESM data shapes — Planful only */}
+              {cs.slug === "planful-esm" && cs.insightDiagram === "olap-vs-esm" && (
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
                   style={{ marginTop: "32px" }}
-                  onClick={() => setLightboxSrc(cs.contextImage!.src)}
                 >
-                  <img
-                    src={cs.contextImage.src}
-                    alt={cs.contextImage.alt}
-                    style={{ width: "100%", display: "block", cursor: "zoom-in" }}
-                  />
-                  {cs.contextImage.caption && (
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
-                      {cs.contextImage.caption}
-                    </p>
-                  )}
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
+                    ESM vs OLAP data model
+                  </p>
+                  <div style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
+                    {/* ESM — Tabular */}
+                    <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                        ESM · Tabular
+                      </span>
+                      <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
+                        <svg width="140" height="80" viewBox="0 0 140 80" fill="none" stroke="currentColor" strokeWidth="0.9" style={{ color: "var(--muted2)" }}>
+                          {/* Header band */}
+                          <rect x="2" y="2" width="136" height="14" fill="currentColor" fillOpacity="0.06" />
+                          {/* Outer table */}
+                          <rect x="2" y="2" width="136" height="76" />
+                          {/* Column dividers */}
+                          <line x1="36" y1="2" x2="36" y2="78" />
+                          <line x1="70" y1="2" x2="70" y2="78" />
+                          <line x1="104" y1="2" x2="104" y2="78" />
+                          {/* Row dividers */}
+                          <line x1="2" y1="16" x2="138" y2="16" />
+                          <line x1="2" y1="31" x2="138" y2="31" />
+                          <line x1="2" y1="46" x2="138" y2="46" />
+                          <line x1="2" y1="61" x2="138" y2="61" />
+                          {/* Header label dashes */}
+                          <line x1="10" y1="9" x2="28" y2="9" strokeWidth="1.2" />
+                          <line x1="44" y1="9" x2="62" y2="9" strokeWidth="1.2" />
+                          <line x1="78" y1="9" x2="96" y2="9" strokeWidth="1.2" />
+                          <line x1="112" y1="9" x2="130" y2="9" strokeWidth="1.2" />
+                        </svg>
+                      </div>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
+                        Rows × columns. Typed cells. Editable in a sandbox before publish.
+                      </p>
+                    </div>
+
+                    {/* OLAP — Multi-dimensional */}
+                    <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                        OLAP · Multi-dimensional
+                      </span>
+                      <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
+                        <svg width="140" height="80" viewBox="0 0 140 80" fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinejoin="round" strokeLinecap="round" style={{ color: "var(--muted2)" }}>
+                          {/* Hex outline */}
+                          <path d="M70 6 L106 22 L106 54 L70 70 L34 54 L34 22 Z" />
+                          {/* 3 inner edges to the front-top corner */}
+                          <path d="M70 6 L70 38 M34 22 L70 38 M106 22 L70 38" />
+                          {/* Top face subdivisions */}
+                          <line x1="52" y1="14" x2="52" y2="30" strokeOpacity="0.5" />
+                          <line x1="88" y1="14" x2="88" y2="30" strokeOpacity="0.5" />
+                          <line x1="42" y1="26" x2="78" y2="42" strokeOpacity="0.4" />
+                          <line x1="98" y1="26" x2="62" y2="42" strokeOpacity="0.4" />
+                          {/* Front-left face vertical subdivisions */}
+                          <line x1="46" y1="28" x2="46" y2="60" strokeOpacity="0.5" />
+                          <line x1="58" y1="34" x2="58" y2="66" strokeOpacity="0.5" />
+                          {/* Front-right face vertical subdivisions */}
+                          <line x1="82" y1="34" x2="82" y2="66" strokeOpacity="0.5" />
+                          <line x1="94" y1="28" x2="94" y2="60" strokeOpacity="0.5" />
+                        </svg>
+                      </div>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
+                        Dimensions × members. Aggregated. The shape reports and forecasts read from.
+                      </p>
+                    </div>
+                  </div>
                 </motion.div>
               )}
 
@@ -376,7 +454,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ marginTop: "32px" }}
                 >
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
-                    How the system works
+                    How financial data models are managed
                   </p>
                   <div style={{ display: "flex", alignItems: "stretch", gap: "0" }}>
                     {/* ESM Box */}
@@ -616,9 +694,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}
                 >
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "12px" }}>Core Insight</p>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)" }}>
-                    {parseHighlights(cs.insight)}
-                  </p>
+                  {(() => {
+                    const paras = cs.insight.split("\n\n");
+                    return (
+                      <>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)" }}>
+                          {parseHighlights(paras[0])}
+                        </p>
+                        {paras.slice(1).map((para, i) => (
+                          <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", marginTop: "16px", maxWidth: "560px" }}>
+                            {parseHighlights(para)}
+                          </p>
+                        ))}
+                      </>
+                    );
+                  })()}
                 </motion.div>
                 {cs.insightImage && (
                   <ImageBlock image={cs.insightImage} placeholder="" onOpen={setLightboxSrc} />
@@ -739,6 +829,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             <CsSection label="Key Design Decisions" id="decisions">
+              {cs.decisionsIntro && (
+                <div style={{ marginBottom: "48px" }}>
+                  <BodyText>{cs.decisionsIntro}</BodyText>
+                </div>
+              )}
               <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
                 {cs.decisions.map((d, i) => (
                   <motion.div
@@ -756,14 +851,69 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <h3 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3 }}>
                         {d.title}
                       </h3>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                        {d.body.split("\n\n").map((para, pi) => (
-                          <p key={pi} style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)" }}>
-                            {parseHighlights(para)}
-                          </p>
-                        ))}
-                      </div>
-                      {d.images && d.images.length > 0 ? (
+                      {cs.slug === "planful-esm" && d.title.startsWith("What comes next") ? (
+                        <MapsDecisionBlock />
+                      ) : (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                          {d.body.split("\n\n").map((para, pi) => (
+                            <p key={pi} style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)" }}>
+                              {parseHighlights(para)}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                      {d.videos && d.videos.length > 0 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 12 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.65, ease: EASE }}
+                          style={{ marginTop: "24px" }}
+                        >
+                          <div style={{ display: "grid", gridTemplateColumns: `repeat(${d.videos.length}, 1fr)`, gap: "12px", width: "100%" }}>
+                            {d.videos.map((v, vi) => (
+                              <div key={vi} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                                {v.label && (
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                                    {v.label}
+                                  </p>
+                                )}
+                                <div
+                                  onClick={() => setLightboxSrc(v.src)}
+                                  style={{ position: "relative", cursor: "zoom-in", borderRadius: "8px", overflow: "hidden", background: "var(--surface)" }}
+                                >
+                                  <video
+                                    src={v.src}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    preload="metadata"
+                                    style={{ width: "100%", display: "block", pointerEvents: "none" }}
+                                  />
+                                  {/* Expand affordance — small badge top-right signalling
+                                      the video is clickable to view full-size in the lightbox. */}
+                                  <div style={{ position: "absolute", top: "8px", right: "8px", background: "rgba(0,0,0,0.65)", borderRadius: "6px", padding: "5px 8px", display: "flex", alignItems: "center", gap: "4px", color: "#fff", fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", pointerEvents: "none", backdropFilter: "blur(4px)" }}>
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                      <polyline points="15 3 21 3 21 9" />
+                                      <polyline points="9 21 3 21 3 15" />
+                                      <line x1="21" y1="3" x2="14" y2="10" />
+                                      <line x1="3" y1="21" x2="10" y2="14" />
+                                    </svg>
+                                    <span>Expand</span>
+                                  </div>
+                                </div>
+                                {v.caption && (
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", textAlign: "center" }}>
+                                    {v.caption}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                      {!(cs.slug === "planful-esm" && d.title.startsWith("What comes next")) && (d.images && d.images.length > 0 ? (
                         <motion.div
                           initial={{ opacity: 0, y: 12 }}
                           whileInView={{ opacity: 1, y: 0 }}
@@ -784,6 +934,29 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               </div>
                             ))}
                           </div>
+                        </motion.div>
+                      ) : d.image?.fullBleed ? (
+                        <motion.div
+                          initial={{ opacity: 0, y: 12 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.65, ease: EASE }}
+                          style={{ marginTop: "24px", marginLeft: "-72px", width: "calc(100% + 72px)", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}
+                        >
+                          <div style={{ position: "relative", width: "100%" }}>
+                            <img
+                              src={d.image.src}
+                              alt={d.image.alt}
+                              onClick={() => setLightboxSrc(d.image!.src)}
+                              style={{ width: "100%", display: "block", objectFit: "contain", cursor: "zoom-in" }}
+                            />
+                            <ZoomBadge />
+                          </div>
+                          {d.image.caption && (
+                            <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                              {d.image.caption}
+                            </p>
+                          )}
                         </motion.div>
                       ) : d.image?.width ? (
                         <motion.div
@@ -812,40 +985,92 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <ZoomLensImage image={d.image} onOpen={setLensLightboxSrc} />
                       ) : d.image ? (
                         <ImageBlock image={d.image} placeholder="Wireframe, prototype or design artifact" onOpen={setLightboxSrc} />
-                      ) : null}
+                      ) : null)}
                     </div>
                   </motion.div>
                 ))}
               </div>
             </CsSection>
 
-            <CsSection label="Outcomes" id="outcomes">
+            {/* Final Design — the polished result. Static design hero first
+                (instant "what shipped") then prototype motion (the product live). */}
+            {(cs.outcomesImage || cs.prototypeVideo) && (
+              <CsSection label="Final Design">
+                <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                  {cs.outcomesImage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.65, ease: EASE }}
+                      onClick={() => setLightboxSrc(cs.outcomesImage!.src)}
+                    >
+                      <img
+                        src={cs.outcomesImage.src}
+                        alt={cs.outcomesImage.alt}
+                        style={{ width: "100%", display: "block", cursor: "zoom-in", borderRadius: "12px" }}
+                      />
+                      {cs.outcomesImage.caption && (
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
+                          {cs.outcomesImage.caption}
+                        </p>
+                      )}
+                    </motion.div>
+                  )}
+                  {cs.prototypeVideo && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.65, ease: EASE }}
+                    >
+                      <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                    </motion.div>
+                  )}
+                </div>
+              </CsSection>
+            )}
+
+            <CsSection label="Impact" id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                {/* Before → After display — Planful only */}
+                {/* Impact tiles — Planful only */}
                 {cs.slug === "planful-esm" && (
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, ease: EASE }}
-                    style={{ background: "var(--surface)", borderRadius: "16px", padding: "28px 32px", boxShadow: "var(--card-shadow)" }}
+                    style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden" }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
-                      <div>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>Before</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 300, letterSpacing: "-0.04em", color: "var(--muted)", lineHeight: 1 }}>3.5 hrs</p>
+                    {/* Tile 1: Time on task */}
+                    <div style={{ flex: 1, padding: "24px 24px 20px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                        Time on task
+                      </span>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap" }}>
+                        <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 300, letterSpacing: "-0.03em", color: "var(--muted)", lineHeight: 1, textDecoration: "line-through", textDecorationColor: "var(--border)" }}>3.5 hrs</span>
+                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" style={{ color: "var(--muted)", flexShrink: 0 }}>
+                          <path d="M3 10h14M13 5l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 3.4vw, 36px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1 }}>10–15 min</span>
                       </div>
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0, color: "var(--border)", marginTop: "20px" }}>
-                        <path d="M3 10h14M13 5l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      <div>
-                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--accent-success)", background: "color-mix(in srgb, var(--accent-success) 10%, transparent)", borderRadius: "8px", padding: "3px 7px", display: "inline-block", marginBottom: "8px" }}>After</span>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 300, letterSpacing: "-0.04em", color: "var(--text)", lineHeight: 1 }}>10–15 min</p>
-                      </div>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
+                        ~95% reduction. Simple updates that took half a day now take a coffee break.
+                      </p>
                     </div>
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "20px" }}>
-                      Reduction in time on task
-                    </p>
+
+                    {/* Tile 2: Access expanded */}
+                    <div style={{ flex: 1, padding: "24px 24px 20px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                        Access expanded
+                      </span>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 28px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1.15 }}>
+                        Finance → Any team
+                      </p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
+                        Non-finance teams now load their own data without finance mediating every update.
+                      </p>
+                    </div>
                   </motion.div>
                 )}
 
@@ -905,18 +1130,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 ))}
 
-                {/* Planful qualitative outcome (second item) */}
-                {cs.slug === "planful-esm" && cs.outcomes[1] && (
-                  <motion.p
-                    initial={{ opacity: 0, y: 8 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.55, ease: EASE, delay: 0.08 }}
-                    style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", maxWidth: "580px" }}
-                  >
-                    {cs.outcomes[1]}
-                  </motion.p>
-                )}
               </div>
             </CsSection>
 
@@ -1005,7 +1218,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               );
             })()}
 
-            {cs.reflection && (
+            {/* "What I'd Do Differently" section hidden across all case studies. Data
+                preserved in cs.reflection in case we want to bring it back. */}
+            {false && cs.reflection && (
               <CsSection label="What I'd Do Differently">
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "580px" }}>
                   {cs.reflection}
@@ -1022,9 +1237,16 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         href={ref.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.55, color: "var(--muted2)", textDecoration: "underline", textDecorationColor: "var(--border)", textUnderlineOffset: "3px" }}
+                        style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.55, color: "var(--muted2)", textDecoration: "underline", textDecorationColor: "var(--border)", textUnderlineOffset: "3px", display: "inline-flex", alignItems: "center", gap: "8px" }}
                       >
-                        {ref.label}
+                        {/* External-link icon — small arrow pointing out of a box,
+                            signals "opens in new tab" before users click. */}
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }} aria-hidden="true">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          <polyline points="15 3 21 3 21 9" />
+                          <line x1="10" y1="14" x2="21" y2="3" />
+                        </svg>
+                        <span>{ref.label}</span>
                       </a>
                     </li>
                   ))}
@@ -1044,7 +1266,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.6, ease: EASE }}
-                style={{ paddingTop: "64px", paddingBottom: "16px" }}
+                style={{ paddingTop: "64px", paddingBottom: "120px" }}
               >
                 <Link
                   href={`/work/${next.slug}`}
@@ -1087,7 +1309,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </div>
         </article>
       </main>
-      <Footer />
       {/* Lightboxes wrapped in AnimatePresence so their `exit` animations actually run.
           Without this wrapper, the components unmount instantly when src becomes null
           and the fade/scale-out choreography never plays. */}
@@ -1414,7 +1635,29 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
   );
 }
 
-function VideoBlock({ src }: { src: string }) {
+function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string; chromeUrl?: string }) {
+  // Mobile case studies skip the macOS browser chrome — it's misleading for an
+  // app prototype. Detect on the case-study `type` string (e.g. "Consumer Mobile App").
+  const isMobile = !!appType && /mobile/i.test(appType);
+  // URL pill in the chrome bar. Falls back to a generic "app.example.com" if no
+  // chromeUrl is passed — but we always want to pass one to keep it accurate per case.
+  const urlLabel = chromeUrl || "app.example.com";
+
+  if (isMobile) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}>
+        <video
+          src={src}
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{ maxHeight: "640px", maxWidth: "100%", display: "block", borderRadius: "12px", background: "#000" }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--chrome)", boxShadow: "var(--card-shadow)" }}>
       {/* macOS chrome bar */}
@@ -1432,7 +1675,7 @@ function VideoBlock({ src }: { src: string }) {
             <path d="M2.5 4V2.8a1.5 1.5 0 013 0V4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.04em", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            app.planful.com/esm
+            {urlLabel}
           </span>
         </div>
       </div>
@@ -1473,99 +1716,131 @@ const TASK_ICONS: Record<string, React.ReactNode> = {
   ),
 };
 
-function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
+function MapsDecisionBlock() {
+  const pills = [
+    { label: "Define" },
+    { label: "Prepare" },
+    { label: "Validate" },
+    { label: "Publish" },
+    { label: "Route to model ← gap", gap: true },
+  ];
   return (
-    <div style={{ position: "relative" }}>
-      {/* Connecting line behind the step dots */}
-      <div style={{
-        position: "absolute",
-        top: "11px",
-        left: "12.5%",
-        right: "12.5%",
-        height: "1px",
-        background: "var(--border)",
-        zIndex: 0,
-      }} />
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)" }}>
+        The four-stage flow solves data loading. But after data is loaded, someone still has to route it to the right place in the financial model. At launch, that step required backend support from an implementation team.
+      </p>
 
-      <div style={{ display: "flex", gap: "0" }}>
-        {stages.map((stage, i) => (
-          <motion.div
-            key={stage.number}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, ease: EASE, delay: i * 0.1 }}
-            style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative", zIndex: 1 }}
-          >
-            {/* Step dot */}
+      {/* Pill chain — done stages muted, gap highlighted as the focus */}
+      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "6px" }}>
+        {pills.map((p, i) => (
+          <Fragment key={i}>
             <div style={{
-              width: "28px",
-              height: "28px",
-              borderRadius: "50%",
+              padding: "6px 12px",
               border: "1px solid var(--border)",
-              background: "var(--bg)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              marginBottom: "16px",
-              color: "var(--muted)",
-            }}>
-              {TASK_ICONS[stage.label] ?? (
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.06em", color: "var(--muted)" }}>
-                  {stage.number}
-                </span>
-              )}
-            </div>
-
-            {/* Stage label */}
-            <h3 style={{
+              borderRadius: "6px",
               fontFamily: "var(--font-body)",
-              fontSize: "13px",
-              fontWeight: 400,
-              letterSpacing: "-0.02em",
-              color: "var(--text)",
-              textAlign: "center",
-              lineHeight: 1.3,
-              marginBottom: stage.description ? "8px" : "16px",
-              paddingLeft: "8px",
-              paddingRight: "8px",
+              fontSize: "12px",
+              color: p.gap ? "var(--text)" : "var(--muted)",
+              background: p.gap ? "var(--surface)" : "transparent",
+              fontWeight: p.gap ? 500 : 400,
+              letterSpacing: "-0.01em",
             }}>
-              {stage.label}
-            </h3>
-            {stage.description && (
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "11px", lineHeight: 1.55, color: "var(--muted)", textAlign: "center", paddingLeft: "8px", paddingRight: "8px", marginBottom: "16px" }}>
-                {stage.description}
-              </p>
+              {p.label}
+            </div>
+            {i < pills.length - 1 && (
+              <span style={{ color: "var(--muted)", fontSize: "12px", fontFamily: "var(--font-mono)" }}>›</span>
             )}
-
-            {/* Meta */}
-            {stage.meta && stage.meta.length > 0 && (
-              <div style={{
-                borderTop: "1px solid var(--border)",
-                paddingTop: "12px",
-                width: "100%",
-                paddingLeft: "8px",
-                paddingRight: "8px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-              }}>
-                {stage.meta.map(m => (
-                  <div key={m.label} style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-                      {m.label}
-                    </span>
-                    <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted2)", letterSpacing: "-0.01em", lineHeight: 1.4 }}>
-                      {m.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
+          </Fragment>
         ))}
       </div>
+
+      {/* Maps closes the loop card */}
+      <div style={{ border: "1px solid var(--border)", borderRadius: "10px", padding: "20px 22px", display: "flex", flexDirection: "column", gap: "16px" }}>
+        <h4 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3, margin: 0 }}>
+          Maps closes the loop
+        </h4>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, color: "var(--muted2)" }}>
+          A visual interface where finance teams draw the connections between ESM columns and OLAP dimensions themselves, no backend access, no developer dependency. The workflow becomes end-to-end: any team member loads, validates, publishes, and routes their data without leaving the product.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid var(--border)", borderRadius: "8px", overflow: "hidden" }}>
+          {/* Without Maps — de-emphasized */}
+          <div style={{ padding: "14px 16px", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "8px" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+              Without Maps
+            </span>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted)" }}>
+              Teams finish publishing. Implementation consultants route the data from the backend. Turnaround: hours to days.
+            </p>
+          </div>
+          {/* With Maps — full readable */}
+          <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "8px", background: "var(--surface)" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text)" }}>
+              With Maps
+            </span>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)" }}>
+              Finance teams draw the connections visually. Data reaches the right model dimensions in the same session.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
+  return (
+    <div style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden" }}>
+      {stages.map((stage, i) => (
+        <motion.div
+          key={stage.number}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: EASE, delay: i * 0.1 }}
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: "24px 20px 20px",
+            borderRight: i < stages.length - 1 ? "1px solid var(--border)" : "none",
+            gap: "20px",
+          }}
+        >
+          {/* Step number */}
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "9px",
+            letterSpacing: "0.08em",
+            color: "var(--muted)",
+          }}>
+            {stage.number}
+          </span>
+
+          {/* Icon */}
+          <div style={{ color: "var(--muted2)", width: "22px", height: "22px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+              {stage.label === "Define" && <><rect x="2" y="2" width="5" height="5" rx="0.5"/><rect x="9" y="2" width="5" height="5" rx="0.5"/><rect x="2" y="9" width="5" height="5" rx="0.5"/><rect x="9" y="9" width="5" height="5" rx="0.5"/></>}
+              {stage.label === "Prepare" && <><path d="M8 11V4M5 7l3-3 3 3"/><path d="M3 13h10"/></>}
+              {stage.label === "Validate" && <><circle cx="8" cy="8" r="6"/><path d="M5.5 8.5l2 2 3-3"/></>}
+              {stage.label === "Publish" && <path d="M14 2L7 9M14 2l-4.5 12L7 9 2.5 6.5 14 2z"/>}
+            </svg>
+          </div>
+
+          {/* Stage label */}
+          <h3 style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "14px",
+            fontWeight: 500,
+            letterSpacing: "-0.02em",
+            color: "var(--text)",
+            lineHeight: 1.2,
+          }}>
+            {stage.label}
+          </h3>
+        </motion.div>
+      ))}
     </div>
   );
 }
@@ -1847,6 +2122,8 @@ function LensLightbox({ src, onClose }: { src: string | null; onClose: () => voi
 
 function Lightbox({ src, onClose }: { src: string | null; onClose: () => void }) {
   if (!src) return null;
+  // Detect video sources so the lightbox can play them at full size, not just images.
+  const isVideo = /\.(mov|mp4|webm)$/i.test(src);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -1867,6 +2144,28 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
         cursor: "pointer",
       }}
     >
+      {isVideo ? (
+        <motion.video
+          src={src}
+          autoPlay
+          loop
+          controls
+          playsInline
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            maxWidth: "90vw",
+            maxHeight: "90vh",
+            objectFit: "contain",
+            borderRadius: "16px",
+            boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
+            cursor: "default",
+            background: "#000",
+          }}
+        />
+      ) : (
       <motion.img
         src={src}
         initial={{ opacity: 0, scale: 0.96 }}
@@ -1883,6 +2182,7 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
         }}
         alt=""
       />
+      )}
       <button
         onClick={(e) => { e.stopPropagation(); onClose(); }}
         aria-label="Close lightbox"

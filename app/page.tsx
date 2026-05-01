@@ -8,6 +8,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
 import ISTClock from "@/components/ISTClock";
+import { ArrowUpRight } from "@/components/ui/Icon";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -300,9 +301,9 @@ function AboutPanel() {
           style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}
         >
           {[
-            { label: "LinkedIn ↗", href: "https://linkedin.com/in/akgaddam", external: true },
-            { label: "Medium ↗", href: "https://medium.com/@akgaddam", external: true },
-            { label: "CV ↗", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
+            { label: "LinkedIn", href: "https://linkedin.com/in/akgaddam", external: true },
+            { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
+            { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
           ].map(({ label, href, external }, i, arr) => (
             <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
               <Link
@@ -315,7 +316,7 @@ function AboutPanel() {
                   color: "var(--muted)",
                   padding: "4px 8px",
                   borderRadius: "6px",
-                  display: "inline-block",
+                  display: "inline-flex", alignItems: "center", gap: "4px",
                   transition: "color 0.18s, background 0.18s",
                 }}
                 onMouseEnter={e => {
@@ -328,6 +329,7 @@ function AboutPanel() {
                 }}
               >
                 {label}
+                <ArrowUpRight size={10} strokeWidth={1.5} />
               </Link>
               {i < arr.length - 1 && (
                 <span style={{ color: "var(--muted)", fontFamily: "var(--font-mono)", fontSize: "9px", userSelect: "none", opacity: 0.4 }}>·</span>
@@ -456,7 +458,7 @@ function MeshThumbnail({ index, type, confidential }: {
     <div
       ref={ref}
       style={{
-        height: "200px",
+        height: "192px",
         background: palette.base,
         position: "relative", overflow: "hidden",
       }}
@@ -482,13 +484,17 @@ function MeshThumbnail({ index, type, confidential }: {
 /* ── Panel 2: Selected Work ── */
 
 const WORK_THUMBS: Record<string, string> = {
-  "astra":                "/images/astra/cover.png",
-  "planful-esm":          "/images/planful/landing-page.jpg",
-  "reputation-listings":  "/images/reputation/Thumbnail .png",
+  "astra":                "/images/astra/overview.mov",
+  "planful-esm":          "/images/planful/Untitled.mp4",
+  "reputation-listings":  "/images/reputation/after.mov",
   "fancode-ftux":         "/images/fancode/user-journey-map.jpg",
+  "fancode-homepage":     "/images/fancode/hp-overview.mov",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
 };
+
+// Video file extensions that should render through <video> instead of <img>.
+const isVideoThumb = (src: string) => /\.(mov|mp4|webm)$/i.test(src);
 
 /* ── Count-up animation for metric values ── */
 function MetricValue({ value }: { value: string }) {
@@ -555,15 +561,20 @@ function SystemFeatureCard() {
           onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
         >
-          {/* Thumbnail — screenshot of the live /system page */}
-          <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
-            <img
+          {/* Thumbnail — screen recording of the live /system page in motion.
+              NOTE: the source mov is large (~400MB). Recommend compressing to
+              ~10–20MB for production. preload="metadata" keeps the homepage load
+              from blocking on it. */}
+          <div style={{ position: "relative", height: "192px", overflow: "hidden", padding: "12px 12px 0" }}>
+            <video
               className="work-thumb"
-              src="/images/system/cover.png"
-              alt=""
+              src="/images/system/overview.mov"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
               aria-hidden="true"
-              loading="lazy"
-              decoding="async"
               style={{
                 width: "100%",
                 height: "100%",
@@ -571,6 +582,7 @@ function SystemFeatureCard() {
                 objectPosition: "center top",
                 display: "block",
                 borderRadius: "8px 8px 0 0",
+                background: "var(--surface)",
               }}
             />
           </div>
@@ -651,10 +663,31 @@ function WorkPanel() {
                       e.currentTarget.style.boxShadow = "var(--card-shadow)";
                     }}
                   >
-                    {/* Thumbnail — always-visible image, mesh as fallback */}
-                    <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                    {/* Thumbnail — always-visible image (or video for case studies
+                        where motion communicates the design better), mesh as fallback */}
+                    <div style={{ position: "relative", height: "192px", overflow: "hidden", padding: "12px 12px 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
-                        <>
+                        isVideoThumb(WORK_THUMBS[cs.slug]) ? (
+                          <video
+                            className="work-thumb"
+                            src={WORK_THUMBS[cs.slug]}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            preload="metadata"
+                            aria-hidden="true"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              objectPosition: "center top",
+                              display: "block",
+                              borderRadius: "8px 8px 0 0",
+                              background: "var(--surface)",
+                            }}
+                          />
+                        ) : (
                           <img
                             className="work-thumb"
                             src={WORK_THUMBS[cs.slug]}
@@ -671,7 +704,7 @@ function WorkPanel() {
                               borderRadius: "8px 8px 0 0",
                             }}
                           />
-                        </>
+                        )
                       ) : (
                         <MeshThumbnail
                           index={i}
@@ -717,34 +750,10 @@ function WorkPanel() {
                         {cs.subtitle}
                       </p>
 
-                      {/* Primary metric — elevated */}
-                      {cs.metrics && cs.metrics[0] && (
-                        <div style={{ paddingTop: "12px", borderTop: "1px solid var(--border)" }}>
-                          <p style={{
-                            fontFamily: "var(--font-body)",
-                            fontSize: "18px",
-                            fontWeight: 400,
-                            letterSpacing: "-0.03em",
-                            color: "var(--text)",
-                            lineHeight: 1,
-                            marginBottom: "4px",
-                          }}>
-                            <MetricValue value={cs.metrics[0].value} />
-                          </p>
-                          <p style={{
-                            fontFamily: "var(--font-mono)",
-                            fontSize: "10px",
-                            letterSpacing: "-0.01em",
-                            color: "var(--muted)",
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                          } as React.CSSProperties}>
-                            {cs.metrics[0].label}
-                          </p>
-                        </div>
-                      )}
+                      {/* Primary metric block removed from the card to save vertical
+                          space. The headline metric will live inside the case study
+                          subtitle/summary text instead. MetricValue helper kept defined
+                          in case a metric block is reintroduced later. */}
                     </div>
                   </div>
                 </Link>
@@ -1068,6 +1077,7 @@ function CareerPanel() {
                 fontWeight: 510, letterSpacing: "-0.01em",
                 color: isHovered && item.impact ? "var(--text)" : "var(--muted)", marginTop: "3px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                fontVariantNumeric: "tabular-nums",
                 transition: "color 0.2s",
               }}>
                 {isHovered && item.impact ? item.impact : item.dateLabel}
@@ -1126,7 +1136,7 @@ function CareerPanel() {
                       onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
                       onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
                     >
-                      Visit site ↗
+                      Visit site <ArrowUpRight size={11} strokeWidth={1.5} />
                     </a>
                   </div>
                 )}
@@ -1206,7 +1216,7 @@ function CareerPanel() {
                         onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
                         onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
                       >
-                        Read the CI report ↗
+                        Read the CI report <ArrowUpRight size={11} strokeWidth={1.5} />
                       </a>
                     )}
                   </div>
@@ -1364,7 +1374,7 @@ function CareerPanel() {
   };
 
   return (
-    <div>
+    <div id="career-panel-container">
       <PanelHeader label="Career" />
       <div style={{ padding: "16px 0 32px 0" }}>
 
@@ -1396,6 +1406,7 @@ function CareerPanel() {
                   letterSpacing: "-0.01em",
                   color: isYearActive(yr) ? "var(--text)" : yr === 2026 ? "var(--text)" : "var(--muted)",
                   fontWeight: 400,
+                  fontVariantNumeric: "tabular-nums",
                   opacity: isYearActive(yr) ? 1 : yr === 2026 ? 1 : 0.55,
                   transition: "color 0.2s, opacity 0.2s",
                 }}>{yr}</span>
@@ -1440,12 +1451,12 @@ function CareerPanel() {
             }}>
               <div className="today-dot" style={{
                 width: "9px", height: "9px", borderRadius: "50%",
-                background: "var(--accent-error)", flexShrink: 0,
+                background: "var(--accent-warm)", flexShrink: 0,
               }} />
               <span style={{
                 fontFamily: "var(--font-body)", fontSize: "11px",
                 fontWeight: 510, letterSpacing: "-0.01em",
-                color: "var(--accent-error)", opacity: 0.75,
+                color: "var(--accent-warm)", opacity: 0.85,
               }}>Now</span>
             </div>
 
@@ -1610,52 +1621,6 @@ function TestimonialsPanel() {
 }
 
 /* ── Panel 4: AI Explorations ── */
-const aiExplorations = [
-  {
-    number: "01",
-    title: "AI-Assisted Research Synthesis",
-    tags: ["Claude", "Dovetail"],
-    body: "Built a workflow using Claude to synthesise raw interview transcripts into themes, opportunity statements, and HMW questions in minutes — work that used to take days. Now a core part of my discovery process.",
-    status: "In use",
-  },
-  {
-    number: "02",
-    title: "Prompt-Driven Wireframing",
-    tags: ["Cursor", "Figma AI"],
-    body: "Experimenting with prompt-to-wireframe pipelines using Cursor and Figma AI. The output is rough, but it's a forcing function — it surfaces structural decisions before I get attached to any visual direction.",
-    status: "Ongoing",
-  },
-  {
-    number: "03",
-    title: "This Portfolio",
-    tags: ["Claude Code", "Next.js"],
-    body: "Designed and shipped entirely using Claude Code. No separate dev handoff — I wrote the brief, Claude wrote the code, I directed the output. Proof that a designer with the right tools can own the full stack.",
-    status: "Shipped",
-    href: "/ai",
-  },
-  {
-    number: "04",
-    title: "LLM UX Copy Reviewer",
-    tags: ["GPT-4", "Figma"],
-    body: "A Figma plugin prototype that runs selected copy through an LLM and flags tone, reading level, and clarity issues — with suggested rewrites. Reduces back-and-forth with content designers on early-stage screens.",
-    status: "Prototype",
-  },
-  {
-    number: "05",
-    title: "AI Decision Audit Trail",
-    tags: ["Claude", "Notion"],
-    body: "A structured prompt system that captures design decisions with rationale, tradeoffs, and alternatives considered. Feeds directly into Notion as a living decision log. Useful for async teams and post-mortems.",
-    status: "In use",
-  },
-];
-
-const statusColors: Record<string, string> = {
-  "In use":   "var(--accent-success)",
-  "Ongoing":  "#2563eb",
-  "Shipped":  "#7c3aed",
-  "Prototype":"#d97706",
-};
-
 function ContactPanel() {
   const [copied, setCopied] = useState(false);
 
@@ -1749,7 +1714,7 @@ function ContactPanel() {
             onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
           >
-            <span style={{ fontSize: "11px" }}>↗</span>
+            <ArrowUpRight size={11} strokeWidth={1.5} />
             LinkedIn
           </Link>
         </motion.div>
@@ -1869,41 +1834,6 @@ function ContactPanel() {
 
 /* ── Panel shadow helpers ── */
 /* ── AI Explorations panel ── */
-function ExplorationItem({ item }: { item: (typeof aiExplorations)[0] }) {
-  return (
-    <div style={{
-      padding: "12px 14px",
-      background: "var(--surface)",
-      borderRadius: "12px",
-      boxShadow: "var(--card-shadow)",
-    }}>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px", marginBottom: "6px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted2)", letterSpacing: "0.04em" }}>{item.number}</span>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 590, letterSpacing: "-0.01em", color: "var(--text)" }}>{item.title}</span>
-        </div>
-        <span style={{
-          flexShrink: 0,
-          fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.04em", textTransform: "uppercase",
-          padding: "2px 7px", borderRadius: "6px",
-          color: statusColors[item.status] ?? "var(--muted)",
-          background: `color-mix(in srgb, ${statusColors[item.status] ?? "var(--muted)"} 12%, transparent)`,
-        }}>
-          {item.status}
-        </span>
-      </div>
-      <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginBottom: "6px" }}>
-        {item.tags.map(tag => (
-          <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.04em", textTransform: "uppercase", padding: "2px 6px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "6px" }}>
-            {tag}
-          </span>
-        ))}
-      </div>
-      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, color: "var(--muted)", margin: 0 }}>{item.body}</p>
-    </div>
-  );
-}
-
 function AiExplorationsPanel() {
   const astra = caseStudies.find(cs => cs.slug === "astra");
   return (
@@ -1932,17 +1862,31 @@ function AiExplorationsPanel() {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                 >
-                  <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                  <div style={{ position: "relative", height: "192px", overflow: "hidden", padding: "12px 12px 0" }}>
                     {WORK_THUMBS[astra.slug] ? (
-                      <img
-                        className="work-thumb"
-                        src={WORK_THUMBS[astra.slug]}
-                        alt=""
-                        aria-hidden="true"
-                        loading="lazy"
-                        decoding="async"
-                        style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block", borderRadius: "8px 8px 0 0" }}
-                      />
+                      isVideoThumb(WORK_THUMBS[astra.slug]) ? (
+                        <video
+                          className="work-thumb"
+                          src={WORK_THUMBS[astra.slug]}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          preload="metadata"
+                          aria-hidden="true"
+                          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block", borderRadius: "8px 8px 0 0", background: "var(--surface)" }}
+                        />
+                      ) : (
+                        <img
+                          className="work-thumb"
+                          src={WORK_THUMBS[astra.slug]}
+                          alt=""
+                          aria-hidden="true"
+                          loading="lazy"
+                          decoding="async"
+                          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block", borderRadius: "8px 8px 0 0" }}
+                        />
+                      )
                     ) : (
                       <MeshThumbnail index={0} type={astra.type} confidential={astra.confidential} />
                     )}
@@ -1972,25 +1916,6 @@ function AiExplorationsPanel() {
 
           {/* Portfolio Design Language — meta artifact */}
           <SystemFeatureCard />
-
-          {/* Text-based explorations */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            {aiExplorations.map((item, i) => (
-              <motion.div
-                key={item.number}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-10px" }}
-                transition={{ opacity: { duration: 0.4, ease: EASE, delay: i * 0.05 }, y: { type: "spring", stiffness: 320, damping: 28 } }}
-              >
-                {"href" in item && item.href ? (
-                  <Link href={item.href as string}><ExplorationItem item={item} /></Link>
-                ) : (
-                  <ExplorationItem item={item} />
-                )}
-              </motion.div>
-            ))}
-          </div>
 
         </div>
       </div>
@@ -2185,9 +2110,9 @@ export default function Home() {
         .panel { -ms-overflow-style: none; scrollbar-width: none; }
 
         @keyframes today-pulse {
-          0%   { box-shadow: 0 0 0 0px rgba(239,68,68,0.4); }
-          60%  { box-shadow: 0 0 0 5px rgba(239,68,68,0); }
-          100% { box-shadow: 0 0 0 0px rgba(239,68,68,0); }
+          0%   { box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent-warm) 40%, transparent); }
+          60%  { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent-warm)  0%, transparent); }
+          100% { box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent-warm)  0%, transparent); }
         }
         .today-dot {
           animation: today-pulse 3.5s ease-out infinite;

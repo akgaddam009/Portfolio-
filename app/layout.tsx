@@ -25,6 +25,16 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,        // never disable zoom — accessibility requirement
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfd" },
+    { media: "(prefers-color-scheme: dark)",  color: "#000000" },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "Arun Gaddam — Senior Product Designer",
   description:

@@ -29,7 +29,12 @@
 
   /* ── Semantic accent tokens — Apple system colors ── */
   --accent-success: #34c759;  /* Apple systemGreen — copy-success, "In use", "After" */
-  --accent-error:   #ff3b30;  /* Apple systemRed — error states, "Now" marker */
+  --accent-error:   #ff3b30;  /* Apple systemRed — error states only */
+
+  /* ── Brand accent — burnt terracotta. Phase-1 trial, used as punctuation:
+     "Now" dot, text highlight sweep. NOT used for body text (3.05:1 light /
+     5.34:1 dark — passes for marks and icons, not for paragraphs). */
+  --accent-warm:    #d17b53;
 
   /* ── Soft hover overlay — theme-aware via color-mix ──
      Replaces full --surface2 swaps on icon buttons / chrome elements where
@@ -255,13 +260,15 @@ a { color: inherit; text-decoration: none; }
   animation-play-state: paused;
 }
 
-/* ─── Work card image lift — pairs with the shadow-elevation hover ── */
-.work-thumb {
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-.work-card:hover .work-thumb {
-  transform: scale(1.04);
+/* ─── Work card thumbnail — hover image-change behaviour removed.
+   Previously: scale(1.04) on hover plus a brightness shift in dark mode.
+   The card itself still gets its shadow-elevation hover from the inline
+   onMouseEnter handler; only the thumbnail content is now static on hover. */
+/* Dark mode: bright UI screenshots (Financial Data, Listings, etc.) blast
+   against the #2c2c2e card surface. Tone them down ~8% with a slight
+   warm tilt to integrate them into the theme. Stays consistent on hover. */
+[data-theme="dark"] .work-thumb {
+  filter: brightness(0.88) contrast(1.02) saturate(0.95);
 }
 
 
@@ -271,10 +278,12 @@ a { color: inherit; text-decoration: none; }
   to   { background-size: 100% 100%; }
 }
 .text-highlight {
+  /* Terracotta highlight sweep — warm pigment ink, not yellow marker. The
+     low-opacity layer reads as a thoughtful editor's mark, not Microsoft Word. */
   background-image: linear-gradient(
     transparent 18%,
-    rgba(251, 191, 36, 0.28) 18%,
-    rgba(251, 191, 36, 0.28) 88%,
+    color-mix(in srgb, var(--accent-warm) 28%, transparent) 18%,
+    color-mix(in srgb, var(--accent-warm) 28%, transparent) 88%,
     transparent 88%
   );
   background-size: 0% 100%;
@@ -368,6 +377,24 @@ a { color: inherit; text-decoration: none; }
   }
   .desktop-nav-arrows { display: none !important; }
   .panel-dots { display: none !important; }
+
+  /* Solid nav backdrop on mobile — content scrolling under a transparent
+     fixed nav is the recruiter-on-phone "feels broken" tell. */
+  .nav-glass {
+    background: rgba(255, 255, 255, 0.98) !important;
+  }
+  [data-theme="dark"] .nav-glass {
+    background: rgba(28, 28, 30, 0.98) !important;
+  }
+
+  /* Career panel: the timeline uses absolute positioning calibrated to
+     desktop widths. On mobile, give the panel more vertical room so
+     cards don't clip dates and roles. Min-height ensures the entire
+     timeline is visible without scroll-trap inside the stacked layout. */
+  #career-panel-container,
+  .panel:has(#career-panel-container) {
+    min-height: 720px;
+  }
 }
 
 /* ─── Film grain overlay ─────────────────────────────── */

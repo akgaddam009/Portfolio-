@@ -6,6 +6,7 @@ import ContactCTA from "@/components/ContactCTA";
 import PageTransition from "@/components/PageTransition";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { ArrowRight, ArrowDown } from "@/components/ui/Icon";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -144,7 +145,7 @@ export default function AboutPage() {
               Outside work, I&apos;m in Hyderabad with my wife and our son — figuring out how to be present as a parent while staying sharp as a designer. AI helps with the second part.
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.36 }} style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
-              <Link href="mailto:akgaddam02@gmail.com" className="btn-primary">Get in touch →</Link>
+              <Link href="mailto:akgaddam02@gmail.com" className="btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>Get in touch <ArrowRight size={13} strokeWidth={1.6} /></Link>
               <Link
                 href="/cv.pdf"
                 target="_blank"
@@ -158,7 +159,7 @@ export default function AboutPage() {
                 onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
                 onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
               >
-                Download CV ↓
+                Download CV <ArrowDown size={11} strokeWidth={1.5} />
               </Link>
             </motion.div>
           </div>
