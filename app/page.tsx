@@ -703,7 +703,7 @@ function SystemFeatureCard() {
 
             <h3 style={{
               fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400,
-              lineHeight: "18px", letterSpacing: 0,
+              lineHeight: "22px", letterSpacing: 0,
               color: "var(--text)", marginBottom: "4px",
             }}>
               Portfolio Design Language
@@ -836,7 +836,7 @@ function WorkPanel() {
                       {/* Title — Figma: Inter 400 / 16px / line-height 18px / 0 tracking */}
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400,
-                        lineHeight: "18px", letterSpacing: 0,
+                        lineHeight: "22px", letterSpacing: 0,
                         color: "var(--text)", marginBottom: "4px",
                       }}>
                         {cs.title}
@@ -2011,7 +2011,7 @@ function AiExplorationsPanel() {
                         </span>
                       ))}
                     </div>
-                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400, lineHeight: "18px", letterSpacing: 0, color: "var(--text)", marginBottom: "4px" }}>
+                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400, lineHeight: "22px", letterSpacing: 0, color: "var(--text)", marginBottom: "4px" }}>
                       {astra.title}
                     </h3>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, color: "var(--muted)" }}>
