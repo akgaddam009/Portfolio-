@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, DM_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
-import GrainOverlay from "@/components/GrainOverlay";
 import Cursor from "@/components/Cursor";
 
 const inter = Inter({
@@ -71,7 +70,6 @@ export default function RootLayout({
         {/* Skip to main content — for keyboard/screen-reader users (CSS-only, no JS needed) */}
         <a href="#main-content" className="skip-nav">Skip to content</a>
         <Cursor />
-        <GrainOverlay />
         {children}
       </body>
     </html>
