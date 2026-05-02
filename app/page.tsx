@@ -737,7 +737,7 @@ function SystemFeatureCard() {
               gradient-orb fallback). The card is about the design language
               itself, so the thumbnail leans into the portfolio's visual
               vocabulary instead of showing a literal page screenshot. */}
-          <div style={{ position: "relative", height: "160px", overflow: "hidden", padding: "12px 12px 0" }}>
+          <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
             <MeshThumbnail index={0} type="design-system" confidential={false} />
           </div>
 
@@ -821,7 +821,7 @@ function WorkPanel() {
                   >
                     {/* Thumbnail — always-visible image (or video for case studies
                         where motion communicates the design better), mesh as fallback */}
-                    <div style={{ position: "relative", height: "160px", overflow: "hidden", padding: "12px 12px 0" }}>
+                    <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         isVideoThumb(WORK_THUMBS[cs.slug]) ? (
                           <video
@@ -2061,7 +2061,7 @@ function AiExplorationsPanel() {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                 >
-                  <div style={{ position: "relative", height: "160px", overflow: "hidden", padding: "12px 12px 0" }}>
+                  <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
                     {WORK_THUMBS[astra.slug] ? (
                       isVideoThumb(WORK_THUMBS[astra.slug]) ? (
                         <video
