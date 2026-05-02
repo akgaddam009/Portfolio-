@@ -550,6 +550,11 @@ function MeshThumbnail({ index, type, confidential }: {
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const raf = useRef<number | null>(null);
+  /* Current and target orb positions. Mouse drives the target;
+     the rAF loop eases the current values toward it for a smooth,
+     trailing motion across three layered radial gradients. */
+  const mouse = useRef({ x: 50, y: 50 });
+  const current = useRef({ x: 50, y: 50, x2: 30, y2: 70, x3: 70, y3: 30 });
   const [isDark, setIsDark] = useState(false);
 
   // Watch data-theme attribute changes
@@ -565,6 +570,50 @@ function MeshThumbnail({ index, type, confidential }: {
     ? meshPalettes.dark[index % meshPalettes.dark.length]
     : meshPalettes.light[index % meshPalettes.light.length];
 
+  /* rAF loop — lerp orbs toward mouse, paint as background gradients.
+     Each orb follows at a slightly different rate, giving the trio a
+     parallax-like wobble rather than moving in lockstep. */
+  const update = () => {
+    const c = current.current;
+    const m = mouse.current;
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    c.x  = lerp(c.x,  m.x,       0.06);
+    c.y  = lerp(c.y,  m.y,       0.06);
+    c.x2 = lerp(c.x2, 100 - m.x, 0.04);
+    c.y2 = lerp(c.y2, m.y * 0.7, 0.04);
+    c.x3 = lerp(c.x3, m.x * 0.6, 0.035);
+    c.y3 = lerp(c.y3, 100 - m.y, 0.035);
+
+    if (ref.current) {
+      const p = document.documentElement.dataset.theme === "dark"
+        ? meshPalettes.dark[index % meshPalettes.dark.length]
+        : meshPalettes.light[index % meshPalettes.light.length];
+      ref.current.style.background = [
+        `radial-gradient(ellipse 60% 55% at ${c.x}% ${c.y}%, ${p.orbs[0]}ee, transparent 70%)`,
+        `radial-gradient(ellipse 50% 60% at ${c.x2}% ${c.y2}%, ${p.orbs[1]}bb, transparent 65%)`,
+        `radial-gradient(ellipse 55% 50% at ${c.x3}% ${c.y3}%, ${p.orbs[2]}aa, transparent 60%)`,
+        p.base,
+      ].join(", ");
+    }
+    raf.current = requestAnimationFrame(update);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouse.current = {
+      x: ((e.clientX - rect.left) / rect.width)  * 100,
+      y: ((e.clientY - rect.top)  / rect.height) * 100,
+    };
+  };
+
+  const startRaf = () => { if (!raf.current) raf.current = requestAnimationFrame(update); };
+  const stopRaf  = () => {
+    if (raf.current) { cancelAnimationFrame(raf.current); raf.current = null; }
+    /* Reset the target to centre when the cursor leaves so the orbs
+       drift back toward a neutral resting position next time. */
+    mouse.current = { x: 50, y: 50 };
+  };
+
   useEffect(() => () => { if (raf.current) cancelAnimationFrame(raf.current); }, []);
 
   // Theme-aware colour values
@@ -574,6 +623,9 @@ function MeshThumbnail({ index, type, confidential }: {
   return (
     <div
       ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={startRaf}
+      onMouseLeave={stopRaf}
       style={{
         height: "192px",
         background: palette.base,
