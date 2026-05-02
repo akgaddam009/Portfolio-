@@ -1976,15 +1976,51 @@ function ContactPanel() {
             color: "var(--muted)", lineHeight: 1.3,
             marginBottom: "4px",
           }}>
-            © 2026 · Arun Gaddam ツ
+            © 2026 · Arun Gaddam{" "}
+            <span style={{
+              color: "#f5b800",
+              /* Sun-glow drop shadow + a slight upward inset highlight via
+                 text-shadow trick, so the smile reads warm and lifted. */
+              textShadow: "0 0 6px rgba(245, 184, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.15)",
+              fontWeight: 500,
+            }}>ツ</span>
           </p>
           <p style={{
             fontFamily: "var(--font-body)", fontSize: "11px",
             fontWeight: 400, letterSpacing: "-0.01em",
             color: "var(--muted)", lineHeight: 1.3,
-            opacity: 0.6,
           }}>
-            Designed with <svg width="11" height="11" viewBox="0 0 24 24" style={{ display: "inline", verticalAlign: "middle", marginBottom: "1px" }} fill="var(--muted)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> using Claude Code
+            <span style={{ opacity: 0.6 }}>Designed with </span>
+            {/* 3D red heart — radial gradient gives volume, drop-shadow
+                provides cast. Inline-flex keeps it baseline-aligned with
+                the body type around it. */}
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              style={{
+                display: "inline-block",
+                verticalAlign: "-2px",
+                margin: "0 2px",
+                filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.35)) drop-shadow(0 0 4px rgba(255, 60, 60, 0.45))",
+              }}
+              aria-label="love"
+            >
+              <defs>
+                <radialGradient id="heart-3d" cx="35%" cy="30%" r="75%">
+                  <stop offset="0%"   stopColor="#ff8a8a" />
+                  <stop offset="55%"  stopColor="#ff3b3b" />
+                  <stop offset="100%" stopColor="#a3000c" />
+                </radialGradient>
+              </defs>
+              <path
+                fill="url(#heart-3d)"
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              />
+              {/* Specular highlight — small soft white blob top-left */}
+              <ellipse cx="9" cy="7.5" rx="2.2" ry="1.4" fill="rgba(255,255,255,0.55)" />
+            </svg>
+            <span style={{ opacity: 0.6 }}> using Claude Code</span>
           </p>
         </motion.div>
 
