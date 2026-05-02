@@ -262,17 +262,20 @@ function AboutPanel() {
       <PanelHeader label="About me" />
       <div style={{ padding: "16px 24px 48px" }}>
 
-        {/* Hero headline */}
+        {/* Hero headline — matches case study detail page hero typography:
+            display scale, light weight, compressed tracking. Was 24px /
+            weight 400 (body scale) which felt demoted next to the case
+            study heroes. */}
         <motion.h1
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "24px",
-            fontWeight: 400,
-            lineHeight: 1.3,
-            letterSpacing: "-0.012em",
+            fontSize: "clamp(26px, 3.4vw, 38px)",
+            fontWeight: 300,
+            lineHeight: 1.15,
+            letterSpacing: "-0.03em",
             color: "var(--text)",
             marginBottom: "20px",
           }}
@@ -1721,17 +1724,19 @@ function ContactPanel() {
       <PanelHeader label="Contact" />
       <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
 
-        {/* Headline */}
+        {/* Headline — matches case study detail page hero typography:
+            display scale, light weight, compressed tracking. Aligns with
+            the About panel hero so both panel heroes share one type voice. */}
         <motion.h2
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "24px",
-            fontWeight: 400,
-            letterSpacing: "-0.012em",
-            lineHeight: 1.2,
+            fontSize: "clamp(26px, 3.4vw, 38px)",
+            fontWeight: 300,
+            letterSpacing: "-0.03em",
+            lineHeight: 1.15,
             color: "var(--text)",
             marginBottom: "10px",
           }}
