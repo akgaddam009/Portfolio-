@@ -58,14 +58,18 @@
    Cards lift off panels by 16 units. Each layer adds a 1px white hairline
    ring because drop shadows darken, and there's nothing to darken on dark. */
 [data-theme="dark"] {
-  --bg:       #1c1c1e;   /* Apple Secondary System Grouped Bg — panel fills */
-  --surface:  #2c2c2e;   /* Apple Tertiary System Grouped Bg — card fills */
-  --surface2: #3a3a3c;   /* Hover / inset — one step above surface */
-  --border:   #38383a;   /* Apple Separator (dark) — neutral, no purple tint */
+  /* Aligned with Figma reference: tighter, warmer-neutral scale.
+     Was Apple systemGray (cool, with a noticeable surface lift);
+     reference uses near-black panels with cards barely stepping
+     up from them. */
+  --bg:       #111110;   /* panel fill — Figma grey/6 (Cod Gray) */
+  --surface:  #181818;   /* card fill — Figma grey/9, barely lifted from panel */
+  --surface2: #232323;   /* hover / inset — one step above surface */
+  --border:   #262626;   /* warm-neutral hairline, less cool than #38383a */
   --text:     #ffffff;
-  --muted:    #9a9a9f;   /* Lifted from #8e8e93 — passes AA (4.98:1) on card surface */
-  --muted2:   #aeaeb2;
-  --chrome:   #000000;   /* Apple System Background (dark) — true black canvas */
+  --muted:    #71717b;   /* Figma Storm Gray (grey/46) — secondary label */
+  --muted2:   #a1a1aa;   /* lifted from --muted for body / value text */
+  --chrome:   #000000;   /* canvas — pure black, panels lift off it */
 
   /* Ring does the edge definition (drop shadows are invisible on dark bg).
      Soft drop shadow adds ambient depth on the lighter panel backgrounds. */
