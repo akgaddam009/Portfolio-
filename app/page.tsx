@@ -264,6 +264,16 @@ function AboutPanel() {
       <PanelHeader label="About me" />
       <div style={{ padding: "16px 24px 48px" }}>
 
+        {/* Portrait — illustration by default, real photo on hover */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          style={{ marginBottom: "20px" }}
+        >
+          <PortraitMagnify />
+        </motion.div>
+
         {/* Hero headline — typography per Figma reference:
             Inter 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h1
