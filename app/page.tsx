@@ -27,7 +27,9 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
     <header
       style={{
         position: "fixed",
-        top: 0, left: 0, right: 0,
+        /* 8px breathing room above the nav so it doesn't sit flush
+           against the top edge — same rhythm as the inter-panel gap. */
+        top: "8px", left: 0, right: 0,
         zIndex: 200,
         height: "64px",
         display: "flex",
@@ -2145,13 +2147,13 @@ export default function Home() {
         }}
       />
 
-      <main id="main-content" className="home-main" style={{ paddingTop: "64px", height: "100dvh", overflow: "hidden", background: "var(--chrome)" }}>
+      <main id="main-content" className="home-main" style={{ paddingTop: "72px", height: "100dvh", overflow: "hidden", background: "var(--chrome)" }}>
         <div
           ref={containerRef}
           className="panels-container"
           style={{
             display: "flex",
-            height: "calc(100dvh - 64px)",
+            height: "calc(100dvh - 72px)",
             overflowX: "auto",
             overflowY: "hidden",
             gap: "8px",
