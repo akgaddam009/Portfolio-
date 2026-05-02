@@ -664,27 +664,12 @@ function SystemFeatureCard() {
           onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
         >
-          {/* Thumbnail — static cover image of the live /system page.
-              Was a screen recording (overview.mov) but the motion was
-              redundant with the rest of the homepage and added page weight. */}
+          {/* Thumbnail — abstract MeshThumbnail (the portfolio's signature
+              gradient-orb fallback). The card is about the design language
+              itself, so the thumbnail leans into the portfolio's visual
+              vocabulary instead of showing a literal page screenshot. */}
           <div style={{ position: "relative", height: "160px", overflow: "hidden", padding: "12px 12px 0" }}>
-            <img
-              className="work-thumb"
-              src="/images/system/cover.png"
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-              decoding="async"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center top",
-                display: "block",
-                borderRadius: "8px 8px 0 0",
-                background: "var(--surface)",
-              }}
-            />
+            <MeshThumbnail index={0} type="design-system" confidential={false} />
           </div>
 
           {/* Body */}
