@@ -1784,7 +1784,7 @@ function ContactPanel() {
     navigator.clipboard.writeText("akgaddam02@gmail.com");
     haptic([10, 40, 10]); // double-tap success pattern
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 1800);
   };
 
   return (
@@ -1833,25 +1833,123 @@ function ContactPanel() {
           transition={{ duration: 0.45, ease: EASE, delay: 0.16 }}
           style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "0" }}
         >
+          {/* Email copy pill — Framer-marketplace pattern. Shows the
+              actual email text, with an icon on the right that swaps
+              from copy → check on click with a smooth motion crossfade.
+              Brief "Copied!" replacement of the email text for ~1.6s,
+              then reverts. Hover lifts the border + text colour. */}
           <button
             onClick={copyEmail}
-            aria-label={copied ? "Email copied" : "Copy email address"}
+            aria-label={copied ? "Email copied to clipboard" : "Copy email address"}
+            className="copy-email-pill"
             style={{
               fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
               letterSpacing: "-0.01em",
               color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "8px 14px",
-              borderRadius: "8px",
-              border: "1px solid var(--border)",
+              padding: "8px 12px 8px 14px",
+              borderRadius: "999px",
+              border: `1px solid ${copied ? "var(--accent-success)" : "var(--border)"}`,
               background: "transparent",
               cursor: "pointer",
-              display: "inline-flex", alignItems: "center", gap: "5px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s",
+              display: "inline-flex", alignItems: "center", gap: "8px",
+              transition: "color 0.22s ease, border-color 0.22s ease, background 0.22s ease, transform 0.18s ease",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; } }}
+            onMouseEnter={e => {
+              if (!copied) {
+                e.currentTarget.style.color = "var(--text)";
+                e.currentTarget.style.borderColor = "var(--text)";
+              }
+            }}
+            onMouseLeave={e => {
+              if (!copied) {
+                e.currentTarget.style.color = "var(--muted)";
+                e.currentTarget.style.borderColor = "var(--border)";
+              }
+            }}
           >
-            {copied ? "Copied ✓" : "Copy email"}
+            {/* Animated label — width animates to fit the longer email
+                vs the shorter "Copied!" string. The fixed-position
+                children stack lets one fade in as the other fades out
+                without any layout shift. */}
+            <span
+              style={{
+                position: "relative",
+                display: "inline-flex",
+                alignItems: "center",
+                height: "16px",
+                overflow: "hidden",
+              }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {copied ? (
+                  <motion.span
+                    key="copied"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2, ease: EASE }}
+                    style={{ display: "inline-block", whiteSpace: "nowrap" }}
+                  >
+                    Copied!
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="email"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2, ease: EASE }}
+                    style={{ display: "inline-block", whiteSpace: "nowrap" }}
+                  >
+                    akgaddam02@gmail.com
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </span>
+            {/* Icon swap — copy glyph → check, scale + opacity crossfade. */}
+            <span
+              aria-hidden="true"
+              style={{
+                position: "relative",
+                display: "inline-flex",
+                width: "13px",
+                height: "13px",
+                flexShrink: 0,
+              }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {copied ? (
+                  <motion.svg
+                    key="check"
+                    width="13" height="13" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor"
+                    strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"
+                    initial={{ opacity: 0, scale: 0.6, rotate: -10 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    exit={{ opacity: 0, scale: 0.6, rotate: 10 }}
+                    transition={{ duration: 0.18, ease: EASE }}
+                    style={{ position: "absolute", inset: 0 }}
+                  >
+                    <polyline points="4 12 10 18 20 6" />
+                  </motion.svg>
+                ) : (
+                  <motion.svg
+                    key="copy"
+                    width="13" height="13" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor"
+                    strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"
+                    initial={{ opacity: 0, scale: 0.6, rotate: 10 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    exit={{ opacity: 0, scale: 0.6, rotate: -10 }}
+                    transition={{ duration: 0.18, ease: EASE }}
+                    style={{ position: "absolute", inset: 0 }}
+                  >
+                    <rect x="9" y="9" width="11" height="11" rx="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </motion.svg>
+                )}
+              </AnimatePresence>
+            </span>
           </button>
 
           <Link
