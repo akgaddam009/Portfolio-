@@ -262,20 +262,18 @@ function AboutPanel() {
       <PanelHeader label="About me" />
       <div style={{ padding: "16px 24px 48px" }}>
 
-        {/* Hero headline — matches case study detail page hero typography:
-            display scale, light weight, compressed tracking. Was 24px /
-            weight 400 (body scale) which felt demoted next to the case
-            study heroes. */}
+        {/* Hero headline — typography per Figma reference:
+            Inter 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h1
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "clamp(26px, 3.4vw, 38px)",
-            fontWeight: 300,
-            lineHeight: 1.15,
-            letterSpacing: "-0.03em",
+            fontSize: "18px",
+            fontWeight: 400,
+            lineHeight: "30px",
+            letterSpacing: 0,
             color: "var(--text)",
             marginBottom: "20px",
           }}
@@ -283,7 +281,8 @@ function AboutPanel() {
           I design products at the intersection of design, product thinking, and now vibe coding.
         </motion.h1>
 
-        {/* Bio */}
+        {/* Bio — typography per Figma reference:
+            Inter 400 / 14px / line-height 26px / 0 tracking. */}
         <motion.p
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -291,8 +290,8 @@ function AboutPanel() {
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "14px",
-            lineHeight: 1.65,
-            letterSpacing: "-0.011em",
+            lineHeight: "26px",
+            letterSpacing: 0,
             color: "var(--muted)",
             marginBottom: "20px",
           }}
@@ -691,8 +690,8 @@ function SystemFeatureCard() {
             </div>
 
             <h3 style={{
-              fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 590,
-              lineHeight: 1.3, letterSpacing: "-0.012em",
+              fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400,
+              lineHeight: "18px", letterSpacing: 0,
               color: "var(--text)", marginBottom: "4px",
             }}>
               Portfolio Design Language
@@ -700,7 +699,7 @@ function SystemFeatureCard() {
 
             <p style={{
               fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
-              lineHeight: 1.4, letterSpacing: "-0.13px",
+              lineHeight: 1.5, letterSpacing: 0,
               color: "var(--muted)", marginBottom: "12px",
             }}>
               Tokens, motion vocab, and interaction patterns. Documented as they exist in the live site.
@@ -820,10 +819,10 @@ function WorkPanel() {
                         ))}
                       </div>
 
-                      {/* Title */}
+                      {/* Title — Figma: Inter 400 / 16px / line-height 18px / 0 tracking */}
                       <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 590,
-                        lineHeight: 1.3, letterSpacing: "-0.012em",
+                        fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400,
+                        lineHeight: "18px", letterSpacing: 0,
                         color: "var(--text)", marginBottom: "4px",
                       }}>
                         {cs.title}
@@ -832,7 +831,7 @@ function WorkPanel() {
                       {/* Subtitle */}
                       <p style={{
                         fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
-                        lineHeight: 1.4, letterSpacing: "-0.01em",
+                        lineHeight: 1.5, letterSpacing: 0,
                         color: "var(--muted)", marginBottom: "12px",
                       }}>
                         {cs.subtitle}
@@ -1724,19 +1723,18 @@ function ContactPanel() {
       <PanelHeader label="Contact" />
       <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
 
-        {/* Headline — matches case study detail page hero typography:
-            display scale, light weight, compressed tracking. Aligns with
-            the About panel hero so both panel heroes share one type voice. */}
+        {/* Headline — typography per Figma reference:
+            Inter 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h2
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "clamp(26px, 3.4vw, 38px)",
-            fontWeight: 300,
-            letterSpacing: "-0.03em",
-            lineHeight: 1.15,
+            fontSize: "18px",
+            fontWeight: 400,
+            letterSpacing: 0,
+            lineHeight: "30px",
             color: "var(--text)",
             marginBottom: "10px",
           }}
@@ -1999,10 +1997,10 @@ function AiExplorationsPanel() {
                         </span>
                       ))}
                     </div>
-                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 590, lineHeight: 1.3, letterSpacing: "-0.012em", color: "var(--text)", marginBottom: "4px" }}>
+                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400, lineHeight: "18px", letterSpacing: 0, color: "var(--text)", marginBottom: "4px" }}>
                       {astra.title}
                     </h3>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, lineHeight: 1.4, letterSpacing: "-0.01em", color: "var(--muted)" }}>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, color: "var(--muted)" }}>
                       {astra.subtitle}
                     </p>
                   </div>
