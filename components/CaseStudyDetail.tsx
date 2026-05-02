@@ -6,6 +6,20 @@ import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
+import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar } from "@/components/ui/Icon";
+
+/* Decision icons: keyed by the optional `icon` name on each
+   decision entry. Single source so icons stay consistent with
+   the rest of the portfolio's icon family. */
+const DECISION_ICONS: Record<string, React.FC<{ size?: number; strokeWidth?: number; style?: React.CSSProperties }>> = {
+  Briefcase,
+  LayoutGrid,
+  Users,
+  Scissors,
+  ChartActivity,
+  Info,
+  Calendar,
+};
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -54,6 +68,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // suffixes like ".com", and reconstructs as "app.{company}.com". For Planful
   // the well-known path stays so existing behaviour is preserved.
   const chromeUrl = (() => {
+    // Per-case-study override wins.
+    if (cs.chromeUrl) return cs.chromeUrl;
     if (cs.slug === "planful-esm") return "app.planful.com/esm";
     const co = (cs.company || "").toLowerCase().replace(/\.com$/, "").replace(/[^a-z0-9]/g, "");
     return co ? `app.${co}.com` : "app.example.com";
@@ -169,19 +185,33 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               letterSpacing: "0.06em",
               textTransform: "uppercase",
               height: "44px",
-              padding: "0 14px",
+              padding: "0 14px 0 6px",
               borderRadius: "12px",
               border: "none",
               background: "var(--surface)",
               boxShadow: "var(--card-shadow)",
               display: "inline-flex",
               alignItems: "center",
+              gap: "10px",
               textDecoration: "none",
               transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
             }}
             onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
             onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
           >
+            <img
+              src="/Illustration image .png"
+              alt=""
+              aria-hidden="true"
+              style={{
+                width: "32px",
+                height: "32px",
+                borderRadius: "8px",
+                objectFit: "cover",
+                objectPosition: "center top",
+                display: "block",
+              }}
+            />
             Arun Gaddam
           </Link>
           <ThemeToggle />
@@ -356,11 +386,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         <article style={{ padding: "0" }}>
           <div className="page-pad">
 
-            <CsSection label="Overview" id="cs-overview">
-              {cs.context && <BodyText>{cs.context}</BodyText>}
-              <div style={{ marginTop: cs.context ? "16px" : 0 }}>
-                <BodyText>{cs.summary}</BodyText>
-              </div>
+            <CsSection label={cs.sectionLabels?.overview ?? "Overview"} id="cs-overview">
+              {/* Overview prefers `context` (the framing paragraph the case
+                  study controls). `summary` is the card/SEO hook and only
+                  falls back into Overview if context isn't set, so each case
+                  study controls how long/short its Overview reads. */}
+              <BodyText>{cs.context || cs.summary}</BodyText>
 
               {/* contextVideo and contextImage used to render here inside Overview.
                   Removed because the contextVideo already renders as the hero panel
@@ -498,8 +529,16 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               )}
             </CsSection>
 
-            <CsSection label="The Problem" id="cs-problem">
-              <BodyText>{cs.problem}</BodyText>
+            <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} id="cs-problem">
+              {/* Apple Maps case study: custom Challenge layout. Lede prose,
+                  the diagnosis bullets as a 3-card stat grid, and the
+                  design question as a featured prompt callout. Other case
+                  studies fall back to BodyText. */}
+              {cs.slug === "apple-business-listings" ? (
+                <AppleChallengeBlock text={cs.problem} />
+              ) : (
+                <BodyText>{cs.problem}</BodyText>
+              )}
 
               {cs.problemBreakdown && (
                 <motion.div
@@ -541,6 +580,80 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               {cs.problemImage && <ImageBlock image={cs.problemImage} placeholder="Legacy tool — Excel Spotlight screenshot" onOpen={setLightboxSrc} />}
             </CsSection>
+
+            {/* ── Project Goals (optional) — three-card row sitting between
+                the Challenge and the Decisions, framing the brief through
+                Business / UX / User lenses. Renders only when set per case. */}
+            {cs.projectGoals && (
+              <CsSection label={cs.sectionLabels?.goals ?? "🎯 Project Goals"}>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                  className="goals-grid"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "16px",
+                  }}
+                >
+                  {[
+                    { Icon: Briefcase,  label: "Business Goal", body: cs.projectGoals.business },
+                    { Icon: LayoutGrid, label: "UX Goal",       body: cs.projectGoals.ux       },
+                    { Icon: Users,      label: "User Goal",     body: cs.projectGoals.user     },
+                  ].map(({ Icon, label, body }) => (
+                    <div
+                      key={label}
+                      style={{
+                        background: "var(--surface)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "12px",
+                        padding: "20px 20px 22px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "14px",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text)" }}>
+                        <Icon size={14} strokeWidth={1.6} />
+                        <p
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: "9px",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            color: "var(--text)",
+                            margin: 0,
+                          }}
+                        >
+                          {label}
+                        </p>
+                      </div>
+                      <div className="goal-card-body">
+                        <BodyText>{body}</BodyText>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+                <style>{`
+                  /* Business Goal spans both columns on the first row;
+                     UX Goal + User Goal share the second row. Stacks to
+                     a single column on mobile. */
+                  .goals-grid > *:first-child { grid-column: 1 / -1; }
+                  @media (max-width: 720px) {
+                    .goals-grid { grid-template-columns: 1fr !important; }
+                  }
+                  /* Goal cards use a slightly tighter type scale than the
+                     body sections, since the cards are narrow columns. */
+                  .goal-card-body p,
+                  .goal-card-body li,
+                  .goal-card-body dd { font-size: 13px !important; line-height: 1.55 !important; }
+                  .goal-card-body ul { gap: 6px !important; }
+                  .goal-card-body { display: flex; flex-direction: column; gap: 12px; }
+                `}</style>
+              </CsSection>
+            )}
 
             {/* ── Password gate (Planful only) ── */}
             {isGated && !unlocked && (
@@ -656,14 +769,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* My Approach — renders when present (research-led case studies) */}
             {cs.approach && (
-              <CsSection label="My Approach">
+              <CsSection label={cs.sectionLabels?.approach ?? "My Approach"}>
                 <BodyText>{cs.approach}</BodyText>
               </CsSection>
             )}
 
             {/* Research — renders as its own section when approach is present */}
             {cs.approach && cs.researchEvidence && (
-              <CsSection label="Research">
+              <CsSection label={cs.sectionLabels?.research ?? "Research"}>
                 <BodyText>{cs.researchEvidence}</BodyText>
                 {cs.researchFindings && cs.researchFindings.length > 0 && (
                   <motion.div
@@ -710,6 +823,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     );
                   })()}
                 </motion.div>
+                {cs.slug === "zetwerk-dc" && <ZetwerkDualUserBlock />}
                 {cs.insightImage && (
                   <ImageBlock image={cs.insightImage} placeholder="" onOpen={setLightboxSrc} />
                 )}
@@ -721,7 +835,18 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </section>
             )}
 
-            {cs.taskFlow && (
+            {cs.slug === "zetwerk-dc" ? (
+              <section id="cs-workflow" style={{ padding: "48px 0" }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                >
+                  <ZetwerkSystemBlock />
+                </motion.div>
+              </section>
+            ) : cs.taskFlow && (
               <section id="cs-workflow" style={{ padding: "48px 0" }}>
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
@@ -828,7 +953,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            <CsSection label="Key Design Decisions" id="decisions">
+            <CsSection label={cs.sectionLabels?.decisions ?? "Key Design Decisions"} id="decisions">
               {cs.decisionsIntro && (
                 <div style={{ marginBottom: "48px" }}>
                   <BodyText>{cs.decisionsIntro}</BodyText>
@@ -848,19 +973,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       {String(i + 1).padStart(2, "0")}<span style={{ color: "var(--border)" }}> / {String(cs.decisions.length).padStart(2, "0")}</span>
                     </p>
                     <div>
-                      <h3 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3 }}>
+                      <h3 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3, display: "flex", alignItems: "center", gap: "8px" }}>
+                        {d.icon && DECISION_ICONS[d.icon] && (() => {
+                          const IconComp = DECISION_ICONS[d.icon];
+                          return <IconComp size={14} strokeWidth={1.6} style={{ color: "var(--muted)", flexShrink: 0 }} />;
+                        })()}
                         {d.title}
                       </h3>
                       {cs.slug === "planful-esm" && d.title.startsWith("What comes next") ? (
                         <MapsDecisionBlock />
                       ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                          {d.body.split("\n\n").map((para, pi) => (
-                            <p key={pi} style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)" }}>
-                              {parseHighlights(para)}
-                            </p>
-                          ))}
-                        </div>
+                        /* Route through BodyText so bullets / labelled lists
+                           inside the decision body render as proper structural
+                           lists (was rendering them as flat prose with literal
+                           dashes before). */
+                        <BodyText>{d.body}</BodyText>
                       )}
                       {d.videos && d.videos.length > 0 && (
                         <motion.div
@@ -880,7 +1007,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                 )}
                                 <div
                                   onClick={() => setLightboxSrc(v.src)}
-                                  style={{ position: "relative", cursor: "zoom-in", borderRadius: "8px", overflow: "hidden", background: "var(--surface)" }}
+                                  style={{ position: "relative", cursor: "zoom-in", borderRadius: "12px", overflow: "hidden", background: "var(--surface)" }}
                                 >
                                   <video
                                     src={v.src}
@@ -1031,7 +1158,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            <CsSection label="Impact" id="outcomes">
+            <CsSection label={cs.sectionLabels?.outcomes ?? "Impact"} id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                 {/* Impact tiles — Planful only */}
                 {cs.slug === "planful-esm" && (
@@ -1111,24 +1238,89 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 )}
 
-                {/* All outcomes as a numbered list — all other case studies */}
-                {cs.slug !== "planful-esm" && cs.slug !== "zetwerk-bu-ecosystem" && cs.outcomes.map((outcome, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 8 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
-                    style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: "12px", alignItems: "start" }}
-                  >
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--border)", paddingTop: "3px" }}>
-                      {String(i + 1).padStart(2, "0")}
-                    </p>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
-                      {outcome}
-                    </p>
-                  </motion.div>
-                ))}
+                {/* Outcomes — Planful and Zetwerk BU have their own custom blocks above */}
+                {cs.slug !== "planful-esm" && cs.slug !== "zetwerk-bu-ecosystem" && (() => {
+                  /* Single-outcome treatment — promote the stat to a hero
+                     stat block instead of an "01" numbered row. Triggers
+                     when there's exactly one outcome AND it starts with a
+                     parseable stat (e.g. "68%", "+70%", "~3x"). The
+                     leading stat becomes the headline, the rest of the
+                     sentence becomes the supporting label. Drops the
+                     "01 / 01" numbering since it's meaningless with one
+                     row, and gives the section real visual weight at the
+                     bottom of the case study. */
+                  const STAT_RE = /^(~?[+\-]?\d+(?:\.\d+)?\s*(?:%|x|×)?)\s+(.+)$/;
+                  const solo = cs.outcomes.length === 1 ? cs.outcomes[0].match(STAT_RE) : null;
+
+                  if (solo) {
+                    const [, stat, body] = solo;
+                    return (
+                      <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7, ease: EASE }}
+                        style={{
+                          background: "var(--surface)",
+                          border: "1px solid var(--border)",
+                          borderRadius: "16px",
+                          padding: "56px 32px 48px",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          textAlign: "center",
+                          gap: "20px",
+                        }}
+                      >
+                        <p
+                          style={{
+                            fontFamily: "var(--font-body)",
+                            fontSize: "clamp(56px, 9vw, 104px)",
+                            fontWeight: 300,
+                            lineHeight: 0.95,
+                            letterSpacing: "-0.05em",
+                            color: "var(--text)",
+                            margin: 0,
+                          }}
+                        >
+                          {stat}
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: "var(--font-body)",
+                            fontSize: "15px",
+                            lineHeight: 1.55,
+                            letterSpacing: "-0.01em",
+                            color: "var(--muted2)",
+                            maxWidth: "420px",
+                            margin: 0,
+                          }}
+                        >
+                          {body.replace(/\.$/, "")}
+                        </p>
+                      </motion.div>
+                    );
+                  }
+
+                  /* Default: numbered list for multi-outcome case studies. */
+                  return cs.outcomes.map((outcome, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 8 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
+                      style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: "12px", alignItems: "start" }}
+                    >
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--border)", paddingTop: "3px" }}>
+                        {String(i + 1).padStart(2, "0")}
+                      </p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
+                        {outcome}
+                      </p>
+                    </motion.div>
+                  ));
+                })()}
 
               </div>
             </CsSection>
@@ -1201,18 +1393,23 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {cs.lesson && (() => {
+              /* Lead with the first sentence as a headline, then route the
+                 rest through BodyText so multi-paragraph lessons render as
+                 distinct blocks (and bullets render as bullets). Earlier
+                 this collapsed everything after the first sentence into
+                 one wall of prose. */
               const dotIdx = cs.lesson.indexOf(". ");
               const headline = dotIdx > -1 ? cs.lesson.slice(0, dotIdx + 1) : cs.lesson;
               const body = dotIdx > -1 ? cs.lesson.slice(dotIdx + 2) : "";
               return (
-                <CsSection label="What I learned">
+                <CsSection label={cs.sectionLabels?.lesson ?? "What I learned"}>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2vw, 22px)", fontWeight: 400, lineHeight: 1.4, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "640px" }}>
                     {headline}
                   </p>
                   {body && (
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", maxWidth: "560px", marginTop: "16px" }}>
-                      {body}
-                    </p>
+                    <div style={{ marginTop: "16px" }}>
+                      <BodyText>{body}</BodyText>
+                    </div>
                   )}
                 </CsSection>
               );
@@ -1229,7 +1426,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {cs.references && cs.references.length > 0 && (
-              <CsSection label="References">
+              <CsSection label={cs.sectionLabels?.references ?? "References"}>
                 <ul style={{ display: "flex", flexDirection: "column", gap: "10px", listStyle: "none", padding: 0, margin: 0, maxWidth: "640px" }}>
                   {cs.references.map((ref, i) => (
                     <li key={i}>
@@ -1441,6 +1638,11 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
           alignItems: isEmpty ? "center" : undefined,
           justifyContent: isEmpty ? "center" : undefined,
           overflow: "hidden",
+          /* Standardised 12px radius — matches outcomesImage and the
+             other case-study image surfaces. Keeps every screenshot
+             clipped to the same corner so the page reads as one
+             family of artefacts. */
+          borderRadius: "12px",
           border: isEmpty ? "1.5px dashed var(--border)" : "none",
           background: isEmpty ? "var(--surface)" : undefined,
           boxShadow: undefined,
@@ -1492,6 +1694,173 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
   );
 }
 
+/* ─── AppleChallengeBlock ──────────────────────────────────────
+   Custom Challenge renderer for the apple-business-listings case
+   study. Splits the source `problem` string by \n\n into:
+     1. lede paragraph (Apple missing context)
+     2. setup paragraph ("The existing dashboard was:")
+     3. diagnosis bullets (3 short bullets) → 3-card stat grid
+     4. design question paragraph (label + question) → callout
+   The text is unchanged, only the presentation per-block. */
+function AppleChallengeBlock({ text }: { text: string }) {
+  const blocks = text.split("\n\n");
+
+  // Locate diagnosis bullets and design question by content shape.
+  const bulletIdx = blocks.findIndex(b => b.split("\n").every(l => l.trim().startsWith("- ")) && b.split("\n").length >= 2);
+  const questionIdx = blocks.findIndex(b => /design question:/i.test(b) && /\?\s*$/.test(b));
+
+  // Parse each diagnosis bullet into a "lead" (first phrase / stat) and
+  // a "body" (the rest, often a parenthetical qualifier). The lead
+  // becomes the card's headline; the body sits below as supporting text.
+  const FACT_RE = /^\s*-\s+(.+?)(?:\s*[(,]\s*(.+?)\s*\)?)?$/;
+  const facts = bulletIdx >= 0
+    ? blocks[bulletIdx].split("\n").map(line => {
+        const m = line.match(FACT_RE);
+        if (!m) return { lead: line.replace(/^\s*-\s*/, ""), body: "" };
+        const lead = m[1].trim();
+        const body = (m[2] || "").trim();
+        return { lead, body };
+      })
+    : [];
+
+  // Split the design question into label + question text.
+  let qLabel = "";
+  let qBody = "";
+  if (questionIdx >= 0) {
+    const m = blocks[questionIdx].match(/^([^:]+:)\s*(.+)$/);
+    if (m) {
+      qLabel = m[1];
+      qBody = m[2];
+    } else {
+      qBody = blocks[questionIdx];
+    }
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+      {blocks.map((block, i) => {
+        if (i === bulletIdx) {
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: EASE }}
+              className="apple-challenge-facts"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "12px",
+                marginTop: "4px",
+              }}
+            >
+              {facts.map((f, j) => (
+                <div
+                  key={j}
+                  style={{
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "12px",
+                    padding: "20px 18px 18px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <p
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      lineHeight: 1.45,
+                      letterSpacing: "-0.01em",
+                      color: "var(--text)",
+                      margin: 0,
+                    }}
+                  >
+                    {f.lead}
+                  </p>
+                  {f.body && (
+                    <p
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: "13px",
+                        lineHeight: 1.6,
+                        letterSpacing: "-0.01em",
+                        color: "var(--muted2)",
+                        margin: 0,
+                      }}
+                    >
+                      {f.body}
+                    </p>
+                  )}
+                </div>
+              ))}
+              <style>{`
+                @media (max-width: 720px) {
+                  .apple-challenge-facts { grid-template-columns: 1fr !important; }
+                }
+              `}</style>
+            </motion.div>
+          );
+        }
+        if (i === questionIdx) {
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65, ease: EASE }}
+              style={{
+                marginTop: "8px",
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: "16px",
+                padding: "32px 28px 30px",
+                position: "relative",
+              }}
+            >
+              {qLabel && (
+                <p
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "10px",
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "var(--muted)",
+                    margin: 0,
+                    marginBottom: "14px",
+                  }}
+                >
+                  {qLabel.replace(/:$/, "")}
+                </p>
+              )}
+              <p
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "14px",
+                  fontWeight: 400,
+                  lineHeight: 1.65,
+                  letterSpacing: "-0.01em",
+                  color: "var(--text)",
+                  margin: 0,
+                  maxWidth: "640px",
+                }}
+              >
+                {qBody}
+              </p>
+            </motion.div>
+          );
+        }
+        // Default: regular paragraph(s) — let BodyText handle this block.
+        return <BodyText key={i}>{block}</BodyText>;
+      })}
+    </div>
+  );
+}
+
 function CsSection({ label, children, id }: { label: string; children: React.ReactNode; id?: string }) {
   return (
     <motion.section
@@ -1509,24 +1878,12 @@ function CsSection({ label, children, id }: { label: string; children: React.Rea
 }
 
 function Highlight({ children }: { children: React.ReactNode }) {
+  /* Highlighted phrases (`==text==`) read as semantic emphasis only —
+     no background, no underline, no animation. Just a colour + weight
+     bump so the eye lands on the phrase without a coloured block
+     wrapping mid-line and breaking the prose flow. */
   return (
-    <span style={{ position: "relative", display: "inline" }}>
-      <motion.span
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-        style={{
-          position: "absolute",
-          inset: "0 -3px",
-          background: "rgba(113, 112, 255, 0.20)",
-          borderRadius: "3px",
-          transformOrigin: "left center",
-          zIndex: 0,
-        }}
-      />
-      <span style={{ position: "relative", zIndex: 1 }}>{children}</span>
-    </span>
+    <span style={{ color: "var(--text)", fontWeight: 500 }}>{children}</span>
   );
 }
 
@@ -1716,6 +2073,128 @@ const TASK_ICONS: Record<string, React.ReactNode> = {
   ),
 };
 
+function ZetwerkSystemBlock() {
+  const flow1 = ["Create DC", "Fill details", "Preview", "Summary"];
+  const flow2 = ["Discover", "View details", "Mark / update", "Close / cancel"];
+
+  const Tile = ({ label, filled }: { label: string; filled?: boolean }) => (
+    <div style={{
+      flex: 1,
+      padding: "14px 12px",
+      border: "1px solid var(--border)",
+      borderRadius: "6px",
+      background: filled ? "var(--surface)" : "transparent",
+      fontFamily: "var(--font-body)",
+      fontSize: "12px",
+      letterSpacing: "-0.01em",
+      color: "var(--text)",
+      textAlign: "center" as const,
+      lineHeight: 1.3,
+    }}>
+      {label}
+    </div>
+  );
+
+  const Arrow = () => (
+    <span style={{ color: "var(--muted)", flexShrink: 0, padding: "0 4px", display: "flex", alignItems: "center" }}>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M2 6h7M6 3l3 3-3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </span>
+  );
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", borderTop: "1px solid var(--border)", paddingTop: "16px", marginBottom: "0" }}>
+        The system
+      </p>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)", maxWidth: "640px" }}>
+        From document creation to lifecycle visibility: two flows operating on one shared record. A list-first landing page gives Ops a single place to find any of the 800+ monthly challans by status, search, filter, or export.
+      </p>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "12px" }}>
+        {/* Flow 1: Create */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+            Flow 1 · Create
+          </span>
+          <div style={{ display: "flex", alignItems: "stretch", gap: "0" }}>
+            {flow1.map((label, i) => (
+              <Fragment key={label}>
+                <Tile label={label} />
+                {i < flow1.length - 1 && <Arrow />}
+              </Fragment>
+            ))}
+          </div>
+        </div>
+
+        {/* Shared record bridge */}
+        <div style={{ padding: "14px 16px", border: "1px solid var(--border)", borderRadius: "6px", background: "var(--surface)", display: "flex", flexDirection: "column", gap: "4px", textAlign: "center" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)" }}>
+            Shared record
+          </span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted2)" }}>
+            Visible to BizOps, Tax, and Logistics simultaneously
+          </span>
+        </div>
+
+        {/* Flow 2: Track */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+            Flow 2 · Track
+          </span>
+          <div style={{ display: "flex", alignItems: "stretch", gap: "0" }}>
+            {flow2.map((label, i) => (
+              <Fragment key={label}>
+                <Tile label={label} filled />
+                {i < flow2.length - 1 && <Arrow />}
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ZetwerkDualUserBlock() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginTop: "24px" }}>
+      {/* Dual-user comparison */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
+        <div style={{ padding: "20px 22px", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)" }}>
+            Business Operations
+          </span>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, color: "var(--muted2)" }}>
+            Two minutes to file it. A truck idling outside. Get it wrong and the shipment doesn&apos;t move.
+          </p>
+        </div>
+        <div style={{ padding: "20px 22px", display: "flex", flexDirection: "column", gap: "10px", background: "var(--surface)" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)" }}>
+            Tax Specialist
+          </span>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, color: "var(--muted2)" }}>
+            Pulls up the same record three months later for a GST filing. If BizOps got it wrong, Tax can&apos;t fix it, only explain it to a tax officer.
+          </p>
+        </div>
+      </div>
+
+      {/* Closing paragraph */}
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)", maxWidth: "640px" }}>
+        Designing for one would break the other. So the project shifted: stop building a form. <Highlight>Build a forward trail the whole chain could share. The document becomes a printout of state, not the source of it.</Highlight>
+      </p>
+
+      {/* Strategic callout — left-bordered */}
+      <div style={{ borderLeft: "2px solid var(--border)", paddingLeft: "20px", marginTop: "8px" }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, color: "var(--muted2)", maxWidth: "640px" }}>
+          Zetwerk doesn&apos;t own factories, it orchestrates 10,000+ of them. Its whole pitch is that you can see where your goods are. The challan workflow was the place that pitch was breaking. <Highlight>Fixing this wasn&apos;t a productivity play. It was protecting what the company sells.</Highlight>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function MapsDecisionBlock() {
   const pills = [
     { label: "Define" },
@@ -1854,23 +2333,231 @@ function parseHighlights(text: string): React.ReactNode[] {
   );
 }
 
-function BodyText({ children }: { children: React.ReactNode }) {
-  if (typeof children === "string" && children.includes("\n\n")) {
+/* ─── BodyText ──────────────────────────────────────────────────
+   Renders a body string with paragraph + structural awareness.
+   Splits on \n\n into blocks, then within each block detects:
+     • bullet list      (every line starts with "- ")
+     • labeled list     (every line is "Label: value")
+     • label + bullets  (first line ends with ":", rest are bullets)
+     • default          (a single paragraph)
+   Source text is unchanged — this is a presentation layer that
+   gives lists proper visual rhythm so the page scans cleanly. */
+const BODY_PARA_STYLE: React.CSSProperties = {
+  fontFamily: "var(--font-body)",
+  fontSize: "14px",
+  fontWeight: 400,
+  lineHeight: 1.65,
+  color: "var(--muted2)",
+  maxWidth: "580px",
+};
+
+const BULLET_RE = /^\s*-\s+/;
+const isBullet = (line: string) => BULLET_RE.test(line);
+const stripBullet = (line: string) => line.replace(BULLET_RE, "");
+// "Label: value" — label is short (<= 32 chars), starts uppercase or digit,
+// has at least one non-space char after the colon. Bullets are excluded.
+const LABEL_RE = /^([A-Z][^:\n]{0,32}):\s+(\S.*)$/;
+
+function BulletList({ items }: { items: string[] }) {
+  return (
+    <ul
+      style={{
+        listStyle: "none",
+        padding: 0,
+        margin: 0,
+        maxWidth: "580px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px",
+      }}
+    >
+      {items.map((item, i) => (
+        <li
+          key={i}
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "14px",
+            lineHeight: 1.6,
+            color: "var(--muted2)",
+            paddingLeft: "18px",
+            position: "relative",
+          }}
+        >
+          <span
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              left: 0,
+              top: "0.55em",
+              width: "6px",
+              height: "1px",
+              background: "var(--muted)",
+            }}
+          />
+          {parseHighlights(item)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function LabeledList({ rows }: { rows: { label: string; value: string }[] }) {
+  /* 3-column rhythm with the parenthetical scope rendered as a small
+     pill chip on the right. Eye scans label-left, description-mid,
+     scope-chip-right. No row borders, no stripes — the chip is the
+     only visual primitive that earns space. Falls back to a clean
+     2-column labelled layout when no row has a parenthetical. */
+  const PAREN_RE = /^(.+?)\s*\((.+?)\)\s*$/;
+  const parsed = rows.map(r => {
+    const m = r.value.match(PAREN_RE);
+    return { label: r.label, desc: m ? m[1].trim() : r.value, scope: m ? m[2].trim() : null };
+  });
+  const hasChips = parsed.some(r => r.scope);
+
+  return (
+    <div
+      className="labeled-list"
+      style={{
+        maxWidth: "680px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
+      {parsed.map((r, i) => (
+        <div
+          key={i}
+          className="labeled-list-row"
+          style={{
+            display: "grid",
+            gridTemplateColumns: hasChips ? "minmax(140px, max-content) 1fr auto" : "minmax(140px, max-content) 1fr",
+            alignItems: "baseline",
+            columnGap: "20px",
+            padding: "6px 0",
+          }}
+        >
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "10px",
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            color: "var(--text)",
+            whiteSpace: "nowrap",
+          }}>
+            {r.label}
+          </span>
+          <span style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "14px",
+            lineHeight: 1.6,
+            color: "var(--muted2)",
+          }}>
+            {parseHighlights(r.desc)}
+          </span>
+          {r.scope && (
+            <span
+              className="labeled-list-chip"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "9px",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "var(--muted)",
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: "999px",
+                padding: "3px 9px",
+                whiteSpace: "nowrap",
+                justifySelf: "end",
+              }}
+            >
+              {r.scope}
+            </span>
+          )}
+        </div>
+      ))}
+      {/* Mobile: stack the row to a single column. Chip moves below the
+          description and aligns left with the rest of the row. */}
+      <style>{`
+        @media (max-width: 600px) {
+          .labeled-list-row {
+            grid-template-columns: 1fr !important;
+            row-gap: 4px !important;
+            column-gap: 0 !important;
+          }
+          .labeled-list-chip {
+            justify-self: start !important;
+            margin-top: 4px;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function BodyBlock({ block }: { block: string }) {
+  const lines = block.split("\n").filter(l => l.trim().length > 0);
+
+  // Single line: render as paragraph
+  if (lines.length <= 1) {
+    return <p style={BODY_PARA_STYLE}>{parseHighlights(block)}</p>;
+  }
+
+  // Pure bullet list (2+ lines, all bullets)
+  if (lines.every(isBullet)) {
+    return <BulletList items={lines.map(stripBullet)} />;
+  }
+
+  // Label + bullets ("Result:\n- foo\n- bar")
+  if (
+    !isBullet(lines[0]) &&
+    lines[0].trimEnd().endsWith(":") &&
+    lines.slice(1).every(isBullet)
+  ) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        {children.split("\n\n").map((para, i) => (
-          <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.65, color: "var(--muted2)", maxWidth: "580px" }}>
-            {parseHighlights(para)}
-          </p>
-        ))}
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <p style={{ ...BODY_PARA_STYLE, fontWeight: 500, color: "var(--text)" }}>
+          {parseHighlights(lines[0])}
+        </p>
+        <BulletList items={lines.slice(1).map(stripBullet)} />
       </div>
     );
   }
-  const content = typeof children === "string" ? parseHighlights(children) : children;
+
+  // Pure labeled list — every line matches "Label: value"
+  if (lines.every(l => LABEL_RE.test(l))) {
+    return (
+      <LabeledList
+        rows={lines.map(l => {
+          const m = l.match(LABEL_RE)!;
+          return { label: m[1], value: m[2] };
+        })}
+      />
+    );
+  }
+
+  // Mixed multi-line block — render with line breaks preserved
   return (
-    <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.65, color: "var(--muted2)", maxWidth: "580px" }}>
-      {content}
+    <p style={{ ...BODY_PARA_STYLE, whiteSpace: "pre-line" }}>
+      {parseHighlights(block)}
     </p>
+  );
+}
+
+function BodyText({ children }: { children: React.ReactNode }) {
+  if (typeof children !== "string") {
+    return <p style={BODY_PARA_STYLE}>{children}</p>;
+  }
+  const blocks = children.split("\n\n");
+  if (blocks.length === 1) {
+    return <BodyBlock block={blocks[0]} />;
+  }
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      {blocks.map((block, i) => (
+        <BodyBlock key={i} block={block} />
+      ))}
+    </div>
   );
 }
 

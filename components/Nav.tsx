@@ -64,13 +64,14 @@ export default function Nav() {
                 letterSpacing: "0.06em",
                 textTransform: "uppercase",
                 height: "44px",
-                padding: "0 14px",
+                padding: "0 14px 0 6px",
                 borderRadius: "12px",
                 border: "none",
                 background: "var(--surface)",
                 boxShadow: "var(--card-shadow)",
                 display: "inline-flex",
                 alignItems: "center",
+                gap: "10px",
                 textDecoration: "none",
                 userSelect: "none",
                 transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -78,6 +79,19 @@ export default function Nav() {
               onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
               onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
             >
+              <img
+                src="/Illustration image .png"
+                alt=""
+                aria-hidden="true"
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "8px",
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                  display: "block",
+                }}
+              />
               Arun Gaddam
             </Link>
             <ThemeToggle />
@@ -90,7 +104,6 @@ export default function Nav() {
           >
             {[
               { href: "/#work", label: "Work" },
-              { href: "/about", label: "About" },
               { href: "/#contact", label: "Contact" },
             ].map(({ href, label }) => (
               <Link key={href} href={href} className="nav-link">
@@ -186,7 +199,6 @@ export default function Nav() {
           >
             {[
               { href: "/#work", label: "Work" },
-              { href: "/about", label: "About" },
               { href: "/#contact", label: "Contact" },
             ].map(({ href, label }, i) => (
               <motion.div

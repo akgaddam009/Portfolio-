@@ -50,13 +50,14 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
             letterSpacing: "0.06em",
             textTransform: "uppercase",
             height: "44px",
-            padding: "0 14px",
+            padding: "0 14px 0 6px",
             borderRadius: "12px",
             border: "none",
             background: "var(--surface)",
             boxShadow: "var(--card-shadow)",
             display: "inline-flex",
             alignItems: "center",
+            gap: "10px",
             textDecoration: "none",
             userSelect: "none",
             transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -64,6 +65,19 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
           onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
         >
+          <img
+            src="/Illustration image .png"
+            alt=""
+            aria-hidden="true"
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "8px",
+              objectFit: "cover",
+              objectPosition: "center top",
+              display: "block",
+            }}
+          />
           Arun Gaddam
         </Link>
         <ThemeToggle />
@@ -232,14 +246,14 @@ function PortraitMagnify() {
 }
 
 const infoRows: { label: string; value: string; chips?: string[] }[] = [
-  { label: "Role", value: "Senior Product Designer. I own the full design process — from discovery and strategy to final pixel." },
-  { label: "Focus", value: "Enterprise SaaS and consumer products at scale — driven by design, strategy, and research." },
+  { label: "Role", value: "Senior Product Designer. I own the full design process, from discovery and strategy to final pixel." },
+  { label: "Superpower", value: "Turning strategy into execution, ensuring clarity at the top and precision where it matters." },
+  { label: "Focus", value: "Enterprise SaaS and consumer products at scale, driven by design, strategy, and research." },
   {
     label: "Experience",
     value: "Nearly a decade designing products for startups and large-scale platforms with millions of users. I focus on building scalable systems that solve real-world problems.",
     chips: ["Fintech", "Manufacturing", "Healthcare", "HRIS", "Entertainment", "ERP", "Customer Experience"],
   },
-  { label: "Superpower", value: "Turning strategy into execution, ensuring clarity at the top and precision where it matters." },
 ];
 
 function AboutPanel() {
@@ -247,16 +261,6 @@ function AboutPanel() {
     <div>
       <PanelHeader label="About me" />
       <div style={{ padding: "16px 24px 48px" }}>
-
-        {/* Portrait */}
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, ease: EASE }}
-          style={{ marginBottom: "24px" }}
-        >
-          <PortraitMagnify />
-        </motion.div>
 
         {/* Hero headline */}
         <motion.h1
@@ -283,60 +287,15 @@ function AboutPanel() {
           transition={{ duration: 0.5, ease: EASE, delay: 0.1 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "15px",
+            fontSize: "14px",
             lineHeight: 1.65,
             letterSpacing: "-0.011em",
             color: "var(--muted)",
-            marginBottom: "16px",
+            marginBottom: "20px",
           }}
         >
           I&apos;m hands-on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
         </motion.p>
-
-        {/* Links */}
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
-          style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}
-        >
-          {[
-            { label: "LinkedIn", href: "https://linkedin.com/in/akgaddam", external: true },
-            { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
-            { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
-          ].map(({ label, href, external }, i, arr) => (
-            <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-              <Link
-                href={href}
-                target={external ? "_blank" : undefined}
-                rel={external ? "noopener noreferrer" : undefined}
-                style={{
-                  fontFamily: "var(--font-mono)", fontSize: "9px",
-                  letterSpacing: "0.08em", textTransform: "uppercase",
-                  color: "var(--muted)",
-                  padding: "4px 8px",
-                  borderRadius: "6px",
-                  display: "inline-flex", alignItems: "center", gap: "4px",
-                  transition: "color 0.18s, background 0.18s",
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = "var(--text)";
-                  e.currentTarget.style.background = "var(--surface)";
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.color = "var(--muted)";
-                  e.currentTarget.style.background = "transparent";
-                }}
-              >
-                {label}
-                <ArrowUpRight size={10} strokeWidth={1.5} />
-              </Link>
-              {i < arr.length - 1 && (
-                <span style={{ color: "var(--muted)", fontFamily: "var(--font-mono)", fontSize: "9px", userSelect: "none", opacity: 0.4 }}>·</span>
-              )}
-            </span>
-          ))}
-        </motion.div>
 
         {/* Info rows */}
         <div>
@@ -402,6 +361,150 @@ function AboutPanel() {
             </motion.div>
           ))}
         </div>
+
+        {/* Skills & Tools — marquee of chips, but with the same mono label +
+            dashed-line header used by the rows above (Role, Focus, Experience,
+            Superpower) for visual consistency. AI-forward sequence leads. */}
+        {(() => {
+          const skills = [
+            "AI UX Design", "Vibe Coding", "Agentic AI", "Claude Code", "Cursor",
+            "Figma", "UX Design", "UX Strategy", "UX Research",
+            "Design Systems", "Prototyping", "Service Design",
+            "Usability Testing", "Contextual Inquiry", "Service Blueprints",
+            "Dovetail", "Framer", "Jobs-to-be-Done",
+            "Information Architecture", "Interaction Design",
+            "Next.js",
+          ];
+          const ticker = [...skills, ...skills];
+          return (
+            <motion.div
+              className="skills-ticker"
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: EASE, delay: 0.24 }}
+              style={{ padding: "12px 0" }}
+            >
+              {/* Header row — matches the infoRow label style above */}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+                <p style={{
+                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  letterSpacing: "0.1em", textTransform: "uppercase",
+                  color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+                }}>
+                  Skills &amp; Tools
+                </p>
+                <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+              </div>
+
+              {/* Marquee track */}
+              <div style={{ overflow: "hidden", position: "relative" }}>
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+                <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to left, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+                <div
+                  className="marquee-track"
+                  style={{
+                    ["--marquee-duration" as string]: "28s",
+                    display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
+                  }}
+                >
+                  {ticker.map((skill, i) => (
+                    <span key={`${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                      <span style={{
+                        fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                        letterSpacing: "-0.01em", color: "var(--muted2)",
+                        padding: "4px 10px",
+                        border: "1px solid var(--border)",
+                        borderRadius: "9999px",
+                        background: "var(--surface)",
+                        marginRight: "6px",
+                        whiteSpace: "nowrap",
+                      }}>
+                        {skill}
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          );
+        })()}
+
+        {/* Availability anchor — closes the card with a clear signal,
+            using the same mono label + dashed line as the rows above. The
+            green status dot ties it to the brand accent (also in the OG image). */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, ease: EASE, delay: 0.3 }}
+        >
+          <div style={{ padding: "12px 0" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "9px",
+                letterSpacing: "0.1em", textTransform: "uppercase",
+                color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+              }}>
+                Availability
+              </p>
+              <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+              <span style={{
+                width: "8px", height: "8px", borderRadius: "50%",
+                background: "#34c759", display: "block", flexShrink: 0,
+              }} />
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "14px",
+                letterSpacing: "-0.01em",
+                color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
+              }}>
+                Open to suitable opportunities
+              </p>
+            </div>
+
+            {/* Links — paired with availability so the CTA fires after full context */}
+            <div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
+              {[
+                { label: "LinkedIn", href: "https://linkedin.com/in/akgaddam", external: true },
+                { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
+                { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
+              ].map(({ label, href, external }, i, arr) => (
+                <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                  <Link
+                    href={href}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noopener noreferrer" : undefined}
+                    style={{
+                      fontFamily: "var(--font-mono)", fontSize: "9px",
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      color: "var(--muted)",
+                      padding: "4px 8px",
+                      borderRadius: "6px",
+                      display: "inline-flex", alignItems: "center", gap: "4px",
+                      transition: "color 0.18s, background 0.18s",
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.color = "var(--text)";
+                      e.currentTarget.style.background = "var(--surface)";
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.color = "var(--muted)";
+                      e.currentTarget.style.background = "transparent";
+                    }}
+                  >
+                    {label}
+                    <ArrowUpRight size={10} strokeWidth={1.5} />
+                  </Link>
+                  {i < arr.length - 1 && (
+                    <span style={{ color: "var(--muted)", fontFamily: "var(--font-mono)", fontSize: "9px", userSelect: "none", opacity: 0.4 }}>·</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
+        </motion.div>
 
       </div>
     </div>
@@ -486,7 +589,7 @@ function MeshThumbnail({ index, type, confidential }: {
 const WORK_THUMBS: Record<string, string> = {
   "astra":                "/images/astra/overview.mov",
   "planful-esm":          "/images/planful/Untitled.mp4",
-  "reputation-listings":  "/images/reputation/after.mov",
+  "apple-business-listings": "/images/reputation/after.mov",
   "fancode-ftux":         "/images/fancode/user-journey-map.jpg",
   "fancode-homepage":     "/images/fancode/hp-overview.mov",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
@@ -561,20 +664,17 @@ function SystemFeatureCard() {
           onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
         >
-          {/* Thumbnail — screen recording of the live /system page in motion.
-              NOTE: the source mov is large (~400MB). Recommend compressing to
-              ~10–20MB for production. preload="metadata" keeps the homepage load
-              from blocking on it. */}
-          <div style={{ position: "relative", height: "192px", overflow: "hidden", padding: "12px 12px 0" }}>
-            <video
+          {/* Thumbnail — static cover image of the live /system page.
+              Was a screen recording (overview.mov) but the motion was
+              redundant with the rest of the homepage and added page weight. */}
+          <div style={{ position: "relative", height: "160px", overflow: "hidden", padding: "12px 12px 0" }}>
+            <img
               className="work-thumb"
-              src="/images/system/overview.mov"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
+              src="/images/system/cover.png"
+              alt=""
               aria-hidden="true"
+              loading="lazy"
+              decoding="async"
               style={{
                 width: "100%",
                 height: "100%",
@@ -615,7 +715,7 @@ function SystemFeatureCard() {
               lineHeight: 1.4, letterSpacing: "-0.13px",
               color: "var(--muted)", marginBottom: "12px",
             }}>
-              Tokens, motion vocab, and interaction patterns — documented as they exist in the live site.
+              Tokens, motion vocab, and interaction patterns. Documented as they exist in the live site.
             </p>
 
           </div>
@@ -665,7 +765,7 @@ function WorkPanel() {
                   >
                     {/* Thumbnail — always-visible image (or video for case studies
                         where motion communicates the design better), mesh as fallback */}
-                    <div style={{ position: "relative", height: "192px", overflow: "hidden", padding: "12px 12px 0" }}>
+                    <div style={{ position: "relative", height: "160px", overflow: "hidden", padding: "12px 12px 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         isVideoThumb(WORK_THUMBS[cs.slug]) ? (
                           <video
@@ -810,7 +910,7 @@ const careerItems: CareerItem[] = [
     title: "Senior UX Designer", subtitle: "Reputation.com", minHeight: 72,
     dateLabel: "Mar 2024 — Feb 2025", impact: "−40% task time", logoDomain: "reputation.com",
     link: "https://reputation.com/",
-    description: "Led design across three core product verticals — Insights, Reporting, Business Listings, and Reviews — directly supporting primary revenue drivers and AI feature initiatives.",
+    description: "Led design across three core product verticals (Insights, Reporting, Business Listings, and Reviews), directly supporting primary revenue drivers and AI feature initiatives.",
     highlights: [
       "Designed a unified Competitive Insights workflow that reduced task time by 40%, increased active usage, and contributed to higher customer retention and monetisation",
       "Implemented design QA, reducing design defects by ~25% and improving release quality",
@@ -825,7 +925,7 @@ const careerItems: CareerItem[] = [
     images: ["/images/career/zetwerk-team.jpg"],
     description: "Led product design initiatives for Zetwerk's Order Management System (OMS), improving workflows to support business operations during a ~6× revenue growth phase.",
     highlights: [
-      "Mentored three designers and partnered with leadership to establish UX practices — research, concept validation, usability testing",
+      "Mentored three designers and partnered with leadership to establish UX practices: research, concept validation, usability testing",
       "Replaced guesswork with evidence-based design, improving product quality and reducing backlog ~20–30%",
     ],
   },
@@ -860,10 +960,10 @@ const careerItems: CareerItem[] = [
     title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
     dateLabel: "Nov 2023 — Present", impact: "Top 1% · 3K+ mins",
     link: "https://adplist.org/",
-    description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList — mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
+    description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList, mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
     highlights: [
-      "Top 1% Mentor Recognition — Feb, Mar, May & Jun 2024 (Expertise of Design)",
-      "3,000+ mentorship minutes milestone — Feb 2026",
+      "Top 1% Mentor Recognition: Feb, Mar, May & Jun 2024 (Expertise of Design)",
+      "3,000+ mentorship minutes milestone, Feb 2026",
       "Ongoing 1:1 sessions on product design, career strategy, and portfolio critique",
     ],
   },
@@ -871,32 +971,32 @@ const careerItems: CareerItem[] = [
     type: "education", startYear: 2023.75, endYear: 2025.083,
     title: "Product Management", subtitle: "IIT Guwahati · Accredian",
     dateLabel: "Oct 2023 — Feb 2025", logoDomain: "accredian.com", minHeight: 72,
-    description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati), focused on applying data, product strategy, and user-centric approaches across the product lifecycle. Covered customer research, analytics, product strategy, and experimentation — translating insights into product roadmaps, metrics, and iterative, data-informed decisions.",
+    description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati), focused on applying data, product strategy, and user-centric approaches across the product lifecycle. Covered customer research, analytics, product strategy, and experimentation, translating insights into product roadmaps, metrics, and iterative, data-informed decisions.",
   },
   {
     type: "education", startYear: 2020.917, endYear: 2021.333,
     title: "Program in UX Design", subtitle: "IIT Bombay",
     dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
-    description: "Program in User Experience Design from IDC School of Design, IIT Bombay — covering the end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation. Completed a hands-on, project-based curriculum including a field research project using contextual inquiry to uncover real-world user behaviours and translate insights into iterative design solutions.",
+    description: "Program in User Experience Design from IDC School of Design, IIT Bombay, covering the end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation. Completed a hands-on, project-based curriculum including a field research project using contextual inquiry to uncover real-world user behaviours and translate insights into iterative design solutions.",
     images: ["/images/career/iitb-1.jpg", "/images/career/iitb-2.jpg"],
   },
   {
     type: "education", startYear: 2019.583, endYear: 2019.75,
     title: "Conducting Usability Testing", subtitle: "Interaction Design Foundation",
     dateLabel: "Aug 2019", logoDomain: "interaction-design.org", minHeight: 72,
-    description: "Usability Testing certification from Interaction Design Foundation — focused on planning, conducting, and analysing user tests to drive data-informed design improvements.",
+    description: "Usability Testing certification from Interaction Design Foundation, focused on planning, conducting, and analysing user tests to drive data-informed design improvements.",
   },
   {
     type: "education", startYear: 2019.5, endYear: 2019.583,
     title: "Industry Jury", subtitle: "Institute of Product Leadership",
     dateLabel: "Jul 2019", minHeight: 72,
-    description: "At the Institute of Product Leadership, examinations are replaced with Skillathons. Top Product Lab UX ideas are presented to a live jury of hiring managers and industry experts — the best voted team wins the Skill Champion Trophy and cash award.",
+    description: "At the Institute of Product Leadership, examinations are replaced with Skillathons. Top Product Lab UX ideas are presented to a live jury of hiring managers and industry experts. The best voted team wins the Skill Champion Trophy and cash award.",
   },
   {
     type: "education", startYear: 2017, endYear: 2017.5,
     title: "Design Thinking & Leadership", subtitle: "DSIL Global",
     dateLabel: "2017", minHeight: 72,
-    description: "Global certification in social innovation and leadership — applying human-centered methods and systems thinking through field immersions and cross-sector collaboration to address complex, real-world problems. Worked closely with local communities, social enterprises, and ecosystem leaders across Southeast Asia: conducting contextual research, facilitating design sprints, and translating insights into actionable solutions through iterative prototyping and real-world validation.",
+    description: "Global certification in social innovation and leadership, applying human-centered methods and systems thinking through field immersions and cross-sector collaboration to address complex, real-world problems. Worked closely with local communities, social enterprises, and ecosystem leaders across Southeast Asia: conducting contextual research, facilitating design sprints, and translating insights into actionable solutions through iterative prototyping and real-world validation.",
     images: ["/images/career/dsil-1.jpg", "/images/career/dsil-2.jpg"],
   },
 ];
@@ -918,7 +1018,7 @@ const testimonials: Testimonial[] = [
   { quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.", name: "Jeff Orshalick", role: "UX Design Manager", company: "Reputation", initials: "JO" },
   { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "Fancode", initials: "VK" },
   { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research. He was integral throughout the process, actively shaping the product. A true advocate for the customer's voice, and a definite asset to any team.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB" },
-  { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX — as a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB" },
+  { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB" },
 ];
 
 /** Deterministic hue (0-360) derived from initials so each person gets a
@@ -1263,11 +1363,11 @@ function CareerPanel() {
                           initials: "DG", role: "Senior UX Designer", company: "Salesforce", date: "Dec 2023",
                         },
                         {
-                          quote: "I have learned a lot of things from Arun in just one meet. He has great product thinking and analytical thinking — showed me frameworks to build a good product along with real life examples.",
+                          quote: "I have learned a lot of things from Arun in just one meet. He has great product thinking and analytical thinking. He showed me frameworks to build a good product along with real life examples.",
                           initials: "JS", role: "UI/UX Designer", company: "Goldenflitch", date: "May 2024",
                         },
                         {
-                          quote: "Arun was incredibly helpful during my job hunt! He listened to what I needed and made suggestions on different approaches I could take to find more jobs and improve my applications. He also thought ahead and anticipated other needs — I would highly recommend booking a session.",
+                          quote: "Arun was incredibly helpful during my job hunt! He listened to what I needed and made suggestions on different approaches I could take to find more jobs and improve my applications. He also thought ahead and anticipated other needs. I would highly recommend booking a session.",
                           initials: "AZ", role: "Freelance UX/UI Designer", company: "Self Employed", date: "Jun 2024",
                         },
                         {
@@ -1719,18 +1819,18 @@ function ContactPanel() {
           </Link>
         </motion.div>
 
-        {/* Skills ticker — first element of the bottom group. marginTop: auto
-            absorbs all the vertical slack above so this + location + footer
-            sit anchored to the panel's base. */}
+        {/* Skills & Tools — matches the about-panel treatment (mono label
+            + dashed line + marquee of pills). marginTop: auto pushes it
+            and the location card to the bottom of the panel. */}
         {(() => {
           const skills = [
+            "AI UX Design", "Vibe Coding", "Agentic AI", "Claude Code", "Cursor",
             "Figma", "UX Design", "UX Strategy", "UX Research",
             "Design Systems", "Prototyping", "Service Design",
             "Usability Testing", "Contextual Inquiry", "Service Blueprints",
-            "AI UX Design", "Agentic AI", "Claude Code", "Vibe Coding",
             "Dovetail", "Framer", "Jobs-to-be-Done",
             "Information Architecture", "Interaction Design",
-            "Cursor", "Next.js",
+            "Next.js",
           ];
           const ticker = [...skills, ...skills];
           return (
@@ -1739,38 +1839,45 @@ function ContactPanel() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, ease: EASE, delay: 0.18 }}
-              style={{ marginTop: "auto", marginBottom: "16px", overflow: "hidden", position: "relative" }}
+              style={{ marginTop: "auto", marginBottom: "16px" }}
             >
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px", fontWeight: 400 }}>
-                Skills &amp; Tools
-              </p>
-              <div style={{ position: "absolute", left: 0, top: "24px", bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
-              <div style={{ position: "absolute", right: 0, top: "24px", bottom: 0, width: "32px", background: "linear-gradient(to left, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
-              <div
-                className="marquee-track"
-                style={{
-                  // CSS variable consumed by .marquee-track in globals.css —
-                  // overrides the default 40s duration for this instance.
-                  ["--marquee-duration" as string]: "28s",
-                  display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
-                }}
-              >
-                {ticker.map((skill, i) => (
-                  <span key={`${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
-                    <span style={{
-                      fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
-                      letterSpacing: "-0.01em", color: "var(--muted2)",
-                      padding: "4px 10px",
-                      border: "1px solid var(--border)",
-                      borderRadius: "9999px",
-                      background: "var(--surface)",
-                      marginRight: "6px",
-                      whiteSpace: "nowrap",
-                    }}>
-                      {skill}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+                <p style={{
+                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  letterSpacing: "0.1em", textTransform: "uppercase",
+                  color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+                }}>
+                  Skills &amp; Tools
+                </p>
+                <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+              </div>
+              <div style={{ overflow: "hidden", position: "relative" }}>
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+                <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to left, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+                <div
+                  className="marquee-track"
+                  style={{
+                    ["--marquee-duration" as string]: "28s",
+                    display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
+                  }}
+                >
+                  {ticker.map((skill, i) => (
+                    <span key={`${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                      <span style={{
+                        fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                        letterSpacing: "-0.01em", color: "var(--muted2)",
+                        padding: "4px 10px",
+                        border: "1px solid var(--border)",
+                        borderRadius: "9999px",
+                        background: "var(--surface)",
+                        marginRight: "6px",
+                        whiteSpace: "nowrap",
+                      }}>
+                        {skill}
+                      </span>
                     </span>
-                  </span>
-                ))}
+                  ))}
+                </div>
               </div>
             </motion.div>
           );
@@ -1862,7 +1969,7 @@ function AiExplorationsPanel() {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                 >
-                  <div style={{ position: "relative", height: "192px", overflow: "hidden", padding: "12px 12px 0" }}>
+                  <div style={{ position: "relative", height: "160px", overflow: "hidden", padding: "12px 12px 0" }}>
                     {WORK_THUMBS[astra.slug] ? (
                       isVideoThumb(WORK_THUMBS[astra.slug]) ? (
                         <video
