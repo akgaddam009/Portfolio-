@@ -43,3 +43,14 @@ next-env.d.ts
 # Large video assets (over GitHub's 100MB limit) — host elsewhere or via Git LFS
 public/images/system/overview.mov
 public/images/astra/overview.mov
+
+# Untracked giant media that snuck in via wildcard adds — keep local, don't push
+public/images/system/Screen Recording*
+public/images/Fancode Homepage /
+public/images/reputation/After .mov
+public/images/reputation/Before .mov
+public/images/astra/Meet - Persona Research Group*
+
+# Reference materials downloaded into the repo, not part of the build
+awesome-design-md-main/
+awesome-design-md-main.zip

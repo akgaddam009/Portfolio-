@@ -630,6 +630,9 @@ function MeshThumbnail({ index, type, confidential }: {
         height: "192px",
         background: palette.base,
         position: "relative", overflow: "hidden",
+        /* Rounded top corners so the mesh matches the work-card image
+           treatment (the static images use borderRadius "8px 8px 0 0"). */
+        borderRadius: "8px 8px 0 0",
       }}
     >
       <div className="paper-grain" />
@@ -1067,11 +1070,11 @@ type Testimonial = {
 };
 
 const testimonials: Testimonial[] = [
-  { quote: "Arun possesses a remarkable understanding of user needs, seamlessly navigating between design strategy and hands-on execution. His strategic mindset significantly impacted our efforts to enhance retention metrics.", name: "Raissa Fichardo", role: "Director of UX", company: "Fancode", initials: "RF" },
-  { quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.", name: "Jeff Orshalick", role: "UX Design Manager", company: "Reputation", initials: "JO" },
-  { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "Fancode", initials: "VK" },
-  { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research. He was integral throughout the process, actively shaping the product. A true advocate for the customer's voice, and a definite asset to any team.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB" },
-  { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB" },
+  { quote: "Arun possesses a remarkable understanding of user needs, seamlessly navigating between design strategy and hands-on execution. His strategic mindset significantly impacted our efforts to enhance retention metrics.", name: "Raissa Fichardo", role: "Director of UX", company: "Fancode", initials: "RF", image: "/images/testimonial/raissa-fichardo.webp" },
+  { quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.", name: "Jeff Orshalick", role: "UX Design Manager", company: "Reputation", initials: "JO", image: "/images/testimonial/jeff-orshalick.avif" },
+  { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "Fancode", initials: "VK", image: "/images/testimonial/vikas-kotian.jpeg" },
+  { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research. He was integral throughout the process, actively shaping the product. A true advocate for the customer's voice, and a definite asset to any team.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB", image: "/images/testimonial/nikhil-bhagya.jpeg" },
+  { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB", image: "/images/testimonial/bishal-biswas.jpeg" },
 ];
 
 /** Deterministic hue (0-360) derived from initials so each person gets a
@@ -1785,9 +1788,65 @@ function ContactPanel() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <PanelHeader label="Contact" />
-      <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
+    <div className="contact-panel" style={{ display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}>
+      {/* Paper texture background — three CSS-only layers, all sitting
+          inside the existing dark-theme palette so it reads consistent
+          with the rest of the page (no new colours introduced):
+            1. Base gradient: soft radial lift from a slightly warmer
+               centre to var(--bg) at the edges. Suggests paper catching
+               light off-centre. Cross-hatched fibre lines at <2.5%
+               opacity for the woven cardstock feel.
+            2. Grain: SVG fractalNoise as a tiled data URI, blended via
+               mixBlendMode: overlay so it sits on the surface as grain
+               rather than overlaying as static.
+            3. Vignette: subtle radial dark edge so the panel still feels
+               contained at the corners. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
+          background: `
+            radial-gradient(ellipse 120% 90% at 30% 20%,
+              color-mix(in srgb, var(--surface) 65%, transparent) 0%,
+              transparent 60%),
+            repeating-linear-gradient(2deg,
+              rgba(255,255,255,0.022) 0px,
+              rgba(255,255,255,0.022) 1px,
+              transparent 1px,
+              transparent 6px),
+            repeating-linear-gradient(92deg,
+              rgba(255,255,255,0.018) 0px,
+              rgba(255,255,255,0.018) 1px,
+              transparent 1px,
+              transparent 5px),
+            var(--bg)
+          `,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
+          opacity: 0.55,
+          mixBlendMode: "overlay",
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
+          backgroundSize: "220px 220px",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2,
+          background:
+            "radial-gradient(ellipse 110% 90% at 50% 50%, transparent 50%, rgba(0,0,0,0.35) 100%)",
+        }}
+      />
+
+      <div style={{ position: "relative", zIndex: 3 }}>
+        <PanelHeader label="Contact" />
+      </div>
+      <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column", position: "relative", zIndex: 3 }}>
 
         {/* Headline — typography per Figma reference:
             Inter 400 / 18px / line-height 30px / 0 tracking. */}

@@ -142,19 +142,37 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
   return (
     <>
-      {/* Scroll progress bar */}
+      {/* Scroll progress bar — animated AI-themed gradient. The bar
+          itself uses scaleX to grow with scroll; the gradient runs
+          across a 3× wide background that drifts horizontally,
+          giving the moving stripe a constantly shifting palette. */}
       <motion.div
+        className="cs-scroll-progress"
         style={{
           position: "fixed",
           top: 0, left: 0, right: 0,
-          height: "2px",
-          background: "var(--text)",
+          height: "1.5px",
+          background:
+            "linear-gradient(90deg, #06b6d4 0%, #6366f1 25%, #a855f7 50%, #ec4899 75%, #f59e0b 100%)",
+          backgroundSize: "300% 100%",
           transformOrigin: "left center",
           scaleX,
           zIndex: 300,
-          opacity: 0.7,
+          boxShadow: "0 0 8px rgba(99, 102, 241, 0.4)",
         }}
       />
+      <style>{`
+        .cs-scroll-progress {
+          animation: cs-progress-shift 6s linear infinite;
+        }
+        @keyframes cs-progress-shift {
+          0%   { background-position:   0% 50%; }
+          100% { background-position: 300% 50%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .cs-scroll-progress { animation: none !important; }
+        }
+      `}</style>
 
       {/* Minimal nav — matches HomeNav */}
       <motion.header
@@ -1507,6 +1525,82 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 </Link>
               </motion.div>
             )}
+
+            {/* Footer — mirrors the homepage Contact panel sign-off,
+                split-aligned: copyright on the left, "designed with"
+                attribution on the right. Stacks centred on mobile. */}
+            <div
+              className="cs-footer"
+              style={{
+                paddingTop: "32px",
+                paddingBottom: "48px",
+                marginTop: "48px",
+                borderTop: "1px solid var(--border)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "16px",
+                flexWrap: "wrap",
+              }}
+            >
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "11px",
+                fontWeight: 400, letterSpacing: "-0.01em",
+                color: "var(--muted)", lineHeight: 1.3,
+                margin: 0,
+              }}>
+                © 2026 · Arun Gaddam{" "}
+                <span style={{
+                  color: "#f5b800",
+                  textShadow: "0 0 6px rgba(245, 184, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.15)",
+                  fontWeight: 500,
+                }}>ツ</span>
+              </p>
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "11px",
+                fontWeight: 400, letterSpacing: "-0.01em",
+                color: "var(--muted)", lineHeight: 1.3,
+                margin: 0,
+              }}>
+                <span style={{ opacity: 0.6 }}>Designed with </span>
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  style={{
+                    display: "inline-block",
+                    verticalAlign: "-2px",
+                    margin: "0 2px",
+                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.35)) drop-shadow(0 0 4px rgba(255, 60, 60, 0.45))",
+                  }}
+                  aria-label="love"
+                >
+                  <defs>
+                    <radialGradient id="cs-heart-3d" cx="35%" cy="30%" r="75%">
+                      <stop offset="0%"   stopColor="#ff8a8a" />
+                      <stop offset="55%"  stopColor="#ff3b3b" />
+                      <stop offset="100%" stopColor="#a3000c" />
+                    </radialGradient>
+                  </defs>
+                  <path
+                    fill="url(#cs-heart-3d)"
+                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                  />
+                  <ellipse cx="9" cy="7.5" rx="2.2" ry="1.4" fill="rgba(255,255,255,0.55)" />
+                </svg>
+                <span style={{ opacity: 0.6 }}> using Claude Code</span>
+              </p>
+              <style>{`
+                @media (max-width: 480px) {
+                  .cs-footer {
+                    justify-content: center !important;
+                    flex-direction: column !important;
+                    gap: 6px !important;
+                    text-align: center;
+                  }
+                }
+              `}</style>
+            </div>
 
           </div>
         </article>
