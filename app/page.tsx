@@ -2155,7 +2155,10 @@ export default function Home() {
             overflowX: "auto",
             overflowY: "hidden",
             gap: "8px",
-            padding: "12px 0 16px 24px",
+            /* Top padding mirrors the inter-panel gap (8px) so the gap
+               between the nav and the first row of panels reads
+               consistent with the gap between adjacent panels. */
+            padding: "8px 0 16px 24px",
             boxSizing: "border-box",
             scrollSnapType: "x proximity",
             scrollPaddingLeft: "24px",
