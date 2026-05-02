@@ -580,7 +580,6 @@ function MeshThumbnail({ index, type, confidential }: {
         position: "relative", overflow: "hidden",
       }}
     >
-      <div className="paper-grain" />
       {confidential && (
         <div style={{
           position: "absolute", top: "10px", right: "10px",
