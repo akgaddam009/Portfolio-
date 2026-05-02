@@ -1788,65 +1788,9 @@ function ContactPanel() {
   };
 
   return (
-    <div className="contact-panel" style={{ display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}>
-      {/* Paper texture background — three CSS-only layers, all sitting
-          inside the existing dark-theme palette so it reads consistent
-          with the rest of the page (no new colours introduced):
-            1. Base gradient: soft radial lift from a slightly warmer
-               centre to var(--bg) at the edges. Suggests paper catching
-               light off-centre. Cross-hatched fibre lines at <2.5%
-               opacity for the woven cardstock feel.
-            2. Grain: SVG fractalNoise as a tiled data URI, blended via
-               mixBlendMode: overlay so it sits on the surface as grain
-               rather than overlaying as static.
-            3. Vignette: subtle radial dark edge so the panel still feels
-               contained at the corners. */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
-          background: `
-            radial-gradient(ellipse 120% 90% at 30% 20%,
-              color-mix(in srgb, var(--surface) 65%, transparent) 0%,
-              transparent 60%),
-            repeating-linear-gradient(2deg,
-              rgba(255,255,255,0.022) 0px,
-              rgba(255,255,255,0.022) 1px,
-              transparent 1px,
-              transparent 6px),
-            repeating-linear-gradient(92deg,
-              rgba(255,255,255,0.018) 0px,
-              rgba(255,255,255,0.018) 1px,
-              transparent 1px,
-              transparent 5px),
-            var(--bg)
-          `,
-        }}
-      />
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
-          opacity: 0.55,
-          mixBlendMode: "overlay",
-          backgroundImage:
-            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
-          backgroundSize: "220px 220px",
-        }}
-      />
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2,
-          background:
-            "radial-gradient(ellipse 110% 90% at 50% 50%, transparent 50%, rgba(0,0,0,0.35) 100%)",
-        }}
-      />
-
-      <div style={{ position: "relative", zIndex: 3 }}>
-        <PanelHeader label="Contact" />
-      </div>
-      <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column", position: "relative", zIndex: 3 }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <PanelHeader label="Contact" />
+      <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
 
         {/* Headline — typography per Figma reference:
             Inter 400 / 18px / line-height 30px / 0 tracking. */}
