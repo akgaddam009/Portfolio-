@@ -1906,7 +1906,6 @@ function ContactPanel() {
                 }}>
                   Skills &amp; Tools
                 </p>
-                <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
               </div>
               <div style={{ overflow: "hidden", position: "relative" }}>
                 <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
