@@ -580,6 +580,7 @@ function MeshThumbnail({ index, type, confidential }: {
         position: "relative", overflow: "hidden",
       }}
     >
+      <div className="paper-grain" />
       {confidential && (
         <div style={{
           position: "absolute", top: "10px", right: "10px",
@@ -728,7 +729,9 @@ function WorkPanel() {
     <div id="work-panel">
       <PanelHeader label="Selected Work" />
       <div style={{ padding: "16px 24px 32px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        {/* Card gap mirrors the inter-panel gap on the page so the
+            spacing rhythm reads consistent across the layout. */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
           {caseStudies.filter(cs => cs.slug !== "astra").map((cs, i) => {
             const href = `/work/${cs.slug}`;
