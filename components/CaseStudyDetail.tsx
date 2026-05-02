@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
-import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar } from "@/components/ui/Icon";
+import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight } from "@/components/ui/Icon";
 
 /* Decision icons: keyed by the optional `icon` name on each
    decision entry. Single source so icons stay consistent with
@@ -216,6 +216,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </Link>
           <ThemeToggle />
         </div>
+
+        {/* Right cluster — Copy email + LinkedIn, matching the
+            ContactPanel pattern from the homepage so visitors can
+            reach out from any case study page. */}
+        <CaseStudyContactCluster />
       </motion.header>
 
       <main style={{ paddingTop: "64px" }}>
@@ -1857,6 +1862,105 @@ function AppleChallengeBlock({ text }: { text: string }) {
         // Default: regular paragraph(s) — let BodyText handle this block.
         return <BodyText key={i}>{block}</BodyText>;
       })}
+    </div>
+  );
+}
+
+/* ─── CaseStudyContactCluster ──────────────────────────────────
+   Right-side cluster on the case study detail nav: Copy email
+   button + LinkedIn link. Mirrors the ContactPanel pattern from
+   the homepage so visitors can reach out from any case study
+   page without bouncing back to /. Hidden on mobile to keep the
+   nav uncluttered (the home Contact panel is one tap away). */
+function CaseStudyContactCluster() {
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText("akgaddam02@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div
+      className="cs-contact-cluster"
+      style={{ display: "flex", alignItems: "center", gap: "8px" }}
+    >
+      <button
+        onClick={copyEmail}
+        aria-label={copied ? "Email copied" : "Copy email address"}
+        style={{
+          fontFamily: "var(--font-body)",
+          fontSize: "12px",
+          fontWeight: 400,
+          letterSpacing: "-0.01em",
+          color: copied ? "var(--accent-success)" : "var(--muted)",
+          padding: "8px 14px",
+          borderRadius: "8px",
+          border: "1px solid var(--border)",
+          background: "transparent",
+          cursor: "pointer",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "5px",
+          transition: "color 0.18s, border-color 0.18s, background 0.18s",
+        }}
+        onMouseEnter={e => {
+          if (!copied) {
+            e.currentTarget.style.color = "var(--text)";
+            e.currentTarget.style.borderColor = "var(--text)";
+          }
+        }}
+        onMouseLeave={e => {
+          if (!copied) {
+            e.currentTarget.style.color = "var(--muted)";
+            e.currentTarget.style.borderColor = "var(--border)";
+          }
+        }}
+      >
+        {copied ? "Copied ✓" : "Copy email"}
+      </button>
+
+      <Link
+        href="https://www.linkedin.com/in/akgaddam/"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          fontFamily: "var(--font-body)",
+          fontSize: "12px",
+          fontWeight: 400,
+          letterSpacing: "-0.01em",
+          color: "var(--muted)",
+          padding: "8px 14px",
+          borderRadius: "8px",
+          border: "1px solid var(--border)",
+          background: "transparent",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "5px",
+          transition: "color 0.18s, border-color 0.18s, background 0.18s",
+          textDecoration: "none",
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.color = "var(--text)";
+          e.currentTarget.style.borderColor = "var(--text)";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.color = "var(--muted)";
+          e.currentTarget.style.borderColor = "var(--border)";
+        }}
+      >
+        <ArrowUpRight size={11} strokeWidth={1.5} />
+        LinkedIn
+      </Link>
+
+      {/* Mobile: hide cluster — the homepage Contact panel sits one tap
+          away in the nav, and the case study nav is tight on small screens. */}
+      <style>{`
+        @media (max-width: 640px) {
+          .cs-contact-cluster { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }
