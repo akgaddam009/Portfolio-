@@ -58,14 +58,13 @@
    Cards lift off panels by 16 units. Each layer adds a 1px white hairline
    ring because drop shadows darken, and there's nothing to darken on dark. */
 [data-theme="dark"] {
-  /* Aligned with Figma reference: tighter, warmer-neutral scale.
-     Was Apple systemGray (cool, with a noticeable surface lift);
-     reference uses near-black panels with cards barely stepping
-     up from them. */
-  --bg:       #111110;   /* panel fill — Figma grey/6 (Cod Gray) */
-  --surface:  #181818;   /* card fill — Figma grey/9, barely lifted from panel */
-  --surface2: #232323;   /* hover / inset — one step above surface */
-  --border:   #262626;   /* warm-neutral hairline, less cool than #38383a */
+  /* Higher-intensity dark theme — deeper blacks, tighter scale.
+     Each surface step is darker than the previous variant so the
+     overall page reads more graphic and contrasty. */
+  --bg:       #0a0a0a;   /* panel fill — near-black, sits just above canvas */
+  --surface:  #141414;   /* card fill — barely lifted from panel */
+  --surface2: #1c1c1c;   /* hover / inset — one subtle step further */
+  --border:   #1f1f1f;   /* hairline — visible against bg, not against canvas */
   --text:     #ffffff;
   --muted:    #71717b;   /* Figma Storm Gray (grey/46) — secondary label */
   --muted2:   #a1a1aa;   /* lifted from --muted for body / value text */
