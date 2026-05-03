@@ -9,7 +9,6 @@ import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
 import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight } from "@/components/ui/Icon";
-import AtmosphereBackdrop from "@/components/ui/AtmosphereBackdrop";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -265,21 +264,14 @@ function AboutPanel() {
       <PanelHeader label="About me" />
       <div style={{ padding: "16px 24px 48px" }}>
 
-        {/* Portrait — illustration by default, real photo on hover.
-            Wrapped with a Nocturne particle backdrop so the portrait
-            sits in atmosphere. The portrait itself has its own
-            border-radius and bg, so the backdrop only fills the gap
-            around it (top/bottom margins). */}
+        {/* Portrait — illustration by default, real photo on hover */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
-          style={{ marginBottom: "20px", position: "relative", overflow: "hidden", padding: "12px", margin: "-12px -12px 8px" }}
+          style={{ marginBottom: "20px" }}
         >
-          <AtmosphereBackdrop variant="nocturne" opacity={0.28} />
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <PortraitMagnify />
-          </div>
+          <PortraitMagnify />
         </motion.div>
 
         {/* Hero headline — typography per Figma reference:
@@ -1800,13 +1792,6 @@ function ContactPanel() {
       <PanelHeader label="Contact" />
       <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
 
-        {/* Headline + subtext zone — wrapped with a Nocturne particle
-            backdrop so the "Let's create stories together" CTA gets
-            atmosphere without bleeding into the CTAs or skills below.
-            Backdrop fades to bg before the CTA row. */}
-        <div style={{ position: "relative", overflow: "hidden", padding: "16px 12px 8px", margin: "-16px -12px 12px" }}>
-          <AtmosphereBackdrop variant="nocturne" opacity={0.32} />
-
         {/* Headline — typography per Figma reference:
             Inter 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h2
@@ -1814,7 +1799,6 @@ function ContactPanel() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
           style={{
-            position: "relative", zIndex: 1,
             fontFamily: "var(--font-body)",
             fontSize: "18px",
             fontWeight: 400,
@@ -1833,7 +1817,6 @@ function ContactPanel() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}
           style={{
-            position: "relative", zIndex: 1,
             fontFamily: "var(--font-body)", fontSize: "12px",
             lineHeight: 1.65, letterSpacing: "-0.01em",
             color: "var(--muted)", fontWeight: 400,
@@ -1842,7 +1825,6 @@ function ContactPanel() {
         >
           Open to senior IC and lead roles, consulting engagements, and conversations about design, AI-assisted workflows, or vibe coding.
         </motion.p>
-        </div>
 
         {/* CTAs — always visible */}
         <motion.div

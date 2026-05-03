@@ -7,7 +7,6 @@ import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
 import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight } from "@/components/ui/Icon";
-import AtmosphereBackdrop from "@/components/ui/AtmosphereBackdrop";
 
 /* Decision icons: keyed by the optional `icon` name on each
    decision entry. Single source so icons stay consistent with
@@ -319,14 +318,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
         {/* Metrics bar — only rendered when the case study has real business outcomes to show */}
         {cs.metrics && cs.metrics.length > 0 && (
-          <div style={{ background: "var(--surface)", padding: "24px 0", position: "relative", overflow: "hidden" }}>
-            {/* Wave sheen — Apple Maps only. Bookends the page with the
-                bottom Impact stat block, signalling that the top stat
-                row and the bottom moment belong to the same story. */}
-            {cs.slug === "apple-business-listings" && (
-              <AtmosphereBackdrop variant="wave" opacity={0.4} fadeBottom={false} />
-            )}
-            <div className="page-pad" style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ background: "var(--surface)", padding: "24px 0" }}>
+            <div className="page-pad">
               <div style={{ display: "flex", gap: "32px", flexWrap: "wrap" }}>
                 {cs.metrics.map(m => (
                   <div key={m.label}>
@@ -627,17 +620,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 Business / UX / User lenses. Renders only when set per case. */}
             {cs.projectGoals && (
               <CsSection label={cs.sectionLabels?.goals ?? "🎯 Project Goals"}>
-                <div style={{ position: "relative", padding: "16px 0", margin: "-16px 0", overflow: "hidden", borderRadius: "16px" }}>
-                  {/* Apple Maps only — very faint gradient backdrop to
-                      differentiate the section from the surrounding prose. */}
-                  {cs.slug === "apple-business-listings" && (
-                    <AtmosphereBackdrop
-                      variant="gradient"
-                      palette={{ from: "#1a3050", via: "#0f1f3a", to: "#000000" }}
-                      opacity={0.10}
-                      fadeBottom={false}
-                    />
-                  )}
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -648,8 +630,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr",
                     gap: "16px",
-                    position: "relative",
-                    zIndex: 1,
                   }}
                 >
                   {[
@@ -706,7 +686,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   .goal-card-body ul { gap: 6px !important; }
                   .goal-card-body { display: flex; flex-direction: column; gap: 12px; }
                 `}</style>
-                </div>
               </CsSection>
             )}
 
@@ -1325,18 +1304,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           alignItems: "center",
                           textAlign: "center",
                           gap: "20px",
-                          position: "relative",
-                          overflow: "hidden",
                         }}
                       >
-                        {/* Wave sheen behind the big stat — gives the
-                            closing moment a sense of depth without
-                            adding any colour. */}
-                        <AtmosphereBackdrop variant="wave" opacity={0.6} fadeBottom={false} />
                         <p
                           style={{
-                            position: "relative",
-                            zIndex: 1,
                             fontFamily: "var(--font-body)",
                             fontSize: "clamp(56px, 9vw, 104px)",
                             fontWeight: 300,
@@ -1350,8 +1321,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         </p>
                         <p
                           style={{
-                            position: "relative",
-                            zIndex: 1,
                             fontFamily: "var(--font-body)",
                             fontSize: "15px",
                             lineHeight: 1.55,
@@ -1583,15 +1552,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 alignItems: "center",
                 gap: "16px",
                 flexWrap: "wrap",
-                position: "relative",
-                overflow: "hidden",
               }}
             >
-              {/* Quiet nocturne particles behind the closing footer beat. */}
-              <AtmosphereBackdrop variant="nocturne" opacity={0.22} fadeBottom={false} />
               <p style={{
-                position: "relative",
-                zIndex: 1,
                 fontFamily: "var(--font-body)", fontSize: "11px",
                 fontWeight: 400, letterSpacing: "-0.01em",
                 color: "var(--muted)", lineHeight: 1.3,
@@ -1605,7 +1568,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 }}>ツ</span>
               </p>
               <p style={{
-                position: "relative", zIndex: 1,
                 fontFamily: "var(--font-body)", fontSize: "11px",
                 fontWeight: 400, letterSpacing: "-0.01em",
                 color: "var(--muted)", lineHeight: 1.3,
@@ -2006,6 +1968,64 @@ function AppleChallengeBlock({ text }: { text: string }) {
         return <BodyText key={i}>{block}</BodyText>;
       })}
     </div>
+  );
+}
+
+/* ─── AtmosphereBackdrop ───────────────────────────────────────
+   A soft atmospheric backdrop intended to sit behind a case study
+   hero (or any other contained zone). Uses an image when `src` is
+   provided; otherwise falls back to a CSS radial gradient built
+   from `palette` so the system works before any custom artwork is
+   wired in.
+
+   Always absolutely positioned, pointer-events disabled, masked to
+   fade out at the bottom edge so the backdrop never collides with
+   downstream content. Opacity defaults are tuned for dark theme;
+   pass a higher value (e.g. 0.18–0.22) for light theme if needed.
+
+   Usage:
+     <AtmosphereBackdrop
+       src="/images/bg/nocturne-04.jpg"   // optional
+       palette={{ from: "#1a3050", via: "#0f1f3a", to: "#000000" }}
+       opacity={0.18}
+     />
+*/
+type AtmospherePalette = { from: string; via?: string; to: string };
+function AtmosphereBackdrop({
+  src,
+  palette,
+  opacity = 0.14,
+  fadeBottom = true,
+}: {
+  src?: string;
+  palette?: AtmospherePalette;
+  opacity?: number;
+  fadeBottom?: boolean;
+}) {
+  const fade = fadeBottom
+    ? "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 100%)"
+    : undefined;
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none",
+        zIndex: 0,
+        opacity,
+        background: src
+          ? undefined
+          : palette
+            ? `radial-gradient(ellipse 90% 70% at 50% 25%, ${palette.from} 0%, ${palette.via ?? palette.from} 45%, ${palette.to} 100%)`
+            : "transparent",
+        backgroundImage: src ? `url(${src})` : undefined,
+        backgroundSize: src ? "cover" : undefined,
+        backgroundPosition: src ? "center" : undefined,
+        maskImage: fade,
+        WebkitMaskImage: fade,
+      }}
+    />
   );
 }
 
