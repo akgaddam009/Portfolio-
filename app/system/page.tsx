@@ -16,34 +16,41 @@ const NAV_SECTIONS = [
   { id: "system-process",      label: "Process"      },
 ];
 
-/* Tokens — direct extraction from globals.css.
+/* Tokens — direct extraction from globals.css (kept in sync manually).
    3-layer depth model in both themes: chrome (canvas) → bg (panel) → surface (card).
-   Dark uses Apple's systemGray scale (gray6 → gray5 → gray4); light inverts. */
+   Light theme stays on the original Apple cool-grey scale.
+   Dark theme moved off Apple systemGray to a tighter, warmer-neutral
+   scale (Figma reference) — deeper blacks, less colour cast, panels
+   barely lift off canvas, cards barely lift off panels. */
 const COLORS = [
-  { name: "--chrome",   light: "#f5f5f7", dark: "#000000", role: "Canvas — outermost layer behind panels" },
-  { name: "--bg",       light: "#fbfbfd", dark: "#1c1c1e", role: "Panel surface — body background" },
-  { name: "--surface",  light: "#ffffff", dark: "#2c2c2e", role: "Card surface — elevated above panel" },
-  { name: "--surface2", light: "#f5f5f7", dark: "#3a3a3c", role: "Hover / inset state" },
-  { name: "--border",   light: "#d2d2d7", dark: "#38383a", role: "Opaque separator" },
+  { name: "--chrome",   light: "#f5f5f7", dark: "#000000", role: "Canvas — outermost layer behind panels (pure black on dark)" },
+  { name: "--bg",       light: "#fbfbfd", dark: "#0a0a0a", role: "Panel fill — sits just above canvas, near-black on dark" },
+  { name: "--surface",  light: "#ffffff", dark: "#141414", role: "Card fill — barely lifted from panel on dark" },
+  { name: "--surface2", light: "#f5f5f7", dark: "#1c1c1c", role: "Hover / inset — one subtle step further" },
+  { name: "--border",   light: "#d2d2d7", dark: "#1f1f1f", role: "Opaque separator / hairline" },
   { name: "--text",     light: "#1d1d1f", dark: "#ffffff", role: "Primary label" },
-  { name: "--muted",    light: "#6e6e73", dark: "#9a9a9f", role: "Secondary label — passes AA on card surface" },
-  { name: "--muted2",   light: "#424245", dark: "#aeaeb2", role: "Tertiary label" },
+  { name: "--muted",    light: "#6e6e73", dark: "#71717b", role: "Secondary label — Figma Storm Gray on dark" },
+  { name: "--muted2",   light: "#424245", dark: "#a1a1aa", role: "Tertiary label — body / value text" },
 ];
 
 const ACCENTS = [
-  { name: "--accent-success", value: "#34c759", role: "Apple systemGreen — success" },
+  { name: "--accent-success", value: "#34c759", role: "Apple systemGreen — success / 'now' indicator" },
   { name: "--accent-error",   value: "#ff3b30", role: "Apple systemRed — error" },
 ];
 
+/* Type scale — rebuilt against the Figma reference design
+   (lTdRlX8PGw0ncWuAT8fElw). Inter Regular at every size; weight 500
+   only for emphasised inline phrases (==text==). 0 letter-spacing
+   throughout — the previous negative tracking was drift. */
 const TYPE_SCALE = [
-  { name: "Display",      size: "48px", weight: 400, ls: "-0.035em" },
-  { name: "Heading 1",    size: "32px", weight: 400, ls: "-0.022em" },
-  { name: "Heading 2",    size: "24px", weight: 400, ls: "-0.012em" },
-  { name: "Heading 3",    size: "20px", weight: 590, ls: "-0.012em" },
-  { name: "Body Large",   size: "17px", weight: 400, ls: "-0.01em"  },
-  { name: "Body",         size: "15px", weight: 400, ls: "-0.01em"  },
-  { name: "Caption",      size: "13px", weight: 400, ls: "-0.01em"  },
-  { name: "Mono Micro",   size: "10px", weight: 400, ls: "0.08em",  mono: true, upper: true },
+  { name: "Case study hero",   size: "clamp(26px, 4vw, 44px)", weight: 300, ls: "-0.03em" },
+  { name: "Panel hero",        size: "18px", weight: 400, ls: "0", lh: "30px" },
+  { name: "Card title",        size: "16px", weight: 400, ls: "0", lh: "22px" },
+  { name: "Body",              size: "14px", weight: 400, ls: "0", lh: "26px" },
+  { name: "Body small",        size: "13px", weight: 400, ls: "0", lh: "1.55" },
+  { name: "Caption",           size: "12px", weight: 400, ls: "-0.01em" },
+  { name: "Mono micro",        size: "10px", weight: 400, ls: "0.06em", mono: true, upper: true },
+  { name: "Mono tiny",         size: "9px",  weight: 400, ls: "0.08em", mono: true, upper: true },
 ];
 
 export default function SystemPage() {
@@ -80,19 +87,35 @@ export default function SystemPage() {
 
   return (
     <>
-      {/* Scroll progress bar — same as case study */}
+      {/* Scroll progress bar — matches the case study layout exactly:
+          1.5px AI-themed gradient (cyan → indigo → purple → pink → amber)
+          drifting horizontally on a 6s linear loop. Honours
+          prefers-reduced-motion. */}
       <motion.div
+        className="cs-scroll-progress"
         style={{
           position: "fixed",
           top: 0, left: 0, right: 0,
-          height: "2px",
-          background: "var(--text)",
+          height: "1.5px",
+          background:
+            "linear-gradient(90deg, #06b6d4 0%, #6366f1 25%, #a855f7 50%, #ec4899 75%, #f59e0b 100%)",
+          backgroundSize: "300% 100%",
           transformOrigin: "left center",
           scaleX,
           zIndex: 300,
-          opacity: 0.7,
+          boxShadow: "0 0 8px rgba(99, 102, 241, 0.4)",
         }}
       />
+      <style>{`
+        .cs-scroll-progress { animation: cs-progress-shift 6s linear infinite; }
+        @keyframes cs-progress-shift {
+          0%   { background-position:   0% 50%; }
+          100% { background-position: 300% 50%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .cs-scroll-progress { animation: none !important; }
+        }
+      `}</style>
 
       {/* Top nav — same chrome as the case study layout */}
       <motion.header
@@ -214,8 +237,11 @@ export default function SystemPage() {
             {/* ── Foundations ── */}
             <CsSection id="system-foundations" label="Foundations">
               <BodyText>
-                Apple-system color in both themes; Inter typography with the 510 weight as the
-                signature emphasis; ease-out-quint as the default motion curve.
+                Light theme stays on the Apple cool-grey scale. Dark theme moved off Apple
+                systemGray to a tighter, warmer-neutral scale aligned to the Figma reference —
+                deeper blacks, less colour cast, panels barely lift off the canvas. Inter at
+                weight 400 throughout, with weight 500 reserved for inline emphasised phrases.
+                Ease-out-quint as the default motion curve.
               </BodyText>
 
               <SubHeading>Surfaces</SubHeading>
@@ -260,7 +286,7 @@ export default function SystemPage() {
                     <div>
                       <p style={tokenName}>{t.name}</p>
                       <p style={{ ...tokenValue, marginTop: "3px" }}>
-                        {t.size} · {t.weight} · ls {t.ls}
+                        {t.size} · {t.weight} · ls {t.ls}{t.lh ? ` · lh ${t.lh}` : ""}
                       </p>
                     </div>
                     <p style={{
@@ -268,7 +294,7 @@ export default function SystemPage() {
                       fontSize: t.size,
                       fontWeight: t.weight,
                       letterSpacing: t.ls,
-                      lineHeight: 1.2,
+                      lineHeight: t.lh ?? 1.2,
                       textTransform: t.upper ? "uppercase" : "none",
                       color: "var(--text)",
                       margin: 0,
@@ -289,9 +315,14 @@ export default function SystemPage() {
                 <code style={codeChip}>--dur-base: 320ms</code>
                 <code style={codeChip}>--dur-slow: 650ms</code>
               </SpecRow>
-              <SpecRow label="Shadow tokens" last>
+              <SpecRow label="Shadow tokens">
                 <code style={codeChip}>--card-shadow</code>
                 <code style={codeChip}>--card-shadow-hover</code>
+              </SpecRow>
+              <SpecRow label="Scroll progress bar" last>
+                <code style={codeChip}>1.5px AI gradient</code>
+                <code style={codeChip}>cyan → indigo → purple → pink → amber</code>
+                <code style={codeChip}>6s drift loop</code>
               </SpecRow>
             </CsSection>
 
