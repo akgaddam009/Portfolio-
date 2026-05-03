@@ -244,19 +244,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       <main style={{ paddingTop: "64px" }}>
 
         {/* Hero */}
-        <section style={{ padding: "48px 0", position: "relative", overflow: "hidden" }}>
-          {/* Per-case-study atmospheric backdrop — currently wired only
-              for apple-business-listings as a proof. Sits behind the
-              hero content and fades to bg before the metrics bar so
-              nothing competes with the title. Swap `src` to a real
-              Backgrounds Supply image once one is selected. */}
-          {cs.slug === "apple-business-listings" && (
-            <AtmosphereBackdrop
-              palette={{ from: "#1a3050", via: "#0f1f3a", to: "#000000" }}
-              opacity={0.18}
-            />
-          )}
-          <div className="page-pad" style={{ position: "relative", zIndex: 1 }}>
+        <section style={{ padding: "48px 0" }}>
+          <div className="page-pad">
             <motion.div variants={container} initial="hidden" animate="show">
               <motion.div variants={fadeUp} style={{ marginBottom: "32px" }}>
                 <Link
@@ -1968,64 +1957,6 @@ function AppleChallengeBlock({ text }: { text: string }) {
         return <BodyText key={i}>{block}</BodyText>;
       })}
     </div>
-  );
-}
-
-/* ─── AtmosphereBackdrop ───────────────────────────────────────
-   A soft atmospheric backdrop intended to sit behind a case study
-   hero (or any other contained zone). Uses an image when `src` is
-   provided; otherwise falls back to a CSS radial gradient built
-   from `palette` so the system works before any custom artwork is
-   wired in.
-
-   Always absolutely positioned, pointer-events disabled, masked to
-   fade out at the bottom edge so the backdrop never collides with
-   downstream content. Opacity defaults are tuned for dark theme;
-   pass a higher value (e.g. 0.18–0.22) for light theme if needed.
-
-   Usage:
-     <AtmosphereBackdrop
-       src="/images/bg/nocturne-04.jpg"   // optional
-       palette={{ from: "#1a3050", via: "#0f1f3a", to: "#000000" }}
-       opacity={0.18}
-     />
-*/
-type AtmospherePalette = { from: string; via?: string; to: string };
-function AtmosphereBackdrop({
-  src,
-  palette,
-  opacity = 0.14,
-  fadeBottom = true,
-}: {
-  src?: string;
-  palette?: AtmospherePalette;
-  opacity?: number;
-  fadeBottom?: boolean;
-}) {
-  const fade = fadeBottom
-    ? "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 100%)"
-    : undefined;
-  return (
-    <div
-      aria-hidden="true"
-      style={{
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-        zIndex: 0,
-        opacity,
-        background: src
-          ? undefined
-          : palette
-            ? `radial-gradient(ellipse 90% 70% at 50% 25%, ${palette.from} 0%, ${palette.via ?? palette.from} 45%, ${palette.to} 100%)`
-            : "transparent",
-        backgroundImage: src ? `url(${src})` : undefined,
-        backgroundSize: src ? "cover" : undefined,
-        backgroundPosition: src ? "center" : undefined,
-        maskImage: fade,
-        WebkitMaskImage: fade,
-      }}
-    />
   );
 }
 
