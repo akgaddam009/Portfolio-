@@ -483,7 +483,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ marginTop: "32px" }}
                 >
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
-                    ESM vs OLAP data model
+                    ESM vs OLAP data model (two different types of data)
                   </p>
                   <div style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
                     {/* ESM — Tabular */}
