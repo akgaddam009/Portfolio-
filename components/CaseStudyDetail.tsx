@@ -654,14 +654,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 <BodyText>{cs.problem}</BodyText>
               )}
 
-              {/* User segments — renders as a 2-card grid + closing
-                  paragraph below the Problem cards when set. Used by
-                  case studies that compare two distinct user types
-                  before getting into design decisions. */}
-              {cs.userSegments && (
-                <UserSegmentsBlock data={cs.userSegments} />
-              )}
-
               {cs.problemBreakdown && (
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
@@ -707,6 +699,16 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   the cards — see above. */}
               {cs.problemImage && !(cs.problemCards && cs.problemCards.length > 0) && <ImageBlock image={cs.problemImage} placeholder="Legacy tool — Excel Spotlight screenshot" onOpen={setLightboxSrc} />}
             </CsSection>
+
+            {/* ── User Types (optional) — dedicated section for case studies
+                that compare two distinct user types side by side before
+                getting into design decisions. Separate from the Problem
+                section so the two groups read as their own narrative beat. */}
+            {cs.userSegments && (
+              <CsSection label="User types" id="cs-users">
+                <UserSegmentsBlock data={cs.userSegments} />
+              </CsSection>
+            )}
 
             {/* ── Project Goals (optional) — three-card row sitting between
                 the Challenge and the Decisions, framing the brief through
@@ -1287,8 +1289,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             <CsSection label={cs.sectionLabels?.outcomes ?? "Impact"} id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                {/* Impact tiles — Planful only */}
-                {cs.slug === "planful-esm" && (
+                {/* Impact tiles — Planful case studies */}
+                {(cs.slug === "planful-esm" || cs.slug === "planful-esm-tables") && (
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1365,8 +1367,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 )}
 
-                {/* Outcomes — Planful and Zetwerk BU have their own custom blocks above */}
-                {cs.slug !== "planful-esm" && cs.slug !== "zetwerk-bu-ecosystem" && (() => {
+                {/* Outcomes — Planful (both) and Zetwerk BU have their own custom blocks above */}
+                {cs.slug !== "planful-esm" && cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && (() => {
                   /* Single-outcome treatment — promote the stat to a hero
                      stat block instead of an "01" numbered row. Triggers
                      when there's exactly one outcome AND it starts with a

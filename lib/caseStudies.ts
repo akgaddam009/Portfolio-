@@ -1340,27 +1340,23 @@ export const caseStudies: CaseStudy[] = [
        reading about how the workspace feeds the model. */
     insightDiagram: "olap-vs-esm",
 
-    /* Problem section — plain prose intro with an inline link to
-       the Microsoft Spotlight product page, followed by the
-       Spotlight screenshot as a standalone image, followed by the
-       Issues card carrying the breakdown grid + business impact. */
+    /* Problem section — plain prose sets the scene, the Issues
+       card carries the screenshot, breakdown grid, and business
+       impact. Image is nested inside the card (not standalone). */
     problem:
-      "A useful tool that was hard to use. A key part of the workflow lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug-in for Excel, PowerPoint, and Word.",
+      "Before ESM Tables existed, this workflow already had a tool. A key part of it lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug-in for Excel, PowerPoint, and Word. It worked — but it came with real friction.",
 
-    /* Standalone Spotlight screenshot — sits between the problem
-       prose and the issues card, no longer wrapped inside a card. */
-    problemImage: {
-      src: "/images/planful/data-model-comparison.png",
-      alt: "Excel Spotlight, the legacy tool it replaced",
-      caption: "Excel Spotlight, the tool teams were using before",
-    },
-
-    /* Issues card — single card carrying the breakdown grid and
-       the business-impact callout. No image inside (lifted to
-       problemImage above), no lead (the prose above sets context). */
+    /* Issues card — single card with the screenshot, breakdown
+       grid, and business-impact callout. Image sits inside the
+       card so the visual and the diagnosis stay together. */
     problemCards: [
       {
         title: "Issues with the Excel Spotlight",
+        image: {
+          src: "/images/planful/data-model-comparison.png",
+          alt: "Excel Spotlight, the legacy tool it replaced",
+          caption: "Excel Spotlight, the tool teams were using before",
+        },
         breakdown: {
           points: [
             "Windows-only and desktop-bound",
@@ -1433,15 +1429,15 @@ export const caseStudies: CaseStudy[] = [
           },
         ],
       },
-      /* NEW — navigation / discovery decision. Uses the Navigation
-         image (was previously incorrectly attached to the Column
-         settings decision). */
+      /* 3 — navigation / discovery decision. Dynamic Planning is the
+         key feature; ESM Tables lives inside it, sequenced fourth
+         because it is not part of everyday modeling work. */
       {
-        title: "Lives where finance experts already work",
-        body: "ESM Tables sits nested inside Dynamic Planning, the same surface finance teams already use for modeling. No separate app to install, no new login, no detour. Discovering the feature meant clicking one tab over.",
+        title: "Inside Dynamic Planning — fourth in the list, not the daily driver",
+        body: "Dynamic Planning is the core modeling surface finance teams use every day. ESM Tables lives inside it as the fourth tab, not the first thing they open. No separate app to install, no new login — discovering the feature meant clicking one tab over from where they already were.",
         image: {
           src: "/images/planful/Navigation.png",
-          alt: "ESM Tables nested inside Dynamic Planning",
+          alt: "ESM Tables nested inside Dynamic Planning as the fourth tab",
           caption: "Nested inside Dynamic Planning, where the modeling work already happens",
         },
       },
@@ -1502,17 +1498,12 @@ export const caseStudies: CaseStudy[] = [
          The end-to-end story is now: load → transform → validate
          → publish → map (next decision). Publish-specific friction
          doesn't earn its own beat. */
-      /* 8 — Maps, rewritten in the user's framing. Plain narrative
-         (no "without Maps / with Maps" framing). Closes the entire
-         loop. Image (DP Map) + section video. */
+      /* 8 — Maps: the next phase. No static image (the video covers
+         it). Title reframes this as a forward-looking project beat,
+         not a post-publish step. */
       {
-        title: "After publish: routing the data into the model",
+        title: "The next phase of the project",
         body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Maps, where finance teams draw those connections visually themselves, closing the loop end-to-end.",
-        image: {
-          src: "/images/planful/DP Map.png",
-          alt: "Dynamic Planning Maps connecting ESM columns to financial model dimensions",
-          caption: "Maps, closing the loop from data entry to model impact",
-        },
         videos: [
           {
             src: "/images/planful/MAPS.mov",
@@ -1524,7 +1515,8 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     outcomes: [
-      "A gradual rollout. The feature shipped to a small group of customers in beta first, then rolled out to the full customer base over two to three months.",
+      "3.5 hrs → 10–15 min. A ~95% reduction in time on task. Simple updates that took half a day now take a coffee break.",
+      "Finance → Any team. Non-finance teams now load their own data without finance mediating every update.",
     ],
 
     references: [
