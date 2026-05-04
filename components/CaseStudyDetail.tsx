@@ -2366,7 +2366,7 @@ function ProblemCardsBlock({
    on mobile. */
 function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments"]> }) {
   return (
-    <div style={{ marginTop: "28px" }}>
+    <div>
       {data.intro && (
         <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "12px" }}>
           {data.intro}

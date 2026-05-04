@@ -1373,7 +1373,6 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     userSegments: {
-      intro: "User types · one tool, one shape",
       segments: [
         {
           label: "User group 1",
