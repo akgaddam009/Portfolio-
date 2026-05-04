@@ -2248,10 +2248,47 @@ function ProblemCardsBlock({
               ))}
             </ul>
           )}
-          {/* Image sits INSIDE the card, after the bullets — contained
-              within the card's normal padding (no edge-to-edge treatment).
-              Inset border + radius keeps it visually separated from the
-              card surface. */}
+          {/* Breakdown points grid — renders BEFORE the image so the
+              issues list reads first, then the screenshot illustrates
+              them. Impact callout follows the image below. */}
+          {card.breakdown && (() => {
+            const breakdownIcons = [
+              <svg key={0} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="2" width="14" height="10" rx="1"/><path d="M5 15h6M8 12v3"/></svg>,
+              <svg key={1} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 8A6 6 0 1 1 8 2"/><path d="M14 2v4h-4"/><path d="M8 6v2.5l2 1.5"/></svg>,
+              <svg key={2} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-2.5 2-4 5-4"/><path d="M12 9l3 3m0-3l-3 3"/></svg>,
+              <svg key={3} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 1h6l4 4v10H4z"/><polyline points="10 1 10 5 14 5"/><line x1="6" y1="9" x2="10" y2="13"/><line x1="10" y1="9" x2="6" y2="13"/></svg>,
+              <svg key={4} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="8 1 15 5 8 9 1 5"/><polyline points="1 9 8 13 15 9"/><line x1="8" y1="9" x2="8" y2="13"/></svg>,
+              <svg key={5} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 1L1 14h14L8 1z"/><line x1="8" y1="6" x2="8" y2="9"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>,
+            ];
+            return (
+              <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}>
+                {card.breakdown!.title && (
+                  <p style={{
+                    fontFamily: "var(--font-mono)", fontSize: "9px",
+                    letterSpacing: "0.08em", textTransform: "uppercase",
+                    color: "var(--muted)", margin: 0, marginBottom: "12px",
+                  }}>
+                    {card.breakdown!.title}
+                  </p>
+                )}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }} className="breakdown-grid">
+                  {card.breakdown!.points.map((p, j) => (
+                    <div key={j} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
+                      <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{breakdownIcons[j % breakdownIcons.length]}</div>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{p}</p>
+                    </div>
+                  ))}
+                </div>
+                <style>{`
+                  @media (max-width: 560px) {
+                    .breakdown-grid { grid-template-columns: 1fr !important; }
+                  }
+                `}</style>
+              </div>
+            );
+          })()}
+          {/* Image sits after the breakdown points so issues read first,
+              then the screenshot illustrates what those issues looked like. */}
           {card.image && (
             <div
               onClick={onOpenImage ? () => onOpenImage(card.image!.src) : undefined}
@@ -2283,77 +2320,31 @@ function ProblemCardsBlock({
               )}
             </div>
           )}
-          {/* Optional breakdown — secondary section inside the card
-              with its own bullets (rendered as a 2-col icon grid,
-              matching the visual structure used by the existing
-              problemBreakdown rendering on the older planful-esm
-              case study) and an impact callout. Same look so a
-              recruiter scanning either case study reads "this is
-              the why-it-was-hard treatment". */}
-          {card.breakdown && (() => {
-            /* Re-uses the same 6 inline SVGs as the slug-gated
-               problemBreakdown above — keeps the visual language
-               consistent across both render paths. */
-            const breakdownIcons = [
-              <svg key={0} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="2" width="14" height="10" rx="1"/><path d="M5 15h6M8 12v3"/></svg>,
-              <svg key={1} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 8A6 6 0 1 1 8 2"/><path d="M14 2v4h-4"/><path d="M8 6v2.5l2 1.5"/></svg>,
-              <svg key={2} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-2.5 2-4 5-4"/><path d="M12 9l3 3m0-3l-3 3"/></svg>,
-              <svg key={3} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 1h6l4 4v10H4z"/><polyline points="10 1 10 5 14 5"/><line x1="6" y1="9" x2="10" y2="13"/><line x1="10" y1="9" x2="6" y2="13"/></svg>,
-              <svg key={4} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="8 1 15 5 8 9 1 5"/><polyline points="1 9 8 13 15 9"/><line x1="8" y1="9" x2="8" y2="13"/></svg>,
-              <svg key={5} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 1L1 14h14L8 1z"/><line x1="8" y1="6" x2="8" y2="9"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>,
-            ];
-            return (
-              <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}>
-                {card.breakdown!.title && (
-                  <p style={{
-                    fontFamily: "var(--font-mono)", fontSize: "9px",
-                    letterSpacing: "0.08em", textTransform: "uppercase",
-                    color: "var(--muted)", margin: 0, marginBottom: "12px",
-                  }}>
-                    {card.breakdown!.title}
-                  </p>
-                )}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }} className="breakdown-grid">
-                  {card.breakdown!.points.map((p, j) => (
-                    <div key={j} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
-                      <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{breakdownIcons[j % breakdownIcons.length]}</div>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{p}</p>
-                    </div>
-                  ))}
-                </div>
-                {card.breakdown!.impact && (
-                  <div style={{
-                    marginTop: "16px",
-                    paddingTop: "14px",
-                    borderTop: "1px dashed var(--border)",
-                  }}>
-                    {card.breakdown!.impact.title && (
-                      <p style={{
-                        fontFamily: "var(--font-mono)", fontSize: "9px",
-                        letterSpacing: "0.08em", textTransform: "uppercase",
-                        color: "var(--muted)", margin: 0, marginBottom: "8px",
-                      }}>
-                        {card.breakdown!.impact.title}
-                      </p>
-                    )}
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "13px",
-                      lineHeight: 1.65, letterSpacing: "-0.005em",
-                      color: "var(--muted2)", margin: 0,
-                    }}>
-                      {card.breakdown!.impact.text}
-                    </p>
-                  </div>
-                )}
-                {/* Mobile: stack the grid into one column. */}
-                <style>{`
-                  @media (max-width: 560px) {
-                    .breakdown-grid { grid-template-columns: 1fr !important; }
-                  }
-                `}</style>
-              </div>
-            );
-          })()}
+          {/* Impact callout — closes the card after the screenshot. */}
+          {card.breakdown?.impact && (
+            <div style={{
+              marginTop: "16px",
+              paddingTop: "14px",
+              borderTop: "1px dashed var(--border)",
+            }}>
+              {card.breakdown.impact.title && (
+                <p style={{
+                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  letterSpacing: "0.08em", textTransform: "uppercase",
+                  color: "var(--muted)", margin: 0, marginBottom: "8px",
+                }}>
+                  {card.breakdown.impact.title}
+                </p>
+              )}
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "13px",
+                lineHeight: 1.65, letterSpacing: "-0.005em",
+                color: "var(--muted2)", margin: 0,
+              }}>
+                {card.breakdown.impact.text}
+              </p>
+            </div>
+          )}
         </motion.div>
       ))}
     </div>
