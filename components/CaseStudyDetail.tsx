@@ -3045,15 +3045,37 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
               transition: "background 0.22s ease",
             }}
           >
-            {/* Step number */}
-            <span style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "9px",
-              letterSpacing: "0.08em",
-              color: "var(--muted)",
-            }}>
-              {stage.number}
-            </span>
+            {/* Top row — number plus an inline label that fades in
+                next to it on hover. Default reads "01"; hover reads
+                "01 · Add" so the eye picks up which step it is even
+                while the bottom slot becomes the description. */}
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", flexWrap: "wrap", lineHeight: 1.2 }}>
+              <span style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "9px",
+                letterSpacing: "0.08em",
+                color: "var(--muted)",
+              }}>
+                {stage.number}
+              </span>
+              {stage.description && (
+                <motion.span
+                  initial={false}
+                  animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -4 }}
+                  transition={{ duration: 0.22, ease: EASE }}
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "9px",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    color: "var(--text)",
+                    pointerEvents: "none",
+                  }}
+                >
+                  · {stage.label}
+                </motion.span>
+              )}
+            </div>
 
             {/* Icon — keyed by label, with mappings for both the
                 older planful-esm vocabulary (Define / Prepare) and
@@ -3069,19 +3091,20 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
               </svg>
             </div>
 
-            {/* Stage label / description swap on hover.
-                Default: bold label.
-                Hover: label cross-fades out, description cross-fades in
-                in the same position. Card height stays constant — no
-                expansion, no jumping. Both layers occupy the same grid
-                slot via position:relative parent. minHeight reserves a
-                small range so a long description doesn't push other
-                content around when it appears. */}
-            <div style={{ position: "relative", minHeight: "20px" }}>
+            {/* Bottom slot — label by default, description on hover.
+                The label has already promoted to the top row on hover
+                (next to the number), so the bottom slot is free to
+                show the description without ambiguity. Both states
+                share the same vertical position via absolute layering;
+                card height stays constant. minHeight reserves space so
+                long descriptions don't push other chrome around. */}
+            <div style={{ position: "relative", minHeight: "32px" }}>
               <motion.h3
                 animate={{ opacity: isHovered && stage.description ? 0 : 1 }}
                 transition={{ duration: 0.18, ease: EASE }}
                 style={{
+                  position: "absolute",
+                  inset: 0,
                   fontFamily: "var(--font-body)",
                   fontSize: "14px",
                   fontWeight: 500,
