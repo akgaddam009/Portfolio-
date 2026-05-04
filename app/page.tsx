@@ -786,21 +786,28 @@ function WorkPanel() {
             spacing rhythm reads consistent across the layout. */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
-          {caseStudies.filter(cs => cs.slug !== "astra").map((cs, i) => {
+          {(() => {
+            const COMING_SOON = new Set(["fancode-ftux", "zetwerk-dc", "zetwerk-bu-ecosystem"]);
+            return caseStudies.filter(cs => cs.slug !== "astra").map((cs, i) => {
             const href = `/work/${cs.slug}`;
+            const comingSoon = COMING_SOON.has(cs.slug);
+            const CardWrapper = comingSoon
+              ? ({ children }: { children: React.ReactNode }) => <div style={{ cursor: "default" }}>{children}</div>
+              : ({ children }: { children: React.ReactNode }) => <Link href={href}>{children}</Link>;
             return (
               <motion.div
                 key={cs.slug}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -2 }}
+                whileHover={comingSoon ? {} : { y: -2 }}
                 viewport={{ once: true, margin: "-20px" }}
                 transition={{
                   opacity: { duration: 0.5, ease: EASE, delay: i * 0.06 },
                   y: { type: "spring", stiffness: 320, damping: 28 },
                 }}
+                style={comingSoon ? { opacity: 0.45 } : {}}
               >
-                <Link href={href}>
+                <CardWrapper>
                   <div
                     className="work-card"
                     style={{
@@ -811,7 +818,7 @@ function WorkPanel() {
                       transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.boxShadow = "var(--card-shadow-hover)";
+                      if (!comingSoon) e.currentTarget.style.boxShadow = "var(--card-shadow-hover)";
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.boxShadow = "var(--card-shadow)";
@@ -884,6 +891,19 @@ function WorkPanel() {
                             {tag}
                           </span>
                         ))}
+                        {comingSoon && (
+                          <span style={{
+                            fontFamily: "var(--font-mono)", fontSize: "9px",
+                            letterSpacing: "0.06em", textTransform: "uppercase",
+                            padding: "3px 8px",
+                            background: "transparent",
+                            border: "1px solid var(--border)",
+                            color: "var(--muted)",
+                            borderRadius: "8px",
+                          }}>
+                            Coming soon
+                          </span>
+                        )}
                       </div>
 
                       {/* Title — Figma: Inter 400 / 16px / line-height 18px / 0 tracking */}
@@ -910,10 +930,11 @@ function WorkPanel() {
                           in case a metric block is reintroduced later. */}
                     </div>
                   </div>
-                </Link>
+                </CardWrapper>
               </motion.div>
             );
-          })}
+          });
+          })()}
         </div>
       </div>
     </div>
