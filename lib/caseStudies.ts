@@ -403,7 +403,7 @@ export const caseStudies: CaseStudy[] = [
       "Prototyping",
     ],
     lesson:
-      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.\n\nThe 95% time reduction didn't come from a faster grid. It came from asking: \"What decisions can the system make so humans only decide when it matters?\"",
+      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.\n\nThe 95% time reduction didn't come from a faster grid. It came from asking: \"What decisions can the system make so users only decide when it matters?\"",
   },
   /* ── #07 Bringing Apple into Business Listing Performance (fresh, verbatim) ── */
   {
@@ -1267,7 +1267,7 @@ export const caseStudies: CaseStudy[] = [
     number: "08",
     title: "Moving a critical finance workflow from Excel to the web.",
     subtitle:
-      "Cut a 3.5-hour finance workflow down to a few minutes, redesigned from Excel to the web.",
+      "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
     company: "Planful",
     type: "Enterprise SaaS · Fintech",
     role: "Senior Product Designer (IC)",
@@ -1344,7 +1344,7 @@ export const caseStudies: CaseStudy[] = [
        card carries the screenshot, breakdown grid, and business
        impact. Image is nested inside the card (not standalone). */
     problem:
-      "Before ESM Tables existed, this workflow already had a tool. A key part of it lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug-in for Excel, PowerPoint, and Word. It worked — but it came with real friction.",
+      "Before ESM Tables existed, this workflow already had a tool. A key part of it lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug in for Excel, PowerPoint, and Word. It worked — but it came with real friction.",
 
     /* Issues card — single card with the screenshot, breakdown
        grid, and business-impact callout. Image sits inside the
@@ -1359,7 +1359,7 @@ export const caseStudies: CaseStudy[] = [
         },
         breakdown: {
           points: [
-            "Windows-only and desktop-bound",
+            "Windows only and desktop bound",
             "Required manual install and regular updates",
             "Couldn't be used on a Mac or in a browser",
             "Strict rules about which row to type into and how to format entries, easy to get wrong",
@@ -1392,7 +1392,7 @@ export const caseStudies: CaseStudy[] = [
     },
 
     contribution:
-      "I led design end-to-end as Senior Product Designer, from problem framing and scoping through research, UX, interaction details, prototyping, and design QA.\n\nValidated weekly with the PM, leadership, and engineering. Brought in customer implementation consultants to make sure the workflow matched real forecasting rhythms, not what the team imagined them to be. During development, I ran design QA to ensure shipped interactions matched intent.",
+      "I led design end to end as Senior Product Designer, from problem framing and scoping through research, UX, interaction details, prototyping, and design QA.\n\nValidated weekly with the PM, leadership, and engineering. Brought in customer implementation consultants to make sure the workflow matched real forecasting rhythms, not what the team imagined them to be. During development, I ran design QA to ensure shipped interactions matched intent.",
 
     taskFlow: {
       heading: "A clear four-step journey",
@@ -1409,7 +1409,7 @@ export const caseStudies: CaseStudy[] = [
          spreadsheet behaviour) instead of the vendor name. */
       {
         title: "A familiar spreadsheet, not a new tool to learn",
-        body: "Users already know how spreadsheets work. We built on a battle-tested enterprise grid (Syncfusion) so the muscle memory carried over: type, paste, drag, fill. We focused design effort on the workflow itself, not on rebuilding the grid. Scaled to large datasets and met the security standards non-negotiable in fintech (SOC 2 Type 2 certified).",
+        body: "Users already know how spreadsheets work. We built on a battle tested enterprise grid (Syncfusion) so the muscle memory carried over: type, paste, drag, fill. We focused design effort on the workflow itself, not on rebuilding the grid. Scaled to large datasets and met the security standards non negotiable in fintech (SOC 2 Type 2 certified).",
         image: {
           src: "/images/planful/Engg feasibility .png",
           alt: "The Syncfusion grid pattern that shaped the technical approach",
@@ -1419,7 +1419,7 @@ export const caseStudies: CaseStudy[] = [
       /* 2 — clearer copy + section walkthrough video. */
       {
         title: "Drag, drop, or paste — no waiting for big files",
-        body: "Two ways in, both first-class: drop a file, or paste straight from a spreadsheet. For files of 50,000+ rows, the first 1,000 rows preview instantly so users can start working before the full upload finishes.",
+        body: "Two ways in, both first class: drop a file, or paste straight from a spreadsheet. For files of 50,000+ rows, the first 1,000 rows preview instantly so users can start working before the full upload finishes.",
         videos: [
           {
             src: "/images/planful/Two%20ways%20in,%20with%20progress%20that%20doesn't%20make%20people%20wait%20.mov",
@@ -1450,7 +1450,7 @@ export const caseStudies: CaseStudy[] = [
           {
             src: "/images/planful/%20Column%20settings%20without%20a%20maze%20of%20menus.mov",
             label: "Column settings",
-            caption: "Type-aware side panel surfaces only what's relevant.",
+            caption: "Type aware side panel surfaces only what's relevant.",
           },
         ],
       },
@@ -1484,7 +1484,7 @@ export const caseStudies: CaseStudy[] = [
          append are the two modes. Section walkthrough video. */
       {
         title: "Bulk data update — overwrite or append",
-        body: "At period close, teams replace the full dataset. Mid-cycle, they add rows without touching what's already there. Both modes are explicit at upload time, no scripting, no support ticket. A task that used to require rebuilding the whole table now takes a click.",
+        body: "At period close, teams replace the full dataset. Mid cycle, they add rows without touching what's already there. Both modes are explicit at upload time, no scripting, no support ticket. A task that used to require rebuilding the whole table now takes a click.",
         videos: [
           {
             src: "/images/planful/Bulk%20Update%20Video.mov",
@@ -1502,7 +1502,7 @@ export const caseStudies: CaseStudy[] = [
          not a post-publish step. */
       {
         title: "The next phase of the project",
-        body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Maps, where finance teams draw those connections visually themselves, closing the loop end-to-end.",
+        body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
         videos: [
           {
             src: "/images/planful/MAPS.mov",
@@ -1524,7 +1524,7 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     lesson:
-      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.\n\nThe 95% time reduction didn't come from a faster grid. It came from asking: \"What decisions can the system make so humans only decide when it matters?\"",
+      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.\n\nThe 95% time reduction didn't come from a faster grid. It came from asking: \"What decisions can the system make so users only decide when it matters?\"",
   },
 ];
 

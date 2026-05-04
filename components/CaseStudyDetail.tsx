@@ -268,11 +268,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     {tag}
                   </span>
                 ))}
-                {cs.confidential && (
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "8px" }}>
-                    Confidential — available 1:1
-                  </span>
-                )}
               </motion.div>
 
               <motion.h1
