@@ -18,24 +18,26 @@ const NAV_SECTIONS = [
 
 /* Tokens — direct extraction from globals.css (kept in sync manually).
    3-layer depth model in both themes: chrome (canvas) → bg (panel) → surface (card).
-   Light theme stays on the original Apple cool-grey scale.
-   Dark theme moved off Apple systemGray to a tighter, warmer-neutral
-   scale (Figma reference) — deeper blacks, less colour cast, panels
-   barely lift off canvas, cards barely lift off panels. */
+   Light theme: cool near-white scale, panels float on a barely-tinted
+   canvas, cards lift one step further on white surfaces.
+   Dark theme: tight warm-neutral scale, panels barely lift off pure
+   black canvas, cards barely lift off panels. The whole dark scale
+   sits in the deepest 12% of the lightness range — high contrast for
+   text, no surface ever feels "lit". */
 const COLORS = [
-  { name: "--chrome",   light: "#f5f5f7", dark: "#000000", role: "Canvas — outermost layer behind panels (pure black on dark)" },
-  { name: "--bg",       light: "#fbfbfd", dark: "#0a0a0a", role: "Panel fill — sits just above canvas, near-black on dark" },
+  { name: "--chrome",   light: "#f5f5f7", dark: "#000000", role: "Canvas — outermost layer the panels float on" },
+  { name: "--bg",       light: "#fbfbfd", dark: "#0a0a0a", role: "Panel fill — sits just above canvas" },
   { name: "--surface",  light: "#ffffff", dark: "#141414", role: "Card fill — barely lifted from panel on dark" },
   { name: "--surface2", light: "#f5f5f7", dark: "#1c1c1c", role: "Hover / inset — one subtle step further" },
   { name: "--border",   light: "#d2d2d7", dark: "#1f1f1f", role: "Opaque separator / hairline" },
   { name: "--text",     light: "#1d1d1f", dark: "#ffffff", role: "Primary label" },
-  { name: "--muted",    light: "#6e6e73", dark: "#71717b", role: "Secondary label — Figma Storm Gray on dark" },
-  { name: "--muted2",   light: "#424245", dark: "#a1a1aa", role: "Tertiary label — body / value text" },
+  { name: "--muted",    light: "#6e6e73", dark: "#71717b", role: "Secondary label — passes AA on card surface" },
+  { name: "--muted2",   light: "#424245", dark: "#a1a1aa", role: "Tertiary label — body and value text" },
 ];
 
 const ACCENTS = [
-  { name: "--accent-success", value: "#34c759", role: "Apple systemGreen — success / 'now' indicator" },
-  { name: "--accent-error",   value: "#ff3b30", role: "Apple systemRed — error" },
+  { name: "--accent-success", value: "#34c759", role: "Confirmation green — 'now' indicator on the career timeline, the 'copied' state on the email pill, momentary success feedback" },
+  { name: "--accent-error",   value: "#ff3b30", role: "Alert red — error states and destructive actions" },
 ];
 
 /* Type scale — rebuilt against the Figma reference design
@@ -237,10 +239,11 @@ export default function SystemPage() {
             {/* ── Foundations ── */}
             <CsSection id="system-foundations" label="Foundations">
               <BodyText>
-                Light theme stays on the Apple cool-grey scale. Dark theme moved off Apple
-                systemGray to a tighter, warmer-neutral scale aligned to the Figma reference —
-                deeper blacks, less colour cast, panels barely lift off the canvas. Inter at
-                weight 400 throughout, with weight 500 reserved for inline emphasised phrases.
+                Two themes sharing one architecture. Light is a cool near-white scale; dark is
+                a tight warm-neutral scale where panels barely lift off pure-black canvas and
+                cards barely lift off panels. The dark scale sits in the deepest 12% of the
+                lightness range — high contrast for text, no surface ever feels &quot;lit&quot;.
+                Inter at weight 400 throughout; weight 500 only for inline emphasised phrases.
                 Ease-out-quint as the default motion curve.
               </BodyText>
 
@@ -898,7 +901,7 @@ function MarqueeDemo() {
         <div className="marquee-track" style={{ ["--marquee-duration" as string]: "20s", display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap" }}>
           {[...Array(2)].map((_, n) => (
             <span key={n} style={{ display: "inline-flex", alignItems: "center" }}>
-              {["Inter", "DM Mono", "Apple systemGray scale", "shadow + ring elevation", "ease-out-quint", "100dvh"].map(s => (
+              {["Inter", "DM Mono", "warm-neutral grey scale", "shadow + ring elevation", "ease-out-quint", "100dvh"].map(s => (
                 <span key={`${n}-${s}`} style={{
                   fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
                   letterSpacing: "-0.01em", color: "var(--muted2)",

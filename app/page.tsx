@@ -657,8 +657,8 @@ function MeshThumbnail({ index, type, confidential }: {
 
 const WORK_THUMBS: Record<string, string> = {
   "astra":                "/images/astra/overview.mov",
-  "planful-esm":          "/images/planful/Untitled.mp4",
-  "planful-esm-tables":   "/images/planful/Untitled.mp4",
+  "planful-esm":          "/images/planful/planful%20product%20video.mov",
+  "planful-esm-tables":   "/images/planful/planful%20product%20video.mov",
   "apple-business-listings": "/images/reputation/after.mov",
   "fancode-ftux":         "/images/fancode/user-journey-map.jpg",
   "fancode-homepage":     "/images/fancode/hp-overview.mov",

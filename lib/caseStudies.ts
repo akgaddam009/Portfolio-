@@ -287,7 +287,7 @@ export const caseStudies: CaseStudy[] = [
       "==The tool wasn't the bottleneck. The workflow was.==\n\nThe design opportunity wasn't to build a faster interface. It was to answer those three questions before the user had to ask them. ==Remove human judgment where the system could be certain.==",
     insightImage: undefined,
     insightDiagram: "olap-vs-esm",
-    contextVideo: "/images/planful/Untitled.mp4",
+    contextVideo: "/images/planful/planful%20product%20video.mov",
     taskFlow: {
       heading: "The new workflow, four clear stages",
       stages: [
@@ -1304,7 +1304,7 @@ export const caseStudies: CaseStudy[] = [
 
     /* Reuses the same hero video as the older planful-esm case study —
        same product, same walkthrough, no need to re-record. */
-    contextVideo: "/images/planful/Untitled.mp4",
+    contextVideo: "/images/planful/planful%20product%20video.mov",
 
     /* Chrome URL on the video panel — explicit so it stays consistent
        with the context copy (Planful software, broadly). The auto-derived
