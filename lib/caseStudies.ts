@@ -1323,14 +1323,16 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "ESM vs OLAP, two different shapes of data",
         lead: "The two data models serve different purposes. Understanding the difference makes the rest of the design choices easier to follow.",
-        vsGrid: {
-          leftLabel: "ESM · Tabular",
-          leftDesc: "Rows × columns. Typed cells. Editable in a sandbox before publish.",
-          rightLabel: "OLAP · Multi-dimensional",
-          rightDesc: "Dimensions × members. Aggregated. The shape reports and forecasts read from.",
-        },
+        /* The text vs-grid was removed in favour of the richer SVG
+           diagram (table grid for ESM, cube for OLAP) rendered below
+           the context cards via insightDiagram: "olap-vs-esm". */
       },
     ],
+
+    /* Triggers the existing ESM vs OLAP visual diagram (table grid +
+       cube SVGs) below the context cards. Same render path as the
+       older planful-esm case study. */
+    insightDiagram: "olap-vs-esm",
 
     /* problem retained as a fallback string (used by SEO/meta), but the
        Problem section will render from problemCards when present. */

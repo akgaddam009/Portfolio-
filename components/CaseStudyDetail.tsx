@@ -473,8 +473,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   cluttered the Overview reading flow. The hero placement is the
                   only place these need to appear. */}
 
-              {/* OLAP vs ESM data shapes — Planful only */}
-              {cs.slug === "planful-esm" && cs.insightDiagram === "olap-vs-esm" && (
+              {/* OLAP vs ESM data shapes — Planful case studies only */}
+              {(cs.slug === "planful-esm" || cs.slug === "planful-esm-tables") && cs.insightDiagram === "olap-vs-esm" && (
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
