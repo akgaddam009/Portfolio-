@@ -1265,13 +1265,7 @@ export const caseStudies: CaseStudy[] = [
 
     contextCards: [
       {
-        title: "Planful, in one line",
-        lead: "Software that core finance teams at large companies use to plan budgets and forecasts.",
-        points: [
-          "A connected financial planning platform shared across the company",
-          "Strict rules on what data goes in, who edits it, and when",
-          "Replaces the patchwork of spreadsheets large finance teams often rely on",
-        ],
+        title: "Planful software is used by core finance teams at large companies to plan budgets and forecasts.",
       },
       {
         title: "How financial data models are managed",
