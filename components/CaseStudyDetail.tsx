@@ -410,11 +410,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           <div className="page-pad">
 
             <CsSection label={cs.sectionLabels?.overview ?? "Overview"} id="cs-overview">
-              {/* Overview prefers `context` (the framing paragraph the case
-                  study controls). `summary` is the card/SEO hook and only
-                  falls back into Overview if context isn't set, so each case
-                  study controls how long/short its Overview reads. */}
-              <BodyText>{cs.context || cs.summary}</BodyText>
+              {/* When `contextCards` is set, render the structured Context
+                  cards (each may include a model-pair diagram or vs-grid).
+                  Otherwise fall back to the simple context/summary string. */}
+              {cs.contextCards && cs.contextCards.length > 0 ? (
+                <ContextCardsBlock cards={cs.contextCards} />
+              ) : (
+                <BodyText>{cs.context || cs.summary}</BodyText>
+              )}
 
               {/* contextVideo and contextImage used to render here inside Overview.
                   Removed because the contextVideo already renders as the hero panel
@@ -553,14 +556,25 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             </CsSection>
 
             <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} id="cs-problem">
-              {/* Apple Maps case study: custom Challenge layout. Lede prose,
-                  the diagnosis bullets as a 3-card stat grid, and the
-                  design question as a featured prompt callout. Other case
-                  studies fall back to BodyText. */}
+              {/* Three render paths for the Problem section:
+                  1. apple-business-listings → custom AppleChallengeBlock
+                     (lede prose, 3-card diagnosis grid, featured prompt)
+                  2. cs.problemCards is set → render structured cards
+                  3. fallback → simple BodyText for the problem string */}
               {cs.slug === "apple-business-listings" ? (
                 <AppleChallengeBlock text={cs.problem} />
+              ) : cs.problemCards && cs.problemCards.length > 0 ? (
+                <ProblemCardsBlock cards={cs.problemCards} />
               ) : (
                 <BodyText>{cs.problem}</BodyText>
+              )}
+
+              {/* User segments — renders as a 2-card grid + closing
+                  paragraph below the Problem cards when set. Used by
+                  case studies that compare two distinct user types
+                  before getting into design decisions. */}
+              {cs.userSegments && (
+                <UserSegmentsBlock data={cs.userSegments} />
               )}
 
               {cs.problemBreakdown && (
@@ -1003,7 +1017,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         })()}
                         {d.title}
                       </h3>
-                      {cs.slug === "planful-esm" && d.title.startsWith("What comes next") ? (
+                      {(cs.slug === "planful-esm" || cs.slug === "planful-esm-tables") && d.title.startsWith("What comes next") ? (
                         <MapsDecisionBlock />
                       ) : (
                         /* Route through BodyText so bullets / labelled lists
@@ -1801,6 +1815,219 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
      3. diagnosis bullets (3 short bullets) → 3-card stat grid
      4. design question paragraph (label + question) → callout
    The text is unchanged, only the presentation per-block. */
+/* ─── ContextCardsBlock ────────────────────────────────────────
+   Stacks one or more titled Context cards. Each card can carry a
+   lead paragraph, a bullet list, a model-pair diagram (left → right),
+   or a vs-grid (two side-by-side labelled descriptions). Used when
+   the Context section needs more structure than a single prose
+   block. */
+function ContextCardsBlock({ cards }: { cards: NonNullable<CaseStudy["contextCards"]> }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      {cards.map((card, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: EASE, delay: i * 0.04 }}
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "12px",
+            padding: "20px 22px",
+          }}
+        >
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: "6px", letterSpacing: "-0.01em" }}>
+            {card.title}
+          </p>
+          {card.lead && (
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0, marginBottom: card.points || card.modelPair || card.vsGrid ? "10px" : 0 }}>
+              {card.lead}
+            </p>
+          )}
+          {card.points && card.points.length > 0 && (
+            <ul style={{ listStyle: "disc outside", paddingLeft: "20px", margin: 0, marginTop: card.lead ? 0 : "4px" }}>
+              {card.points.map((p, j) => (
+                <li key={j} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "3px" }}>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          )}
+          {card.modelPair && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "12px", alignItems: "stretch", marginTop: "4px" }}
+                 className="ctx-model-pair">
+              <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
+                <span style={modelTagStyle}>{card.modelPair.leftTag}</span>
+                <p style={modelNameStyle}>{card.modelPair.leftName}</p>
+                <p style={modelDescStyle}>{card.modelPair.leftDesc}</p>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "var(--muted)", fontSize: "20px", fontWeight: 300 }}>→</div>
+              <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
+                <span style={modelTagStyleAlt}>{card.modelPair.rightTag}</span>
+                <p style={modelNameStyle}>{card.modelPair.rightName}</p>
+                <p style={modelDescStyle}>{card.modelPair.rightDesc}</p>
+              </div>
+              <style>{`
+                @media (max-width: 560px) {
+                  .ctx-model-pair { grid-template-columns: 1fr !important; }
+                  .ctx-model-pair > div:nth-child(2) { transform: rotate(90deg); padding: 4px 0; }
+                }
+              `}</style>
+            </div>
+          )}
+          {card.vsGrid && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "4px" }}
+                 className="ctx-vs-grid">
+              <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", fontWeight: 600, color: "var(--text)", margin: 0, marginBottom: "4px" }}>{card.vsGrid.leftLabel}</p>
+                <p style={modelDescStyle}>{card.vsGrid.leftDesc}</p>
+              </div>
+              <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", fontWeight: 600, color: "var(--text)", margin: 0, marginBottom: "4px" }}>{card.vsGrid.rightLabel}</p>
+                <p style={modelDescStyle}>{card.vsGrid.rightDesc}</p>
+              </div>
+              <style>{`
+                @media (max-width: 560px) {
+                  .ctx-vs-grid { grid-template-columns: 1fr !important; }
+                }
+              `}</style>
+            </div>
+          )}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+const modelTagStyle: React.CSSProperties = {
+  display: "inline-block",
+  fontFamily: "var(--font-mono)",
+  fontSize: "9px",
+  fontWeight: 500,
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+  color: "var(--text)",
+  background: "var(--surface2)",
+  padding: "3px 9px",
+  borderRadius: "999px",
+  marginBottom: "8px",
+};
+const modelTagStyleAlt: React.CSSProperties = { ...modelTagStyle, background: "var(--surface)" };
+const modelNameStyle: React.CSSProperties = {
+  fontFamily: "var(--font-body)", fontSize: "13.5px", fontWeight: 500,
+  color: "var(--text)", margin: 0, marginBottom: "4px", letterSpacing: "-0.01em",
+};
+const modelDescStyle: React.CSSProperties = {
+  fontFamily: "var(--font-body)", fontSize: "12.5px", lineHeight: 1.55,
+  color: "var(--muted2)", margin: 0,
+};
+
+/* ─── ProblemCardsBlock ────────────────────────────────────────
+   Stacked Problem cards. Each has a title, optional lead paragraph,
+   and an optional bullet list. Mirrors the ContextCardsBlock pattern. */
+function ProblemCardsBlock({ cards }: { cards: NonNullable<CaseStudy["problemCards"]> }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      {cards.map((card, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: EASE, delay: i * 0.04 }}
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "12px",
+            padding: "20px 22px",
+          }}
+        >
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: card.lead || card.points ? "6px" : 0, letterSpacing: "-0.01em" }}>
+            {card.title}
+          </p>
+          {card.lead && (
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0, marginBottom: card.points ? "10px" : 0 }}>
+              {card.lead}
+            </p>
+          )}
+          {card.points && card.points.length > 0 && (
+            <ul style={{ listStyle: "disc outside", paddingLeft: "20px", margin: 0 }}>
+              {card.points.map((p, j) => (
+                <li key={j} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "3px" }}>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          )}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+/* ─── UserSegmentsBlock ────────────────────────────────────────
+   Two-card grid (one card per user segment) with optional intro
+   line above and closing paragraph below. Stacks to single column
+   on mobile. */
+function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments"]> }) {
+  return (
+    <div style={{ marginTop: "28px" }}>
+      {data.intro && (
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "12px" }}>
+          {data.intro}
+        </p>
+      )}
+      <div className="user-segments-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+        {data.segments.map((s, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: EASE, delay: i * 0.05 }}
+            style={{
+              border: "1px solid var(--border)",
+              borderRadius: "12px",
+              padding: "20px 22px",
+              background: "var(--surface)",
+            }}
+          >
+            <span style={{
+              display: "inline-block",
+              fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--text)", background: "var(--surface2)",
+              padding: "3px 9px", borderRadius: "999px",
+              marginBottom: "10px",
+            }}>{s.label}</span>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0, marginBottom: "4px" }}>
+              {s.name}
+            </p>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", margin: 0, marginBottom: "10px" }}>
+              {s.roles}
+            </p>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0 }}>
+              {s.body}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+      {data.closing && (
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)", marginTop: "16px", maxWidth: "640px" }}>
+          {data.closing}
+        </p>
+      )}
+      <style>{`
+        @media (max-width: 640px) {
+          .user-segments-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 function AppleChallengeBlock({ text }: { text: string }) {
   const blocks = text.split("\n\n");
 

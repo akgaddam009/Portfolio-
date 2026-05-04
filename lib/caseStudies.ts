@@ -86,6 +86,37 @@ export type CaseStudy = {
     ux: string;
     user: string;
   };
+  /** Optional User Segments section. Renders as a 2-card grid (one
+      segment per card) followed by a closing paragraph. Used when a
+      case study needs to compare two distinct user types side by side
+      before getting into the design decisions. */
+  userSegments?: {
+    intro?: string;
+    closing?: string;
+    segments: { label: string; name: string; roles: string; body: string }[];
+  };
+  /** Optional contextCards — structured Context section with multiple
+      titled cards. Each card may carry a lead paragraph and / or a
+      bullet list. Used when the Context can't be told as one prose
+      block. */
+  contextCards?: {
+    title: string;
+    lead?: string;
+    points?: string[];
+    /** Optional model-pair diagram (left → right) within the card. */
+    modelPair?: { leftTag: string; leftName: string; leftDesc: string; rightTag: string; rightName: string; rightDesc: string };
+    /** Optional vs-grid (two side-by-side labelled descriptions). */
+    vsGrid?: { leftLabel: string; leftDesc: string; rightLabel: string; rightDesc: string };
+  }[];
+  /** Optional problemCards — same idea as contextCards but for the
+      Problem section. Each card has a title plus either a lead or a
+      bullet list (often both). Replaces the simple `problem` string
+      when present. */
+  problemCards?: {
+    title: string;
+    lead?: string;
+    points?: string[];
+  }[];
   /** Per-case-study overrides for the labels of the major narrative sections.
       Each case study can opt into its own voice for section headings (e.g.
       "What's a Business Listing?" instead of the generic "Overview"), so the
@@ -1197,6 +1228,189 @@ export const caseStudies: CaseStudy[] = [
 
     lesson:
       "The hardest part of this project wasn't building the blueprint. It was holding the line on scope. I let a reasonable-sounding argument override a research instinct I had already documented. Finance was in my pre-research system map. I flagged them. I let the constraint stand anyway. The lesson isn't about service blueprints or synthesis methods. It's about research independence: when you've mapped the system and identified a dependency, 'they don't use the platform directly' is not sufficient grounds for exclusion. Scope decisions made before the research starts should require the same standard of evidence as the findings that come out of it.",
+  },
+
+  /* ── #08 Planful ESM Tables — Excel → web (fresh, verbatim from HTML brief) ── */
+  {
+    slug: "planful-esm-tables",
+    number: "08",
+    title: "Moving a critical finance workflow from Excel to the web.",
+    subtitle:
+      "Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app, retaining the depth that finance experts needed, while finally making it usable for everyone else.",
+    company: "Planful",
+    type: "Enterprise SaaS · Fintech",
+    role: "Sr. Product Designer",
+    timeline: "~1 month design · 2–3 months rollout",
+    team: "Product, Engineering, Implementation Consultants",
+    tags: ["Enterprise software", "Data workflow", "End-to-end design", "Navigation", "Error handling", "Component specs", "Finance tools"],
+    heroLabel: "Real Work",
+    confidential: false,
+
+    sectionLabels: {
+      overview: "Context",
+      problem: "Problem",
+      decisions: "How the key moments work",
+      outcomes: "Outcome",
+      lesson: "What I learned",
+      references: "References",
+    },
+
+    metrics: [
+      { value: "3.5 hrs → 10–15 min", label: "~95% reduction in time on task. Simple updates that took half a day now take a coffee break." },
+      { value: "Finance → Any team", label: "Non-finance teams now load their own data without finance mediating every update." },
+    ],
+
+    summary:
+      "Moving a critical finance workflow from Excel to the web. Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app.",
+
+    contextCards: [
+      {
+        title: "Planful, in one line",
+        lead: "Software that core finance teams at large companies use to plan budgets and forecasts.",
+        points: [
+          "A connected financial planning platform shared across the company",
+          "Strict rules on what data goes in, who edits it, and when",
+          "Replaces the patchwork of spreadsheets large finance teams often rely on",
+        ],
+      },
+      {
+        title: "How financial data models are managed",
+        lead: "Rather than editing the live financial model directly, teams load updated data through a controlled workspace that feeds into it without touching what's already there.",
+        modelPair: {
+          leftTag: "2D data model",
+          leftName: "External Source Model (ESM)",
+          leftDesc: "A controlled workspace where teams load, transform, and validate data before it goes anywhere near the live plan.",
+          rightTag: "3D data model",
+          rightName: "Core financial model",
+          rightDesc: "The data driving budgets, forecasts, and headcount plans. Never edited directly.",
+        },
+      },
+      {
+        title: "ESM vs OLAP, two different shapes of data",
+        lead: "The two data models serve different purposes. Understanding the difference makes the rest of the design choices easier to follow.",
+        vsGrid: {
+          leftLabel: "ESM · Tabular",
+          leftDesc: "Rows × columns. Typed cells. Editable in a sandbox before publish.",
+          rightLabel: "OLAP · Multi-dimensional",
+          rightDesc: "Dimensions × members. Aggregated. The shape reports and forecasts read from.",
+        },
+      },
+    ],
+
+    /* problem retained as a fallback string (used by SEO/meta), but the
+       Problem section will render from problemCards when present. */
+    problem:
+      "A useful tool that was hard to use. A key part of the workflow lived inside Spotlight for Microsoft 365, a custom plug-in for Excel, PowerPoint, and Word. Worked inside Excel itself, not in the web product. Only a small group of expert users could navigate it confidently.",
+
+    problemCards: [
+      {
+        title: "The legacy tool: Excel Spotlight",
+        lead: "A key part of the workflow lived inside Spotlight for Microsoft 365, a custom plug-in for Excel, PowerPoint, and Word.",
+        points: [
+          "Worked inside Excel itself, not in the web product",
+          "Only a small group of expert users could navigate it confidently",
+        ],
+      },
+      {
+        title: "Why it was hard",
+        points: [
+          "Windows-only and desktop-bound",
+          "Required manual install and regular updates",
+          "Couldn't be used on a Mac or in a browser",
+          "Strict rules about which row to type into and how to format entries, easy to get wrong",
+        ],
+      },
+      {
+        title: "What that cost the business",
+        points: [
+          "Only a small group of experts could confidently use it",
+          "Slower decisions and delayed forecasts",
+          "A knowledge bottleneck that didn't scale as the business grew",
+        ],
+      },
+    ],
+
+    userSegments: {
+      intro: "Two very different users, one shared tool.",
+      segments: [
+        {
+          label: "User group 1",
+          name: "Occasional contributor",
+          roles: "Sales ops · Marketing · HR",
+          body: "Owns a slice of the company's data and updates it on a schedule. Not a finance person. Wants to be in and out fast, drop in numbers, see they look right, get back to the day job.",
+        },
+        {
+          label: "User group 2",
+          name: "Senior finance team",
+          roles: "FP&A · Finance analysts",
+          body: "Maintains the structure itself, defining tables, writing the calculation logic, deciding when data is ready to publish. Years of Excel experience. Cares deeply about precision and won't accept a tool that takes away control.",
+        },
+      ],
+      closing:
+        "The challenge wasn't designing for one or the other. It was finding a level of clarity where the contributor could work alone without help, and the finance team didn't feel they'd lost any control.",
+    },
+
+    contribution:
+      "I led design end-to-end as Senior Product Designer, from problem framing and scoping through research, UX, interaction details, prototyping, and design QA.\n\nValidated weekly with the PM, leadership, and engineering. Brought in customer implementation consultants to make sure the workflow matched real forecasting rhythms, not what the team imagined them to be. During development, I ran design QA to ensure shipped interactions matched intent.",
+
+    taskFlow: {
+      heading: "A clear four-step journey",
+      stages: [
+        { number: "01", label: "Add",       description: "Upload a file or paste in data" },
+        { number: "02", label: "Transform", description: "Apply calculations and shape the data" },
+        { number: "03", label: "Validate",  description: "Find and fix anything wrong" },
+        { number: "04", label: "Publish",   description: "Send it into the company forecast" },
+      ],
+    },
+
+    decisionsIntro: "How the key moments work",
+
+    decisions: [
+      {
+        title: "An enterprise grid, not a custom interface",
+        body: "I started exploring Google Sheets and Excel, the mental model users already knew. After working through it with engineering, we moved to Syncfusion, an enterprise component library with proven patterns we didn't have to build from scratch. It scaled to large datasets and met the security standards non-negotiable in fintech (SOC 2 Type 2 certified). It let us focus design effort on the workflow, not on rebuilding the grid.",
+      },
+      {
+        title: "Two ways in, with progress that doesn't make people wait",
+        body: "Users can drag and drop a file or paste directly from a spreadsheet, both paths are first-class. For files of 50,000+ rows, a live preview shows the first 1,000 the moment they load, so users can start working before the full upload finishes.",
+      },
+      {
+        title: "Column settings without a maze of menus",
+        body: "Every column has a type, text, number, date, formula, constant. A side panel opens from the column header showing only the settings relevant to that type. Power users get full control. Casual users aren't overwhelmed.",
+      },
+      {
+        title: "Live colour feedback on formulas, no preview step",
+        body: "Transforming and calculating data is core to the task, so a formula bar wasn't optional. We could not bring all the functions as powerfully as in Excel, but we brought in whatever was necessary for this job.\n\nAs users type, colour highlights show exactly which cells are affected. I considered adding a preview step before applying, safer, but adds a click to every formula. Live feedback catches mistakes quickly enough that the extra safety isn't worth the friction.",
+      },
+      {
+        title: "Errors flagged in context, not in a post-submission report",
+        body: "When data fails validation, the system flags the specific cell, not a modal, not a separate review step. A side panel groups problems by type. Every error has a row number that's a clickable link, taking you straight to the cell. Users see exactly what broke and fix it in place without losing their upload.",
+      },
+      {
+        title: "Two explicit update modes, overwrite or append",
+        body: "At period close, teams replace the full dataset. Mid-cycle, they add rows without touching what's already there. I made both modes explicit at upload time, no scripting, no support ticket, the right option visible at the moment it matters. A task that previously required rebuilding the whole table now takes a click.",
+      },
+      {
+        title: "A publish flow with the right amount of friction",
+        body: "Once a table is published, the primary action switches from \"Publish\" to \"Edit\", making it deliberate to go back in. Locking is a separate, opt-in step for tables finalised ahead of an important deadline (board reports, financial close) where no further changes should be made. Keeping it optional gives teams flexibility; making it deliberate gives them confidence.",
+      },
+      {
+        title: "What comes next: Maps, closing the loop",
+        body: "The four-step flow solves data loading. But after a user clicks publish, someone still has to route that data to the right place inside the financial model. At launch, that final step required backend support from an implementation team, turnaround in hours to days.\n\n==Maps== extends the workflow by a fifth step. A visual interface where finance teams draw the connections between ESM columns and the financial model's dimensions themselves, no backend access, no developer dependency. The workflow becomes truly end-to-end.\n\nWithout Maps, teams finished publishing and waited on implementation consultants to route the data from the backend, hours to days. With Maps, finance teams draw the connections visually and data reaches the right model dimensions in the same session.",
+      },
+    ],
+
+    outcomes: [
+      "A gradual rollout. The feature shipped to a small group of customers in beta first, then rolled out to the full customer base over two to three months.",
+    ],
+
+    references: [
+      { label: "Spotlight for Microsoft 365 (Planful)", url: "https://planful.com/solution-hub/spotlight-microsoft/solution/" },
+      { label: "Syncfusion enterprise UI components", url: "https://www.syncfusion.com/" },
+    ],
+
+    lesson:
+      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.\n\nThe 95% time reduction didn't come from a faster grid. It came from asking: \"What decisions can the system make so humans only decide when it matters?\"",
   },
 ];
 
