@@ -2279,20 +2279,20 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
               background: "var(--surface)",
             }}
           >
-            {/* Person silhouette — sits in a soft tinted disc so it
-                reads as a friendly avatar mark, not as a UI icon. */}
+            {/* Person silhouette — sits in a small tinted disc so it
+                reads as a quiet avatar mark, not as a focal element. */}
             <div
               style={{
-                width: "44px", height: "44px",
+                width: "28px", height: "28px",
                 borderRadius: "50%",
                 background: "var(--surface2)",
                 border: "1px solid var(--border)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: "var(--muted2)",
-                marginBottom: "12px",
+                marginBottom: "10px",
               }}
             >
-              <UserCircle size={22} strokeWidth={1.5} />
+              <UserCircle size={14} strokeWidth={1.5} />
             </div>
             <span style={{
               display: "inline-block",
@@ -2305,7 +2305,11 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
             <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0, marginBottom: "4px" }}>
               {s.name}
             </p>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", margin: 0, marginBottom: "10px" }}>
+            {/* Roles — body font, sentence case, sits in the same
+                typographic family as the body sentence below it. The
+                old mono caps treatment broke type rhythm with the
+                rest of the card. */}
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", letterSpacing: "-0.005em", color: "var(--muted)", margin: 0, marginBottom: "10px" }}>
               {s.roles}
             </p>
             <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0 }}>
@@ -3045,44 +3049,51 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
               </svg>
             </div>
 
-            {/* Stage label */}
-            <h3 style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "14px",
-              fontWeight: 500,
-              letterSpacing: "-0.02em",
-              color: "var(--text)",
-              lineHeight: 1.2,
-            }}>
-              {stage.label}
-            </h3>
-
-            {/* Hover-revealed description — reserves a fixed-height
-                slot below the label so cards stay aligned regardless
-                of which one is hovered. Text fades + slides in/out
-                smoothly within that slot. */}
-            {stage.description && (
-              <div style={{
-                height: "44px",
-                marginTop: "-8px",
-                overflow: "hidden",
-              }}>
+            {/* Stage label / description swap on hover.
+                Default: bold label.
+                Hover: label cross-fades out, description cross-fades in
+                in the same position. Card height stays constant — no
+                expansion, no jumping. Both layers occupy the same grid
+                slot via position:relative parent. minHeight reserves a
+                small range so a long description doesn't push other
+                content around when it appears. */}
+            <div style={{ position: "relative", minHeight: "20px" }}>
+              <motion.h3
+                animate={{ opacity: isHovered && stage.description ? 0 : 1 }}
+                transition={{ duration: 0.18, ease: EASE }}
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  letterSpacing: "-0.02em",
+                  color: "var(--text)",
+                  lineHeight: 1.2,
+                  margin: 0,
+                }}
+              >
+                {stage.label}
+              </motion.h3>
+              {stage.description && (
                 <motion.p
-                  animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : -4 }}
-                  transition={{ duration: 0.24, ease: EASE }}
+                  initial={false}
+                  animate={{ opacity: isHovered ? 1 : 0 }}
+                  transition={{ duration: 0.22, ease: EASE }}
                   style={{
+                    position: "absolute",
+                    inset: 0,
                     fontFamily: "var(--font-body)",
-                    fontSize: "11.5px",
-                    lineHeight: 1.5,
+                    fontSize: "12px",
+                    lineHeight: 1.45,
                     letterSpacing: "-0.005em",
                     color: "var(--muted2)",
                     margin: 0,
+                    pointerEvents: "none",
                   }}
                 >
                   {stage.description}
                 </motion.p>
-              </div>
-            )}
+              )}
+            </div>
           </motion.div>
         );
       })}
