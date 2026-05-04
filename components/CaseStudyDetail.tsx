@@ -2160,23 +2160,20 @@ function ProblemCardsBlock({
               ))}
             </ul>
           )}
-          {/* Image sits INSIDE the card, after the bullets — reads as
-              part of the card it relates to, not as a sibling block
-              between cards. Negative side-margins counter the card's
-              22px horizontal padding so the image still spans the
-              full card width edge-to-edge. */}
+          {/* Image sits INSIDE the card, after the bullets — contained
+              within the card's normal padding (no edge-to-edge treatment).
+              Inset border + radius keeps it visually separated from the
+              card surface. */}
           {card.image && (
             <div
               onClick={onOpenImage ? () => onOpenImage(card.image!.src) : undefined}
               style={{
                 marginTop: "16px",
-                marginLeft: "-22px",
-                marginRight: "-22px",
-                marginBottom: "-20px",
-                borderRadius: "0 0 12px 12px",
+                borderRadius: "8px",
                 overflow: "hidden",
                 cursor: onOpenImage ? "zoom-in" : undefined,
                 background: "var(--bg)",
+                border: "1px solid var(--border)",
               }}
             >
               <img
@@ -2189,8 +2186,9 @@ function ProblemCardsBlock({
                   fontFamily: "var(--font-mono)", fontSize: "9px",
                   letterSpacing: "0.08em", textTransform: "uppercase",
                   color: "var(--muted)", textAlign: "center",
-                  padding: "10px 22px",
+                  padding: "10px 14px",
                   margin: 0,
+                  borderTop: "1px solid var(--border)",
                 }}>
                   {card.image.caption}
                 </p>
