@@ -1249,7 +1249,7 @@ export const caseStudies: CaseStudy[] = [
       "Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app, retaining the depth that finance experts needed, while finally making it usable for everyone else.",
     company: "Planful",
     type: "Enterprise SaaS · Fintech",
-    role: "Sr. Product Designer",
+    role: "Senior Product Designer (IC)",
     timeline: "~1 month design · 2–3 months rollout",
     team: "Product, Engineering, Implementation Consultants",
     tags: ["Enterprise software", "Data workflow", "End-to-end design", "Navigation", "Error handling", "Component specs", "Finance tools"],
