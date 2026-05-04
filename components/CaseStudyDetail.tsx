@@ -70,7 +70,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   const chromeUrl = (() => {
     // Per-case-study override wins.
     if (cs.chromeUrl) return cs.chromeUrl;
-    if (cs.slug === "planful-esm") return "app.planful.com/esm";
     const co = (cs.company || "").toLowerCase().replace(/\.com$/, "").replace(/[^a-z0-9]/g, "");
     return co ? `app.${co}.com` : "app.example.com";
   })();
@@ -477,7 +476,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   only place these need to appear. */}
 
               {/* OLAP vs ESM data shapes — Planful case studies only */}
-              {(cs.slug === "planful-esm" || cs.slug === "planful-esm-tables") && cs.insightDiagram === "olap-vs-esm" && (
+              {cs.slug === "planful-esm-tables" && cs.insightDiagram === "olap-vs-esm" && (
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -562,57 +561,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 </div>
               )}
 
-              {cs.slug === "planful-esm" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65, ease: EASE }}
-                  style={{ marginTop: "32px" }}
-                >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
-                    How financial data models are managed
-                  </p>
-                  <div style={{ display: "flex", alignItems: "stretch", gap: "0" }}>
-                    {/* ESM Box */}
-                    <div style={{ flex: 1, padding: "20px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px 0 0 10px" }}>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--muted)", marginBottom: "10px", display: "block" }}>
-                        <rect x="2" y="3" width="12" height="10" rx="1"/><path d="M2 7h12M7 7v6"/>
-                      </svg>
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>
-                        This project
-                      </p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.4, marginBottom: "8px" }}>
-                        External Source Model
-                      </p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)", lineHeight: 1.6 }}>
-                        A controlled workspace where teams load, transform, and validate data before it goes anywhere near the live plan.
-                      </p>
-                    </div>
-                    {/* Arrow divider */}
-                    <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", width: "48px", background: "var(--surface)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--muted)" }}>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    {/* Core Model Box */}
-                    <div style={{ flex: 1, padding: "20px 24px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "0 10px 10px 0", borderLeft: "none" }}>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--muted)", marginBottom: "10px", display: "block" }}>
-                        <ellipse cx="8" cy="5" rx="5" ry="2"/><path d="M3 5v6a5 2 0 0 0 10 0V5"/><path d="M3 8a5 2 0 0 0 10 0"/>
-                      </svg>
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>
-                        Always live
-                      </p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.4, marginBottom: "8px" }}>
-                        Core Financial Model
-                      </p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)", lineHeight: 1.6 }}>
-                        The financial data driving budgets, forecasts, and headcount plans. Never edited directly.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
             </CsSection>
 
             <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} id="cs-problem">
@@ -1104,7 +1052,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         })()}
                         {d.title}
                       </h3>
-                      {(cs.slug === "planful-esm" || cs.slug === "planful-esm-tables") && d.title.startsWith("What comes next") ? (
+                      {cs.slug === "planful-esm-tables" && d.title.startsWith("What comes next") ? (
                         <MapsDecisionBlock />
                       ) : (
                         /* Route through BodyText so bullets / labelled lists
@@ -1164,7 +1112,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           </div>
                         </motion.div>
                       )}
-                      {!(cs.slug === "planful-esm" && d.title.startsWith("What comes next")) && (d.images && d.images.length > 0 ? (
+                      {(d.images && d.images.length > 0 ? (
                         <motion.div
                           initial={{ opacity: 0, y: 12 }}
                           whileInView={{ opacity: 1, y: 0 }}
@@ -1284,8 +1232,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             <CsSection label={cs.sectionLabels?.outcomes ?? "Impact"} id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                {/* Impact tiles — Planful case studies */}
-                {(cs.slug === "planful-esm" || cs.slug === "planful-esm-tables") && (
+                {/* Impact tiles — Planful ESM Tables */}
+                {cs.slug === "planful-esm-tables" && (
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1362,8 +1310,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 )}
 
-                {/* Outcomes — Planful (both) and Zetwerk BU have their own custom blocks above */}
-                {cs.slug !== "planful-esm" && cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && (() => {
+                {/* Outcomes — planful-esm-tables and Zetwerk BU have their own custom blocks above */}
+                {cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && (() => {
                   /* Single-outcome treatment — promote the stat to a hero
                      stat block instead of an "01" numbered row. Triggers
                      when there's exactly one outcome AND it starts with a
