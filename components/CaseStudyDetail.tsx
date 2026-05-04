@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
-import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight } from "@/components/ui/Icon";
+import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle } from "@/components/ui/Icon";
 
 /* Decision icons: keyed by the optional `icon` name on each
    decision entry. Single source so icons stay consistent with
@@ -2195,6 +2195,57 @@ function ProblemCardsBlock({
               )}
             </div>
           )}
+          {/* Optional breakdown — secondary section inside the card
+              with its own bullets and an impact callout. Used to keep
+              the entire problem story (intro · screenshot · why hard ·
+              what it cost) inside a single card instead of spilling
+              into sibling cards. Separated from the card body above
+              by a thin top border so the two sections read as
+              connected but distinct. */}
+          {card.breakdown && (
+            <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}>
+              {card.breakdown.title && (
+                <p style={{
+                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  letterSpacing: "0.08em", textTransform: "uppercase",
+                  color: "var(--muted)", margin: 0, marginBottom: "12px",
+                }}>
+                  {card.breakdown.title}
+                </p>
+              )}
+              <ul style={{ listStyle: "disc outside", paddingLeft: "20px", margin: 0 }}>
+                {card.breakdown.points.map((p, j) => (
+                  <li key={j} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "3px" }}>
+                    {p}
+                  </li>
+                ))}
+              </ul>
+              {card.breakdown.impact && (
+                <div style={{
+                  marginTop: "16px",
+                  paddingTop: "14px",
+                  borderTop: "1px dashed var(--border)",
+                }}>
+                  {card.breakdown.impact.title && (
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "9px",
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      color: "var(--muted)", margin: 0, marginBottom: "8px",
+                    }}>
+                      {card.breakdown.impact.title}
+                    </p>
+                  )}
+                  <p style={{
+                    fontFamily: "var(--font-body)", fontSize: "13px",
+                    lineHeight: 1.65, letterSpacing: "-0.005em",
+                    color: "var(--muted2)", margin: 0,
+                  }}>
+                    {card.breakdown.impact.text}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </motion.div>
       ))}
     </div>
@@ -2228,6 +2279,21 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
               background: "var(--surface)",
             }}
           >
+            {/* Person silhouette — sits in a soft tinted disc so it
+                reads as a friendly avatar mark, not as a UI icon. */}
+            <div
+              style={{
+                width: "44px", height: "44px",
+                borderRadius: "50%",
+                background: "var(--surface2)",
+                border: "1px solid var(--border)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "var(--muted2)",
+                marginBottom: "12px",
+              }}
+            >
+              <UserCircle size={22} strokeWidth={1.5} />
+            </div>
             <span style={{
               display: "inline-block",
               fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500,
@@ -2927,58 +2993,99 @@ function MapsDecisionBlock() {
 }
 
 function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
+  const [hovered, setHovered] = useState<number | null>(null);
   return (
     <div style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden" }}>
-      {stages.map((stage, i) => (
-        <motion.div
-          key={stage.number}
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55, ease: EASE, delay: i * 0.1 }}
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "24px 20px 20px",
-            borderRight: i < stages.length - 1 ? "1px solid var(--border)" : "none",
-            gap: "20px",
-          }}
-        >
-          {/* Step number */}
-          <span style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "9px",
-            letterSpacing: "0.08em",
-            color: "var(--muted)",
-          }}>
-            {stage.number}
-          </span>
+      {stages.map((stage, i) => {
+        const isHovered = hovered === i;
+        return (
+          <motion.div
+            key={stage.number}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, ease: EASE, delay: i * 0.1 }}
+            onMouseEnter={() => setHovered(i)}
+            onMouseLeave={() => setHovered(null)}
+            style={{
+              flex: 1,
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              padding: "24px 20px 20px",
+              borderRight: i < stages.length - 1 ? "1px solid var(--border)" : "none",
+              gap: "20px",
+              cursor: stage.description ? "default" : undefined,
+              background: isHovered ? "var(--surface2)" : "transparent",
+              transition: "background 0.22s ease",
+            }}
+          >
+            {/* Step number */}
+            <span style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "9px",
+              letterSpacing: "0.08em",
+              color: "var(--muted)",
+            }}>
+              {stage.number}
+            </span>
 
-          {/* Icon */}
-          <div style={{ color: "var(--muted2)", width: "22px", height: "22px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-            <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
-              {stage.label === "Define" && <><rect x="2" y="2" width="5" height="5" rx="0.5"/><rect x="9" y="2" width="5" height="5" rx="0.5"/><rect x="2" y="9" width="5" height="5" rx="0.5"/><rect x="9" y="9" width="5" height="5" rx="0.5"/></>}
-              {stage.label === "Prepare" && <><path d="M8 11V4M5 7l3-3 3 3"/><path d="M3 13h10"/></>}
-              {stage.label === "Validate" && <><circle cx="8" cy="8" r="6"/><path d="M5.5 8.5l2 2 3-3"/></>}
-              {stage.label === "Publish" && <path d="M14 2L7 9M14 2l-4.5 12L7 9 2.5 6.5 14 2z"/>}
-            </svg>
-          </div>
+            {/* Icon — keyed by label, with mappings for both the
+                older planful-esm vocabulary (Define / Prepare) and
+                the new planful-esm-tables vocabulary (Add / Transform). */}
+            <div style={{ color: "var(--muted2)", width: "22px", height: "22px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+              <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                {stage.label === "Define" && <><rect x="2" y="2" width="5" height="5" rx="0.5"/><rect x="9" y="2" width="5" height="5" rx="0.5"/><rect x="2" y="9" width="5" height="5" rx="0.5"/><rect x="9" y="9" width="5" height="5" rx="0.5"/></>}
+                {stage.label === "Prepare" && <><path d="M8 11V4M5 7l3-3 3 3"/><path d="M3 13h10"/></>}
+                {stage.label === "Add" && <><rect x="2" y="2" width="12" height="12" rx="1.5"/><path d="M8 5v6M5 8h6"/></>}
+                {stage.label === "Transform" && <><path d="M3 4l2-2h6l2 2"/><path d="M3 4v8a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4"/><path d="M6 8l2 2 2-2"/></>}
+                {stage.label === "Validate" && <><circle cx="8" cy="8" r="6"/><path d="M5.5 8.5l2 2 3-3"/></>}
+                {stage.label === "Publish" && <path d="M14 2L7 9M14 2l-4.5 12L7 9 2.5 6.5 14 2z"/>}
+              </svg>
+            </div>
 
-          {/* Stage label */}
-          <h3 style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "14px",
-            fontWeight: 500,
-            letterSpacing: "-0.02em",
-            color: "var(--text)",
-            lineHeight: 1.2,
-          }}>
-            {stage.label}
-          </h3>
-        </motion.div>
-      ))}
+            {/* Stage label */}
+            <h3 style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "14px",
+              fontWeight: 500,
+              letterSpacing: "-0.02em",
+              color: "var(--text)",
+              lineHeight: 1.2,
+            }}>
+              {stage.label}
+            </h3>
+
+            {/* Hover-revealed description — reserves a fixed-height
+                slot below the label so cards stay aligned regardless
+                of which one is hovered. Text fades + slides in/out
+                smoothly within that slot. */}
+            {stage.description && (
+              <div style={{
+                height: "44px",
+                marginTop: "-8px",
+                overflow: "hidden",
+              }}>
+                <motion.p
+                  animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : -4 }}
+                  transition={{ duration: 0.24, ease: EASE }}
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "11.5px",
+                    lineHeight: 1.5,
+                    letterSpacing: "-0.005em",
+                    color: "var(--muted2)",
+                    margin: 0,
+                  }}
+                >
+                  {stage.description}
+                </motion.p>
+              </div>
+            )}
+          </motion.div>
+        );
+      })}
     </div>
   );
 }

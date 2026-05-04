@@ -118,6 +118,16 @@ export const Info = (p: IconProps) => (
   </Svg>
 );
 
+/** Single-person silhouette — friendly head + shoulders shape,
+ *  used in user-segment cards. Sits in a 24×24 viewbox like the
+ *  rest of the icon family. */
+export const UserCircle = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 21v-1a8 8 0 0 1 16 0v1" />
+  </Svg>
+);
+
 export const Calendar = (p: IconProps) => (
   <Svg {...p}>
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />

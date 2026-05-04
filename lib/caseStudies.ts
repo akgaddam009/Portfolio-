@@ -128,12 +128,21 @@ export type CaseStudy = {
       bullet list (often both). Replaces the simple `problem` string
       when present. An optional `image` after a card lets the
       screenshot/illustration sit right after the card it relates to,
-      not at the bottom of the section. */
+      not at the bottom of the section. An optional `breakdown` block
+      lets a card carry a secondary section (e.g. "Why it was hard")
+      with its own bullets and an impact callout, so the entire
+      problem story can live inside one card instead of spilling into
+      sibling cards. */
   problemCards?: {
     title: string;
     lead?: string;
     points?: string[];
     image?: CaseStudyImage;
+    breakdown?: {
+      title?: string;
+      points: string[];
+      impact?: { title?: string; text: string };
+    };
   }[];
   /** Per-case-study overrides for the labels of the major narrative sections.
       Each case study can opt into its own voice for section headings (e.g.
@@ -1339,6 +1348,9 @@ export const caseStudies: CaseStudy[] = [
     problem:
       "A useful tool that was hard to use. A key part of the workflow lived inside Spotlight for Microsoft 365, a custom plug-in for Excel, PowerPoint, and Word. Worked inside Excel itself, not in the web product. Only a small group of expert users could navigate it confidently.",
 
+    /* Single consolidated problem card — the legacy tool intro,
+       the screenshot, why-it-was-hard breakdown, and what-it-cost
+       impact all live inside one card. No sibling cards. */
     problemCards: [
       {
         title: "The legacy tool: Excel Spotlight",
@@ -1347,36 +1359,29 @@ export const caseStudies: CaseStudy[] = [
           "Worked inside Excel itself, not in the web product",
           "Only a small group of expert users could navigate it confidently",
         ],
-        /* Screenshot reused from the older planful-esm case study —
-           same legacy tool, same artefact. Sits inline directly after
-           this card so it reads in context, not at the bottom of the
-           Problem section. */
         image: {
           src: "/images/planful/data-model-comparison.png",
           alt: "Excel Spotlight, the legacy tool it replaced",
           caption: "Excel Spotlight, the tool teams were using before",
         },
+        breakdown: {
+          title: "Why it was hard",
+          points: [
+            "Windows-only and desktop-bound",
+            "Required manual install and regular updates",
+            "Couldn't be used on a Mac or in a browser",
+            "Strict rules about which row to type into and how to format entries, easy to get wrong",
+          ],
+          impact: {
+            title: "What it cost the business",
+            text: "Only a small group of experts could confidently use it. Slower decisions and delayed forecasts. A knowledge bottleneck that didn't scale as the business grew.",
+          },
+        },
       },
     ],
 
-    /* "Why it was hard" — uses the same problemBreakdown 2-col grid +
-       impact summary visual as the older planful-esm case study. The
-       impact summary folds in the "what it cost the business" content
-       so all three Problem-section subjects are covered: the tool, why
-       it was hard to use, and what that cost. */
-    problemBreakdown: {
-      points: [
-        "Windows-only and desktop-bound",
-        "Required manual install and regular updates",
-        "Couldn't be used on a Mac or in a browser",
-        "Strict rules about which row to type into and how to format entries, easy to get wrong",
-      ],
-      impact:
-        "Only a small group of experts could confidently use it. Slower decisions and delayed forecasts. A knowledge bottleneck that didn't scale as the business grew.",
-    },
-
     userSegments: {
-      intro: "Two very different users, one shared tool.",
+      intro: "User types · one tool, one shape",
       segments: [
         {
           label: "User group 1",
