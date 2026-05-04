@@ -896,9 +896,9 @@ function WorkPanel() {
                             fontFamily: "var(--font-mono)", fontSize: "9px",
                             letterSpacing: "0.06em", textTransform: "uppercase",
                             padding: "3px 8px",
-                            background: "transparent",
-                            border: "1px solid var(--border)",
-                            color: "var(--muted)",
+                            background: "rgba(245,158,11,0.10)",
+                            border: "1px solid rgba(245,158,11,0.35)",
+                            color: "#f59e0b",
                             borderRadius: "8px",
                           }}>
                             Coming soon

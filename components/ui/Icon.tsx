@@ -136,3 +136,33 @@ export const Calendar = (p: IconProps) => (
     <line x1="3" y1="10" x2="21" y2="10" />
   </Svg>
 );
+
+/** Clipboard with list lines — procurement / data review */
+export const ClipboardList = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+    <line x1="9" y1="12" x2="15" y2="12" />
+    <line x1="9" y1="16" x2="15" y2="16" />
+  </Svg>
+);
+
+/** Balance scale — legal review / fairness */
+export const Scale = (p: IconProps) => (
+  <Svg {...p}>
+    <line x1="12" y1="3" x2="12" y2="21" />
+    <path d="m3 6 9 2 9-2" />
+    <path d="M6 6 3 15a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1L6 6Z" />
+    <path d="m18 6-3 9a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1L18 6Z" />
+  </Svg>
+);
+
+/** Branching paths — approval routing / workflow manager */
+export const GitBranch = (p: IconProps) => (
+  <Svg {...p}>
+    <line x1="6" y1="3" x2="6" y2="15" />
+    <circle cx="18" cy="6" r="3" />
+    <circle cx="6" cy="18" r="3" />
+    <path d="M18 9a9 9 0 0 1-9 9" />
+  </Svg>
+);

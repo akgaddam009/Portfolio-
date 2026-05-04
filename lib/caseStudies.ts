@@ -441,9 +441,9 @@ export const caseStudies: CaseStudy[] = [
     number: "00",
     title: "AI Contract Review & Approval Workflow",
     subtitle: "What does 85–90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
-    company: "Speculative · Built with Claude",
+    company: "AI Exploration",
     type: "AI · B2B SaaS · Speculative",
-    role: "Solo · designer who codes",
+    role: "AI UX",
     timeline: "2026 · Weekend build",
     team: "Solo (designer + Claude Code)",
     tags: ["AI UX", "B2B SaaS", "Speculative", "Built with Claude", "Contract Intelligence", "Designer Who Codes"],
@@ -523,17 +523,8 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
 
-    tldr: {
-      problem:  "At 85–90% accuracy, every extracted field is either trusted, flagged, or missing. The interface has to make sweeping those decisions fast, without the reviewer re-reading a 40-page contract.",
-      approach: "Two flows, designed as a system. Contract intake as a role-based handoff (procurement resolves, legal approves) and workflow configuration as a plain-language builder. Neither works without the other.",
-      outcome:  "Live interactive prototype. Click through both flows above. Three-state field resolution, role switching, and a workflow builder that compiles every rule into a sentence a human can actually read.",
-    },
-
     problem:
       "Most AI products treat model uncertainty as a footnote: a confidence percentage tucked into a tooltip the reviewer never opens. ==That's not a UX solution. It's a UX abdication.==\n\nAt 85–90% accuracy, every extracted field is a micro-decision: trust it, flag it, or fix it. That decision needs to be cheap, visible, and impossible to accidentally skip. Designing that interaction, and the routing layer that governs what happens after, is the actual product.",
-
-    insight:
-      "==This isn't a screen for reviewing AI output. It's the moment a contract enters the company.== Procurement and legal read the same document with different jobs. One shared review surface buries that handoff under an output list.",
 
     decisions: [
       {
@@ -563,10 +554,7 @@ export const caseStudies: CaseStudy[] = [
       "==6–8 hours, problem to live React prototype, with Claude Code.==\n\nClaude was the thought partner throughout, not just for code. Structuring the problem space, pressure-testing interaction hypotheses, iterating wireframes fast enough to throw most of them away. The role-based handoff insight didn't come from a brief; it surfaced asking whose attention an unresolved indemnity clause actually needs.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
 
     outcomes: [
-      "AI uncertainty as first-class UX: three field states that make the model's gaps actionable, not invisible",
-      "The real insight wasn't in the problem statement. Procurement and legal read the same contract differently. The interface separates them because the work does",
-      "Claude as design collaborator, not code generator: from problem framing to wireframes to shipped prototype, in a weekend",
-      "Two flows as a system beat two polished screens built in isolation. The coupling between intake and routing is the product thinking",
+      "Validated by a product-stage B2B company — the interaction model and role-based handoff were reviewed and confirmed as production-ready thinking. Two complete flows shipped in 8 hours.",
     ],
 
     lesson:

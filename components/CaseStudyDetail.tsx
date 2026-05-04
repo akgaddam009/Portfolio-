@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
-import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle } from "@/components/ui/Icon";
+import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle, ClipboardList, Scale, GitBranch } from "@/components/ui/Icon";
 
 /* Decision icons: keyed by the optional `icon` name on each
    decision entry. Single source so icons stay consistent with
@@ -420,7 +420,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             TLDR → Process (problem/approach/research/insight) → Design Ideas →
             Final Design → Impact. */}
 
-        {cs.prototypeIframes && cs.prototypeIframes.length > 0 && (
+        {/* Prototype iframes — render here only for non-astra case studies.
+            For astra the prototypes sit below the user types / problem context
+            so the reader sees WHO and WHY before clicking through the live flows. */}
+        {cs.prototypeIframes && cs.prototypeIframes.length > 0 && cs.slug !== "astra" && (
           <motion.section
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -428,15 +431,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             transition={{ duration: 0.65, ease: EASE }}
             style={{ padding: "48px 0" }}
           >
-            {/* Eyebrow stays in the narrow body column to align with the rest
-                of the case study text. */}
             <div className="page-pad">
               <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px" }}>Live prototype</p>
             </div>
-            {/* Iframe blocks break out to a wider column — the Astra app is
-                designed for desktop (~1300px), and forcing it into the 680px
-                body column made the contents cramped. 1180px gives the inner
-                app shell (200px sidebar + main) enough room to breathe. */}
             <div style={{ maxWidth: "1180px", margin: "0 auto", padding: "0 24px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
                 {cs.prototypeIframes.map(p => (
@@ -679,9 +676,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            {/* ── Who This Is For — user cards (astra / AI case studies) ── */}
-            {cs.users && cs.users.length > 0 && (
-              <CsSection label="Who this is for" id="cs-who">
+            {/* ── User Types — user cards (astra / AI case studies) ── */}
+            {cs.users && cs.users.length > 0 && (() => {
+              const USER_ICONS: Record<string, React.FC<{size?: number; strokeWidth?: number}>> = {
+                "Procurement Professional": ClipboardList,
+                "Legal Professional":       Scale,
+                "Procurement Manager":      GitBranch,
+              };
+              return (
+              <CsSection label="User types" id="cs-who">
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -689,7 +692,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   transition={{ duration: 0.65, ease: EASE }}
                   style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}
                 >
-                  {cs.users.map((u) => (
+                  {cs.users.map((u) => {
+                    const RoleIcon = USER_ICONS[u.role] ?? UserCircle;
+                    return (
                     <div
                       key={u.role}
                       style={{
@@ -702,9 +707,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         gap: "10px",
                       }}
                     >
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--accent)", margin: 0 }}>
-                        {u.role}
-                      </p>
+                      {/* Icon + role badge */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <div style={{ width: "28px", height: "28px", borderRadius: "6px", background: "rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "rgb(129,140,248)" }}>
+                          <RoleIcon size={14} strokeWidth={1.6} />
+                        </div>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
+                          {u.role}
+                        </p>
+                      </div>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", margin: 0, lineHeight: 1.4 }}>
                         {u.name}
                       </p>
@@ -721,7 +732,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{u.coreTension}</p>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </motion.div>
 
                 {/* UX Goals + Product Goals grid */}
@@ -754,8 +766,28 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     ))}
                   </motion.div>
                 )}
+
+                {/* Live prototypes — astra only, placed here so readers see
+                    WHO and WHY before clicking through the flows */}
+                {cs.slug === "astra" && cs.prototypeIframes && cs.prototypeIframes.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE, delay: 0.12 }}
+                    style={{ marginTop: "32px" }}
+                  >
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "20px" }}>Live prototype</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "32px", maxWidth: "1180px", margin: "0 auto" }}>
+                      {cs.prototypeIframes.map(p => (
+                        <PrototypeBlock key={p.src} prototype={p} />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
               </CsSection>
-            )}
+              );
+            })()}
 
             {/* ── Project Goals (optional) — three-card row sitting between
                 the Challenge and the Decisions, framing the brief through
