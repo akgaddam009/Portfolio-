@@ -1290,11 +1290,9 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "Moving a critical finance workflow from Excel to the web. Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app.",
 
-    videoPlaceholder: {
-      label: "Hero video",
-      title: "End-to-end walkthrough",
-      sub: "Add → Transform → Validate → Publish, then routed via Maps. Drop the recording in here once it's cut.",
-    },
+    /* Reuses the same hero video as the older planful-esm case study —
+       same product, same walkthrough, no need to re-record. */
+    contextVideo: "/images/planful/Untitled.mp4",
 
     contextCards: [
       {
