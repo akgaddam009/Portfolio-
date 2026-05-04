@@ -481,7 +481,7 @@ function AboutPanel() {
             {/* Links — paired with availability so the CTA fires after full context */}
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
               {[
-                { label: "LinkedIn", href: "https://linkedin.com/in/akgaddam", external: true },
+                { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
                 { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
                 { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
               ].map(({ label, href, external }) => (

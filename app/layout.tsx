@@ -91,7 +91,7 @@ export default function RootLayout({
               description:
                 "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",
               sameAs: [
-                "https://linkedin.com/in/akgaddam",
+                "https://www.linkedin.com/in/akgaddam/",
                 "https://medium.com/@akgaddam",
               ],
               address: {
