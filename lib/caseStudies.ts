@@ -1258,7 +1258,7 @@ export const caseStudies: CaseStudy[] = [
     number: "08",
     title: "Moving a critical finance workflow from Excel to the web.",
     subtitle:
-      "Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app, retaining the depth that finance experts needed, while finally making it usable for everyone else.",
+      "Cut a 3.5-hour finance workflow down to a few minutes, redesigned from Excel to the web.",
     company: "Planful",
     type: "Enterprise SaaS · Fintech",
     role: "Senior Product Designer (IC)",

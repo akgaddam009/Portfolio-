@@ -2130,44 +2130,74 @@ function ProblemCardsBlock({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
       {cards.map((card, i) => (
-        <Fragment key={i}>
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, ease: EASE, delay: i * 0.04 }}
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: "12px",
-              padding: "20px 22px",
-            }}
-          >
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: card.lead || card.points ? "6px" : 0, letterSpacing: "-0.01em" }}>
-              {card.title}
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: EASE, delay: i * 0.04 }}
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "12px",
+            padding: "20px 22px",
+          }}
+        >
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: card.lead || card.points ? "6px" : 0, letterSpacing: "-0.01em" }}>
+            {card.title}
+          </p>
+          {card.lead && (
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0, marginBottom: card.points ? "10px" : 0 }}>
+              {card.lead}
             </p>
-            {card.lead && (
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0, marginBottom: card.points ? "10px" : 0 }}>
-                {card.lead}
-              </p>
-            )}
-            {card.points && card.points.length > 0 && (
-              <ul style={{ listStyle: "disc outside", paddingLeft: "20px", margin: 0 }}>
-                {card.points.map((p, j) => (
-                  <li key={j} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "3px" }}>
-                    {p}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </motion.div>
-          {/* Inline image after the card it relates to. Sits between
-              this card and the next, exactly where the HTML brief
-              placed the Excel Spotlight screenshot. */}
-          {card.image && (
-            <ImageBlock image={card.image} onOpen={onOpenImage} />
           )}
-        </Fragment>
+          {card.points && card.points.length > 0 && (
+            <ul style={{ listStyle: "disc outside", paddingLeft: "20px", margin: 0 }}>
+              {card.points.map((p, j) => (
+                <li key={j} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "3px" }}>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          )}
+          {/* Image sits INSIDE the card, after the bullets — reads as
+              part of the card it relates to, not as a sibling block
+              between cards. Negative side-margins counter the card's
+              22px horizontal padding so the image still spans the
+              full card width edge-to-edge. */}
+          {card.image && (
+            <div
+              onClick={onOpenImage ? () => onOpenImage(card.image!.src) : undefined}
+              style={{
+                marginTop: "16px",
+                marginLeft: "-22px",
+                marginRight: "-22px",
+                marginBottom: "-20px",
+                borderRadius: "0 0 12px 12px",
+                overflow: "hidden",
+                cursor: onOpenImage ? "zoom-in" : undefined,
+                background: "var(--bg)",
+              }}
+            >
+              <img
+                src={card.image.src}
+                alt={card.image.alt}
+                style={{ width: "100%", height: "auto", display: "block" }}
+              />
+              {card.image.caption && (
+                <p style={{
+                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  letterSpacing: "0.08em", textTransform: "uppercase",
+                  color: "var(--muted)", textAlign: "center",
+                  padding: "10px 22px",
+                  margin: 0,
+                }}>
+                  {card.image.caption}
+                </p>
+              )}
+            </div>
+          )}
+        </motion.div>
       ))}
     </div>
   );
