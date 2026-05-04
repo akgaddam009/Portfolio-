@@ -360,8 +360,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         {/* Hero video — placed before TLDR so a recruiter sees the final UI in
             motion within the first scroll. Asymmetric vertical padding: heavier on
             top to clearly separate the panel from the metrics bar above, lighter
-            on bottom to lead the eye into the TLDR. */}
-        {cs.contextVideo && (
+            on bottom to lead the eye into the TLDR. Falls back to a styled
+            placeholder when `videoPlaceholder` is set and `contextVideo` isn't,
+            so the page reserves the slot for a planned video. */}
+        {cs.contextVideo ? (
           <motion.section
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -373,7 +375,19 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
             </div>
           </motion.section>
-        )}
+        ) : cs.videoPlaceholder ? (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{ padding: "96px 0 64px" }}
+          >
+            <div className="page-pad">
+              <VideoPlaceholder data={cs.videoPlaceholder} />
+            </div>
+          </motion.section>
+        ) : null}
 
         {cs.tldr && (
           <motion.section
@@ -1849,6 +1863,120 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
      3. diagnosis bullets (3 short bullets) → 3-card stat grid
      4. design question paragraph (label + question) → callout
    The text is unchanged, only the presentation per-block. */
+/* ─── VideoPlaceholder ─────────────────────────────────────────
+   Styled empty-state for the contextVideo slot. Rendered when a
+   case study reserves space for a hero video that hasn't been
+   recorded yet. 16:9 dark gradient panel with a centered play
+   glyph and three text lines (label / title / sub) — the user
+   can drop in the actual video file later by setting
+   `contextVideo` on the case study entry. */
+function VideoPlaceholder({ data }: { data: NonNullable<CaseStudy["videoPlaceholder"]> }) {
+  return (
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        aspectRatio: "16 / 9",
+        background:
+          "radial-gradient(circle at 22% 28%, rgba(120, 130, 220, 0.18) 0%, transparent 55%), radial-gradient(circle at 78% 72%, rgba(180, 130, 220, 0.13) 0%, transparent 55%), linear-gradient(135deg, #1d1d2a 0%, #0f0f18 100%)",
+        borderRadius: "12px",
+        overflow: "hidden",
+        border: "1px solid var(--border)",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.18)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        padding: "24px",
+      }}
+    >
+      {/* Play glyph — circular pill with a triangle. Subtly nudged
+          right so the triangle reads as centered optically. */}
+      <div
+        style={{
+          width: "64px",
+          height: "64px",
+          borderRadius: "50%",
+          background: "rgba(255,255,255,0.92)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "20px",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.25)",
+        }}
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#0f0f18" style={{ marginLeft: "3px" }} aria-hidden="true">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </div>
+      {data.label && (
+        <p
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "10px",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.55)",
+            margin: 0,
+            marginBottom: "6px",
+          }}
+        >
+          {data.label}
+        </p>
+      )}
+      {data.title && (
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "16px",
+            fontWeight: 500,
+            letterSpacing: "-0.01em",
+            color: "rgba(255,255,255,0.92)",
+            margin: 0,
+            marginBottom: "4px",
+          }}
+        >
+          {data.title}
+        </p>
+      )}
+      {data.sub && (
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "13px",
+            lineHeight: 1.55,
+            color: "rgba(255,255,255,0.6)",
+            margin: 0,
+            maxWidth: "440px",
+          }}
+        >
+          {data.sub}
+        </p>
+      )}
+      {/* Tiny corner badge so it's clear this is a placeholder, not
+          a real video that's still loading. */}
+      <span
+        style={{
+          position: "absolute",
+          bottom: "10px",
+          right: "12px",
+          fontFamily: "var(--font-mono)",
+          fontSize: "9px",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "rgba(255,255,255,0.4)",
+          background: "rgba(0,0,0,0.3)",
+          padding: "3px 8px",
+          borderRadius: "999px",
+        }}
+      >
+        Video placeholder
+      </span>
+    </div>
+  );
+}
+
 /* ─── MetricValueWithArrow ─────────────────────────────────────
    When a metric value contains " → " (a "before → after" pattern
    like "3.5 hrs → 10–15 min"), splits on the arrow and renders an

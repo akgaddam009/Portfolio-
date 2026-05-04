@@ -43,6 +43,15 @@ export type CaseStudy = {
       better than a static image. Rendered through VideoBlock with appType-aware
       styling (no browser chrome for mobile case studies). */
   contextVideo?: string;
+  /** Optional hero video placeholder. Renders a styled empty state in
+      the contextVideo position so the page reserves room for a video
+      that's planned but not yet recorded. Ignored if `contextVideo`
+      is set. */
+  videoPlaceholder?: {
+    label?: string;
+    title?: string;
+    sub?: string;
+  };
   problem: string;
   problemBreakdown?: { points: string[]; impact: string };
   problemImage?: CaseStudyImage;
@@ -1280,6 +1289,12 @@ export const caseStudies: CaseStudy[] = [
 
     summary:
       "Moving a critical finance workflow from Excel to the web. Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app.",
+
+    videoPlaceholder: {
+      label: "Hero video",
+      title: "End-to-end walkthrough",
+      sub: "Add → Transform → Validate → Publish, then routed via Maps. Drop the recording in here once it's cut.",
+    },
 
     contextCards: [
       {
