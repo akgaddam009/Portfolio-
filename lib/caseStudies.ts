@@ -163,6 +163,271 @@ export type CaseStudy = {
 };
 
 export const caseStudies: CaseStudy[] = [
+  /* ── #08 Planful ESM Tables — Excel → web (fresh, verbatim from HTML brief) ── */
+  {
+    slug: "planful-esm-tables",
+    number: "08",
+    title: "Moving a critical finance workflow from Excel to the web.",
+    subtitle:
+      "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
+    company: "Planful",
+    type: "Enterprise SaaS · Fintech",
+    role: "Senior Product Designer (IC)",
+    timeline: "~1 month design · 2–3 months rollout",
+    team: "Product, Engineering, Implementation Consultants",
+    tags: ["Enterprise software", "Data workflow", "Fintech", "Web Application"],
+    heroLabel: "Real Work",
+    /* Confidential — case study sits behind a password gate. */
+    confidential: true,
+
+    sectionLabels: {
+      overview: "Context",
+      problem: "Problem",
+      decisions: "Key design decisions",
+      outcomes: "Outcome",
+      lesson: "What I learned",
+      references: "References",
+    },
+
+    metrics: [
+      {
+        value: "3.5 hrs → 10–15 min",
+        label: "Time on task",
+        body: "~95% reduction. Simple updates that took half a day now take a coffee break.",
+      },
+      {
+        value: "Finance → Any team",
+        label: "Data ownership",
+        body: "Non-finance teams now load their own data without finance mediating every update.",
+      },
+    ],
+
+    summary:
+      "Moving a critical finance workflow from Excel to the web. Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app.",
+
+    contextVideo: "/images/planful/planful%20product%20video.mov",
+    chromeUrl: "app.planful.com",
+
+    /* Plain prose at the top of the Context section — no card, no
+       box. Sets up Planful, the role of the live financial model,
+       and the controlled workspace (ESM) that feeds it. The ESM vs
+       OLAP visual diagram renders below this prose, before the
+       remaining structured contextCards. */
+    context:
+      "Planful software is used by core finance teams at large companies to plan budgets and forecasts. When business needs shift, the data in those models has to shift too. Instead of editing the core model directly, teams load updates through an External Source Model, a controlled workspace that feeds the model without disturbing what's already there.",
+
+    /* One remaining context card — the financial-data-models card
+       with the ESM → Core Financial Model pair. The earlier
+       "Planful in one line" card was promoted to plain prose
+       (above), and the "ESM vs OLAP shapes of data" card was
+       removed because the diagram already carries that message. */
+    contextCards: [
+      {
+        title: "How financial data models are managed",
+        lead: "Rather than editing the live financial model directly, teams load updated data through a controlled workspace that feeds into it without touching what's already there.",
+        modelPair: {
+          leftTag: "2D data model",
+          leftName: "External Source Model (ESM)",
+          leftDesc: "A controlled workspace where teams load, transform, and validate data before it goes anywhere near the live plan.",
+          rightTag: "3D data model",
+          rightName: "Core financial model",
+          rightDesc: "The data driving budgets, forecasts, and headcount plans. Never edited directly.",
+        },
+      },
+    ],
+
+    /* Triggers the existing ESM vs OLAP visual diagram (table grid
+       + cube SVGs). Now rendered between the context prose and the
+       contextCards, so the reader sees the two data shapes before
+       reading about how the workspace feeds the model. */
+    insightDiagram: "olap-vs-esm",
+
+    /* Problem section — plain prose sets the scene, the Issues
+       card carries the screenshot, breakdown grid, and business
+       impact. Image is nested inside the card (not standalone). */
+    problem:
+      "Before ESM Tables existed, this workflow already had a tool. A key part of it lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug in for Excel, PowerPoint, and Word. It worked — but it came with real friction.",
+
+    /* Issues card — single card with the screenshot, breakdown
+       grid, and business-impact callout. Image sits inside the
+       card so the visual and the diagnosis stay together. */
+    problemCards: [
+      {
+        title: "Issues with the Excel Spotlight",
+        image: {
+          src: "/images/planful/data-model-comparison.png",
+          alt: "Excel Spotlight, the legacy tool it replaced",
+          caption: "Excel Spotlight, the tool teams were using before",
+        },
+        breakdown: {
+          points: [
+            "Windows only and desktop bound",
+            "Required manual install and regular updates",
+            "Couldn't be used on a Mac or in a browser",
+            "Strict rules about which row to type into and how to format entries, easy to get wrong",
+          ],
+          impact: {
+            title: "What it cost the business",
+            text: "Only a small group of experts could confidently use it. Slower decisions and delayed forecasts. A knowledge bottleneck that didn't scale as the business grew.",
+          },
+        },
+      },
+    ],
+
+    userSegments: {
+      segments: [
+        {
+          label: "User group 1",
+          name: "Occasional contributor",
+          roles: "Sales ops · Marketing · HR",
+          body: "Owns a slice of the company's data and updates it on a schedule. Not a finance person. Wants to be in and out fast, drop in numbers, see they look right, get back to the day job.",
+        },
+        {
+          label: "User group 2",
+          name: "Senior finance team",
+          roles: "FP&A · Finance analysts",
+          body: "Maintains the structure itself, defining tables, writing the calculation logic, deciding when data is ready to publish. Years of Excel experience. Cares deeply about precision and won't accept a tool that takes away control.",
+        },
+      ],
+      closing:
+        "The challenge wasn't designing for one or the other. It was finding a level of clarity where the contributor could work alone without help, and the finance team didn't feel they'd lost any control.",
+    },
+
+    contribution:
+      "I led design end to end as Senior Product Designer, from problem framing and scoping through research, UX, interaction details, prototyping, and design QA.\n\nValidated weekly with the PM, leadership, and engineering. Brought in customer implementation consultants to make sure the workflow matched real forecasting rhythms, not what the team imagined them to be. During development, I ran design QA to ensure shipped interactions matched intent.",
+
+    taskFlow: {
+      heading: "A clear four-step journey",
+      stages: [
+        { number: "01", label: "Add",       description: "Upload a file or paste in data" },
+        { number: "02", label: "Transform", description: "Apply calculations and shape the data" },
+        { number: "03", label: "Validate",  description: "Find and fix anything wrong" },
+        { number: "04", label: "Publish",   description: "Send it into the company forecast" },
+      ],
+    },
+
+    decisions: [
+      /* 1 — clearer copy: lead with the user benefit (familiar
+         spreadsheet behaviour) instead of the vendor name. */
+      {
+        title: "A familiar spreadsheet, not a new tool to learn",
+        body: "Users already know how spreadsheets work. We built on a battle tested enterprise grid (Syncfusion) so the muscle memory carried over: type, paste, drag, fill. We focused design effort on the workflow itself, not on rebuilding the grid. Scaled to large datasets and met the security standards non negotiable in fintech (SOC 2 Type 2 certified).",
+        image: {
+          src: "/images/planful/Engg feasibility .png",
+          alt: "The Syncfusion grid pattern that shaped the technical approach",
+          caption: "Syncfusion, the grid pattern that shaped the technical approach",
+        },
+      },
+      /* 2 — clearer copy + section walkthrough video. */
+      {
+        title: "Drag, drop, or paste — no waiting for big files",
+        body: "Two ways in, both first class: drop a file, or paste straight from a spreadsheet. For files of 50,000+ rows, the first 1,000 rows preview instantly so users can start working before the full upload finishes.",
+        videos: [
+          {
+            src: "/images/planful/Two%20ways%20in,%20with%20progress%20that%20doesn't%20make%20people%20wait%20.mov",
+            label: "Drag, drop, paste",
+            caption: "Live preview of the first 1,000 rows while the rest streams in.",
+          },
+        ],
+      },
+      /* 3 — navigation / discovery decision. Dynamic Planning is the
+         key feature; ESM Tables lives inside it, sequenced fourth
+         because it is not part of everyday modeling work. */
+      {
+        title: "Inside Dynamic Planning — fourth in the list, not the daily driver",
+        body: "Dynamic Planning is the core modeling surface finance teams use every day. ESM Tables lives inside it as the fourth tab, not the first thing they open. No separate app to install, no new login — discovering the feature meant clicking one tab over from where they already were.",
+        image: {
+          src: "/images/planful/Navigation.png",
+          alt: "ESM Tables nested inside Dynamic Planning as the fourth tab",
+          caption: "Nested inside Dynamic Planning, where the modeling work already happens",
+        },
+      },
+      /* 3 — column settings, now with the section walkthrough video
+         (no more Navigation image, which moved up to its own
+         decision). */
+      {
+        title: "Column settings without a maze of menus",
+        body: "Every column has a type: text, number, date, formula, constant. A side panel opens from the column header showing only the settings relevant to that type. Power users get full control. Casual users aren't overwhelmed.",
+        videos: [
+          {
+            src: "/images/planful/%20Column%20settings%20without%20a%20maze%20of%20menus.mov",
+            label: "Column settings",
+            caption: "Type aware side panel surfaces only what's relevant.",
+          },
+        ],
+      },
+      /* 4 — TLDR'd. Was two paragraphs explaining the trade-off;
+         now a single tighter paragraph that keeps the why and the
+         alternative considered. */
+      {
+        title: "Live colour feedback on formulas",
+        body: "Colour highlights show which cells a formula touches as the user types — no preview step, no extra click. I considered a preview step (safer, but adds friction to every formula); the live feedback catches mistakes the moment they happen, so the extra safety wasn't worth the cost.",
+        image: {
+          src: "/images/planful/formula-feedback.png",
+          alt: "Live colour feedback in the formula bar as the user types",
+          caption: "Live colour feedback as you type, see what changes before it does",
+        },
+      },
+      /* 5 — plain language. Drop the "not in a post-submission
+         report" jargon; the title and body now describe the
+         behaviour in everyday terms. Section walkthrough video. */
+      {
+        title: "Errors users can find and fix in place",
+        body: "When data fails validation, the cell itself flags up. A side panel groups issues by type, and each one carries a row link that takes the user straight to the cell. Fix in place, no need to start over.",
+        videos: [
+          {
+            src: "/images/planful/Errors%20flagged%20in%20context,%20not%20in%20a%20post-submission%20report.mov",
+            label: "Errors in context",
+            caption: "Click a row in the side panel; the grid jumps to the cell.",
+          },
+        ],
+      },
+      /* 6 — renamed: the action is bulk data update; overwrite or
+         append are the two modes. Section walkthrough video. */
+      {
+        title: "Bulk data update — overwrite or append",
+        body: "At period close, teams replace the full dataset. Mid cycle, they add rows without touching what's already there. Both modes are explicit at upload time, no scripting, no support ticket. A task that used to require rebuilding the whole table now takes a click.",
+        videos: [
+          {
+            src: "/images/planful/Bulk%20Update%20Video.mov",
+            label: "Bulk update",
+            caption: "Overwrite replaces. Append adds. Both visible at the moment they matter.",
+          },
+        ],
+      },
+      /* 7 (publish flow) — REMOVED per the latest direction.
+         The end-to-end story is now: load → transform → validate
+         → publish → map (next decision). Publish-specific friction
+         doesn't earn its own beat. */
+      /* 8 — Maps: the next phase. No static image (the video covers
+         it). Title reframes this as a forward-looking project beat,
+         not a post-publish step. */
+      {
+        title: "The next phase of the project",
+        body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
+        videos: [
+          {
+            src: "/images/planful/MAPS.mov",
+            label: "Maps",
+            caption: "Visual mapping from ESM columns to financial model dimensions.",
+          },
+        ],
+      },
+    ],
+
+    outcomes: [
+      "3.5 hrs → 10–15 min. A ~95% reduction in time on task. Simple updates that took half a day now take a coffee break.",
+      "Finance → Any team. Non-finance teams now load their own data without finance mediating every update.",
+    ],
+
+    references: [
+      { label: "Spotlight for Microsoft 365 (Planful)", url: "https://planful.com/solution-hub/spotlight-microsoft/solution/" },
+      { label: "Syncfusion enterprise UI components", url: "https://www.syncfusion.com/" },
+    ],
+
+    lesson:
+      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.\n\nThe 95% time reduction didn't come from a faster grid. It came from asking: \"What decisions can the system make so users only decide when it matters?\"",
+  },
   {
     slug: "astra",
     number: "00",
@@ -1092,271 +1357,6 @@ export const caseStudies: CaseStudy[] = [
       "The hardest part of this project wasn't building the blueprint. It was holding the line on scope. I let a reasonable-sounding argument override a research instinct I had already documented. Finance was in my pre-research system map. I flagged them. I let the constraint stand anyway. The lesson isn't about service blueprints or synthesis methods. It's about research independence: when you've mapped the system and identified a dependency, 'they don't use the platform directly' is not sufficient grounds for exclusion. Scope decisions made before the research starts should require the same standard of evidence as the findings that come out of it.",
   },
 
-  /* ── #08 Planful ESM Tables — Excel → web (fresh, verbatim from HTML brief) ── */
-  {
-    slug: "planful-esm-tables",
-    number: "08",
-    title: "Moving a critical finance workflow from Excel to the web.",
-    subtitle:
-      "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
-    company: "Planful",
-    type: "Enterprise SaaS · Fintech",
-    role: "Senior Product Designer (IC)",
-    timeline: "~1 month design · 2–3 months rollout",
-    team: "Product, Engineering, Implementation Consultants",
-    tags: ["Enterprise software", "Data workflow", "Fintech", "Web Application"],
-    heroLabel: "Real Work",
-    /* Confidential — case study sits behind a password gate. */
-    confidential: true,
-
-    sectionLabels: {
-      overview: "Context",
-      problem: "Problem",
-      decisions: "Key design decisions",
-      outcomes: "Outcome",
-      lesson: "What I learned",
-      references: "References",
-    },
-
-    metrics: [
-      {
-        value: "3.5 hrs → 10–15 min",
-        label: "Time on task",
-        body: "~95% reduction. Simple updates that took half a day now take a coffee break.",
-      },
-      {
-        value: "Finance → Any team",
-        label: "Data ownership",
-        body: "Non-finance teams now load their own data without finance mediating every update.",
-      },
-    ],
-
-    summary:
-      "Moving a critical finance workflow from Excel to the web. Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app.",
-
-    contextVideo: "/images/planful/planful%20product%20video.mov",
-    chromeUrl: "app.planful.com",
-
-    /* Plain prose at the top of the Context section — no card, no
-       box. Sets up Planful, the role of the live financial model,
-       and the controlled workspace (ESM) that feeds it. The ESM vs
-       OLAP visual diagram renders below this prose, before the
-       remaining structured contextCards. */
-    context:
-      "Planful software is used by core finance teams at large companies to plan budgets and forecasts. When business needs shift, the data in those models has to shift too. Instead of editing the core model directly, teams load updates through an External Source Model, a controlled workspace that feeds the model without disturbing what's already there.",
-
-    /* One remaining context card — the financial-data-models card
-       with the ESM → Core Financial Model pair. The earlier
-       "Planful in one line" card was promoted to plain prose
-       (above), and the "ESM vs OLAP shapes of data" card was
-       removed because the diagram already carries that message. */
-    contextCards: [
-      {
-        title: "How financial data models are managed",
-        lead: "Rather than editing the live financial model directly, teams load updated data through a controlled workspace that feeds into it without touching what's already there.",
-        modelPair: {
-          leftTag: "2D data model",
-          leftName: "External Source Model (ESM)",
-          leftDesc: "A controlled workspace where teams load, transform, and validate data before it goes anywhere near the live plan.",
-          rightTag: "3D data model",
-          rightName: "Core financial model",
-          rightDesc: "The data driving budgets, forecasts, and headcount plans. Never edited directly.",
-        },
-      },
-    ],
-
-    /* Triggers the existing ESM vs OLAP visual diagram (table grid
-       + cube SVGs). Now rendered between the context prose and the
-       contextCards, so the reader sees the two data shapes before
-       reading about how the workspace feeds the model. */
-    insightDiagram: "olap-vs-esm",
-
-    /* Problem section — plain prose sets the scene, the Issues
-       card carries the screenshot, breakdown grid, and business
-       impact. Image is nested inside the card (not standalone). */
-    problem:
-      "Before ESM Tables existed, this workflow already had a tool. A key part of it lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug in for Excel, PowerPoint, and Word. It worked — but it came with real friction.",
-
-    /* Issues card — single card with the screenshot, breakdown
-       grid, and business-impact callout. Image sits inside the
-       card so the visual and the diagnosis stay together. */
-    problemCards: [
-      {
-        title: "Issues with the Excel Spotlight",
-        image: {
-          src: "/images/planful/data-model-comparison.png",
-          alt: "Excel Spotlight, the legacy tool it replaced",
-          caption: "Excel Spotlight, the tool teams were using before",
-        },
-        breakdown: {
-          points: [
-            "Windows only and desktop bound",
-            "Required manual install and regular updates",
-            "Couldn't be used on a Mac or in a browser",
-            "Strict rules about which row to type into and how to format entries, easy to get wrong",
-          ],
-          impact: {
-            title: "What it cost the business",
-            text: "Only a small group of experts could confidently use it. Slower decisions and delayed forecasts. A knowledge bottleneck that didn't scale as the business grew.",
-          },
-        },
-      },
-    ],
-
-    userSegments: {
-      segments: [
-        {
-          label: "User group 1",
-          name: "Occasional contributor",
-          roles: "Sales ops · Marketing · HR",
-          body: "Owns a slice of the company's data and updates it on a schedule. Not a finance person. Wants to be in and out fast, drop in numbers, see they look right, get back to the day job.",
-        },
-        {
-          label: "User group 2",
-          name: "Senior finance team",
-          roles: "FP&A · Finance analysts",
-          body: "Maintains the structure itself, defining tables, writing the calculation logic, deciding when data is ready to publish. Years of Excel experience. Cares deeply about precision and won't accept a tool that takes away control.",
-        },
-      ],
-      closing:
-        "The challenge wasn't designing for one or the other. It was finding a level of clarity where the contributor could work alone without help, and the finance team didn't feel they'd lost any control.",
-    },
-
-    contribution:
-      "I led design end to end as Senior Product Designer, from problem framing and scoping through research, UX, interaction details, prototyping, and design QA.\n\nValidated weekly with the PM, leadership, and engineering. Brought in customer implementation consultants to make sure the workflow matched real forecasting rhythms, not what the team imagined them to be. During development, I ran design QA to ensure shipped interactions matched intent.",
-
-    taskFlow: {
-      heading: "A clear four-step journey",
-      stages: [
-        { number: "01", label: "Add",       description: "Upload a file or paste in data" },
-        { number: "02", label: "Transform", description: "Apply calculations and shape the data" },
-        { number: "03", label: "Validate",  description: "Find and fix anything wrong" },
-        { number: "04", label: "Publish",   description: "Send it into the company forecast" },
-      ],
-    },
-
-    decisions: [
-      /* 1 — clearer copy: lead with the user benefit (familiar
-         spreadsheet behaviour) instead of the vendor name. */
-      {
-        title: "A familiar spreadsheet, not a new tool to learn",
-        body: "Users already know how spreadsheets work. We built on a battle tested enterprise grid (Syncfusion) so the muscle memory carried over: type, paste, drag, fill. We focused design effort on the workflow itself, not on rebuilding the grid. Scaled to large datasets and met the security standards non negotiable in fintech (SOC 2 Type 2 certified).",
-        image: {
-          src: "/images/planful/Engg feasibility .png",
-          alt: "The Syncfusion grid pattern that shaped the technical approach",
-          caption: "Syncfusion, the grid pattern that shaped the technical approach",
-        },
-      },
-      /* 2 — clearer copy + section walkthrough video. */
-      {
-        title: "Drag, drop, or paste — no waiting for big files",
-        body: "Two ways in, both first class: drop a file, or paste straight from a spreadsheet. For files of 50,000+ rows, the first 1,000 rows preview instantly so users can start working before the full upload finishes.",
-        videos: [
-          {
-            src: "/images/planful/Two%20ways%20in,%20with%20progress%20that%20doesn't%20make%20people%20wait%20.mov",
-            label: "Drag, drop, paste",
-            caption: "Live preview of the first 1,000 rows while the rest streams in.",
-          },
-        ],
-      },
-      /* 3 — navigation / discovery decision. Dynamic Planning is the
-         key feature; ESM Tables lives inside it, sequenced fourth
-         because it is not part of everyday modeling work. */
-      {
-        title: "Inside Dynamic Planning — fourth in the list, not the daily driver",
-        body: "Dynamic Planning is the core modeling surface finance teams use every day. ESM Tables lives inside it as the fourth tab, not the first thing they open. No separate app to install, no new login — discovering the feature meant clicking one tab over from where they already were.",
-        image: {
-          src: "/images/planful/Navigation.png",
-          alt: "ESM Tables nested inside Dynamic Planning as the fourth tab",
-          caption: "Nested inside Dynamic Planning, where the modeling work already happens",
-        },
-      },
-      /* 3 — column settings, now with the section walkthrough video
-         (no more Navigation image, which moved up to its own
-         decision). */
-      {
-        title: "Column settings without a maze of menus",
-        body: "Every column has a type: text, number, date, formula, constant. A side panel opens from the column header showing only the settings relevant to that type. Power users get full control. Casual users aren't overwhelmed.",
-        videos: [
-          {
-            src: "/images/planful/%20Column%20settings%20without%20a%20maze%20of%20menus.mov",
-            label: "Column settings",
-            caption: "Type aware side panel surfaces only what's relevant.",
-          },
-        ],
-      },
-      /* 4 — TLDR'd. Was two paragraphs explaining the trade-off;
-         now a single tighter paragraph that keeps the why and the
-         alternative considered. */
-      {
-        title: "Live colour feedback on formulas",
-        body: "Colour highlights show which cells a formula touches as the user types — no preview step, no extra click. I considered a preview step (safer, but adds friction to every formula); the live feedback catches mistakes the moment they happen, so the extra safety wasn't worth the cost.",
-        image: {
-          src: "/images/planful/formula-feedback.png",
-          alt: "Live colour feedback in the formula bar as the user types",
-          caption: "Live colour feedback as you type, see what changes before it does",
-        },
-      },
-      /* 5 — plain language. Drop the "not in a post-submission
-         report" jargon; the title and body now describe the
-         behaviour in everyday terms. Section walkthrough video. */
-      {
-        title: "Errors users can find and fix in place",
-        body: "When data fails validation, the cell itself flags up. A side panel groups issues by type, and each one carries a row link that takes the user straight to the cell. Fix in place, no need to start over.",
-        videos: [
-          {
-            src: "/images/planful/Errors%20flagged%20in%20context,%20not%20in%20a%20post-submission%20report.mov",
-            label: "Errors in context",
-            caption: "Click a row in the side panel; the grid jumps to the cell.",
-          },
-        ],
-      },
-      /* 6 — renamed: the action is bulk data update; overwrite or
-         append are the two modes. Section walkthrough video. */
-      {
-        title: "Bulk data update — overwrite or append",
-        body: "At period close, teams replace the full dataset. Mid cycle, they add rows without touching what's already there. Both modes are explicit at upload time, no scripting, no support ticket. A task that used to require rebuilding the whole table now takes a click.",
-        videos: [
-          {
-            src: "/images/planful/Bulk%20Update%20Video.mov",
-            label: "Bulk update",
-            caption: "Overwrite replaces. Append adds. Both visible at the moment they matter.",
-          },
-        ],
-      },
-      /* 7 (publish flow) — REMOVED per the latest direction.
-         The end-to-end story is now: load → transform → validate
-         → publish → map (next decision). Publish-specific friction
-         doesn't earn its own beat. */
-      /* 8 — Maps: the next phase. No static image (the video covers
-         it). Title reframes this as a forward-looking project beat,
-         not a post-publish step. */
-      {
-        title: "The next phase of the project",
-        body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
-        videos: [
-          {
-            src: "/images/planful/MAPS.mov",
-            label: "Maps",
-            caption: "Visual mapping from ESM columns to financial model dimensions.",
-          },
-        ],
-      },
-    ],
-
-    outcomes: [
-      "3.5 hrs → 10–15 min. A ~95% reduction in time on task. Simple updates that took half a day now take a coffee break.",
-      "Finance → Any team. Non-finance teams now load their own data without finance mediating every update.",
-    ],
-
-    references: [
-      { label: "Spotlight for Microsoft 365 (Planful)", url: "https://planful.com/solution-hub/spotlight-microsoft/solution/" },
-      { label: "Syncfusion enterprise UI components", url: "https://www.syncfusion.com/" },
-    ],
-
-    lesson:
-      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.\n\nThe 95% time reduction didn't come from a faster grid. It came from asking: \"What decisions can the system make so users only decide when it matters?\"",
-  },
 ];
 
 export function getCaseStudy(slug: string): CaseStudy | undefined {
