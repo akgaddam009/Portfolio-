@@ -821,7 +821,7 @@ function WorkPanel() {
                   >
                     {/* Thumbnail — always-visible image (or video for case studies
                         where motion communicates the design better), mesh as fallback */}
-                    <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                    <div style={{ position: "relative", height: "220px", overflow: "hidden", padding: "12px 12px 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         isVideoThumb(WORK_THUMBS[cs.slug]) ? (
                           <video
