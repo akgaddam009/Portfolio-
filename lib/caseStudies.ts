@@ -126,11 +126,14 @@ export type CaseStudy = {
   /** Optional problemCards — same idea as contextCards but for the
       Problem section. Each card has a title plus either a lead or a
       bullet list (often both). Replaces the simple `problem` string
-      when present. */
+      when present. An optional `image` after a card lets the
+      screenshot/illustration sit right after the card it relates to,
+      not at the bottom of the section. */
   problemCards?: {
     title: string;
     lead?: string;
     points?: string[];
+    image?: CaseStudyImage;
   }[];
   /** Per-case-study overrides for the labels of the major narrative sections.
       Each case study can opt into its own voice for section headings (e.g.
@@ -1294,6 +1297,13 @@ export const caseStudies: CaseStudy[] = [
        same product, same walkthrough, no need to re-record. */
     contextVideo: "/images/planful/Untitled.mp4",
 
+    /* Chrome URL on the video panel — explicit so it stays consistent
+       with the context copy (Planful software, broadly). The auto-derived
+       value would be the same; keeping it explicit so future changes to
+       the slug-based fallback don't drift this case study away from the
+       intended chrome label. */
+    chromeUrl: "app.planful.com",
+
     contextCards: [
       {
         title: "Planful software is used by core finance teams at large companies to plan budgets and forecasts.",
@@ -1335,25 +1345,33 @@ export const caseStudies: CaseStudy[] = [
           "Worked inside Excel itself, not in the web product",
           "Only a small group of expert users could navigate it confidently",
         ],
-      },
-      {
-        title: "Why it was hard",
-        points: [
-          "Windows-only and desktop-bound",
-          "Required manual install and regular updates",
-          "Couldn't be used on a Mac or in a browser",
-          "Strict rules about which row to type into and how to format entries, easy to get wrong",
-        ],
-      },
-      {
-        title: "What that cost the business",
-        points: [
-          "Only a small group of experts could confidently use it",
-          "Slower decisions and delayed forecasts",
-          "A knowledge bottleneck that didn't scale as the business grew",
-        ],
+        /* Screenshot reused from the older planful-esm case study —
+           same legacy tool, same artefact. Sits inline directly after
+           this card so it reads in context, not at the bottom of the
+           Problem section. */
+        image: {
+          src: "/images/planful/data-model-comparison.png",
+          alt: "Excel Spotlight, the legacy tool it replaced",
+          caption: "Excel Spotlight, the tool teams were using before",
+        },
       },
     ],
+
+    /* "Why it was hard" — uses the same problemBreakdown 2-col grid +
+       impact summary visual as the older planful-esm case study. The
+       impact summary folds in the "what it cost the business" content
+       so all three Problem-section subjects are covered: the tool, why
+       it was hard to use, and what that cost. */
+    problemBreakdown: {
+      points: [
+        "Windows-only and desktop-bound",
+        "Required manual install and regular updates",
+        "Couldn't be used on a Mac or in a browser",
+        "Strict rules about which row to type into and how to format entries, easy to get wrong",
+      ],
+      impact:
+        "Only a small group of experts could confidently use it. Slower decisions and delayed forecasts. A knowledge bottleneck that didn't scale as the business grew.",
+    },
 
     userSegments: {
       intro: "Two very different users, one shared tool.",
