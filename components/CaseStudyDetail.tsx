@@ -677,11 +677,17 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {/* ── User Types — user cards (astra / AI case studies) ── */}
+            {/* ── User Types ─────────────────────────────────────────── */}
             {cs.users && cs.users.length > 0 && (() => {
               const USER_ICONS: Record<string, React.FC<{size?: number; strokeWidth?: number}>> = {
+                // Astra
                 "Procurement Professional": ClipboardList,
                 "Legal Professional":       Scale,
                 "Procurement Manager":      GitBranch,
+                // Planful
+                "Finance Analyst":          ChartActivity,
+                "Business Team Owner":      Users,
+                "Finance Manager":          Briefcase,
               };
               return (
               <CsSection label="User types" id="cs-who">
@@ -690,9 +696,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
-                  style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}
+                  style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
                 >
-                  {cs.users.map((u) => {
+                  {cs.users.map((u, idx) => {
                     const RoleIcon = USER_ICONS[u.role] ?? UserCircle;
                     return (
                     <div
@@ -705,11 +711,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         display: "flex",
                         flexDirection: "column",
                         gap: "10px",
+                        // Third card spans both columns
+                        ...(idx === 2 ? { gridColumn: "1 / -1" } : {}),
                       }}
                     >
                       {/* Icon + role badge */}
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <div style={{ width: "28px", height: "28px", borderRadius: "6px", background: "rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "rgb(129,140,248)" }}>
+                        <div style={{ width: "28px", height: "28px", borderRadius: "6px", background: "var(--surface2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "var(--muted)" }}>
                           <RoleIcon size={14} strokeWidth={1.6} />
                         </div>
                         <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
@@ -719,6 +727,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", margin: 0, lineHeight: 1.4 }}>
                         {u.name}
                       </p>
+                      {/* Core tension sits right below the name — before bullets */}
+                      <div style={{ background: "var(--surface2)", borderRadius: "6px", padding: "8px 12px" }}>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 3px" }}>Core tension</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{u.coreTension}</p>
+                      </div>
                       <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "6px" }}>
                         {u.bullets.map((b, i) => (
                           <li key={i} style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", lineHeight: 1.55, paddingLeft: "14px", position: "relative" }}>
@@ -727,73 +740,70 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           </li>
                         ))}
                       </ul>
-                      <div style={{ borderTop: "1px solid var(--border)", paddingTop: "10px", marginTop: "2px" }}>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 4px" }}>Core tension</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{u.coreTension}</p>
-                      </div>
                     </div>
                     );
                   })}
                 </motion.div>
-
-                {/* UX Goals + Product Goals grid */}
-                {(cs.uxGoals || cs.productGoals) && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.65, ease: EASE, delay: 0.1 }}
-                    style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "12px" }}
-                  >
-                    {[
-                      { label: "UX Goals", items: cs.uxGoals },
-                      { label: "Product Goals", items: cs.productGoals },
-                    ].map(({ label, items }) => items && (
-                      <div
-                        key={label}
-                        style={{ border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
-                      >
-                        <div style={{ background: "var(--surface2)", padding: "10px 16px", borderBottom: "1px solid var(--border)" }}>
-                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>{label}</p>
-                        </div>
-                        {items.map((g, i) => (
-                          <div key={i} style={{ padding: "14px 16px", borderBottom: i < items.length - 1 ? "1px solid var(--border)" : "none" }}>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", margin: "0 0 4px", lineHeight: 1.4 }}>{g.title}</p>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{g.body}</p>
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </motion.div>
-                )}
-
-                {/* Live prototypes — astra only, placed here so readers see
-                    WHO and WHY before clicking through the flows */}
-                {cs.slug === "astra" && cs.prototypeIframes && cs.prototypeIframes.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.65, ease: EASE, delay: 0.12 }}
-                    style={{ marginTop: "32px" }}
-                  >
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "20px" }}>Live prototype</p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "32px", maxWidth: "1180px", margin: "0 auto" }}>
-                      {cs.prototypeIframes.map(p => (
-                        <PrototypeBlock key={p.src} prototype={p} />
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
               </CsSection>
               );
             })()}
+
+            {/* ── UX Goals + Product Goals — own section ──────────────── */}
+            {(cs.uxGoals || cs.productGoals) && (
+              <CsSection label="Goals" id="cs-goals">
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                  style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
+                >
+                  {[
+                    { label: "UX Goals",      items: cs.uxGoals,      Icon: Users },
+                    { label: "Product Goals",  items: cs.productGoals, Icon: LayoutGrid },
+                  ].map(({ label, items, Icon }) => items && (
+                    <div
+                      key={label}
+                      style={{ border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
+                    >
+                      <div style={{ background: "var(--surface2)", padding: "10px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <Icon size={12} strokeWidth={1.6} style={{ color: "var(--muted)", flexShrink: 0 }} />
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>{label}</p>
+                      </div>
+                      {items.map((g, i) => (
+                        <div key={i} style={{ padding: "14px 16px", borderBottom: i < items.length - 1 ? "1px solid var(--border)" : "none" }}>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", margin: "0 0 4px", lineHeight: 1.4 }}>{g.title}</p>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{g.body}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
+            {/* ── Live prototypes — astra only ────────────────────────── */}
+            {cs.slug === "astra" && cs.prototypeIframes && cs.prototypeIframes.length > 0 && (
+              <CsSection label="Live prototype" id="cs-prototype">
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", gap: "32px", maxWidth: "1180px" }}
+                >
+                  {cs.prototypeIframes.map(p => (
+                    <PrototypeBlock key={p.src} prototype={p} />
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
 
             {/* ── Project Goals (optional) — three-card row sitting between
                 the Challenge and the Decisions, framing the brief through
                 Business / UX / User lenses. Renders only when set per case. */}
             {cs.projectGoals && (
-              <CsSection label={cs.sectionLabels?.goals ?? "🎯 Project Goals"}>
+              <CsSection label={cs.sectionLabels?.goals ?? "Project Goals"}>
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -823,7 +833,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         gap: "14px",
                       }}
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--muted)" }}>
                         <Icon size={14} strokeWidth={1.6} />
                         <p
                           style={{
@@ -831,7 +841,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             fontSize: "9px",
                             letterSpacing: "0.1em",
                             textTransform: "uppercase",
-                            color: "var(--text)",
+                            color: "var(--muted)",
                             margin: 0,
                           }}
                         >
@@ -1528,11 +1538,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     );
                   }
 
-                  /* Single non-stat outcome — render as a clean,
-                     numbered-free callout card. Used by case studies
-                     whose closing outcome is qualitative (e.g. "A
-                     gradual rollout...") rather than a single stat. */
+                  /* Single non-stat outcome — render as a clean callout card.
+                     Astra gets a special split layout to highlight the key
+                     stat ("Two complete flows · 8 hours") above the prose. */
                   if (cs.outcomes.length === 1) {
+                    const isAstra = cs.slug === "astra";
+                    // For astra: pull the trailing "X in Y" sentence as a headline
+                    const astraMatch = isAstra
+                      ? cs.outcomes[0].match(/^(.+?)\.\s+(Two .+\.)$/)
+                      : null;
                     return (
                       <motion.div
                         initial={{ opacity: 0, y: 12 }}
@@ -1546,8 +1560,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           padding: "32px 32px 30px",
                           display: "flex",
                           flexDirection: "column",
-                          gap: "10px",
-                          maxWidth: "640px",
+                          gap: isAstra ? "16px" : "10px",
+                          maxWidth: isAstra ? "none" : "640px",
                         }}
                       >
                         <p style={{
@@ -1555,19 +1569,48 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           letterSpacing: "0.1em", textTransform: "uppercase",
                           color: "var(--muted)", margin: 0,
                         }}>
-                          Rollout
+                          {isAstra ? "Validation" : "Outcome"}
                         </p>
-                        <p style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: "16px",
-                          fontWeight: 400,
-                          lineHeight: 1.55,
-                          letterSpacing: "-0.01em",
-                          color: "var(--text)",
-                          margin: 0,
-                        }}>
-                          {cs.outcomes[0]}
-                        </p>
+                        {astraMatch ? (
+                          <>
+                            {/* Hero highlight */}
+                            <p style={{
+                              fontFamily: "var(--font-body)",
+                              fontSize: "clamp(24px, 3.5vw, 36px)",
+                              fontWeight: 300,
+                              lineHeight: 1.15,
+                              letterSpacing: "-0.03em",
+                              color: "var(--text)",
+                              margin: 0,
+                            }}>
+                              {astraMatch[2]}
+                            </p>
+                            {/* Supporting context */}
+                            <p style={{
+                              fontFamily: "var(--font-body)",
+                              fontSize: "13px",
+                              lineHeight: 1.6,
+                              letterSpacing: "-0.01em",
+                              color: "var(--muted2)",
+                              margin: 0,
+                              maxWidth: "600px",
+                            }}>
+                              {astraMatch[1]}.
+                            </p>
+                          </>
+                        ) : (
+                          <p style={{
+                            fontFamily: "var(--font-body)",
+                            fontSize: "16px",
+                            fontWeight: 400,
+                            lineHeight: 1.55,
+                            letterSpacing: "-0.01em",
+                            color: "var(--text)",
+                            margin: 0,
+                          }}>
+                            {cs.outcomes[0]}
+                          </p>
+                        )}
                       </motion.div>
                     );
                   }
@@ -3329,14 +3372,17 @@ function parseInlineLinks(text: string, keyPrefix: string): React.ReactNode[] {
 
 function parseHighlights(text: string): React.ReactNode[] {
   const parts = text.split(/(==.+?==)/g);
-  return parts.flatMap((part, i) => {
+  const out: React.ReactNode[] = [];
+  parts.forEach((part, i) => {
     if (part.startsWith("==") && part.endsWith("==")) {
-      return [<Highlight key={i}>{part.slice(2, -2)}</Highlight>];
+      out.push(<Highlight key={i}>{part.slice(2, -2)}</Highlight>);
+      return;
     }
     /* Run the inline-link pass on plain text segments only — we
        don't want to expand markdown links inside ==highlights==. */
-    return parseInlineLinks(part, `p-${i}`);
+    out.push(...parseInlineLinks(part, `p-${i}`));
   });
+  return out;
 }
 
 /* ─── BodyText ──────────────────────────────────────────────────

@@ -68,7 +68,7 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
           onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
         >
           <img
-            src="/Illustration image .png"
+            src="/arun gaddam.png"
             alt=""
             aria-hidden="true"
             style={{
@@ -176,7 +176,6 @@ function PanelHeader({ label }: { label: string }) {
 /* ── Panel 1: About ── */
 /* ── Portrait: illustration by default, real photo on hover ── */
 function PortraitMagnify() {
-  const [hovered, setHovered] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [leaving, setLeaving] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -192,7 +191,6 @@ function PortraitMagnify() {
   };
 
   const handleMouseLeave = () => {
-    setHovered(false);
     setLeaving(true);
     setTilt({ x: 0, y: 0 });
   };
@@ -201,7 +199,7 @@ function PortraitMagnify() {
     <div style={{ perspective: "700px", width: "100%", aspectRatio: "4 / 3" }}>
       <div
         ref={containerRef}
-        onMouseEnter={() => { setHovered(true); setLeaving(false); }}
+        onMouseEnter={() => setLeaving(false)}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
@@ -215,30 +213,14 @@ function PortraitMagnify() {
           willChange: "transform",
         }}
       >
-        {/* Illustrated portrait — default */}
+        {/* Portrait — single image, no hover swap */}
         <img
-          src="/Illustration image .png"
-          alt="Arun Gaddam illustration"
-          style={{
-            position: "absolute", inset: 0,
-            width: "100%", height: "100%",
-            objectFit: "cover", objectPosition: "center top",
-            opacity: hovered ? 0 : 1,
-            transition: "opacity 0.35s ease",
-            display: "block",
-          }}
-        />
-        {/* Real photo — revealed on hover */}
-        <img
-          src="/arun.JPG"
+          src="/arun gaddam.png"
           alt="Arun Gaddam"
           style={{
             position: "absolute", inset: 0,
             width: "100%", height: "100%",
             objectFit: "cover", objectPosition: "center top",
-            filter: "grayscale(100%)",
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.35s ease",
             display: "block",
           }}
         />
@@ -731,12 +713,29 @@ function SystemFeatureCard() {
           onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
         >
-          {/* Thumbnail — abstract MeshThumbnail (the portfolio's signature
-              gradient-orb fallback). The card is about the design language
-              itself, so the thumbnail leans into the portfolio's visual
-              vocabulary instead of showing a literal page screenshot. */}
+          {/* Thumbnail — auto-playing screen recording of the portfolio's
+              design language in motion. Muted + looped, mirrors the case
+              study video thumbnail pattern. */}
           <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
-            <MeshThumbnail index={0} type="design-system" confidential={false} />
+            <video
+              className="work-thumb"
+              src="/images/system/portfolio-design-language.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center top",
+                display: "block",
+                borderRadius: "8px 8px 0 0",
+                background: "var(--surface)",
+              }}
+            />
           </div>
 
           {/* Body */}

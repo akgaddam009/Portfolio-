@@ -37,6 +37,12 @@
      5.34:1 dark — passes for marks and icons, not for paragraphs). */
   --accent-warm:    #d17b53;
 
+  /* ── Section accent — muted violet. Used for icon badges and labels in
+     case study goal / persona cards. Sits in the purple family but
+     desaturated enough to feel considered rather than defaulted.
+     Candidates: #7c6fe8 (B, current) · #9b8ff5 (lighter) · #6e66d6 (deeper) */
+  --accent-violet:  #9b8ff5;
+
   /* ── Soft hover overlay — theme-aware via color-mix ──
      Replaces full --surface2 swaps on icon buttons / chrome elements where
      the original feels too intense. Auto-adapts because --text differs per theme. */

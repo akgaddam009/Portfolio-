@@ -423,6 +423,42 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
 
+    users: [
+      {
+        role: "Finance Analyst",
+        name: "Data preparation · period close",
+        bullets: [
+          "Manages ESM table updates at quarter and period close",
+          "Runs data loads, validates column types, and publishes to the core financial model",
+          "Previously tied to a Windows machine running the Excel plug-in",
+          "Errors in the load corrupt forecast data downstream — zero tolerance",
+        ],
+        coreTension: "Speed at period close vs. zero tolerance for data errors",
+      },
+      {
+        role: "Business Team Owner",
+        name: "Self-service data loading · no mediator",
+        bullets: [
+          "Owns the data but couldn't load it — always routed through Finance",
+          "Updates were delayed by Finance's queue and manual back-and-forth",
+          "Needs to load independently without risking the shared model",
+          "Doesn't think in database terms — needs the tool to think for them",
+        ],
+        coreTension: "Autonomy without the guardrails Finance used to provide",
+      },
+      {
+        role: "Finance Manager",
+        name: "Model integrity · data governance",
+        bullets: [
+          "Accountable for everything that enters the core financial model",
+          "Historically gatekept access to prevent costly load errors",
+          "Goal: let teams self-serve without losing oversight",
+          "A single bad publish can ripple through quarterly forecasts",
+        ],
+        coreTension: "Can't review every load personally — but can't afford not to",
+      },
+    ],
+
     outcomes: [
       "3.5 hrs → 10–15 min. A ~95% reduction in time on task. Simple updates that took half a day now take a coffee break.",
       "Finance → Any team. Non-finance teams now load their own data without finance mediating every update.",
@@ -442,11 +478,11 @@ export const caseStudies: CaseStudy[] = [
     title: "AI Contract Review & Approval Workflow",
     subtitle: "What does 85–90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
     company: "AI Exploration",
-    type: "AI · B2B SaaS · Speculative",
+    type: "AI · B2B SaaS",
     role: "AI UX",
     timeline: "2026 · Weekend build",
     team: "Solo (designer + Claude Code)",
-    tags: ["AI UX", "B2B SaaS", "Speculative", "Built with Claude", "Contract Intelligence", "Designer Who Codes"],
+    tags: ["AI UX", "B2B SaaS", "Built with Claude"],
     heroLabel: "AI Exploration",
     confidential: false,
 
@@ -614,11 +650,11 @@ export const caseStudies: CaseStudy[] = [
 
     projectGoals: {
       business:
-        "- Deliver on the Apple partnership promise by adding Apple Business Connect performance data\n- Eliminate the blind spot for 100M+ iOS users in the US who use Apple Maps as default navigation\n- Strengthen Reputation's competitive position as the only platform offering unified multi-platform listing insights at enterprise scale",
+        "Reputation partnered with Apple in 2023. The dashboard hadn't caught up.\n\n- Deliver on the Apple partnership promise by surfacing Apple Business Connect performance data\n- Close the blind spot for 100M+ iOS users who use Apple Maps as default navigation\n- Strengthen Reputation's position as the only platform with unified multi-platform listing insights at enterprise scale",
       ux:
         "- Create platform equity when data capabilities vary dramatically (Google = rich behavioral data, Apple/Bing = basic engagement metrics)\n- Avoid making the dashboard feel like \"Google insights with other platforms tacked on\"\n- Prevent empty states that would make Apple integration look broken or incomplete\n- Enable unified cross-platform performance view without sacrificing valuable platform-specific insights",
       user:
-        "Who: Marketing managers and local SEO specialists managing dozens to thousands of locations\n\nWhat they need to answer:\n- Can customers find us on Apple Maps?\n- Which platform drives more direction requests, Google or Apple?\n- Why is our Austin location underperforming on Apple compared to Dallas?\n- Did updating our photos across platforms actually increase engagement?",
+        "- Marketing managers and local SEO specialists managing dozens to thousands of locations\n- Can customers find us on Apple Maps?\n- Which platform drives more direction requests, Google or Apple?\n- Why is our Austin location underperforming on Apple compared to Dallas?\n- Did updating our photos across platforms actually increase engagement?",
     },
 
     decisions: [
@@ -644,7 +680,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Restructured the entire dashboard into 5 clear sections",
         body:
-          "Before: A wall of 20+ widgets with no grouping. Common metrics mixed with Google-specific data, making it impossible to scan quickly.\n\nAfter: Clear information architecture that creates platform equity:\n\nOverview: Cross-platform summary (All 4 platforms)\nActions: Calls, directions, website clicks (All 4 platforms)\nImpressions: Listing views breakdown (All 4 platforms)\nDiscovery: Search patterns, device types (Google-specific, labeled)\nAdditional Actions: Platform-unique actions (Side-by-side cards, equal space)\n\n==Key insight:== By explicitly labeling platform-specific sections, users understood why Apple wasn't everywhere. It's not a gap, it's a capability difference.",
+          "The original dashboard had 20+ widgets with no grouping — common metrics mixed with Google-specific data, making it impossible to scan. The redesign organized everything into 5 clear sections:\n\nOverview: Cross-platform summary (All platforms)\nActions: Calls, directions, website clicks (All platforms)\nImpressions: Listing views breakdown (All platforms)\nDiscovery: Search patterns, device types (Google only)\nAdditional Actions: Platform-unique actions (Per platform)\n\n==Key insight:== By explicitly labeling platform-specific sections, users understood why Apple wasn't everywhere. It's not a gap, it's a capability difference.",
         image: {
           src: "/images/reputation/Before:After image .jpg",
           alt: "Before and after of the Listings Performance dashboard: from a wall of 20+ Google-heavy widgets to a clear 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
@@ -737,6 +773,39 @@ export const caseStudies: CaseStudy[] = [
 
     approach:
       "The team had been trying to fix this homepage for a while. The metric wasn't moving.\n\nSo before touching the design, I asked a different question: are we even solving the right problem?\n\nI pulled together everything we already knew. The scroll data. What PMs across teams kept saying. The CEO's repeated feedback. Old research that had never gone anywhere. Put it all on one wall.\n\nThe same thing kept showing up. We'd built the homepage around the content we had: Live Updates, Top Videos, Trending. But our users weren't thinking that way. A cricket fan opens the app thinking 'IPL today, India tour next.' Not 'I want to look at Top Videos.' The page was speaking a different language than its users.\n\n==That single shift, sort by tournament not by content type, became the whole strategy.== Every design move came from there. Pattern-based IA. Tournament-shaped blocks. Personalisation as a roadmap, not a launch feature.\n\nThe rest was execution. Scroll audit, competitor benchmark, stakeholder deck, handoff, design QA, post-launch numbers in Looker. The work everyone shows off in a case study. But the actual unlock happened before any of that, when I refused to redesign until I'd asked the right question.",
+
+    uxGoals: [
+      {
+        title: "Match tournament-first navigation",
+        body: "Cricket fans open the app thinking 'IPL today, India tour next' — not 'I want Top Videos'. Every below-fold section should answer a tournament question, not a content-format question.",
+      },
+      {
+        title: "Make below-the-fold scannable",
+        body: "More than 90% of users dropped past the first fold without tapping. The structure needed to earn scroll — clear section shapes, consistent rhythm, and deliberate pattern breaks that signal value at a glance.",
+      },
+      {
+        title: "Teach the pattern once, apply it everywhere",
+        body: "Each tournament section follows the same structure: matches → updates → videos. Learn it once on IPL and the entire page becomes legible. Cognitive load should drop with every new section, not reset.",
+      },
+    ],
+
+    productGoals: [
+      {
+        title: "Reverse below-fold drop-off",
+        body: "The dead zone below the first fold wasn't a scroll problem — it was a trust problem. The goal was to turn single-digit below-fold consumption into real traffic distributed across the page.",
+      },
+      {
+        title: "Give PMs more than one slot",
+        body: "Every team was lobbying for first-fold space because nothing else converted. Fixing the structure meant unlocking multiple distribution points, so campaigns, partnerships, and content launches had somewhere to land.",
+      },
+      {
+        title: "Ship personalisation in two phases",
+        body: "Preference-based personalisation (Continue Watching, Recommended for You) ships immediately. Behaviour-based personalisation waits for the consumption pipeline. Two tracks, clear data milestone between them.",
+      },
+    ],
+
+    researchEvidence:
+      "Before touching any designs, I mapped everything the team already knew: scroll data, PM feedback, CEO input, and months of old research that had never gone anywhere. Four signals kept appearing.",
 
     researchFindings: [
       {

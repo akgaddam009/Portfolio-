@@ -54,3 +54,9 @@ public/images/astra/Meet - Persona Research Group*
 # Reference materials downloaded into the repo, not part of the build
 awesome-design-md-main/
 awesome-design-md-main.zip
+
+# Local dev scaffolding — not part of the deployed site
+.agents/
+.claude/
+skills-lock.json
+writer.md
