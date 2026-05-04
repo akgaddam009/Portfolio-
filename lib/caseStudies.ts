@@ -87,6 +87,14 @@ export type CaseStudy = {
   contributionArtifacts?: string[];
   references?: { label: string; url: string }[];
   confidential?: boolean;
+  /** Optional user cards — renders as a 3-column grid showing distinct roles,
+      each with bullet points and a core tension line. Used when a case study
+      involves multiple distinct user types that need separate representation. */
+  users?: { role: string; name: string; bullets: string[]; coreTension: string }[];
+  /** Optional UX goals — renders as a two-column grid alongside productGoals. */
+  uxGoals?: { title: string; body: string }[];
+  /** Optional product goals — renders as a two-column grid alongside uxGoals. */
+  productGoals?: { title: string; body: string }[];
   heroLabel: string;
   /** Optional override for the URL/label shown in the browser chrome above
       the contextVideo and prototypeVideo. When unset, falls back to the
@@ -448,6 +456,72 @@ export const caseStudies: CaseStudy[] = [
     context:
       "B2B contract intelligence: AI extracts 30–40 fields from a vendor contract, a human reviews and corrects, approval routes through a configured workflow. The design problem isn't the upload or the dashboard. It's the seam between what the model extracted and what the reviewer actually trusts.",
 
+
+    users: [
+      {
+        role: "Procurement Professional",
+        name: "Contract review · data accuracy",
+        bullets: [
+          "Processes 5–15 contracts per day",
+          "Reviews AI-extracted fields, corrects mistakes, approves data before it enters the workflow",
+          "Errors that slip through have real financial consequences",
+          "Needs to move fast without sacrificing accuracy",
+        ],
+        coreTension: "Speed vs. accuracy at 85–90% AI reliability",
+      },
+      {
+        role: "Legal Professional",
+        name: "Contract review · risk and liability",
+        bullets: [
+          "Reviews the same contract as procurement — but for risk, not data accuracy",
+          "Scrutinizes indemnity clauses, SLAs, liability terms",
+          "Errors that slip through have real legal consequences",
+          "Needs a view scoped to what legal actually owns",
+        ],
+        coreTension: "Shared document, completely different job",
+      },
+      {
+        role: "Procurement Manager",
+        name: "Workflow configuration · approval routing",
+        bullets: [
+          "Configures 10–15 approval chains across the organisation",
+          "Rules vary by contract type, dollar threshold, vendor risk, and department",
+          "Currently managed through email — approvals get stuck, skipped, or misrouted",
+          "Needs to build and edit rules without engineering support",
+        ],
+        coreTension: "Complex logic that must feel like plain language",
+      },
+    ],
+
+    uxGoals: [
+      {
+        title: "Make AI uncertainty actionable",
+        body: "At 85–90% accuracy, every field needs an explicit state — confident, needs review, or missing. The reviewer shouldn't have to infer confidence from a percentage or a tooltip.",
+      },
+      {
+        title: "Separate the two review jobs",
+        body: "Procurement and legal read the same contract but own different decisions. One shared surface forces each role to scroll past work that isn't theirs.",
+      },
+      {
+        title: "Make rule-building feel like writing a sentence",
+        body: "A procurement manager building approval paths shouldn't have to think in condition logic. Every rule should compile to plain English they can read back and verify.",
+      },
+    ],
+
+    productGoals: [
+      {
+        title: "Replace email-based approval routing",
+        body: "Approvals currently get stuck, skipped, or sent to the wrong person. A configurable workflow layer removes the manual dependency and makes the process auditable.",
+      },
+      {
+        title: "Reduce errors entering the approval chain",
+        body: "Wrong data approved by procurement becomes a legal or financial liability downstream. The review interface is the last line of defence before data is treated as fact.",
+      },
+      {
+        title: "Ship two flows that work as a system",
+        body: "Contract review feeds the approval workflow. Designing them separately misses the coupling — the intake quality directly affects what routes through the approval chain.",
+      },
+    ],
 
     tldr: {
       problem:  "At 85–90% accuracy, every extracted field is either trusted, flagged, or missing. The interface has to make sweeping those decisions fast, without the reviewer re-reading a 40-page contract.",

@@ -679,6 +679,84 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
+            {/* ── Who This Is For — user cards (astra / AI case studies) ── */}
+            {cs.users && cs.users.length > 0 && (
+              <CsSection label="Who this is for" id="cs-who">
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                  style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}
+                >
+                  {cs.users.map((u) => (
+                    <div
+                      key={u.role}
+                      style={{
+                        background: "var(--surface)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "12px",
+                        padding: "20px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "10px",
+                      }}
+                    >
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--accent)", margin: 0 }}>
+                        {u.role}
+                      </p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", margin: 0, lineHeight: 1.4 }}>
+                        {u.name}
+                      </p>
+                      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "6px" }}>
+                        {u.bullets.map((b, i) => (
+                          <li key={i} style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", lineHeight: 1.55, paddingLeft: "14px", position: "relative" }}>
+                            <span style={{ position: "absolute", left: 0, color: "var(--accent)" }}>–</span>
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
+                      <div style={{ borderTop: "1px solid var(--border)", paddingTop: "10px", marginTop: "2px" }}>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 4px" }}>Core tension</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{u.coreTension}</p>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+
+                {/* UX Goals + Product Goals grid */}
+                {(cs.uxGoals || cs.productGoals) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE, delay: 0.1 }}
+                    style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "12px" }}
+                  >
+                    {[
+                      { label: "UX Goals", items: cs.uxGoals },
+                      { label: "Product Goals", items: cs.productGoals },
+                    ].map(({ label, items }) => items && (
+                      <div
+                        key={label}
+                        style={{ border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
+                      >
+                        <div style={{ background: "var(--surface2)", padding: "10px 16px", borderBottom: "1px solid var(--border)" }}>
+                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>{label}</p>
+                        </div>
+                        {items.map((g, i) => (
+                          <div key={i} style={{ padding: "14px 16px", borderBottom: i < items.length - 1 ? "1px solid var(--border)" : "none" }}>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", margin: "0 0 4px", lineHeight: 1.4 }}>{g.title}</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{g.body}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </CsSection>
+            )}
+
             {/* ── Project Goals (optional) — three-card row sitting between
                 the Challenge and the Decisions, framing the brief through
                 Business / UX / User lenses. Renders only when set per case. */}
