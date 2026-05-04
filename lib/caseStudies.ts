@@ -1417,6 +1417,11 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "An enterprise grid, not a custom interface",
         body: "I started exploring Google Sheets and Excel, the mental model users already knew. After working through it with engineering, we moved to Syncfusion, an enterprise component library with proven patterns we didn't have to build from scratch. It scaled to large datasets and met the security standards non-negotiable in fintech (SOC 2 Type 2 certified). It let us focus design effort on the workflow, not on rebuilding the grid.",
+        image: {
+          src: "/images/planful/Engg feasibility .png",
+          alt: "The Syncfusion grid pattern that shaped the technical approach",
+          caption: "Syncfusion, the grid pattern that shaped the technical approach",
+        },
       },
       {
         title: "Two ways in, with progress that doesn't make people wait",
@@ -1425,18 +1430,38 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Column settings without a maze of menus",
         body: "Every column has a type, text, number, date, formula, constant. A side panel opens from the column header showing only the settings relevant to that type. Power users get full control. Casual users aren't overwhelmed.",
+        image: {
+          src: "/images/planful/Navigation.png",
+          alt: "ESM Tables inside Dynamic Planning, where the modeling work happens",
+          caption: "ESM Tables inside Dynamic Planning, where the modeling work happens",
+        },
       },
       {
         title: "Live colour feedback on formulas, no preview step",
         body: "Transforming and calculating data is core to the task, so a formula bar wasn't optional. We could not bring all the functions as powerfully as in Excel, but we brought in whatever was necessary for this job.\n\nAs users type, colour highlights show exactly which cells are affected. I considered adding a preview step before applying, safer, but adds a click to every formula. Live feedback catches mistakes quickly enough that the extra safety isn't worth the friction.",
+        image: {
+          src: "/images/planful/formula-feedback.png",
+          alt: "Live colour feedback in the formula bar as the user types",
+          caption: "Live colour feedback as you type, see what changes before it does",
+        },
       },
       {
         title: "Errors flagged in context, not in a post-submission report",
         body: "When data fails validation, the system flags the specific cell, not a modal, not a separate review step. A side panel groups problems by type. Every error has a row number that's a clickable link, taking you straight to the cell. Users see exactly what broke and fix it in place without losing their upload.",
+        image: {
+          src: "/images/planful/error-handling.png",
+          alt: "Errors flagged inline in the grid, with a side panel grouping issues by type",
+          caption: "Errors flagged in context. Fix in place, no need to start over.",
+        },
       },
       {
         title: "Two explicit update modes, overwrite or append",
         body: "At period close, teams replace the full dataset. Mid-cycle, they add rows without touching what's already there. I made both modes explicit at upload time, no scripting, no support ticket, the right option visible at the moment it matters. A task that previously required rebuilding the whole table now takes a click.",
+        image: {
+          src: "/images/planful/bulk-update.png",
+          alt: "Upload dialog with overwrite vs append options surfaced explicitly",
+          caption: "Two explicit modes at upload time. No hidden logic.",
+        },
       },
       {
         title: "A publish flow with the right amount of friction",
@@ -1445,6 +1470,11 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "What comes next: Maps, closing the loop",
         body: "The four-step flow solves data loading. But after a user clicks publish, someone still has to route that data to the right place inside the financial model. At launch, that final step required backend support from an implementation team, turnaround in hours to days.\n\n==Maps== extends the workflow by a fifth step. A visual interface where finance teams draw the connections between ESM columns and the financial model's dimensions themselves, no backend access, no developer dependency. The workflow becomes truly end-to-end.\n\nWithout Maps, teams finished publishing and waited on implementation consultants to route the data from the backend, hours to days. With Maps, finance teams draw the connections visually and data reaches the right model dimensions in the same session.",
+        image: {
+          src: "/images/planful/DP Map.png",
+          alt: "Dynamic Planning Maps connecting ESM columns to financial model dimensions",
+          caption: "Dynamic Planning Maps, closing the loop from data entry to model impact",
+        },
       },
     ],
 
