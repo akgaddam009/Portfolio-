@@ -458,13 +458,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           <div className="page-pad">
 
             <CsSection label={cs.sectionLabels?.overview ?? "Overview"} id="cs-overview">
-              {/* When `contextCards` is set, render the structured Context
-                  cards (each may include a model-pair diagram or vs-grid).
-                  Otherwise fall back to the simple context/summary string. */}
-              {cs.contextCards && cs.contextCards.length > 0 ? (
-                <ContextCardsBlock cards={cs.contextCards} />
-              ) : (
-                <BodyText>{cs.context || cs.summary}</BodyText>
+              {/* Three-layer Overview rendering:
+                    1. context prose (plain, no card chrome)
+                    2. ESM vs OLAP visual diagram (slug-gated)
+                    3. structured contextCards
+                  When `contextCards` is the only source, behaves the same
+                  as before (cards-only). When `context` is also set,
+                  renders prose above the cards so plain narrative leads
+                  the cards. */}
+              {cs.context && (
+                <div style={{ marginBottom: cs.contextCards && cs.contextCards.length > 0 ? "24px" : 0 }}>
+                  <BodyText>{cs.context}</BodyText>
+                </div>
+              )}
+              {!cs.context && !(cs.contextCards && cs.contextCards.length > 0) && (
+                <BodyText>{cs.summary}</BodyText>
               )}
 
               {/* contextVideo and contextImage used to render here inside Overview.
@@ -550,6 +558,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 </motion.div>
               )}
 
+              {/* Structured Context cards — render AFTER the diagram so
+                  the data-shape primitives (ESM vs OLAP) are introduced
+                  visually before the workspace-feeds-the-model card. */}
+              {cs.contextCards && cs.contextCards.length > 0 && (
+                <div style={{ marginTop: "24px" }}>
+                  <ContextCardsBlock cards={cs.contextCards} />
+                </div>
+              )}
+
               {cs.slug === "planful-esm" && (
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
@@ -604,15 +621,35 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             </CsSection>
 
             <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} id="cs-problem">
-              {/* Three render paths for the Problem section:
+              {/* Render paths for the Problem section:
                   1. apple-business-listings → custom AppleChallengeBlock
-                     (lede prose, 3-card diagnosis grid, featured prompt)
-                  2. cs.problemCards is set → render structured cards
+                  2. cs.problemCards is set → optional plain prose, then
+                     standalone problem image, then the issues card(s)
                   3. fallback → simple BodyText for the problem string */}
               {cs.slug === "apple-business-listings" ? (
                 <AppleChallengeBlock text={cs.problem} />
               ) : cs.problemCards && cs.problemCards.length > 0 ? (
-                <ProblemCardsBlock cards={cs.problemCards} onOpenImage={setLightboxSrc} />
+                <>
+                  {/* Plain prose intro — sets up the legacy tool
+                      conversationally without a card frame. Inline
+                      [text](url) markdown links are rendered as real
+                      anchors so a reader can follow the Microsoft
+                      Spotlight reference. */}
+                  {cs.problem && (
+                    <div style={{ marginBottom: "20px" }}>
+                      <BodyText>{cs.problem}</BodyText>
+                    </div>
+                  )}
+                  {/* Standalone Spotlight screenshot — sits loose
+                      between prose and the issues card, no card
+                      chrome. Click-to-zoom preserved. */}
+                  {cs.problemImage && (
+                    <div style={{ marginBottom: "20px" }}>
+                      <ImageBlock image={cs.problemImage} placeholder="Legacy tool — Excel Spotlight screenshot" onOpen={setLightboxSrc} />
+                    </div>
+                  )}
+                  <ProblemCardsBlock cards={cs.problemCards} onOpenImage={setLightboxSrc} />
+                </>
               ) : (
                 <BodyText>{cs.problem}</BodyText>
               )}
@@ -663,7 +700,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 </motion.div>
               )}
 
-              {cs.problemImage && <ImageBlock image={cs.problemImage} placeholder="Legacy tool — Excel Spotlight screenshot" onOpen={setLightboxSrc} />}
+              {/* Legacy fallback: render problemImage at the bottom of
+                  the section ONLY when problemCards is NOT set. When
+                  the new structured layout is in use (problemCards),
+                  problemImage renders earlier between the prose and
+                  the cards — see above. */}
+              {cs.problemImage && !(cs.problemCards && cs.problemCards.length > 0) && <ImageBlock image={cs.problemImage} placeholder="Legacy tool — Excel Spotlight screenshot" onOpen={setLightboxSrc} />}
             </CsSection>
 
             {/* ── Project Goals (optional) — three-card row sitting between
@@ -1382,6 +1424,50 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           }}
                         >
                           {body.replace(/\.$/, "")}
+                        </p>
+                      </motion.div>
+                    );
+                  }
+
+                  /* Single non-stat outcome — render as a clean,
+                     numbered-free callout card. Used by case studies
+                     whose closing outcome is qualitative (e.g. "A
+                     gradual rollout...") rather than a single stat. */
+                  if (cs.outcomes.length === 1) {
+                    return (
+                      <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.65, ease: EASE }}
+                        style={{
+                          background: "var(--surface)",
+                          border: "1px solid var(--border)",
+                          borderRadius: "16px",
+                          padding: "32px 32px 30px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "10px",
+                          maxWidth: "640px",
+                        }}
+                      >
+                        <p style={{
+                          fontFamily: "var(--font-mono)", fontSize: "9px",
+                          letterSpacing: "0.1em", textTransform: "uppercase",
+                          color: "var(--muted)", margin: 0,
+                        }}>
+                          Rollout
+                        </p>
+                        <p style={{
+                          fontFamily: "var(--font-body)",
+                          fontSize: "16px",
+                          fontWeight: 400,
+                          lineHeight: 1.55,
+                          letterSpacing: "-0.01em",
+                          color: "var(--text)",
+                          margin: 0,
+                        }}>
+                          {cs.outcomes[0]}
                         </p>
                       </motion.div>
                     );
@@ -2299,29 +2385,28 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
               background: "var(--surface)",
             }}
           >
-            {/* Person silhouette — sits in a small tinted disc so it
-                reads as a quiet avatar mark, not as a focal element. */}
-            <div
-              style={{
-                width: "28px", height: "28px",
-                borderRadius: "50%",
-                background: "var(--surface2)",
-                border: "1px solid var(--border)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: "var(--muted2)",
-                marginBottom: "10px",
-              }}
-            >
-              <UserCircle size={14} strokeWidth={1.5} />
+            {/* Person silhouette + label sit side-by-side so the
+                icon visually attaches to "User group 1 / 2" and the
+                pair reads as one component, not two stacked items. */}
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+              <div
+                style={{
+                  width: "24px", height: "24px",
+                  borderRadius: "50%",
+                  background: "var(--surface2)",
+                  border: "1px solid var(--border)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "var(--muted2)",
+                }}
+              >
+                <UserCircle size={12} strokeWidth={1.5} />
+              </div>
+              <span style={{
+                fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500,
+                letterSpacing: "0.08em", textTransform: "uppercase",
+                color: "var(--text)",
+              }}>{s.label}</span>
             </div>
-            <span style={{
-              display: "inline-block",
-              fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500,
-              letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--text)", background: "var(--surface2)",
-              padding: "3px 9px", borderRadius: "999px",
-              marginBottom: "10px",
-            }}>{s.label}</span>
             <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0, marginBottom: "4px" }}>
               {s.name}
             </p>
@@ -3144,13 +3229,52 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
   );
 }
 
+/* Inline-link helper. Walks a text node and replaces any
+   [label](url) sequences with real <a> elements. Used as a
+   second pass on top of parseHighlights so highlight wrappers
+   and link wrappers compose without stepping on each other. */
+function parseInlineLinks(text: string, keyPrefix: string): React.ReactNode[] {
+  const re = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g;
+  const out: React.ReactNode[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  let i = 0;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    out.push(
+      <a
+        key={`${keyPrefix}-l-${i++}`}
+        href={m[2]}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          color: "var(--text)",
+          textDecoration: "underline",
+          textUnderlineOffset: "3px",
+          textDecorationThickness: "1px",
+          textDecorationColor: "var(--muted)",
+          transition: "text-decoration-color 0.15s",
+        }}
+      >
+        {m[1]}
+      </a>
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+}
+
 function parseHighlights(text: string): React.ReactNode[] {
   const parts = text.split(/(==.+?==)/g);
-  return parts.map((part, i) =>
-    part.startsWith("==") && part.endsWith("==")
-      ? <Highlight key={i}>{part.slice(2, -2)}</Highlight>
-      : part
-  );
+  return parts.flatMap((part, i) => {
+    if (part.startsWith("==") && part.endsWith("==")) {
+      return [<Highlight key={i}>{part.slice(2, -2)}</Highlight>];
+    }
+    /* Run the inline-link pass on plain text segments only — we
+       don't want to expand markdown links inside ==highlights==. */
+    return parseInlineLinks(part, `p-${i}`);
+  });
 }
 
 /* ─── BodyText ──────────────────────────────────────────────────
