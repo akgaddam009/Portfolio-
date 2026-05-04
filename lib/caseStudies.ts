@@ -22,8 +22,58 @@ export type CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [
   {
-    slug: "ai-workspace",
+    slug: "planful-scenario-planning",
     number: "01",
+    title: "Moving Finance Off Excel",
+    subtitle: "Redesigning scenario planning for enterprise FP&A teams",
+    company: "Planful",
+    type: "B2B SaaS — Enterprise Financial Planning",
+    role: "Senior Product Designer",
+    timeline: "6 months",
+    team: "PM, Engineering, Finance Domain Experts, Customer Success",
+    tags: ["Enterprise SaaS", "Finance", "Workflow Design", "B2B"],
+    heroLabel: "Enterprise Finance",
+    summary:
+      "Finance teams at enterprise companies were running critical scenario planning in Excel — outside Planful's platform — because the in-product experience couldn't match the flexibility they needed. I led the redesign of the scenario planning module to bring that workflow fully into the product, cutting user training time by 30% and eliminating the Excel dependency for 80% of planning tasks.",
+    metrics: [
+      { value: "↓30%", label: "User training time" },
+      { value: "↓80%", label: "Excel dependency for planning" },
+      { value: "15+", label: "Finance directors interviewed" },
+    ],
+    problem:
+      "Enterprise finance teams were using Planful for reporting but running their actual scenario planning in Excel — emailing spreadsheets between departments, losing version history, and manually reconciling numbers back into the platform. The product had scenario planning features, but they were too rigid for the way finance teams actually worked: iterative, assumption-heavy, and deeply collaborative across departments. The result was a product that was purchased for FP&A but bypassed for the most critical FP&A work.",
+    insight:
+      "Finance teams don't think in rows and columns — they think in assumptions and consequences. The Excel dependency wasn't a UX problem; it was a mental model problem. Planful's scenario planning was designed around data entry, not decision-making. Fixing it required rebuilding the interaction model around how a CFO actually reasons through a plan, not how an engineer thought data should be structured.",
+    decisions: [
+      {
+        title: "Assumption-first entry, not cell-first entry",
+        body: "The old model required users to navigate to specific cells and type values. The redesign flipped this: users defined a named assumption ('headcount grows 10% in Q3') and the system propagated the impact across all dependent models automatically. Finance teams could think in plain language and see consequences in real time.",
+      },
+      {
+        title: "Side-by-side scenario comparison",
+        body: "The most common Excel pattern was duplicating tabs — 'Base Case,' 'Upside,' 'Downside.' We built a native three-pane comparison view that let teams see all scenarios simultaneously, with delta highlighting that surfaced variances without requiring mental arithmetic. No tab switching, no formula errors.",
+      },
+      {
+        title: "Collaborative locking model",
+        body: "Multi-department planning meant one team's edit could silently overwrite another's. We introduced a cell-level locking model that was visible but non-blocking — finance directors could lock key assumptions while still allowing downstream edits. This replicated the social contract of Excel ownership without the file-locking nightmares.",
+      },
+      {
+        title: "Audit trail as a first-class feature",
+        body: "In regulated finance environments, knowing who changed what and when is not a nice-to-have — it's a compliance requirement. We surfaced a full audit trail inline with the planning interface rather than buried in an admin panel. This was a direct outcome from user research with enterprise finance directors who cited auditability as a primary reason for staying in Excel.",
+      },
+    ],
+    outcomes: [
+      "Reduced user training time by 30% measured against previous module onboarding benchmarks",
+      "80% of scenario planning tasks previously done in Excel migrated fully into platform within 90 days of launch",
+      "Component library built during this project adopted by 3 product teams within one quarter",
+      "15+ enterprise finance directors across North America contributed to research and validation",
+    ],
+    lesson:
+      "Enterprise finance tools fail when they're designed for data entry and succeed when they're designed for decision-making. The job isn't to replace Excel — it's to make the product good enough that finance teams choose it over Excel. That only happens when the tool understands how finance teams actually think.",
+  },
+  {
+    slug: "ai-workspace",
+    number: "02",
     title: "AI Workspace Assistant",
     subtitle: "Designing ambient intelligence for enterprise teams",
     type: "B2B AI Tool — Enterprise Productivity",
@@ -70,7 +120,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "ai-decision",
-    number: "02",
+    number: "03",
     title: "AI Decision Companion",
     subtitle: "Making AI trustworthy in high-stakes consumer decisions",
     type: "B2C AI Tool — Consumer Decision Support",
@@ -117,7 +167,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "compass",
-    number: "03",
+    number: "04",
     title: "Compass",
     subtitle: "Rebuilding competitive intelligence for four stakeholder types",
     company: "Reputation.com",
@@ -167,7 +217,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "cx-enterprise",
-    number: "04",
+    number: "05",
     title: "CX Enterprise App",
     subtitle: "Multi-tenant platform for four stakeholder tiers",
     type: "Enterprise SaaS — Customer Experience Management",
@@ -211,7 +261,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "design-system",
-    number: "05",
+    number: "06",
     title: "Enterprise Design System",
     subtitle: "Building the foundation that scales across 6 product surfaces",
     type: "Design Infrastructure — Component Library",
@@ -246,7 +296,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "mentorship-platform",
-    number: "06",
+    number: "07",
     title: "Mentorship Platform Redesign",
     subtitle: "Redesigning booking and discovery for 50M+ users",
     type: "Consumer Product — Mobile & Web",
