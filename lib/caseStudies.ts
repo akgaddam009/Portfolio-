@@ -1261,7 +1261,7 @@ export const caseStudies: CaseStudy[] = [
     role: "Senior Product Designer (IC)",
     timeline: "~1 month design · 2–3 months rollout",
     team: "Product, Engineering, Implementation Consultants",
-    tags: ["Enterprise software", "Data workflow", "End-to-end design", "Navigation", "Error handling", "Component specs", "Finance tools"],
+    tags: ["Enterprise software", "Data workflow", "Fintech", "Web Application"],
     heroLabel: "Real Work",
     confidential: false,
 
