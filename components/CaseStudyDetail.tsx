@@ -307,7 +307,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             descriptive sentence. When absent, falls back to the
             classic value + caps-label below pattern. */}
         {cs.metrics && cs.metrics.length > 0 && (
-          <div style={{ background: "var(--surface)", padding: "28px 0" }}>
+          <div style={{ padding: "28px 0", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
             <div className="page-pad">
               <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (
