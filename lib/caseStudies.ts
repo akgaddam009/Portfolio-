@@ -29,7 +29,13 @@ export type CaseStudy = {
   tags: string[];
   summary: string;
   tldr?: { problem: string; approach: string; outcome: string };
-  metrics?: { value: string; label: string }[];
+  /** Top-of-page metrics. Each metric has:
+        value — the headline (rendered big, primary text)
+        label — a short eyebrow (mono caps, 1–4 words)
+        body  — optional longer descriptive sentence, sentence-case
+                body text. Use when the explanation is too long to
+                read comfortably as mono caps. */
+  metrics?: { value: string; label: string; body?: string }[];
   context?: string;
   contextImage?: CaseStudyImage;
   /** Hero video shown at the top of the case study, right after the summary.
@@ -404,7 +410,11 @@ export const caseStudies: CaseStudy[] = [
     chromeUrl: "app.reputation.com",
 
     metrics: [
-      { value: "~68%", label: "of customers check Apple Maps data week on week" },
+      {
+        value: "~68%",
+        label: "Weekly adoption",
+        body: "of customers check Apple Maps data week on week.",
+      },
     ],
 
     summary:
@@ -1256,8 +1266,16 @@ export const caseStudies: CaseStudy[] = [
     },
 
     metrics: [
-      { value: "3.5 hrs → 10–15 min", label: "~95% reduction in time on task. Simple updates that took half a day now take a coffee break." },
-      { value: "Finance → Any team", label: "Non-finance teams now load their own data without finance mediating every update." },
+      {
+        value: "3.5 hrs → 10–15 min",
+        label: "Time on task",
+        body: "~95% reduction. Simple updates that took half a day now take a coffee break.",
+      },
+      {
+        value: "Finance → Any team",
+        label: "Data ownership",
+        body: "Non-finance teams now load their own data without finance mediating every update.",
+      },
     ],
 
     summary:

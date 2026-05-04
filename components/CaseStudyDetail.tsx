@@ -305,17 +305,51 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </div>
         </section>
 
-        {/* Metrics bar — only rendered when the case study has real business outcomes to show */}
+        {/* Metrics bar — three-layer structure:
+              eyebrow (mono caps, short)
+              value   (big stat, primary text)
+              body    (optional sentence-case descriptive text)
+            When `body` is set, the metric reads as eyebrow → value →
+            descriptive sentence. When absent, falls back to the
+            classic value + caps-label below pattern. */}
         {cs.metrics && cs.metrics.length > 0 && (
-          <div style={{ background: "var(--surface)", padding: "24px 0" }}>
+          <div style={{ background: "var(--surface)", padding: "28px 0" }}>
             <div className="page-pad">
-              <div style={{ display: "flex", gap: "32px", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (
-                  <div key={m.label}>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1, marginBottom: "4px", display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: "10px" }}>
+                  <div key={m.label} style={{ maxWidth: m.body ? "320px" : undefined, flex: m.body ? "1 1 280px" : undefined }}>
+                    {/* Eyebrow — always rendered as mono caps */}
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "9px",
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      color: "var(--muted)", marginBottom: "8px",
+                    }}>
+                      {m.label}
+                    </p>
+                    {/* Big stat */}
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "clamp(22px, 3vw, 32px)",
+                      fontWeight: 400, letterSpacing: "-0.03em",
+                      color: "var(--text)", lineHeight: 1.1,
+                      marginBottom: m.body ? "10px" : 0,
+                      display: "flex", alignItems: "baseline",
+                      flexWrap: "wrap", gap: "10px",
+                    }}>
                       <MetricValueWithArrow value={m.value} />
                     </p>
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>{m.label}</p>
+                    {/* Descriptive body — sentence case, body type,
+                        muted2 colour. Reads as a real sentence, not
+                        a punishing block of caps. */}
+                    {m.body && (
+                      <p style={{
+                        fontFamily: "var(--font-body)", fontSize: "13px",
+                        lineHeight: 1.55, letterSpacing: "-0.005em",
+                        color: "var(--muted2)", margin: 0,
+                      }}>
+                        {m.body}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
