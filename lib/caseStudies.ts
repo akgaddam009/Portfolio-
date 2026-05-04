@@ -264,7 +264,7 @@ export const caseStudies: CaseStudy[] = [
             "Windows only and desktop bound",
             "Required manual install and regular updates",
             "Couldn't be used on a Mac or in a browser",
-            "Strict rules about which row to type into and how to format entries, easy to get wrong",
+            "Hard to use and requires significant training cost. Demands high user cognition during the task",
           ],
           impact: {
             title: "What it cost the business",
@@ -325,7 +325,7 @@ export const caseStudies: CaseStudy[] = [
         videos: [
           {
             src: "/images/planful/Two%20ways%20in,%20with%20progress%20that%20doesn't%20make%20people%20wait%20.mov",
-            label: "Drag, drop, paste",
+            label: "Drag & drop or paste data",
             caption: "Live preview of the first 1,000 rows while the rest streams in.",
           },
         ],
@@ -399,16 +399,16 @@ export const caseStudies: CaseStudy[] = [
          The end-to-end story is now: load → transform → validate
          → publish → map (next decision). Publish-specific friction
          doesn't earn its own beat. */
-      /* 8 — Maps: the next phase. No static image (the video covers
+      /* 8 — Data Maps: the next phase. No static image (the video covers
          it). Title reframes this as a forward-looking project beat,
          not a post-publish step. */
       {
         title: "The next phase of the project",
-        body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
+        body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Data Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
         videos: [
           {
             src: "/images/planful/MAPS.mov",
-            label: "Maps",
+            label: "Data Maps",
             caption: "Visual mapping from ESM columns to financial model dimensions.",
           },
         ],

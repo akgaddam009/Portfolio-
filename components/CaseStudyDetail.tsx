@@ -251,7 +251,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   href="/#work"
                   className="case-study-back-link"
                   style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", transition: "color 0.2s cubic-bezier(0.22, 1, 0.36, 1)" }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
+                  onMouseEnter={e => (e.currentTarget.style.color = "var(--text-hover)")}
                   onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -592,6 +592,32 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
                   )}
                   <ProblemCardsBlock cards={cs.problemCards} onOpenImage={setLightboxSrc} />
+                  {/* Impact callout — rendered outside the card so it sits
+                      below the screenshot without card padding around it. */}
+                  {cs.problemCards.some(c => c.breakdown?.impact) && (
+                    <div style={{ marginTop: "24px" }}>
+                      {cs.problemCards.map((c, i) => c.breakdown?.impact ? (
+                        <div key={i}>
+                          {c.breakdown.impact.title && (
+                            <p style={{
+                              fontFamily: "var(--font-mono)", fontSize: "9px",
+                              letterSpacing: "0.08em", textTransform: "uppercase",
+                              color: "var(--muted)", margin: 0, marginBottom: "8px",
+                            }}>
+                              {c.breakdown.impact.title}
+                            </p>
+                          )}
+                          <p style={{
+                            fontFamily: "var(--font-body)", fontSize: "14px",
+                            lineHeight: 1.65, letterSpacing: "-0.005em",
+                            color: "var(--muted2)", margin: 0,
+                          }}>
+                            {c.breakdown.impact.text}
+                          </p>
+                        </div>
+                      ) : null)}
+                    </div>
+                  )}
                 </>
               ) : (
                 <BodyText>{cs.problem}</BodyText>
@@ -1031,6 +1057,20 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   <BodyText>{cs.decisionsIntro}</BodyText>
                 </div>
               )}
+              <style>{`
+                .decision-num-badge {
+                  background: rgba(99, 102, 241, 0.12);
+                }
+                .decision-num-text {
+                  color: rgb(165, 168, 255);
+                }
+                [data-theme="light"] .decision-num-badge {
+                  background: rgba(99, 102, 241, 0.10);
+                }
+                [data-theme="light"] .decision-num-text {
+                  color: rgb(67, 56, 202);
+                }
+              `}</style>
               <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
                 {cs.decisions.map((d, i) => (
                   <motion.div
@@ -1041,9 +1081,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     transition={{ duration: 0.6, ease: EASE, delay: i * 0.06 }}
                     style={{ display: "grid", gridTemplateColumns: "48px 1fr", gap: "24px" }}
                   >
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)", paddingTop: "2px", lineHeight: 1.5 }}>
-                      {String(i + 1).padStart(2, "0")}<span style={{ color: "var(--border)" }}> / {String(cs.decisions.length).padStart(2, "0")}</span>
-                    </p>
+                    <div style={{ display: "flex", paddingTop: "1px" }}>
+                      <div className="decision-num-badge" style={{ width: "28px", height: "28px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <span className="decision-num-text" style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", lineHeight: 1 }}>
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                    </div>
                     <div>
                       <h3 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3, display: "flex", alignItems: "center", gap: "8px" }}>
                         {d.icon && DECISION_ICONS[d.icon] && (() => {
@@ -1073,7 +1117,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             {d.videos.map((v, vi) => (
                               <div key={vi} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                                 {v.label && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                                  <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)" }}>
                                     {v.label}
                                   </p>
                                 )}
@@ -1092,7 +1136,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   />
                                   {/* Expand affordance — small badge top-right signalling
                                       the video is clickable to view full-size in the lightbox. */}
-                                  <div style={{ position: "absolute", top: "8px", right: "8px", background: "rgba(0,0,0,0.65)", borderRadius: "6px", padding: "5px 8px", display: "flex", alignItems: "center", gap: "4px", color: "#fff", fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", pointerEvents: "none", backdropFilter: "blur(4px)" }}>
+                                  <div style={{ position: "absolute", top: "8px", right: "8px", background: "rgba(0,0,0,0.65)", borderRadius: "6px", padding: "5px 8px", display: "flex", alignItems: "center", gap: "4px", color: "#fff", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "-0.01em", pointerEvents: "none", backdropFilter: "blur(4px)" }}>
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                       <polyline points="15 3 21 3 21 9" />
                                       <polyline points="9 21 3 21 3 15" />
@@ -1103,7 +1147,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   </div>
                                 </div>
                                 {v.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", textAlign: "center" }}>
+                                  <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)", textAlign: "center" }}>
                                     {v.caption}
                                   </p>
                                 )}
@@ -2193,7 +2237,7 @@ function ProblemCardsBlock({
           )}
           {/* Breakdown points grid — renders BEFORE the image so the
               issues list reads first, then the screenshot illustrates
-              them. Impact callout follows the image below. */}
+              them. Impact callout is rendered outside the card below. */}
           {card.breakdown && (() => {
             const breakdownIcons = [
               <svg key={0} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="2" width="14" height="10" rx="1"/><path d="M5 15h6M8 12v3"/></svg>,
@@ -2204,7 +2248,7 @@ function ProblemCardsBlock({
               <svg key={5} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 1L1 14h14L8 1z"/><line x1="8" y1="6" x2="8" y2="9"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>,
             ];
             return (
-              <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}>
+              <div style={{ marginTop: "20px" }}>
                 {card.breakdown!.title && (
                   <p style={{
                     fontFamily: "var(--font-mono)", fontSize: "9px",
@@ -2240,8 +2284,6 @@ function ProblemCardsBlock({
                 borderRadius: "8px",
                 overflow: "hidden",
                 cursor: onOpenImage ? "zoom-in" : undefined,
-                background: "var(--bg)",
-                border: "1px solid var(--border)",
               }}
             >
               <img
@@ -2254,38 +2296,12 @@ function ProblemCardsBlock({
                   fontFamily: "var(--font-mono)", fontSize: "9px",
                   letterSpacing: "0.08em", textTransform: "uppercase",
                   color: "var(--muted)", textAlign: "center",
-                  padding: "10px 14px",
+                  padding: "10px 0 0",
                   margin: 0,
-                  borderTop: "1px solid var(--border)",
                 }}>
                   {card.image.caption}
                 </p>
               )}
-            </div>
-          )}
-          {/* Impact callout — closes the card after the screenshot. */}
-          {card.breakdown?.impact && (
-            <div style={{
-              marginTop: "16px",
-              paddingTop: "14px",
-              borderTop: "1px dashed var(--border)",
-            }}>
-              {card.breakdown.impact.title && (
-                <p style={{
-                  fontFamily: "var(--font-mono)", fontSize: "9px",
-                  letterSpacing: "0.08em", textTransform: "uppercase",
-                  color: "var(--muted)", margin: 0, marginBottom: "8px",
-                }}>
-                  {card.breakdown.impact.title}
-                </p>
-              )}
-              <p style={{
-                fontFamily: "var(--font-body)", fontSize: "13px",
-                lineHeight: 1.65, letterSpacing: "-0.005em",
-                color: "var(--muted2)", margin: 0,
-              }}>
-                {card.breakdown.impact.text}
-              </p>
             </div>
           )}
         </motion.div>
@@ -2689,7 +2705,7 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
           target="_blank"
           rel="noopener noreferrer"
           style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "5px", padding: "5px 10px", borderRadius: "6px", border: "1px solid var(--border)", transition: "color 0.15s, border-color 0.15s" }}
-          onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; }}
+          onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--text-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
         >
           Open in new tab ↗
@@ -2728,7 +2744,7 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
                 color:      i === activeIdx ? "var(--bg)"   : "var(--muted2)",
                 transition: "background 0.15s, color 0.15s",
               }}
-              onMouseEnter={e => { if (i !== activeIdx) { e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.color = "var(--text)"; } }}
+              onMouseEnter={e => { if (i !== activeIdx) { e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.color = "var(--text-hover)"; } }}
               onMouseLeave={e => { if (i !== activeIdx) { e.currentTarget.style.background = "transparent";   e.currentTarget.style.color = "var(--muted2)"; } }}
             >
               {s.label}
@@ -2801,7 +2817,7 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
             <rect x="1" y="4" width="6" height="5.5" rx="1" stroke="currentColor" strokeWidth="1.2" />
             <path d="M2.5 4V2.8a1.5 1.5 0 013 0V4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.04em", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {urlLabel}
           </span>
         </div>

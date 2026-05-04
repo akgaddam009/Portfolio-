@@ -11,7 +11,8 @@
   --surface:  #ffffff;   /* primary background — for elevated cards */
   --surface2: #f5f5f7;   /* tertiary — subtle differentiation for hover / inset */
   --border:   #d2d2d7;   /* opaque separator — visible cool gray */
-  --text:     #1d1d1f;   /* the Apple signature: NOT pure black, has 6% lift */
+  --text:       #1d1d1f;   /* the Apple signature: NOT pure black, has 6% lift */
+  --text-hover: #3a3a3c;   /* hover — slightly softened near-black, less harsh than --text */
   --muted:    #6e6e73;   /* secondary label — cool gray */
   --muted2:   #424245;   /* tertiary label — deeper cool gray */
   --chrome:   #f5f5f7;   /* grouped-background canvas — panels float on this */
@@ -65,7 +66,8 @@
   --surface:  #141414;   /* card fill — barely lifted from panel */
   --surface2: #1c1c1c;   /* hover / inset — one subtle step further */
   --border:   #1f1f1f;   /* hairline — visible against bg, not against canvas */
-  --text:     #ffffff;
+  --text:       #ffffff;
+  --text-hover: #c8c3bc;   /* hover — warm parchment off-white, softer than pure white */
   --muted:    #71717b;   /* Figma Storm Gray (grey/46) — secondary label */
   --muted2:   #a1a1aa;   /* lifted from --muted for body / value text */
   --chrome:   #000000;   /* canvas — pure black, panels lift off it */
@@ -224,7 +226,7 @@ a { color: inherit; text-decoration: none; }
               transform var(--dur-base) var(--ease-expo);
   letter-spacing: -0.01em;
 }
-.btn-secondary:hover { border-color: var(--text); color: var(--text); transform: translateY(-1px); }
+.btn-secondary:hover { border-color: var(--text-hover); color: var(--text-hover); transform: translateY(-1px); }
 
 /* ─── Nav link with underline ────────────────────────── */
 .nav-link {
@@ -246,7 +248,7 @@ a { color: inherit; text-decoration: none; }
   transform-origin: left center;
   transition: transform var(--dur-base) var(--ease-expo);
 }
-.nav-link:hover { color: var(--text); }
+.nav-link:hover { color: var(--text-hover); }
 .nav-link:hover::after { transform: scaleX(1); }
 
 /* ─── Marquee ────────────────────────────────────────── */

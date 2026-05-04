@@ -326,7 +326,7 @@ function AboutPanel() {
                 onMouseEnter={e => {
                   e.currentTarget.style.opacity = "0.6";
                   const label = e.currentTarget.querySelector<HTMLElement>("[data-label]");
-                  if (label) label.style.color = "var(--text)";
+                  if (label) label.style.color = "var(--text-hover)";
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.opacity = "1";
@@ -479,42 +479,40 @@ function AboutPanel() {
             </div>
 
             {/* Links — paired with availability so the CTA fires after full context */}
-            <div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
               {[
                 { label: "LinkedIn", href: "https://linkedin.com/in/akgaddam", external: true },
                 { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
                 { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
-              ].map(({ label, href, external }, i, arr) => (
-                <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                  <Link
-                    href={href}
-                    target={external ? "_blank" : undefined}
-                    rel={external ? "noopener noreferrer" : undefined}
-                    style={{
-                      fontFamily: "var(--font-mono)", fontSize: "9px",
-                      letterSpacing: "0.08em", textTransform: "uppercase",
-                      color: "var(--muted)",
-                      padding: "4px 8px",
-                      borderRadius: "6px",
-                      display: "inline-flex", alignItems: "center", gap: "4px",
-                      transition: "color 0.18s, background 0.18s",
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.color = "var(--text)";
-                      e.currentTarget.style.background = "var(--surface)";
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.color = "var(--muted)";
-                      e.currentTarget.style.background = "transparent";
-                    }}
-                  >
-                    {label}
-                    <ArrowUpRight size={10} strokeWidth={1.5} />
-                  </Link>
-                  {i < arr.length - 1 && (
-                    <span style={{ color: "var(--muted)", fontFamily: "var(--font-mono)", fontSize: "9px", userSelect: "none", opacity: 0.4 }}>·</span>
-                  )}
-                </span>
+              ].map(({ label, href, external }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  target={external ? "_blank" : undefined}
+                  rel={external ? "noopener noreferrer" : undefined}
+                  style={{
+                    fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                    letterSpacing: "-0.01em",
+                    color: "var(--muted)",
+                    padding: "8px 14px",
+                    borderRadius: "8px",
+                    border: "1px solid var(--border)",
+                    background: "transparent",
+                    display: "inline-flex", alignItems: "center", gap: "5px",
+                    transition: "color 0.18s, border-color 0.18s, background 0.18s",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.color = "var(--text-hover)";
+                    e.currentTarget.style.borderColor = "var(--text-hover)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.color = "var(--muted)";
+                    e.currentTarget.style.borderColor = "var(--border)";
+                  }}
+                >
+                  <ArrowUpRight size={11} strokeWidth={1.5} />
+                  {label}
+                </Link>
               ))}
             </div>
           </div>
@@ -1289,7 +1287,7 @@ function CareerPanel() {
                         color: "var(--muted)", textDecoration: "none",
                         transition: "color 0.15s",
                       }}
-                      onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
+                      onMouseEnter={e => (e.currentTarget.style.color = "var(--text-hover)")}
                       onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
                     >
                       Visit site <ArrowUpRight size={11} strokeWidth={1.5} />
@@ -1848,7 +1846,7 @@ function ContactPanel() {
               display: "inline-flex", alignItems: "center", gap: "5px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--text-hover)"; } }}
             onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
@@ -1868,7 +1866,7 @@ function ContactPanel() {
               display: "inline-flex", alignItems: "center", gap: "5px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--text-hover)"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
           >
             <ArrowUpRight size={11} strokeWidth={1.5} />
