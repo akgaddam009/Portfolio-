@@ -312,8 +312,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               <div style={{ display: "flex", gap: "32px", flexWrap: "wrap" }}>
                 {cs.metrics.map(m => (
                   <div key={m.label}>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1, marginBottom: "4px" }}>
-                      {m.value}
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1, marginBottom: "4px", display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: "10px" }}>
+                      <MetricValueWithArrow value={m.value} />
                     </p>
                     <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>{m.label}</p>
                   </div>
@@ -1815,6 +1815,37 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
      3. diagnosis bullets (3 short bullets) → 3-card stat grid
      4. design question paragraph (label + question) → callout
    The text is unchanged, only the presentation per-block. */
+/* ─── MetricValueWithArrow ─────────────────────────────────────
+   When a metric value contains " → " (a "before → after" pattern
+   like "3.5 hrs → 10–15 min"), splits on the arrow and renders an
+   inline SVG arrow in place of the Unicode glyph. The "before"
+   side reads at full text colour with a strikethrough, the arrow
+   is muted, and the "after" side reads at full text colour and
+   weight, so the eye lands on the outcome instead of the change
+   marker. Falls back to plain rendering when no arrow is present. */
+function MetricValueWithArrow({ value }: { value: string }) {
+  const arrowMatch = value.split(/\s*[→➔➜]\s*/);
+  if (arrowMatch.length !== 2) {
+    return <>{value}</>;
+  }
+  const [before, after] = arrowMatch;
+  return (
+    <>
+      <span style={{ color: "var(--muted)", textDecoration: "line-through", textDecorationColor: "var(--border)", textDecorationThickness: "1px" }}>
+        {before}
+      </span>
+      <svg
+        aria-hidden="true"
+        width="0.8em" height="0.8em" viewBox="0 0 20 20" fill="none"
+        style={{ flexShrink: 0, color: "var(--muted)", alignSelf: "center" }}
+      >
+        <path d="M3 10h14M13 5l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span style={{ color: "var(--text)" }}>{after}</span>
+    </>
+  );
+}
+
 /* ─── ContextCardsBlock ────────────────────────────────────────
    Stacks one or more titled Context cards. Each card can carry a
    lead paragraph, a bullet list, a model-pair diagram (left → right),
