@@ -1350,15 +1350,13 @@ export const caseStudies: CaseStudy[] = [
 
     /* Single consolidated problem card — the legacy tool intro,
        the screenshot, why-it-was-hard breakdown, and what-it-cost
-       impact all live inside one card. No sibling cards. */
+       impact all live inside one card. No redundant bullets above
+       the screenshot — the lead alone sets up the image, and the
+       breakdown grid below carries the specifics. */
     problemCards: [
       {
         title: "The legacy tool: Excel Spotlight",
         lead: "A key part of the workflow lived inside Spotlight for Microsoft 365, a custom plug-in for Excel, PowerPoint, and Word.",
-        points: [
-          "Worked inside Excel itself, not in the web product",
-          "Only a small group of expert users could navigate it confidently",
-        ],
         image: {
           src: "/images/planful/data-model-comparison.png",
           alt: "Excel Spotlight, the legacy tool it replaced",
