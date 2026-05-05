@@ -79,14 +79,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   })();
 
   // Password gate — any case study with `confidential: true`.
-  // Unlock state is per-slug, keyed in sessionStorage so different gated
-  // case studies don't share an unlock and reload doesn't re-prompt.
+  // One shared key in localStorage — entering the password on any gated case study
+  // unlocks all of them globally and persists across browser sessions.
   const PASSWORD = "password";
   const isGated = !!cs.confidential;
-  const storageKey = `cs-unlocked-${cs.slug}`;
+  const GLOBAL_UNLOCK_KEY = "cs-portfolio-unlocked";
   const [unlocked, setUnlocked] = useState(() => {
     if (typeof window === "undefined") return false;
-    return sessionStorage.getItem(storageKey) === "1";
+    return localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1";
   });
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState(false);
@@ -94,7 +94,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
     e.preventDefault();
     if (pwInput === PASSWORD) {
       setUnlocked(true);
-      sessionStorage.setItem(storageKey, "1");
+      localStorage.setItem(GLOBAL_UNLOCK_KEY, "1");
       setPwError(false);
     } else {
       setPwError(true);
