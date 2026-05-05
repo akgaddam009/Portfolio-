@@ -750,7 +750,7 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "More than 90% of FanCode users dropped past the first fold. India's all-in-one sports app (live streaming, scores, news, shop, 3M+ monthly active users) was running on a homepage where most of the page was dying below the fold. ==I restructured around how cricket fans actually think: tournament first, then match, then teams and players. The dead zone reversed.==",
 
-    contextVideo: "/images/fancode/hp-overview.mp4",
+    contextVideo: "/images/fancode/hp-prototype.mov",
 
     context:
       "The homepage had become the company's growth bottleneck. Every new feature, content investment, or campaign had to fight for first-fold space because below the fold didn't work. Promotional placements, content launches, partnerships: every team was lobbying for the one slot that converted. Fixing the dead zone wasn't a UX project. It was a growth unlock for the entire product.",
@@ -892,7 +892,7 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
 
-    prototypeVideo: "/images/fancode/hp-prototype.mov",
+    prototypeVideo: "/images/fancode/hp-overview.mp4",
 
     outcomesImage: {
       src: "/images/fancode/hp-final-ui.jpg",
