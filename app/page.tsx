@@ -1221,7 +1221,7 @@ function CareerPanel() {
           opacity: { duration: 0.4, ease: EASE },
           x:       { duration: 0.4, ease: EASE, delay: index * 0.055 },
         }}
-        onMouseEnter={() => !isExpanded && setHoveredItem(item)}
+        onMouseEnter={() => setHoveredItem(item)}
         onMouseLeave={() => setHoveredItem(null)}
         onClick={() => isClickable && toggleCard(item)}
         style={{
@@ -1237,12 +1237,10 @@ function CareerPanel() {
           overflow: "hidden",
           cursor: isClickable ? "pointer" : "default",
           zIndex: isExpanded ? 10 : isHovered ? 5 : 1,
-          boxShadow: isExpanded
-            ? "0 4px 32px rgba(0,0,0,0.09)"
-            : isHovered
-              ? "var(--card-shadow-hover)"
-              : "var(--card-shadow)",
-          transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
+          boxShadow: isExpanded || isHovered
+            ? "var(--card-shadow-hover)"
+            : "var(--card-shadow)",
+          transition: "box-shadow 0.35s cubic-bezier(0.22,1,0.36,1)",
         }}
       >
         {/* ── Compact header row. always visible ── */}
