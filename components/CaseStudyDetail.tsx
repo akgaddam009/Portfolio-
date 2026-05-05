@@ -1656,8 +1656,41 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 )}
 
-                {/* Outcomes — planful-esm-tables and Zetwerk BU have their own custom blocks above */}
-                {cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && (() => {
+                {/* FanCode homepage — two-stat hero block */}
+                {cs.slug === "fancode-homepage" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE }}
+                    style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}
+                  >
+                    {[
+                      { stat: "~20%", label: "New user retention", body: "Post-launch lift vs baseline" },
+                      { stat: "15–20%", label: "Homepage adoption", body: "Lift across all cohorts" },
+                    ].map(({ stat, label, body }, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          background: "var(--surface)",
+                          borderRadius: "16px",
+                          padding: "32px 28px 28px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "12px",
+                          boxShadow: "var(--card-shadow)",
+                        }}
+                      >
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(40px, 6vw, 64px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 0.95, color: "var(--text)", margin: 0 }}>{stat}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{body}</p>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+
+                {/* Outcomes — planful-esm-tables, Zetwerk BU, and FanCode have their own custom blocks above */}
+                {cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && cs.slug !== "fancode-homepage" && (() => {
                   /* Single-outcome treatment — promote the stat to a hero
                      stat block instead of an "01" numbered row. Triggers
                      when there's exactly one outcome AND it starts with a
