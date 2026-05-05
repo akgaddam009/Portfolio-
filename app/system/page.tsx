@@ -16,34 +16,36 @@ const NAV_SECTIONS = [
   { id: "system-process",      label: "Process"      },
 ];
 
-/* Tokens — direct extraction from globals.css (kept in sync manually).
+/* Tokens. direct extraction from globals.css (kept in sync manually).
    3-layer depth model in both themes: chrome (canvas) → bg (panel) → surface (card).
    Light theme: cool near-white scale, panels float on a barely-tinted
    canvas, cards lift one step further on white surfaces.
    Dark theme: tight warm-neutral scale, panels barely lift off pure
    black canvas, cards barely lift off panels. The whole dark scale
-   sits in the deepest 12% of the lightness range — high contrast for
+   sits in the deepest 12% of the lightness range. high contrast for
    text, no surface ever feels "lit". */
 const COLORS = [
-  { name: "--chrome",   light: "#f5f5f7", dark: "#000000", role: "Canvas — outermost layer the panels float on" },
-  { name: "--bg",       light: "#fbfbfd", dark: "#0a0a0a", role: "Panel fill — sits just above canvas" },
-  { name: "--surface",  light: "#ffffff", dark: "#141414", role: "Card fill — barely lifted from panel on dark" },
-  { name: "--surface2", light: "#f5f5f7", dark: "#1c1c1c", role: "Hover / inset — one subtle step further" },
-  { name: "--border",   light: "#d2d2d7", dark: "#1f1f1f", role: "Opaque separator / hairline" },
+  { name: "--chrome",   light: "#f5f5f7", dark: "#000000", role: "Canvas. outermost layer the panels float on" },
+  { name: "--bg",       light: "#fafafa", dark: "#141414", role: "Panel fill. sits just above canvas" },
+  { name: "--surface",  light: "#ffffff", dark: "#1c1c1c", role: "Card fill. elevated above panel; case study page bg" },
+  { name: "--surface2", light: "#f5f5f7", dark: "#242424", role: "Hover / inset. one subtle step further" },
+  { name: "--border",   light: "#d2d2d7", dark: "#2a2a2a", role: "Opaque separator / hairline" },
   { name: "--text",     light: "#1d1d1f", dark: "#ffffff", role: "Primary label" },
-  { name: "--muted",    light: "#6e6e73", dark: "#71717b", role: "Secondary label — passes AA on card surface" },
-  { name: "--muted2",   light: "#424245", dark: "#a1a1aa", role: "Tertiary label — body and value text" },
+  { name: "--muted",    light: "#6e6e73", dark: "#71717b", role: "Secondary label. passes AA on card surface" },
+  { name: "--muted2",   light: "#424245", dark: "#a1a1aa", role: "Tertiary label. body and value text" },
 ];
 
 const ACCENTS = [
-  { name: "--accent-success", value: "#34c759", role: "Confirmation green — 'now' indicator on the career timeline, the 'copied' state on the email pill, momentary success feedback" },
-  { name: "--accent-error",   value: "#ff3b30", role: "Alert red — error states and destructive actions" },
+  { name: "--accent-success", value: "#34c759", role: "Confirmation green. 'now' indicator on the career timeline, the 'copied' state on the email pill, momentary success feedback" },
+  { name: "--accent-error",   value: "#ff3b30", role: "Alert red. error states and destructive actions" },
+  { name: "--accent-warm",    value: "#d17b53", role: "Burnt terracotta. punctuation accent; used on the 'Now' dot, highlight sweeps, and inline emphasis marks" },
+  { name: "--accent-violet",  value: "#9b8ff5", role: "Muted violet. AI Experiments chip, icon badges, and section labels in case study goal / persona cards" },
 ];
 
-/* Type scale — rebuilt against the Figma reference design
+/* Type scale. rebuilt against the Figma reference design
    (lTdRlX8PGw0ncWuAT8fElw). Inter Regular at every size; weight 500
    only for emphasised inline phrases (==text==). 0 letter-spacing
-   throughout — the previous negative tracking was drift. */
+   throughout. the previous negative tracking was drift. */
 const TYPE_SCALE = [
   { name: "Case study hero",   size: "clamp(26px, 4vw, 44px)", weight: 300, ls: "-0.03em" },
   { name: "Panel hero",        size: "18px", weight: 400, ls: "0", lh: "30px" },
@@ -56,11 +58,11 @@ const TYPE_SCALE = [
 ];
 
 export default function SystemPage() {
-  /* Scroll progress — matches case study layout exactly */
+  /* Scroll progress. matches case study layout exactly */
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
 
-  /* Sticky section nav — appears after scrolling past the hero */
+  /* Sticky section nav. appears after scrolling past the hero */
   const [navVisible, setNavVisible] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("system-overview");
 
@@ -89,7 +91,7 @@ export default function SystemPage() {
 
   return (
     <>
-      {/* Scroll progress bar — matches the case study layout exactly:
+      {/* Scroll progress bar. matches the case study layout exactly:
           1.5px AI-themed gradient (cyan → indigo → purple → pink → amber)
           drifting horizontally on a 6s linear loop. Honours
           prefers-reduced-motion. */}
@@ -119,7 +121,7 @@ export default function SystemPage() {
         }
       `}</style>
 
-      {/* Top nav — same chrome as the case study layout */}
+      {/* Top nav. same chrome as the case study layout */}
       <motion.header
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -169,7 +171,7 @@ export default function SystemPage() {
 
       <main style={{ paddingTop: "64px" }}>
 
-        {/* Hero — same shape as case study hero */}
+        {/* Hero. same shape as case study hero */}
         <section style={{ padding: "48px 0" }}>
           <div className="page-pad">
             <motion.div
@@ -209,7 +211,7 @@ export default function SystemPage() {
                 variants={fadeUp}
                 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.65, color: "var(--muted)", maxWidth: "520px", marginBottom: "32px" }}
               >
-                Tokens, components, motion vocabulary, and recurring interaction patterns —
+                Tokens, components, motion vocabulary, and recurring interaction patterns .
                 documented as they exist in the live site, not invented for the page.
                 Format follows Untitled UI&apos;s component-spec convention.
               </motion.p>
@@ -222,12 +224,12 @@ export default function SystemPage() {
 
             {/* ── Overview ── */}
             <CsSection id="system-overview" label="Overview">
-              <BodyText>
-                This page documents what already lives in the codebase you&apos;re reading from —
-                color and type tokens, the components used across the home and case study pages,
-                and the recurring interaction patterns. Nothing here is speculative; every
-                example is wired to the same tokens and behaviors used in the live portfolio.
-              </BodyText>
+              <ul style={listStyle}>
+                <li>Extracted from the live codebase. not speculative or invented for this page</li>
+                <li>Every example is wired to the same tokens and behaviors you see in the portfolio</li>
+                <li>Covers color + type tokens, components, interaction patterns, and the AI-augmented process</li>
+                <li>Format follows Untitled UI&apos;s component-spec convention</li>
+              </ul>
               <SpecRow label="Sections">
                 <span style={chipStyle}>Foundations</span>
                 <span style={chipStyle}>Components</span>
@@ -238,14 +240,12 @@ export default function SystemPage() {
 
             {/* ── Foundations ── */}
             <CsSection id="system-foundations" label="Foundations">
-              <BodyText>
-                Two themes sharing one architecture. Light is a cool near-white scale; dark is
-                a tight warm-neutral scale where panels barely lift off pure-black canvas and
-                cards barely lift off panels. The dark scale sits in the deepest 12% of the
-                lightness range — high contrast for text, no surface ever feels &quot;lit&quot;.
-                Inter at weight 400 throughout; weight 500 only for inline emphasised phrases.
-                Ease-out-quint as the default motion curve.
-              </BodyText>
+              <ul style={listStyle}>
+                <li>Two themes, one shared architecture. light (cool near-white) and dark (tight warm-neutral)</li>
+                <li>Dark scale sits in the deepest 12% of lightness. surfaces never feel &quot;lit&quot;, text always wins</li>
+                <li>Inter 400 throughout; weight 500 only for inline emphasis. Zero letter-spacing as default</li>
+                <li>Ease-out-quint is the default motion curve across all transitions</li>
+              </ul>
 
               <SubHeading>Surfaces</SubHeading>
               <div style={swatchGrid}>
@@ -331,10 +331,11 @@ export default function SystemPage() {
 
             {/* ── Components ── */}
             <CsSection id="system-components" label="Components">
-              <BodyText>
-                Each component shown live with its variants. Same shadow-elevation language
-                across content (cards) and chrome (icon buttons, wordmark pill).
-              </BodyText>
+              <ul style={listStyle}>
+                <li>Each component shown live. resting, hover, and active states where applicable</li>
+                <li>Consistent shadow-elevation language across content (cards) and chrome (buttons, pills)</li>
+                <li>No bespoke one-offs. every component is reused across at least two surfaces</li>
+              </ul>
 
               <ComponentBlock
                 name="Card"
@@ -343,7 +344,7 @@ export default function SystemPage() {
                 usedIn={["Selected Work", "Career timeline", "Testimonials", "Location card"]}
                 tokens={["--surface", "--card-shadow", "--card-shadow-hover", "border-radius: 16px"]}
                 states={[
-                  { label: "Resting", node: <DemoCard interactive={false} label="Resting" desc="Default — sits with subtle elevation." /> },
+                  { label: "Resting", node: <DemoCard interactive={false} label="Resting" desc="Default. sits with subtle elevation." /> },
                   { label: "Hover",   node: <DemoCard interactive={true}  label="Hover me" desc="Shadow deepens; no border change." /> },
                 ]}
               />
@@ -387,27 +388,45 @@ export default function SystemPage() {
 
             {/* ── Patterns ── */}
             <CsSection id="system-patterns" label="Patterns">
-              <BodyText>
-                Recurring interactions used across the portfolio. Each is implemented in the
-                live codebase; the demos here run on the same tokens and timings.
-              </BodyText>
+              {/* At-a-glance scan table */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1px", marginBottom: "40px", borderRadius: "12px", overflow: "hidden", boxShadow: "var(--card-shadow)" }}>
+                {[
+                  { name: "Card hover lift",        cat: "Elevation", where: "Work, Career, Nav chrome" },
+                  { name: "Scroll reveal",           cat: "Entrance",  where: "Case study sections, Work cards" },
+                  { name: "Panel cascade",           cat: "Entrance",  where: "Home. all 5 panels on load" },
+                  { name: "Metric count-up",         cat: "Reveal",    where: "Work card primary metrics" },
+                  { name: "Live-coded loader",       cat: "Entrance",  where: "Home. first frame" },
+                  { name: "Marquee + hover pause",   cat: "Motion",    where: "Contact panel skills ticker" },
+                  { name: "Live IST clock",          cat: "Live data", where: "Contact panel map card" },
+                ].map((p, i, arr) => (
+                  <div key={p.name} style={{
+                    display: "grid", gridTemplateColumns: "1fr 90px 1fr",
+                    alignItems: "center", gap: "16px",
+                    padding: "12px 16px",
+                    background: "var(--surface)",
+                    borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none",
+                  }}>
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, color: "var(--text)", letterSpacing: "-0.01em" }}>{p.name}</span>
+                    <span style={{ ...categoryPill, justifySelf: "start" }}>{p.cat}</span>
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", letterSpacing: "-0.01em" }}>{p.where}</span>
+                  </div>
+                ))}
+              </div>
 
               <PatternBlock
                 name="Card hover lift"
                 category="Elevation"
-                rationale="One elevation language across the entire portfolio. Cards rest at --card-shadow, lift to --card-shadow-hover on hover. The same tokens drive icon-button hovers (theme toggle, wordmark) so chrome and content share physics."
                 usedIn={["Selected Work", "Career", "Wordmark", "Theme toggle", "Nav arrows"]}
                 tokens={["--card-shadow", "--card-shadow-hover"]}
               >
                 <div style={{ display: "flex", gap: "12px" }}>
-                  <DemoCard interactive label="Hover me" desc="Shadow deepens." />
+                  <DemoCard interactive label="Hover me" desc="Shadow deepens on hover." />
                 </div>
               </PatternBlock>
 
               <PatternBlock
                 name="Scroll-triggered reveal"
                 category="Entrance"
-                rationale="Elements fade up from y:20 with a brief filter:blur(6px) → blur(0). The blur adds cinematic depth without scale or rotation. Uses framer-motion whileInView with viewport once: true."
                 usedIn={["Case study sections", "Work cards on scroll", "Career cards"]}
                 tokens={["ease-out-quint", "0.7s duration", "filter blur 6px → 0"]}
               >
@@ -417,8 +436,7 @@ export default function SystemPage() {
               <PatternBlock
                 name="Panel cascade entrance"
                 category="Entrance"
-                rationale="When the loader exits, the five home panels reveal in sequence (0.12s stagger) over ~700ms. Each uses the same fade-up + blur as the scroll pattern. One well-rehearsed entrance over scattered micro-interactions."
-                usedIn={["Home page — five panels"]}
+                usedIn={["Home page. five panels"]}
                 tokens={["0.12s per-panel stagger", "0.7s duration", "y:20, blur 6px → 0"]}
               >
                 <CascadeDemo />
@@ -427,7 +445,6 @@ export default function SystemPage() {
               <PatternBlock
                 name="Metric count-up"
                 category="Reveal"
-                rationale="The first time a work card enters view, its primary metric counts up from 0 to the target. Parses prefix/suffix (e.g. ~95%) and animates only the numeric portion. Fires once via IntersectionObserver."
                 usedIn={["Work card primary metrics"]}
                 tokens={["IntersectionObserver threshold 0.5", "1000ms duration", "ease-out-expo"]}
               >
@@ -437,8 +454,7 @@ export default function SystemPage() {
               <PatternBlock
                 name="Live-coded loader"
                 category="Entrance"
-                rationale="The page loader types <h1>Arun Gaddam</h1> in mono font, then the syntax tags fade and the inner text morphs from mono 14px → body 42px. Gated on document.fonts.ready with a 1500ms safety cap."
-                usedIn={["Home page — first frame"]}
+                usedIn={["Home page. first frame"]}
                 tokens={["--font-mono → --font-body morph", "1.3s sequence"]}
               >
                 <LoaderDemo />
@@ -447,7 +463,6 @@ export default function SystemPage() {
               <PatternBlock
                 name="Marquee with hover pause"
                 category="Motion"
-                rationale="Continuously-scrolling track using CSS keyframes (not framer-motion — supports animation-play-state: paused). On hover of the parent .skills-ticker container, the inner .marquee-track pauses so visitors can read the items."
                 usedIn={["Skills & Tools ticker on Contact panel"]}
                 tokens={["--marquee-duration", "@keyframes marquee", "linear infinite"]}
               >
@@ -457,9 +472,8 @@ export default function SystemPage() {
               <PatternBlock
                 name="Live IST clock"
                 category="Live data"
-                rationale="Replaces a static IST · UTC +5:30 label with a live ticking clock. SSR-safe: renders the static fallback until hydration. Signals the human on the other side."
-                usedIn={["Contact panel — Hyderabad map card"]}
-                tokens={["Intl.DateTimeFormat with timeZone: 'Asia/Kolkata'", "1s update interval"]}
+                usedIn={["Contact panel. Hyderabad map card"]}
+                tokens={["Intl.DateTimeFormat · Asia/Kolkata", "1s update interval"]}
               >
                 <ClockDemo />
               </PatternBlock>
@@ -467,27 +481,63 @@ export default function SystemPage() {
 
             {/* ── Process ── */}
             <CsSection id="system-process" label="Process">
-              <BodyText>
-                This portfolio — and this system documentation — was built end-to-end with Claude Code.
-                Not &quot;AI-assisted&quot; as a buzzword; the actual workflow: plan, prompt, review, revert,
-                refine. The notes below capture what worked, what I overrode, and what I&apos;d carry forward.
-              </BodyText>
 
-              <SubHeading>What this section will cover</SubHeading>
-              <ul style={listStyle}>
-                <li>The setup — PRODUCT.md, DESIGN.md, the agent skills (impeccable, animate, design-taste-frontend) and how I used them</li>
-                <li>Specific design decisions that emerged from the human / AI dialog</li>
-                <li>The reverts — moments where I knew better than Claude (the dither backdrop, the gradient overlay, the chartreuse accent)</li>
-                <li>Unexpected wins — where Claude proposed something I wouldn&apos;t have considered alone</li>
-                <li>What this says about the senior designer&apos;s role in an AI-augmented workflow</li>
-              </ul>
+              {/* Workflow strip */}
+              <div style={{ display: "flex", gap: "2px", marginBottom: "32px" }}>
+                {["Plan", "Prompt", "Review", "Revert", "Refine"].map((step, i) => (
+                  <div key={step} style={{
+                    flex: 1, padding: "14px 10px",
+                    background: "var(--surface)",
+                    borderRadius: i === 0 ? "10px 2px 2px 10px" : i === 4 ? "2px 10px 10px 2px" : "2px",
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
+                    boxShadow: "var(--card-shadow)",
+                  }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)" }}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em" }}>
+                      {step}
+                    </span>
+                  </div>
+                ))}
+              </div>
 
-              <BodyText>
-                AI-augmented design isn&apos;t faster than solo design — it&apos;s <em>different</em>.
-                The bottleneck shifts from &quot;can I produce this&quot; to &quot;do I know what I want.&quot;
-                Claude can generate ten variants of a button hover in a minute, but only the designer
-                can name which one is right. The portfolio is the proof; this essay (in progress) is the post-mortem.
-              </BodyText>
+              {/* Moment cards */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "24px" }}>
+                {[
+                  {
+                    label: "The Setup",
+                    items: ["PRODUCT.md + DESIGN.md as ground truth", "Agent skills: impeccable, animate, design-taste-frontend", "Plan mode before every major change"],
+                  },
+                  {
+                    label: "The Reverts",
+                    items: ["Dither backdrop. too noisy", "Full-page gradient overlay. killed contrast", "Chartreuse accent. wrong energy entirely"],
+                  },
+                  {
+                    label: "The Wins",
+                    items: ["Count-up metric on work cards", "Live IST clock in contact panel", "Scroll-progress gradient bar"],
+                  },
+                ].map(card => (
+                  <div key={card.label} style={{ padding: "16px 18px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 12px 0" }}>
+                      {card.label}
+                    </p>
+                    <ul style={{ margin: 0, paddingLeft: "14px" }}>
+                      {card.items.map(item => (
+                        <li key={item} style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted2)", lineHeight: 1.65, marginBottom: "6px" }}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+
+              {/* Key insight callout */}
+              <div style={{ padding: "18px 22px", background: "var(--surface)", borderRadius: "12px", borderLeft: "3px solid var(--border)", boxShadow: "var(--card-shadow)" }}>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "var(--text)", lineHeight: 1.65, margin: 0, letterSpacing: "-0.01em" }}>
+                  AI-augmented design shifts the bottleneck from <em>&quot;can I produce this&quot;</em> to <em>&quot;do I know what I want.&quot;</em> The portfolio is the proof; the post-mortem essay is in progress.
+                </p>
+              </div>
+
             </CsSection>
 
           </div>
@@ -496,7 +546,7 @@ export default function SystemPage() {
 
       <Footer />
 
-      {/* Sticky section nav — same component as case study detail */}
+      {/* Sticky section nav. same component as case study detail */}
       <AnimatePresence>
         {navVisible && (
           <motion.nav
@@ -560,7 +610,7 @@ export default function SystemPage() {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Section primitives — match the case study detail layout shape
+   Section primitives. match the case study detail layout shape
    ───────────────────────────────────────────────────────────── */
 
 function CsSection({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
@@ -671,22 +721,20 @@ function ComponentBlock({
 /* ─── Pattern block ─── */
 
 function PatternBlock({
-  name, category, rationale, usedIn, tokens, children,
+  name, category, usedIn, tokens, children,
 }: {
   name: string;
   category: string;
-  rationale: string;
   usedIn: string[];
   tokens: string[];
   children: React.ReactNode;
 }) {
   return (
-    <div style={{ marginTop: "48px" }}>
-      <div style={{ display: "flex", alignItems: "baseline", gap: "12px", marginBottom: "8px" }}>
+    <div style={{ marginTop: "36px" }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "12px" }}>
         <h3 style={blockTitle}>{name}</h3>
         <span style={categoryPill}>{category}</span>
       </div>
-      <p style={blockPara}>{rationale}</p>
 
       <div style={demoFrame}>{children}</div>
 

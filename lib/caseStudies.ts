@@ -22,7 +22,7 @@ export type CaseStudy = {
   title: string;
   subtitle: string;
   /** Short impact statement shown on the Selected Work card thumbnail.
-      Replaces the subtitle in the card view — should convey the key outcome
+      Replaces the subtitle in the card view. should convey the key outcome
       in ≤ 12 words. If absent, falls back to the first metric or subtitle. */
   cardImpact?: string;
   company?: string;
@@ -34,9 +34,9 @@ export type CaseStudy = {
   summary: string;
   tldr?: { problem: string; approach: string; outcome: string };
   /** Top-of-page metrics. Each metric has:
-        value — the headline (rendered big, primary text)
-        label — a short eyebrow (mono caps, 1–4 words)
-        body  — optional longer descriptive sentence, sentence-case
+        value. the headline (rendered big, primary text)
+        label. a short eyebrow (mono caps, 1 to 4 words)
+        body . optional longer descriptive sentence, sentence-case
                 body text. Use when the explanation is too long to
                 read comfortably as mono caps. */
   metrics?: { value: string; label: string; body?: string }[];
@@ -91,13 +91,13 @@ export type CaseStudy = {
   contributionArtifacts?: string[];
   references?: { label: string; url: string }[];
   confidential?: boolean;
-  /** Optional user cards — renders as a 3-column grid showing distinct roles,
+  /** Optional user cards. renders as a 3-column grid showing distinct roles,
       each with bullet points and a core tension line. Used when a case study
       involves multiple distinct user types that need separate representation. */
   users?: { role: string; name: string; bullets: string[]; coreTension: string }[];
-  /** Optional UX goals — renders as a two-column grid alongside productGoals. */
+  /** Optional UX goals. renders as a two-column grid alongside productGoals. */
   uxGoals?: { title: string; body: string }[];
-  /** Optional product goals — renders as a two-column grid alongside uxGoals. */
+  /** Optional product goals. renders as a two-column grid alongside uxGoals. */
   productGoals?: { title: string; body: string }[];
   heroLabel: string;
   /** Optional override for the URL/label shown in the browser chrome above
@@ -122,7 +122,7 @@ export type CaseStudy = {
     closing?: string;
     segments: { label: string; name: string; roles: string; body: string }[];
   };
-  /** Optional contextCards — structured Context section with multiple
+  /** Optional contextCards. structured Context section with multiple
       titled cards. Each card may carry a lead paragraph and / or a
       bullet list. Used when the Context can't be told as one prose
       block. */
@@ -135,7 +135,7 @@ export type CaseStudy = {
     /** Optional vs-grid (two side-by-side labelled descriptions). */
     vsGrid?: { leftLabel: string; leftDesc: string; rightLabel: string; rightDesc: string };
   }[];
-  /** Optional problemCards — same idea as contextCards but for the
+  /** Optional problemCards. same idea as contextCards but for the
       Problem section. Each card has a title plus either a lead or a
       bullet list (often both). Replaces the simple `problem` string
       when present. An optional `image` after a card lets the
@@ -175,22 +175,22 @@ export type CaseStudy = {
 };
 
 export const caseStudies: CaseStudy[] = [
-  /* ── #08 Planful ESM Tables — Excel → web (fresh, verbatim from HTML brief) ── */
+  /* ── #08 Planful ESM Tables. Excel → web (fresh, verbatim from HTML brief) ── */
   {
     slug: "planful-esm-tables",
     number: "08",
     title: "Moving a critical finance workflow from Excel to the web.",
     subtitle:
       "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
-    cardImpact: "~95% reduction in time on task — 3.5 hrs → 10–15 min",
+    cardImpact: "~95% reduction in time on task. 3.5 hrs → 10 to 15 min",
     company: "Planful",
     type: "Enterprise SaaS · Fintech",
     role: "Senior Product Designer (IC)",
-    timeline: "~1 month design · 2–3 months rollout",
+    timeline: "~1 month design · 2 to 3 months rollout",
     team: "Product, Engineering, Implementation Consultants",
     tags: ["Enterprise software", "Data workflow", "Fintech", "Web Application"],
     heroLabel: "Real Work",
-    /* Confidential — case study sits behind a password gate. */
+    /* Confidential. case study sits behind a password gate. */
     confidential: true,
 
     sectionLabels: {
@@ -204,7 +204,7 @@ export const caseStudies: CaseStudy[] = [
 
     metrics: [
       {
-        value: "3.5 hrs → 10–15 min",
+        value: "3.5 hrs → 10 to 15 min",
         label: "Time on task",
         body: "~95% reduction. Simple updates that took half a day now take a coffee break.",
       },
@@ -221,7 +221,7 @@ export const caseStudies: CaseStudy[] = [
     contextVideo: "/images/planful/planful%20product%20video.mp4",
     chromeUrl: "app.planful.com",
 
-    /* Plain prose at the top of the Context section — no card, no
+    /* Plain prose at the top of the Context section. no card, no
        box. Sets up Planful, the role of the live financial model,
        and the controlled workspace (ESM) that feeds it. The ESM vs
        OLAP visual diagram renders below this prose, before the
@@ -229,7 +229,7 @@ export const caseStudies: CaseStudy[] = [
     context:
       "Planful software is used by core finance teams at large companies to plan budgets and forecasts. When business needs shift, the data in those models has to shift too. Instead of editing the core model directly, teams load updates through an External Source Model, a controlled workspace that feeds the model without disturbing what's already there.",
 
-    /* One remaining context card — the financial-data-models card
+    /* One remaining context card. the financial-data-models card
        with the ESM → Core Financial Model pair. The earlier
        "Planful in one line" card was promoted to plain prose
        (above), and the "ESM vs OLAP shapes of data" card was
@@ -255,13 +255,13 @@ export const caseStudies: CaseStudy[] = [
        reading about how the workspace feeds the model. */
     insightDiagram: "olap-vs-esm",
 
-    /* Problem section — plain prose sets the scene, the Issues
+    /* Problem section. plain prose sets the scene, the Issues
        card carries the screenshot, breakdown grid, and business
        impact. Image is nested inside the card (not standalone). */
     problem:
-      "Before ESM Tables existed, this workflow already had a tool. A key part of it lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug in for Excel, PowerPoint, and Word. It worked — but it came with real friction.",
+      "Before ESM Tables existed, this workflow already had a tool. A key part of it lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug in for Excel, PowerPoint, and Word. It worked. but it came with real friction.",
 
-    /* Issues card — single card with the screenshot, breakdown
+    /* Issues card. single card with the screenshot, breakdown
        grid, and business-impact callout. Image sits inside the
        card so the visual and the diagnosis stay together. */
     problemCards: [
@@ -320,7 +320,7 @@ export const caseStudies: CaseStudy[] = [
     },
 
     decisions: [
-      /* 1 — clearer copy: lead with the user benefit (familiar
+      /* 1. clearer copy: lead with the user benefit (familiar
          spreadsheet behaviour) instead of the vendor name. */
       {
         title: "A familiar spreadsheet, not a new tool to learn",
@@ -331,9 +331,9 @@ export const caseStudies: CaseStudy[] = [
           caption: "Syncfusion, the grid pattern that shaped the technical approach",
         },
       },
-      /* 2 — clearer copy + section walkthrough video. */
+      /* 2. clearer copy + section walkthrough video. */
       {
-        title: "Drag, drop, or paste — no waiting for big files",
+        title: "Drag, drop, or paste. no waiting for big files",
         body: "Two ways in, both first class: drop a file, or paste straight from a spreadsheet. For files of 50,000+ rows, the first 1,000 rows preview instantly so users can start working before the full upload finishes.",
         videos: [
           {
@@ -343,19 +343,19 @@ export const caseStudies: CaseStudy[] = [
           },
         ],
       },
-      /* 3 — navigation / discovery decision. Dynamic Planning is the
+      /* 3. navigation / discovery decision. Dynamic Planning is the
          key feature; ESM Tables lives inside it, sequenced fourth
          because it is not part of everyday modeling work. */
       {
-        title: "Inside Dynamic Planning — fourth in the list, not the daily driver",
-        body: "Dynamic Planning is the core modeling surface finance teams use every day. ESM Tables lives inside it as the fourth tab, not the first thing they open. No separate app to install, no new login — discovering the feature meant clicking one tab over from where they already were.",
+        title: "Inside Dynamic Planning. fourth in the list, not the daily driver",
+        body: "Dynamic Planning is the core modeling surface finance teams use every day. ESM Tables lives inside it as the fourth tab, not the first thing they open. No separate app to install, no new login. discovering the feature meant clicking one tab over from where they already were.",
         image: {
           src: "/images/planful/Navigation.png",
           alt: "ESM Tables nested inside Dynamic Planning as the fourth tab",
           caption: "Nested inside Dynamic Planning, where the modeling work already happens",
         },
       },
-      /* 3 — column settings, now with the section walkthrough video
+      /* 3. column settings, now with the section walkthrough video
          (no more Navigation image, which moved up to its own
          decision). */
       {
@@ -369,19 +369,19 @@ export const caseStudies: CaseStudy[] = [
           },
         ],
       },
-      /* 4 — TLDR'd. Was two paragraphs explaining the trade-off;
+      /* 4. TLDR'd. Was two paragraphs explaining the trade-off;
          now a single tighter paragraph that keeps the why and the
          alternative considered. */
       {
         title: "Live colour feedback on formulas",
-        body: "Colour highlights show which cells a formula touches as the user types — no preview step, no extra click. I considered a preview step (safer, but adds friction to every formula); the live feedback catches mistakes the moment they happen, so the extra safety wasn't worth the cost.",
+        body: "Colour highlights show which cells a formula touches as the user types. no preview step, no extra click. I considered a preview step (safer, but adds friction to every formula); the live feedback catches mistakes the moment they happen, so the extra safety wasn't worth the cost.",
         image: {
           src: "/images/planful/formula-feedback.png",
           alt: "Live colour feedback in the formula bar as the user types",
           caption: "Live colour feedback as you type, see what changes before it does",
         },
       },
-      /* 5 — plain language. Drop the "not in a post-submission
+      /* 5. plain language. Drop the "not in a post-submission
          report" jargon; the title and body now describe the
          behaviour in everyday terms. Section walkthrough video. */
       {
@@ -395,10 +395,10 @@ export const caseStudies: CaseStudy[] = [
           },
         ],
       },
-      /* 6 — renamed: the action is bulk data update; overwrite or
+      /* 6. renamed: the action is bulk data update; overwrite or
          append are the two modes. Section walkthrough video. */
       {
-        title: "Bulk data update — overwrite or append",
+        title: "Bulk data update. overwrite or append",
         body: "At period close, teams replace the full dataset. Mid cycle, they add rows without touching what's already there. Both modes are explicit at upload time, no scripting, no support ticket. A task that used to require rebuilding the whole table now takes a click.",
         videos: [
           {
@@ -408,11 +408,11 @@ export const caseStudies: CaseStudy[] = [
           },
         ],
       },
-      /* 7 (publish flow) — REMOVED per the latest direction.
+      /* 7 (publish flow). REMOVED per the latest direction.
          The end-to-end story is now: load → transform → validate
          → publish → map (next decision). Publish-specific friction
          doesn't earn its own beat. */
-      /* 8 — Data Maps: the next phase. No static image (the video covers
+      /* 8. Data Maps: the next phase. No static image (the video covers
          it). Title reframes this as a forward-looking project beat,
          not a post-publish step. */
       {
@@ -436,7 +436,7 @@ export const caseStudies: CaseStudy[] = [
           "Manages ESM table updates at quarter and period close",
           "Runs data loads, validates column types, and publishes to the core financial model",
           "Previously tied to a Windows machine running the Excel plug-in",
-          "Errors in the load corrupt forecast data downstream — zero tolerance",
+          "Errors in the load corrupt forecast data downstream. zero tolerance",
         ],
         coreTension: "Speed at period close vs. zero tolerance for data errors",
       },
@@ -444,10 +444,10 @@ export const caseStudies: CaseStudy[] = [
         role: "Business Team Owner",
         name: "Self-service data loading · no mediator",
         bullets: [
-          "Owns the data but couldn't load it — always routed through Finance",
+          "Owns the data but couldn't load it. always routed through Finance",
           "Updates were delayed by Finance's queue and manual back-and-forth",
           "Needs to load independently without risking the shared model",
-          "Doesn't think in database terms — needs the tool to think for them",
+          "Doesn't think in database terms. needs the tool to think for them",
         ],
         coreTension: "Autonomy without the guardrails Finance used to provide",
       },
@@ -460,12 +460,12 @@ export const caseStudies: CaseStudy[] = [
           "Goal: let teams self-serve without losing oversight",
           "A single bad publish can ripple through quarterly forecasts",
         ],
-        coreTension: "Can't review every load personally — but can't afford not to",
+        coreTension: "Can't review every load personally. but can't afford not to",
       },
     ],
 
     outcomes: [
-      "3.5 hrs → 10–15 min. A ~95% reduction in time on task. Simple updates that took half a day now take a coffee break.",
+      "3.5 hrs → 10 to 15 min. A ~95% reduction in time on task. Simple updates that took half a day now take a coffee break.",
       "Finance → Any team. Non-finance teams now load their own data without finance mediating every update.",
     ],
 
@@ -481,8 +481,8 @@ export const caseStudies: CaseStudy[] = [
     slug: "astra",
     number: "00",
     title: "AI Contract Review & Approval Workflow",
-    subtitle: "What does 85–90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
-    cardImpact: "Full working prototype shipped in a weekend — AI review + approval in 2 flows",
+    subtitle: "What does 85 to 90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
+    cardImpact: "Full working prototype shipped in a weekend. AI review + approval in 2 flows",
     company: "AI Exploration",
     type: "AI · B2B SaaS",
     role: "AI UX",
@@ -493,10 +493,10 @@ export const caseStudies: CaseStudy[] = [
     confidential: false,
 
     summary:
-      "==When an AI is right 85–90% of the time, what does the remaining 10–15% look like in the interface?== Two flows, built in a weekend with Claude Code. Working through that answer.",
+      "==When an AI is right 85 to 90% of the time, what does the remaining 10 to 15% look like in the interface?== Two flows, built in a weekend with Claude Code. Working through that answer.",
 
     context:
-      "B2B contract intelligence: AI extracts 30–40 fields from a vendor contract, a human reviews and corrects, approval routes through a configured workflow. The design problem isn't the upload or the dashboard. It's the seam between what the model extracted and what the reviewer actually trusts.",
+      "B2B contract intelligence: AI extracts 30 to 40 fields from a vendor contract, a human reviews and corrects, approval routes through a configured workflow. The design problem isn't the upload or the dashboard. It's the seam between what the model extracted and what the reviewer actually trusts.",
 
 
     users: [
@@ -504,18 +504,18 @@ export const caseStudies: CaseStudy[] = [
         role: "Procurement Professional",
         name: "Contract review · data accuracy",
         bullets: [
-          "Processes 5–15 contracts per day",
+          "Processes 5 to 15 contracts per day",
           "Reviews AI-extracted fields, corrects mistakes, approves data before it enters the workflow",
           "Errors that slip through have real financial consequences",
           "Needs to move fast without sacrificing accuracy",
         ],
-        coreTension: "Speed vs. accuracy at 85–90% AI reliability",
+        coreTension: "Speed vs. accuracy at 85 to 90% AI reliability",
       },
       {
         role: "Legal Professional",
         name: "Contract review · risk and liability",
         bullets: [
-          "Reviews the same contract as procurement — but for risk, not data accuracy",
+          "Reviews the same contract as procurement. but for risk, not data accuracy",
           "Scrutinizes indemnity clauses, SLAs, liability terms",
           "Errors that slip through have real legal consequences",
           "Needs a view scoped to what legal actually owns",
@@ -526,9 +526,9 @@ export const caseStudies: CaseStudy[] = [
         role: "Procurement Manager",
         name: "Workflow configuration · approval routing",
         bullets: [
-          "Configures 10–15 approval chains across the organisation",
+          "Configures 10 to 15 approval chains across the organisation",
           "Rules vary by contract type, dollar threshold, vendor risk, and department",
-          "Currently managed through email — approvals get stuck, skipped, or misrouted",
+          "Currently managed through email. approvals get stuck, skipped, or misrouted",
           "Needs to build and edit rules without engineering support",
         ],
         coreTension: "Complex logic that must feel like plain language",
@@ -538,7 +538,7 @@ export const caseStudies: CaseStudy[] = [
     uxGoals: [
       {
         title: "Make AI uncertainty actionable",
-        body: "At 85–90% accuracy, every field needs an explicit state — confident, needs review, or missing. The reviewer shouldn't have to infer confidence from a percentage or a tooltip.",
+        body: "At 85 to 90% accuracy, every field needs an explicit state. confident, needs review, or missing. The reviewer shouldn't have to infer confidence from a percentage or a tooltip.",
       },
       {
         title: "Separate the two review jobs",
@@ -561,12 +561,12 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "Ship two flows that work as a system",
-        body: "Contract review feeds the approval workflow. Designing them separately misses the coupling — the intake quality directly affects what routes through the approval chain.",
+        body: "Contract review feeds the approval workflow. Designing them separately misses the coupling. the intake quality directly affects what routes through the approval chain.",
       },
     ],
 
     problem:
-      "Most AI products treat model uncertainty as a footnote: a confidence percentage tucked into a tooltip the reviewer never opens. ==That's not a UX solution. It's a UX abdication.==\n\nAt 85–90% accuracy, every extracted field is a micro-decision: trust it, flag it, or fix it. That decision needs to be cheap, visible, and impossible to accidentally skip. Designing that interaction, and the routing layer that governs what happens after, is the actual product.",
+      "Most AI products treat model uncertainty as a footnote: a confidence percentage tucked into a tooltip the reviewer never opens. ==That's not a UX solution. It's a UX abdication.==\n\nAt 85 to 90% accuracy, every extracted field is a micro-decision: trust it, flag it, or fix it. That decision needs to be cheap, visible, and impossible to accidentally skip. Designing that interaction, and the routing layer that governs what happens after, is the actual product.",
 
     decisions: [
       {
@@ -582,7 +582,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Every workflow rule compiles to a sentence a human can read",
         body:
-          "An admin building 10–15 approval paths shouldn't have to parse condition logic in their head. At every step of the builder, the configured rule renders as plain English: 'Software contracts under $50K go to direct manager only.' That sentence is the verification surface during build, and the artifact they scan on the landing page a month later.",
+          "An admin building 10 to 15 approval paths shouldn't have to parse condition logic in their head. At every step of the builder, the configured rule renders as plain English: 'Software contracts under $50K go to direct manager only.' That sentence is the verification surface during build, and the artifact they scan on the landing page a month later.",
       },
     ],
 
@@ -593,10 +593,10 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     approach:
-      "==6–8 hours, problem to live React prototype, with Claude Code.==\n\nClaude was the thought partner throughout, not just for code. Structuring the problem space, pressure-testing interaction hypotheses, iterating wireframes fast enough to throw most of them away. The role-based handoff insight didn't come from a brief; it surfaced asking whose attention an unresolved indemnity clause actually needs.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
+      "==6 to 8 hours, problem to live React prototype, with Claude Code.==\n\nClaude was the thought partner throughout, not just for code. Structuring the problem space, pressure-testing interaction hypotheses, iterating wireframes fast enough to throw most of them away. The role-based handoff insight didn't come from a brief; it surfaced asking whose attention an unresolved indemnity clause actually needs.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
 
     outcomes: [
-      "Validated by a product-stage B2B company — the interaction model and role-based handoff were reviewed and confirmed as production-ready thinking. Two complete flows shipped in 8 hours.",
+      "Validated by a product-stage B2B company. the interaction model and role-based handoff were reviewed and confirmed as production-ready thinking. Two complete flows shipped in 8 hours.",
     ],
 
     lesson:
@@ -611,15 +611,15 @@ export const caseStudies: CaseStudy[] = [
     number: "07",
     title: "Bringing Apple Maps into Business Listing Performance",
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
-    cardImpact: "~68% weekly adoption from launch — Apple Maps data visible across 100M+ US users",
+    cardImpact: "~68% weekly adoption from launch. Apple Maps data visible across 100M+ US users",
     company: "Reputation.com",
     type: "Enterprise SaaS · Analytics & Insights",
     role: "Senior UX Designer",
     timeline: "Q4 2024",
     team: "PM, Eng Lead, 3 Backend Engineers, 2 QA",
-    tags: ["Enterprise SaaS", "Analytics", "Dashboard Design", "Data Visualisation"],
+    tags: ["Enterprise SaaS", "Analytical Dashboard", "Dashboard Design", "Data Visualisation"],
     heroLabel: "Real Work",
-    confidential: false,
+    confidential: true,
 
     sectionLabels: {
       overview: "What's a Business Listing?",
@@ -687,7 +687,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Restructured the entire dashboard into 5 clear sections",
         body:
-          "The original dashboard had 20+ widgets with no grouping — common metrics mixed with Google-specific data, making it impossible to scan. The redesign organized everything into 5 clear sections:\n\nOverview: Cross-platform summary (All platforms)\nActions: Calls, directions, website clicks (All platforms)\nImpressions: Listing views breakdown (All platforms)\nDiscovery: Search patterns, device types (Google only)\nAdditional Actions: Platform-unique actions (Per platform)\n\n==Key insight:== By explicitly labeling platform-specific sections, users understood why Apple wasn't everywhere. It's not a gap, it's a capability difference.",
+          "The original dashboard had 20+ widgets with no grouping. common metrics mixed with Google-specific data, making it impossible to scan. The redesign organized everything into 5 clear sections:\n\nOverview: Cross-platform summary (All platforms)\nActions: Calls, directions, website clicks (All platforms)\nImpressions: Listing views breakdown (All platforms)\nDiscovery: Search patterns, device types (Google only)\nAdditional Actions: Platform-unique actions (Per platform)\n\n==Key insight:== By explicitly labeling platform-specific sections, users understood why Apple wasn't everywhere. It's not a gap, it's a capability difference.",
         image: {
           src: "/images/reputation/Before:After image .jpg",
           alt: "Before and after of the Listings Performance dashboard: from a wall of 20+ Google-heavy widgets to a clear 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
@@ -732,7 +732,7 @@ export const caseStudies: CaseStudy[] = [
     number: "06",
     title: "FanCode Homepage Redesign",
     subtitle: "We were sorting the homepage by content. Our users were sorting it by tournament.",
-    cardImpact: "Below-fold dead zone reversed — unused sections became active across every user cohort",
+    cardImpact: "Below-fold dead zone reversed. unused sections became active across every user cohort",
     company: "FanCode",
     type: "Consumer Mobile App · Sports & Streaming",
     role: "Manager UX (IC)",
@@ -740,21 +740,12 @@ export const caseStudies: CaseStudy[] = [
     team: "Product, Data, Content, Engineering",
     tags: ["Consumer Mobile", "Sports", "Homepage", "Retention", "IA", "Design Systems"],
     heroLabel: "Real Work",
-    confidential: false,
+    confidential: true,
 
     metrics: [
       { value: ">90%", label: "of users dropped past the first fold (before)" },
       { value: "3M+", label: "monthly active users on FanCode at the time" },
     ],
-
-    tldr: {
-      problem:
-        "More than 90% of users dropped past the first fold. Match cards absorbed nearly every click across every cohort. Below the fold was a dead zone.",
-      approach:
-        "I refused to redesign until I knew what was actually broken. The data, the team, the CEO, and the old research all pointed at the same thing: we'd built the page around the content we had, not around how users think.",
-      outcome:
-        "The dead zone became a real surface. Sections that sat at single-digit consumption started getting reached, scrolled, and clicked. The homepage moved from one entry point (match card) to many.",
-    },
 
     summary:
       "More than 90% of FanCode users dropped past the first fold. India's all-in-one sports app (live streaming, scores, news, shop, 3M+ monthly active users) was running on a homepage where most of the page was dying below the fold. ==I restructured around how cricket fans actually think: tournament first, then match, then teams and players. The dead zone reversed.==",
@@ -785,11 +776,11 @@ export const caseStudies: CaseStudy[] = [
     uxGoals: [
       {
         title: "Match tournament-first navigation",
-        body: "Cricket fans open the app thinking 'IPL today, India tour next' — not 'I want Top Videos'. Every below-fold section should answer a tournament question, not a content-format question.",
+        body: "Cricket fans open the app thinking 'IPL today, India tour next'. not 'I want Top Videos'. Every below-fold section should answer a tournament question, not a content-format question.",
       },
       {
         title: "Make below-the-fold scannable",
-        body: "More than 90% of users dropped past the first fold without tapping. The structure needed to earn scroll — clear section shapes, consistent rhythm, and deliberate pattern breaks that signal value at a glance.",
+        body: "More than 90% of users dropped past the first fold without tapping. The structure needed to earn scroll. clear section shapes, consistent rhythm, and deliberate pattern breaks that signal value at a glance.",
       },
       {
         title: "Teach the pattern once, apply it everywhere",
@@ -800,7 +791,7 @@ export const caseStudies: CaseStudy[] = [
     productGoals: [
       {
         title: "Reverse below-fold drop-off",
-        body: "The dead zone below the first fold wasn't a scroll problem — it was a trust problem. The goal was to turn single-digit below-fold consumption into real traffic distributed across the page.",
+        body: "The dead zone below the first fold wasn't a scroll problem. it was a trust problem. The goal was to turn single-digit below-fold consumption into real traffic distributed across the page.",
       },
       {
         title: "Give PMs more than one slot",
@@ -942,7 +933,7 @@ export const caseStudies: CaseStudy[] = [
     number: "02",
     title: "First-Time User Experience",
     subtitle: "Users were deleting the app within 2 hours of download. The product worked. The first minute didn't.",
-    cardImpact: "5 features shipped from 15 interviews — free trial, splash redesign, restructured FTUX",
+    cardImpact: "5 features shipped from 15 interviews. free trial, splash redesign, restructured FTUX",
     company: "FanCode",
     type: "Consumer Mobile App Sports & Media",
     role: "Manager UX",
@@ -1093,7 +1084,7 @@ export const caseStudies: CaseStudy[] = [
     title: "Supply chain coordination at scale",
     subtitle:
       "Designed a digital delivery challan workflow for a 500+ supplier network, turning a paper-based process that tied up 8 employees full-time into a system any ops user could run, with built-in GST compliance for the tax team.",
-    cardImpact: "90% user adoption in first 3 months — 800+ monthly challans off paper",
+    cardImpact: "90% user adoption in first 3 months. 800+ monthly challans off paper",
     company: "Zetwerk",
     type: "Enterprise Application, Supply Chain",
     role: "Sr. Product Designer",
@@ -1278,7 +1269,7 @@ export const caseStudies: CaseStudy[] = [
     number: "04",
     title: "Enterprise Service Design & Operations Research",
     subtitle: "Five teams. Five broken workflows. Nobody had ever drawn the full picture.",
-    cardImpact: "5 competing backlogs → 1 sequenced plan — first complete view of how ops actually worked",
+    cardImpact: "5 competing backlogs → 1 sequenced plan. first complete view of how ops actually worked",
     company: "Zetwerk",
     type: "User Research",
     role: "User Research & UX Strategy",
@@ -1310,7 +1301,7 @@ export const caseStudies: CaseStudy[] = [
         "The system had no way to filter orders by assigned person. Everyone saw everything, all the time",
         "Business Finance managed profit & loss and financial risk positions entirely in personal Excel files",
         "Procurement negotiated supplier quotes over WhatsApp, leaving no record of the conversation anywhere",
-        "Every invoice had to route through a third-party service, adding 15–20 minutes of waiting per order while loaded vehicles sat idle",
+        "Every invoice had to route through a third-party service, adding 15 to 20 minutes of waiting per order while loaded vehicles sat idle",
         "No real-time delivery tracking: operations managers called drivers directly to find out where shipments were",
         "Sales spent 1 in 4 working hours resolving delivery problems that the system should have prevented",
       ],
@@ -1335,11 +1326,11 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "The invoice delay was a process design failure, not a vendor problem",
-        body: "The invoice delay wasn't a vendor performance problem. It was a structural failure nobody had named yet. Every shipment had to route through a third-party service before a vehicle could move: 15–20 minutes per order, every time. Internally it was treated as a speed problem: pressure the vendor. Research showed it was structural: three parties, one sequential handoff, no shared visibility into where the delay was occurring. When a process requires sequential action with no shared view of progress, delays are guaranteed regardless of how fast any one party moves. The vendor wasn't the problem. The architecture was.",
+        body: "The invoice delay wasn't a vendor performance problem. It was a structural failure nobody had named yet. Every shipment had to route through a third-party service before a vehicle could move: 15 to 20 minutes per order, every time. Internally it was treated as a speed problem: pressure the vendor. Research showed it was structural: three parties, one sequential handoff, no shared visibility into where the delay was occurring. When a process requires sequential action with no shared view of progress, delays are guaranteed regardless of how fast any one party moves. The vendor wasn't the problem. The architecture was.",
       },
       {
         title: "Sales was being used as the system's customer service fallback",
-        body: "60–65% of orders escalated back to the Sales team. Priya's team was spending a quarter of their working hours chasing deliveries, not closing new customers. This wasn't just an efficiency problem. It was a misdirection problem. The most expensive resource in the business was being used to compensate for a system that couldn't handle its own error states. Every hour spent on an escalation is an hour not spent on growth.",
+        body: "60 to 65% of orders escalated back to the Sales team. Priya's team was spending a quarter of their working hours chasing deliveries, not closing new customers. This wasn't just an efficiency problem. It was a misdirection problem. The most expensive resource in the business was being used to compensate for a system that couldn't handle its own error states. Every hour spent on an escalation is an hour not spent on growth.",
       },
       {
         title: "Finance was carrying a risk the product had never accounted for, and I found it two weeks late",
@@ -1374,7 +1365,7 @@ export const caseStudies: CaseStudy[] = [
           number: "02",
           label: "Enquiry",
           description:
-            "Customer asks for a price quote. Procurement contacts 2–3 suppliers over WhatsApp to get prices. Sales negotiates terms. The entire process happens outside any system.",
+            "Customer asks for a price quote. Procurement contacts 2 to 3 suppliers over WhatsApp to get prices. Sales negotiates terms. The entire process happens outside any system.",
           meta: [
             { label: "Who", value: "Sales, Procurement" },
             { label: "Tools", value: "Email, WhatsApp, calls" },
@@ -1438,7 +1429,7 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "Mapping the invoice flow as a systemic failure, not a vendor issue",
-        body: "The invoice delay had been treated as a vendor management problem for months: pressure the third-party service, escalate, move faster. Research showed the problem was structural, which meant vendor pressure would never fix it. Three parties, one sequential handoff, no shared visibility into where the delay was occurring. Operations was spending 15–20 minutes per order waiting for paperwork while loaded vehicles sat idle. The reframe mattered because it changed what solutions were even possible: if it's a vendor problem, you escalate. If it's a structural problem, you redesign the process, including building a flow that lets Zetwerk create invoices directly instead of waiting. The tradeoff was a longer timeline. There was no quick version of this fix, and pretending otherwise would have repeated the mistake.",
+        body: "The invoice delay had been treated as a vendor management problem for months: pressure the third-party service, escalate, move faster. Research showed the problem was structural, which meant vendor pressure would never fix it. Three parties, one sequential handoff, no shared visibility into where the delay was occurring. Operations was spending 15 to 20 minutes per order waiting for paperwork while loaded vehicles sat idle. The reframe mattered because it changed what solutions were even possible: if it's a vendor problem, you escalate. If it's a structural problem, you redesign the process, including building a flow that lets Zetwerk create invoices directly instead of waiting. The tradeoff was a longer timeline. There was no quick version of this fix, and pretending otherwise would have repeated the mistake.",
         persona: {
           name: "Mithilesh",
           role: "Regional Operations Lead · 16-person team",
@@ -1465,7 +1456,7 @@ export const caseStudies: CaseStudy[] = [
           name: "Priya",
           role: "Sales",
           goal: "Grow her region by closing new customers, not managing existing deliveries.",
-          pain: "60–65% of orders escalate back to her team. A quarter of her working hours go into resolving delivery problems that should be handled by Operations.",
+          pain: "60 to 65% of orders escalate back to her team. A quarter of her working hours go into resolving delivery problems that should be handled by Operations.",
           quote: "I want to sell. Right now I'm doing operations work.",
         },
       },

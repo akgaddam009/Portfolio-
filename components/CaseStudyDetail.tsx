@@ -49,9 +49,13 @@ const container = {
 
 export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Find the next case study so we can offer a forward CTA at the end of the page.
-  // Wraps to the first study after the last one so visitors never hit a dead end.
+  // Wraps to the first study after the last one. If the immediate next is a
+  // coming-soon or hidden study, we suppress the CTA entirely (Option B) rather
+  // than skip ahead, so visitors never click into something that isn't ready.
+  const HIDDEN_NEXT_SLUGS = new Set(["fancode-ftux", "zetwerk-bu-ecosystem", "zetwerk-dc"]);
   const currentIndex = caseStudies.findIndex(c => c.slug === cs.slug);
-  const next = caseStudies[(currentIndex + 1) % caseStudies.length];
+  const nextCandidate = caseStudies[(currentIndex + 1) % caseStudies.length];
+  const next = nextCandidate && !HIDDEN_NEXT_SLUGS.has(nextCandidate.slug) ? nextCandidate : null;
 
   // Scroll progress bar
   const { scrollYProgress } = useScroll();
@@ -140,7 +144,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   }, []);
 
   return (
-    <div style={{ background: "var(--surface)" }}>
+    <div style={{ background: "var(--bg)" }}>
       {/* Scroll progress bar — animated AI-themed gradient. The bar
           itself uses scaleX to grow with scroll; the gradient runs
           across a 3× wide background that drifts horizontally,
@@ -307,7 +311,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             descriptive sentence. When absent, falls back to the
             classic value + caps-label below pattern. */}
         {cs.metrics && cs.metrics.length > 0 && (
-          <div style={{ background: "var(--bg)", padding: "28px 0" }}>
+          <div style={{ background: "var(--surface)", padding: "28px 0" }}>
             <div className="page-pad">
               <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (
@@ -393,7 +397,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           >
             <div className="page-pad">
               <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "20px" }}>
-                In one minute
+                TL;DR
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px" }}>
                 {[
@@ -585,7 +589,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       chrome. Click-to-zoom preserved. */}
                   {cs.problemImage && (
                     <div style={{ marginBottom: "20px" }}>
-                      <ImageBlock image={cs.problemImage} placeholder="Legacy tool — Excel Spotlight screenshot" onOpen={setLightboxSrc} />
+                      <ImageBlock image={cs.problemImage} placeholder="Legacy tool: Excel Spotlight screenshot" onOpen={setLightboxSrc} />
                     </div>
                   )}
                   <ProblemCardsBlock cards={cs.problemCards} onOpenImage={setLightboxSrc} />
@@ -663,7 +667,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   the new structured layout is in use (problemCards),
                   problemImage renders earlier between the prose and
                   the cards — see above. */}
-              {cs.problemImage && !(cs.problemCards && cs.problemCards.length > 0) && <ImageBlock image={cs.problemImage} placeholder="Legacy tool — Excel Spotlight screenshot" onOpen={setLightboxSrc} />}
+              {cs.problemImage && !(cs.problemCards && cs.problemCards.length > 0) && <ImageBlock image={cs.problemImage} placeholder="Legacy tool: Excel Spotlight screenshot" onOpen={setLightboxSrc} />}
             </CsSection>
 
             {/* ── User Types (optional) — dedicated section for case studies
@@ -735,7 +739,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "6px" }}>
                         {u.bullets.map((b, i) => (
                           <li key={i} style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", lineHeight: 1.55, paddingLeft: "14px", position: "relative" }}>
-                            <span style={{ position: "absolute", left: 0, color: "var(--accent)" }}>–</span>
+                            <span style={{ position: "absolute", left: 0, color: "var(--accent)" }}>·</span>
                             {b}
                           </li>
                         ))}
@@ -996,7 +1000,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             transition={{ duration: 0.25, ease: EASE }}
                             style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--accent-error)", letterSpacing: "0.04em", marginTop: "-8px" }}
                           >
-                            Incorrect password — try again.
+                            Incorrect password. Try again.
                           </motion.p>
                         )}
                       </AnimatePresence>
@@ -1440,7 +1444,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" style={{ color: "var(--muted)", flexShrink: 0 }}>
                           <path d="M3 10h14M13 5l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 3.4vw, 36px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1 }}>10–15 min</span>
+                        <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 3.4vw, 36px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1 }}>10 to 15 min</span>
                       </div>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
                         ~95% reduction. Simple updates that took half a day now take a coffee break.

@@ -56,22 +56,22 @@
   --card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.09);
 }
 
-/* ─── Dark theme — Apple dark system (3-level hierarchy) ─
-   Three distinct depth layers, matching Apple's actual HIG tokens:
-   - Chrome (#050507): the canvas — home page container, deepest layer
-   - Bg (#1c1c1e): panel fills — Apple Secondary System Grouped Background
-   - Surface (#2c2c2e): card fills — Apple Tertiary System Grouped Background
-   Panels lift off the canvas by the surface step alone (23 units).
-   Cards lift off panels by 16 units. Each layer adds a 1px white hairline
-   ring because drop shadows darken, and there's nothing to darken on dark. */
+/* ─── Dark theme — 3-level hierarchy, lifted scale ─
+   Three distinct depth layers, tuned for legibility against pure-black canvas:
+   - Chrome (#000000): the canvas — outermost layer, deepest
+   - Bg (#141414): panel fills — 20-unit step above canvas (panels visibly lift)
+   - Surface (#1c1c1c): card fills — 8-unit step above panel
+   Cards lift off panels by 8 units; surface2 (#242424) and border (#2a2a2a)
+   continue the scale. Each card layer also takes a 1px white hairline ring
+   because drop shadows darken, and there's nothing to darken on near-black. */
 [data-theme="dark"] {
-  /* Higher-intensity dark theme — deeper blacks, tighter scale.
-     Each surface step is darker than the previous variant so the
-     overall page reads more graphic and contrasty. */
-  --bg:       #0a0a0a;   /* panel fill — near-black, sits just above canvas */
-  --surface:  #141414;   /* card fill — barely lifted from panel */
-  --surface2: #1c1c1c;   /* hover / inset — one subtle step further */
-  --border:   #1f1f1f;   /* hairline — visible against bg, not against canvas */
+  /* Lifted dark scale — canvas stays pure black, but panels and cards each
+     gain visible elevation steps so the depth model reads in dark mode the
+     same way it does in light mode. */
+  --bg:       #141414;   /* panel fill — lifted from pure-black canvas (20-unit step for legibility) */
+  --surface:  #1c1c1c;   /* card fill — lifted from panel */
+  --surface2: #242424;   /* hover / inset — one subtle step further */
+  --border:   #2a2a2a;   /* hairline — visible against the new bg */
   --text:       #ffffff;
   --text-hover: #c8c3bc;   /* hover — warm parchment off-white, softer than pure white */
   --muted:    #71717b;   /* Figma Storm Gray (grey/46) — secondary label */

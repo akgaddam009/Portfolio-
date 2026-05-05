@@ -12,14 +12,14 @@ import { ArrowUpRight } from "@/components/ui/Icon";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/* ── Haptic utility — silently ignored on desktop ── */
+/* ── Haptic utility. silently ignored on desktop ── */
 const haptic = (pattern: number | number[]) => {
   if (typeof navigator !== "undefined" && "vibrate" in navigator) {
     navigator.vibrate(pattern);
   }
 };
 
-/* ── Home nav — name + panel arrows ── */
+/* ── Home nav. name + panel arrows ── */
 const PANEL_LABELS = ["About", "Work", "AI", "Career", "Testimonials", "Contact"];
 
 function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: () => void; activePanel: number }) {
@@ -28,7 +28,7 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
       style={{
         position: "fixed",
         /* 8px breathing room above the nav so it doesn't sit flush
-           against the top edge — same rhythm as the inter-panel gap. */
+           against the top edge. same rhythm as the inter-panel gap. */
         top: "8px", left: 0, right: 0,
         zIndex: 200,
         height: "64px",
@@ -43,7 +43,7 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         <Link
           href="/"
-          aria-label="Home — Arun Gaddam"
+          aria-label="Home. Arun Gaddam"
           style={{
             fontFamily: "var(--font-logo)",
             fontSize: "12px",
@@ -213,7 +213,7 @@ function PortraitMagnify() {
           willChange: "transform",
         }}
       >
-        {/* Portrait — single image, no hover swap */}
+        {/* Portrait. single image, no hover swap */}
         <img
           src="/arun gaddam.png"
           alt="Arun Gaddam"
@@ -230,9 +230,8 @@ function PortraitMagnify() {
 }
 
 const infoRows: { label: string; value: string; chips?: string[] }[] = [
-  { label: "Role", value: "Senior Product Designer. I own the full design process, from discovery and strategy to final pixel." },
-  { label: "Superpower", value: "Turning strategy into execution, ensuring clarity at the top and precision where it matters." },
   { label: "Focus", value: "Enterprise SaaS and consumer products at scale, driven by design, strategy, and research." },
+  { label: "Superpower", value: "Reducing complexity at scale. I find the one clear path through ambiguous, multi stakeholder product problems." },
   {
     label: "Experience",
     value: "Nearly a decade designing products for startups and large-scale platforms with millions of users. I focus on building scalable systems that solve real-world problems.",
@@ -246,7 +245,7 @@ function AboutPanel() {
       <PanelHeader label="About me" />
       <div style={{ padding: "16px 24px 48px" }}>
 
-        {/* Portrait — illustration by default, real photo on hover */}
+        {/* Portrait. illustration by default, real photo on hover */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -256,7 +255,7 @@ function AboutPanel() {
           <PortraitMagnify />
         </motion.div>
 
-        {/* Hero headline — typography per Figma reference:
+        {/* Hero headline. typography per Figma reference:
             Inter 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h1
           initial={{ opacity: 0, y: 8 }}
@@ -266,16 +265,16 @@ function AboutPanel() {
             fontFamily: "var(--font-body)",
             fontSize: "18px",
             fontWeight: 400,
-            lineHeight: "22px",
+            lineHeight: "30px",
             letterSpacing: 0,
             color: "var(--text)",
             marginBottom: "20px",
           }}
         >
-          I design products at the intersection of design, product thinking, and now vibe coding.
+          I design complex systems, turning messy workflows into measurable outcomes using research, product thinking, and AI.
         </motion.h1>
 
-        {/* Bio — typography per Figma reference:
+        {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
         <motion.p
           initial={{ opacity: 0, y: 6 }}
@@ -284,8 +283,8 @@ function AboutPanel() {
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "14px",
-            lineHeight: "26px",
-            letterSpacing: 0,
+            lineHeight: 1.65,
+            letterSpacing: "-0.01em",
             color: "var(--muted)",
             marginBottom: "20px",
           }}
@@ -358,18 +357,18 @@ function AboutPanel() {
           ))}
         </div>
 
-        {/* Skills & Tools — marquee of chips, but with the same mono label +
+        {/* Skills & Tools. marquee of chips, but with the same mono label +
             dashed-line header used by the rows above (Role, Focus, Experience,
             Superpower) for visual consistency. AI-forward sequence leads. */}
         {(() => {
           const skills = [
-            "AI UX Design", "Vibe Coding", "Agentic AI", "Claude Code", "Cursor",
-            "Figma", "UX Design", "UX Strategy", "UX Research",
-            "Design Systems", "Prototyping", "Service Design",
+            "Systems Thinking", "AI UX Design", "Product Thinking", "0→1 Design",
+            "Product Strategy", "Claude Code", "Agentic AI", "Service Design",
+            "Cross functional Leadership", "UX Strategy", "UX Research",
+            "Research Synthesis", "Stakeholder Alignment", "Design Systems",
+            "Information Architecture", "Interaction Design", "Prototyping",
             "Usability Testing", "Contextual Inquiry", "Service Blueprints",
-            "Dovetail", "Framer", "Jobs-to-be-Done",
-            "Information Architecture", "Interaction Design",
-            "Next.js",
+            "Jobs-to-be-Done", "Figma", "Framer", "Next.js",
           ];
           const ticker = [...skills, ...skills];
           return (
@@ -381,7 +380,7 @@ function AboutPanel() {
               transition={{ duration: 0.4, ease: EASE, delay: 0.24 }}
               style={{ padding: "12px 0" }}
             >
-              {/* Header row — matches the infoRow label style above */}
+              {/* Header row. matches the infoRow label style above */}
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
                 <p style={{
                   fontFamily: "var(--font-mono)", fontSize: "9px",
@@ -426,7 +425,7 @@ function AboutPanel() {
           );
         })()}
 
-        {/* Availability anchor — closes the card with a clear signal,
+        {/* Availability anchor. closes the card with a clear signal,
             using the same mono label + dashed line as the rows above. The
             green status dot ties it to the brand accent (also in the OG image). */}
         <motion.div
@@ -460,7 +459,7 @@ function AboutPanel() {
               </p>
             </div>
 
-            {/* Links — paired with availability so the CTA fires after full context */}
+            {/* Links. paired with availability so the CTA fires after full context */}
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
               {[
                 { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
@@ -505,7 +504,7 @@ function AboutPanel() {
   );
 }
 
-/* ── Mesh thumbnail — mouse-reactive radial gradient orbs ── */
+/* ── Mesh thumbnail. mouse-reactive radial gradient orbs ── */
 const meshPalettes = {
   light: [
     { base: "#f0ede8", orbs: ["#e8d5c4", "#d4c5e0", "#c4d8e0"] },
@@ -550,7 +549,7 @@ function MeshThumbnail({ index, type, confidential }: {
     ? meshPalettes.dark[index % meshPalettes.dark.length]
     : meshPalettes.light[index % meshPalettes.light.length];
 
-  /* rAF loop — lerp orbs toward mouse, paint as background gradients.
+  /* rAF loop. lerp orbs toward mouse, paint as background gradients.
      Each orb follows at a slightly different rate, giving the trio a
      parallax-like wobble rather than moving in lockstep. */
   const update = () => {
@@ -645,6 +644,13 @@ const WORK_THUMBS: Record<string, string> = {
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
 };
 
+const WORK_POSTERS: Record<string, string> = {
+  "astra":                "/images/astra/cover.png",
+  "planful-esm-tables":   "/images/planful/landing-page.jpg",
+  "apple-business-listings": "/images/reputation/Thumbnail .png",
+  "fancode-homepage":     "/images/fancode/cover.png",
+};
+
 // Video file extensions that should render through <video> instead of <img>.
 const isVideoThumb = (src: string) => /\.(mov|mp4|webm)$/i.test(src);
 
@@ -686,9 +692,9 @@ function MetricValue({ value }: { value: string }) {
   return <span ref={ref}>{display}</span>;
 }
 
-/* ─── Featured Design System card — leads the Selected Work panel ─────
+/* ─── Featured Design System card. leads the Selected Work panel ─────
    The design system extracted from this portfolio. Documents the actual
-   tokens, components, and patterns in the live codebase — no speculation. */
+   tokens, components, and patterns in the live codebase. no speculation. */
 function SystemFeatureCard() {
   return (
     <motion.div
@@ -713,13 +719,14 @@ function SystemFeatureCard() {
           onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
         >
-          {/* Thumbnail — auto-playing screen recording of the portfolio's
+          {/* Thumbnail. auto-playing screen recording of the portfolio's
               design language in motion. Muted + looped, mirrors the case
               study video thumbnail pattern. */}
           <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
             <video
               className="work-thumb"
               src="/images/system/portfolio-design-language.mp4"
+              poster="/images/system/cover.png"
               autoPlay
               loop
               muted
@@ -788,13 +795,13 @@ function SystemFeatureCard() {
 }
 
 function WorkPanel() {
-  // Explicit display order — astra moves in after fancode-homepage,
+  // Explicit display order. astra moves in after fancode-homepage,
   // coming-soon cards follow as full cards with a "Coming soon" chip on them.
   const CARD_ORDER = [
     "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
-    "fancode-ftux", "zetwerk-dc", "zetwerk-bu-ecosystem",
+    "fancode-ftux", "zetwerk-bu-ecosystem",
   ];
-  const COMING_SOON = new Set(["fancode-ftux", "zetwerk-dc", "zetwerk-bu-ecosystem"]);
+  const COMING_SOON = new Set(["fancode-ftux", "zetwerk-bu-ecosystem"]);
 
   const allCards = CARD_ORDER
     .map(slug => caseStudies.find(cs => cs.slug === slug))
@@ -845,6 +852,7 @@ function WorkPanel() {
                           <video
                             className="work-thumb"
                             src={WORK_THUMBS[cs.slug]}
+                            poster={WORK_POSTERS[cs.slug]}
                             autoPlay loop muted playsInline preload="metadata" aria-hidden="true"
                             style={{
                               width: "100%", height: "100%", objectFit: "cover",
@@ -884,6 +892,26 @@ function WorkPanel() {
                             AI Experiments
                           </span>
                         )}
+                        {cs.slug === "planful-esm-tables" && (
+                          <span style={{
+                            fontFamily: "var(--font-mono)", fontSize: "9px",
+                            letterSpacing: "0.06em", textTransform: "uppercase",
+                            padding: "3px 8px", background: "var(--surface2)",
+                            color: "var(--muted)", borderRadius: "8px",
+                          }}>
+                            Fintech
+                          </span>
+                        )}
+                        {cs.slug === "apple-business-listings" && (
+                          <span style={{
+                            fontFamily: "var(--font-mono)", fontSize: "9px",
+                            letterSpacing: "0.06em", textTransform: "uppercase",
+                            padding: "3px 8px", background: "var(--surface2)",
+                            color: "var(--muted)", borderRadius: "8px",
+                          }}>
+                            CXM
+                          </span>
+                        )}
                         {cs.tags.slice(0, 2).map(tag => (
                           <span key={tag} style={{
                             fontFamily: "var(--font-mono)", fontSize: "9px",
@@ -899,8 +927,8 @@ function WorkPanel() {
                             fontFamily: "var(--font-mono)", fontSize: "9px",
                             letterSpacing: "0.06em", textTransform: "uppercase",
                             padding: "3px 8px",
-                            background: "rgba(245,158,11,0.10)",
-                            border: "1px solid rgba(245,158,11,0.35)",
+                            background: "transparent",
+                            border: "1px solid rgba(245,158,11,0.55)",
                             color: "#f59e0b",
                             borderRadius: "8px",
                           }}>
@@ -967,11 +995,11 @@ type CareerItem = {
 // Jan=0, Feb=0.083, Mar=0.167, Apr=0.25, May=0.333, Jun=0.417,
 // Jul=0.5, Aug=0.583, Sep=0.667, Oct=0.75, Nov=0.833, Dec=0.917
 const careerItems: CareerItem[] = [
-  // Work — newest first
+  // Work. newest first
   {
     type: "role", startYear: 2025.167, endYear: 2025.583,
     title: "Senior Product Designer", subtitle: "Planful Software", minHeight: 72,
-    dateLabel: "Mar 2025 — Aug 2025", impact: "−30% training time", logoDomain: "planful.com",
+    dateLabel: "Mar 2025 · Aug 2025", impact: "Fintech", logoDomain: "planful.com",
     link: "https://planful.com/",
     description: "Led end-to-end design of two finance planning features, reducing training time ~30% and supporting migration of core finance workflows from legacy tools to a modern web interface.",
     highlights: [
@@ -981,7 +1009,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2024.167, endYear: 2025.083,
     title: "Senior UX Designer", subtitle: "Reputation.com", minHeight: 72,
-    dateLabel: "Mar 2024 — Feb 2025", impact: "−40% task time", logoDomain: "reputation.com",
+    dateLabel: "Mar 2024 · Feb 2025", impact: "Enterprise SaaS", logoDomain: "reputation.com",
     link: "https://reputation.com/",
     description: "Led design across three core product verticals (Insights, Reporting, Business Listings, and Reviews), directly supporting primary revenue drivers and AI feature initiatives.",
     highlights: [
@@ -993,19 +1021,19 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2022.25, endYear: 2023.833,
     title: "Senior Product Designer", subtitle: "Zetwerk",
-    dateLabel: "Apr 2022 — Nov 2023", impact: "~6× revenue growth", logoDomain: "zetwerk.com",
+    dateLabel: "Apr 2022 · Nov 2023", impact: "Manufacturing startup", logoDomain: "zetwerk.com",
     link: "https://www.zetwerk.com/",
     images: ["/images/career/zetwerk-team.jpg"],
     description: "Led product design initiatives for Zetwerk's Order Management System (OMS), improving workflows to support business operations during a ~6× revenue growth phase.",
     highlights: [
       "Mentored three designers and partnered with leadership to establish UX practices: research, concept validation, usability testing",
-      "Replaced guesswork with evidence-based design, improving product quality and reducing backlog ~20–30%",
+      "Replaced guesswork with evidence-based design, improving product quality and reducing backlog ~20 to 30%",
     ],
   },
   {
     type: "role", startYear: 2020.583, endYear: 2022.25,
     title: "Manager UX Designer", subtitle: "FanCode / Dream Sports",
-    dateLabel: "Aug 2020 — Apr 2022", impact: "+18% retention", logoDomain: "fancode.com",
+    dateLabel: "Aug 2020 · Apr 2022", impact: "B2C startup", logoDomain: "fancode.com",
     link: "https://play.google.com/store/apps/details?id=com.dream11sportsguru&hl=en_IN",
     images: ["/images/career/fancode-team.jpg"],
     description: "Owned UX for a core product initiative, designing multiple features that drove adoption, retention, and growth across a ~50M user base.",
@@ -1019,19 +1047,19 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2016.667, endYear: 2020.5,
     title: "UX Designer (Founder)", subtitle: "Quazire Consulting",
-    dateLabel: "Sep 2016 — Jul 2020", impact: "0→1 founder",
+    dateLabel: "Sep 2016 · Jul 2020", impact: "0→1 founder",
     description: "Founded and ran a boutique UX consultancy, designing 0→1 digital products across healthcare, HRIS, and fintech verticals for early-stage startups and SMEs.",
     highlights: [
-      "Designed an award-winning suite of hospital applications (Ehnote), improving operational efficiency, patient management, and clinical decision-making",
-      "Designed SwarmHR, an HRIS and applicant tracking system that streamlined recruitment workflows and enhanced hiring team collaboration",
-      "Designed Instabee, a mobile ERP solution for MSMEs in India",
+      "Designed an award-winning suite of hospital applications, improving operational efficiency, patient management, and clinical decision-making",
+      "Designed an HRIS and applicant tracking system that streamlined recruitment workflows and enhanced hiring team collaboration",
+      "Designed a mobile ERP solution for MSMEs in India",
     ],
   },
-  // Other — education & side roles
+  // Other. education & side roles
   {
     type: "education", startYear: 2023.833, endYear: 2026.25,
     title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
-    dateLabel: "Nov 2023 — Present", impact: "Top 1% · 3K+ mins",
+    dateLabel: "Nov 2023 · Present", impact: "Top 1% · 3K+ mins",
     link: "https://adplist.org/",
     description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList, mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
     highlights: [
@@ -1043,13 +1071,13 @@ const careerItems: CareerItem[] = [
   {
     type: "education", startYear: 2023.75, endYear: 2025.083,
     title: "Product Management", subtitle: "IIT Guwahati · Accredian",
-    dateLabel: "Oct 2023 — Feb 2025", logoDomain: "accredian.com", minHeight: 72,
+    dateLabel: "Oct 2023 · Feb 2025", logoDomain: "accredian.com", minHeight: 72,
     description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati), focused on applying data, product strategy, and user-centric approaches across the product lifecycle. Covered customer research, analytics, product strategy, and experimentation, translating insights into product roadmaps, metrics, and iterative, data-informed decisions.",
   },
   {
     type: "education", startYear: 2020.917, endYear: 2021.333,
     title: "Program in UX Design", subtitle: "IIT Bombay",
-    dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
+    dateLabel: "Dec 2020 · May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
     description: "Program in User Experience Design from IDC School of Design, IIT Bombay, covering the end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation. Completed a hands-on, project-based curriculum including a field research project using contextual inquiry to uncover real-world user behaviours and translate insights into iterative design solutions.",
     images: ["/images/career/iitb-1.jpg", "/images/career/iitb-2.jpg"],
   },
@@ -1130,7 +1158,7 @@ function CareerPanel() {
 
   const CARD_OVERLAP = 6; // px of overlap between adjacent cards
 
-  // Pre-compute stacked positions for work cards — slight negative gap
+  // Pre-compute stacked positions for work cards. slight negative gap
   const stackedWorkPositions = (() => {
     const computed = workItems.map(item => {
       const endYr  = item.endYear ?? (item.startYear + 0.5);
@@ -1151,7 +1179,7 @@ function CareerPanel() {
     return computed;
   })();
 
-  // Pre-compute stacked positions for education cards — same overlap logic
+  // Pre-compute stacked positions for education cards. same overlap logic
   const stackedEduPositions = (() => {
     const computed = eduItems.map(item => {
       const endYr  = item.endYear ?? (item.startYear + 0.5);
@@ -1217,7 +1245,7 @@ function CareerPanel() {
           transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
         }}
       >
-        {/* ── Compact header row — always visible ── */}
+        {/* ── Compact header row. always visible ── */}
         <motion.div layout style={{
           display: "flex", alignItems: "center", gap: "8px",
           padding: isExpanded ? "8px 12px" : naturalH < 40 ? "4px 10px" : "8px 12px",
@@ -1244,7 +1272,7 @@ function CareerPanel() {
                 {item.subtitle}
               </p>
             )}
-            {!isExpanded && (item.dateLabel || item.impact) && (
+            {!isExpanded && !isEdu && (item.dateLabel || item.impact) && (
               <p style={{
                 fontFamily: "var(--font-body)", fontSize: "11px",
                 fontWeight: 510, letterSpacing: "-0.01em",
@@ -1259,7 +1287,7 @@ function CareerPanel() {
           </div>
 
 
-          {/* Close — only visible when expanded */}
+          {/* Close. only visible when expanded */}
           {isExpanded && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -1291,7 +1319,7 @@ function CareerPanel() {
 
               <div style={{ padding: "16px 12px 12px" }}>
 
-                {/* Company / project link — top */}
+                {/* Company / project link. top */}
                 {item.link && (
                   <div style={{ marginBottom: "12px" }}>
                     <a
@@ -1314,8 +1342,8 @@ function CareerPanel() {
                   </div>
                 )}
 
-                {/* Date label */}
-                {item.dateLabel && (
+                {/* Date label — role cards only */}
+                {item.dateLabel && !isEdu && (
                   <p style={{
                     fontFamily: "var(--font-body)", fontSize: "11px",
                     fontWeight: 510, letterSpacing: "-0.01em",
@@ -1498,7 +1526,7 @@ function CareerPanel() {
                   </div>
                 )}
 
-                {/* Prev / Next navigation — only for work cards */}
+                {/* Prev / Next navigation. only for work cards */}
                 {!isEdu && <div style={{
                   display: "flex", gap: "6px", paddingTop: "12px",
                   borderTop: "1px solid var(--border)",
@@ -1551,7 +1579,7 @@ function CareerPanel() {
       <PanelHeader label="Career" />
       <div style={{ padding: "16px 0 32px 0" }}>
 
-        {/* Column headers — single continuous bottom border spans the full panel
+        {/* Column headers. single continuous bottom border spans the full panel
             width (year axis + Work + Other) so the line aligns with where the
             year text begins on the left. */}
         <div style={{ display: "flex", borderBottom: "1px solid var(--border)", paddingBottom: "10px" }}>
@@ -1590,7 +1618,7 @@ function CareerPanel() {
           {/* Timeline track */}
           <div style={{ flex: 1, position: "relative", height: `${totalH}px`, paddingRight: "16px", borderBottom: "1px solid var(--border)" }}>
 
-            {/* Horizontal grid lines — all years, uniform weight */}
+            {/* Horizontal grid lines. all years, uniform weight */}
             {allYears.map(yr => (
               <div key={yr} style={{
                 position: "absolute", left: 0, right: 0,
@@ -1633,7 +1661,7 @@ function CareerPanel() {
               }}>Now</span>
             </div>
 
-            {/* Rail connector dots — mark each card's start year on the vertical rail */}
+            {/* Rail connector dots. mark each card's start year on the vertical rail */}
             {[...workItems, ...eduItems].map(item => {
               const dotY = (CAL_END - item.startYear) * YEAR_PX + TOP_OFFSET;
               const isActive = hoveredItem?.title === item.title && hoveredItem?.startYear === item.startYear;
@@ -1651,7 +1679,7 @@ function CareerPanel() {
               );
             })}
 
-            {/* Dismiss overlay — catches outside clicks when a card is expanded */}
+            {/* Dismiss overlay. catches outside clicks when a card is expanded */}
             {selectedItem && (
               <div
                 onClick={collapseCard}
@@ -1659,10 +1687,10 @@ function CareerPanel() {
               />
             )}
 
-            {/* Work cards — stacked with slight overlap */}
+            {/* Work cards. stacked with slight overlap */}
             {stackedWorkPositions.map(({ item, top }, i) => renderCard(item, false, i, top))}
 
-            {/* Education cards — stacked with slight overlap */}
+            {/* Education cards. stacked with slight overlap */}
             {stackedEduPositions.map(({ item, top }, i) => renderCard(item, true, i, top))}
 
           </div>
@@ -1718,7 +1746,7 @@ function TestimonialsPanel() {
                 &ldquo;
               </p>
 
-              {/* Quote body — primary content, var(--text) */}
+              {/* Quote body. primary content, var(--text) */}
               <p style={{
                 fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
                 lineHeight: 1.7, color: "var(--text)", marginBottom: "16px",
@@ -1727,7 +1755,7 @@ function TestimonialsPanel() {
                 {t.quote}
               </p>
 
-              {/* Author — no border, spacing does the separation */}
+              {/* Author. no border, spacing does the separation */}
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 {t.image ? (
                   <img
@@ -1749,7 +1777,7 @@ function TestimonialsPanel() {
                       aria-hidden="true"
                       style={{
                         width: "40px", height: "40px", borderRadius: "50%",
-                        // Soft hue-tinted gradient — color-mix blends with theme surface tones,
+                        // Soft hue-tinted gradient. color-mix blends with theme surface tones,
                         // so this stays subtle in both light and dark mode.
                         background: `linear-gradient(135deg,
                           color-mix(in srgb, ${tint} 16%, var(--surface2)),
@@ -1809,7 +1837,7 @@ function ContactPanel() {
       <PanelHeader label="Contact" />
       <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
 
-        {/* Headline — typography per Figma reference:
+        {/* Headline. typography per Figma reference:
             Inter 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h2
           initial={{ opacity: 0, y: 8 }}
@@ -1840,10 +1868,10 @@ function ContactPanel() {
             marginBottom: "20px",
           }}
         >
-          Open to senior IC and lead roles, consulting engagements, and conversations about design, AI-assisted workflows, or vibe coding.
+          Open to senior IC and lead roles at companies building complex, human centred products. Especially in AI, enterprise SaaS, and consumer at scale.
         </motion.p>
 
-        {/* CTAs — always visible */}
+        {/* CTAs. always visible */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1893,18 +1921,18 @@ function ContactPanel() {
           </Link>
         </motion.div>
 
-        {/* Skills & Tools — matches the about-panel treatment (mono label
+        {/* Skills & Tools. matches the about-panel treatment (mono label
             + dashed line + marquee of pills). marginTop: auto pushes it
             and the location card to the bottom of the panel. */}
         {(() => {
           const skills = [
-            "AI UX Design", "Vibe Coding", "Agentic AI", "Claude Code", "Cursor",
-            "Figma", "UX Design", "UX Strategy", "UX Research",
-            "Design Systems", "Prototyping", "Service Design",
+            "Systems Thinking", "AI UX Design", "Product Thinking", "0→1 Design",
+            "Product Strategy", "Claude Code", "Agentic AI", "Service Design",
+            "Cross functional Leadership", "UX Strategy", "UX Research",
+            "Research Synthesis", "Stakeholder Alignment", "Design Systems",
+            "Information Architecture", "Interaction Design", "Prototyping",
             "Usability Testing", "Contextual Inquiry", "Service Blueprints",
-            "Dovetail", "Framer", "Jobs-to-be-Done",
-            "Information Architecture", "Interaction Design",
-            "Next.js",
+            "Jobs-to-be-Done", "Figma", "Framer", "Next.js",
           ];
           const ticker = [...skills, ...skills];
           return (
@@ -1967,7 +1995,7 @@ function ContactPanel() {
             boxShadow: "var(--card-shadow)",
           }}
         >
-          {/* Map area — MapLibre GL */}
+          {/* Map area. MapLibre GL */}
           <div style={{ position: "relative", overflow: "hidden" }}>
             <MapLibreMap height={190} />
           </div>
@@ -2010,7 +2038,7 @@ function ContactPanel() {
             color: "var(--muted)", lineHeight: 1.3,
           }}>
             <span style={{ opacity: 0.6 }}>Designed with </span>
-            {/* 3D red heart — radial gradient gives volume, drop-shadow
+            {/* 3D red heart. radial gradient gives volume, drop-shadow
                 provides cast. Inline-flex keeps it baseline-aligned with
                 the body type around it. */}
             <svg
@@ -2036,7 +2064,7 @@ function ContactPanel() {
                 fill="url(#heart-3d)"
                 d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
               />
-              {/* Specular highlight — small soft white blob top-left */}
+              {/* Specular highlight. small soft white blob top-left */}
               <ellipse cx="9" cy="7.5" rx="2.2" ry="1.4" fill="rgba(255,255,255,0.55)" />
             </svg>
             <span style={{ opacity: 0.6 }}> using Claude Code</span>
@@ -2058,7 +2086,7 @@ function AiExplorationsPanel() {
       <div style={{ padding: "16px 24px 32px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
 
-          {/* Featured: AI Contract Review — live React prototype built with Claude */}
+          {/* Featured: AI Contract Review. live React prototype built with Claude */}
           {astra && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -2084,6 +2112,7 @@ function AiExplorationsPanel() {
                         <video
                           className="work-thumb"
                           src={WORK_THUMBS[astra.slug]}
+                          poster={WORK_POSTERS[astra.slug]}
                           autoPlay
                           loop
                           muted
@@ -2130,7 +2159,7 @@ function AiExplorationsPanel() {
             </motion.div>
           )}
 
-          {/* Portfolio Design Language — meta artifact */}
+          {/* Portfolio Design Language. meta artifact */}
           <SystemFeatureCard />
 
         </div>
@@ -2141,11 +2170,11 @@ function AiExplorationsPanel() {
 
 const PANEL_SHADOW_LIGHT = "0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06)";
 const PANEL_SHADOW_ACTIVE_LIGHT = "0 2px 4px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.10)";
-/* Dark panels sit on #050507 canvas — drop shadows are invisible on near-black.
+/* Dark panels sit on #050507 canvas. drop shadows are invisible on near-black.
    A white hairline ring defines the panel edge; the surface step (#1c1c1e panel
    vs #050507 canvas) provides the perceived lift. */
-const PANEL_SHADOW_DARK  = "0 0 0 1px rgba(255,255,255,0.06), 0 2px 8px rgba(0,0,0,0.5), 0 8px 32px rgba(0,0,0,0.4)";
-const PANEL_SHADOW_ACTIVE_DARK = "0 0 0 1px rgba(255,255,255,0.09), 0 4px 12px rgba(0,0,0,0.6), 0 16px 48px rgba(0,0,0,0.5)";
+const PANEL_SHADOW_DARK  = "0 1px 2px rgba(0,0,0,0.40), 0 6px 24px rgba(0,0,0,0.35)";
+const PANEL_SHADOW_ACTIVE_DARK = "0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(0,0,0,0.45)";
 
 const PANEL_CONFIGS = [
   { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
@@ -2252,7 +2281,7 @@ export default function Home() {
       <LoadingScreen visible={loading} />
       <HomeNav onPrev={() => scrollByPanel(-1)} onNext={() => scrollByPanel(1)} activePanel={activePanel} />
 
-      {/* Right-edge fade — hides on last panel */}
+      {/* Right-edge fade. hides on last panel */}
       <motion.div
         className="panels-right-fade"
         animate={{ opacity: isLastPanel ? 0 : 1 }}
@@ -2275,7 +2304,7 @@ export default function Home() {
             overflowX: "auto",
             overflowY: "hidden",
             gap: "8px",
-            /* Top padding mirrors the inter-panel gap (8px) — matches
+            /* Top padding mirrors the inter-panel gap (8px). matches
                the gap between the name pill and theme toggle in the nav,
                keeping spacing rhythm consistent across the layout. */
             padding: "8px 0 16px 24px",
