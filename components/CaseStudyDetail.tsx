@@ -307,7 +307,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             descriptive sentence. When absent, falls back to the
             classic value + caps-label below pattern. */}
         {cs.metrics && cs.metrics.length > 0 && (
-          <div style={{ background: "var(--surface)", padding: "28px 0" }}>
+          // Full-width band: surface2 is a clear step darker than bg so the
+          // metrics row reads as its own plane bleeding edge-to-edge across
+          // the page, not as a card stuck inside the body column.
+          <div style={{ background: "var(--surface2)", padding: "28px 0" }}>
             <div className="page-pad">
               <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (

@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
-/* ─── Design Tokens — Apple-inspired light system ────
-   Apple's light theme: pure white is the ELEVATED layer (cards), not the base.
-   The page itself sits on a barely-tinted cool gray. Text is never pure black —
-   the signature #1d1d1f has a subtle warm-cool balance that reads "considered."
-   All grays carry a cool undertone (computed via systemGray rather than
-   chromatic-neutral RGB) which is the technical move that makes Apple "premium." */
+/* ─── Design Tokens — Warm-neutral light system ────
+   Pure white is the ELEVATED layer (cards), not the base. The page itself
+   sits on a barely-warm cream. Each gray carries a tiny yellow-red tint
+   (hsl hue ~30-40) so the palette feels premium-warm rather than cool-clinical.
+   Surface2 is intentionally a step darker than bg so bands and insets read
+   as a separate plane (e.g. case-study metrics bar bleeds across the page). */
 :root {
-  --bg:       #fbfbfd;   /* Apple secondary background — barely-tinted cool */
-  --surface:  #ffffff;   /* primary background — for elevated cards */
-  --surface2: #f5f5f7;   /* tertiary — subtle differentiation for hover / inset */
-  --border:   #d2d2d7;   /* opaque separator — visible cool gray */
-  --text:       #1d1d1f;   /* the Apple signature: NOT pure black, has 6% lift */
-  --text-hover: #3a3a3c;   /* hover — slightly softened near-black, less harsh than --text */
-  --muted:    #6e6e73;   /* secondary label — cool gray */
-  --muted2:   #424245;   /* tertiary label — deeper cool gray */
-  --chrome:   #f5f5f7;   /* grouped-background canvas — panels float on this */
+  --bg:       #faf8f4;   /* page canvas — barely-warm cream, not pure white */
+  --surface:  #ffffff;   /* elevated cards — pure white for clean lift off bg */
+  --surface2: #efebe3;   /* inset / band fill — warm gray, distinctly darker than bg */
+  --border:   #e3ddd1;   /* hairline — warm soft separator */
+  --text:       #1d1b18;   /* near-black with a touch of warmth */
+  --text-hover: #3a3833;   /* hover — softened warm near-black */
+  --muted:    #6e6a62;   /* secondary label — warm gray */
+  --muted2:   #423f39;   /* tertiary label — deeper warm gray */
+  --chrome:   #efebe3;   /* grouped-background canvas — matches surface2 */
 
   --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Fira Mono', monospace;
