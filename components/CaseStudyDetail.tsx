@@ -792,15 +792,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 Capped at 1240px so it doesn't go edge-to-edge on huge monitors. */}
             {cs.slug === "astra" && cs.prototypeIframes && cs.prototypeIframes.length > 0 && (
               <CsSection label="Live prototype" id="cs-prototype">
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65, ease: EASE }}
+                {/* Outer plain div owns the viewport-centered breakout
+                    (translateX(-50%) trick). The inner motion.div only
+                    animates opacity + y so its transform doesn't fight
+                    the breakout transform. */}
+                <div
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "32px",
                     width: "min(1240px, calc(100vw - 48px))",
                     maxWidth: "none",
                     position: "relative",
@@ -808,10 +805,22 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     transform: "translateX(-50%)",
                   }}
                 >
-                  {cs.prototypeIframes.map(p => (
-                    <PrototypeBlock key={p.src} prototype={p} />
-                  ))}
-                </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE }}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "32px",
+                    }}
+                  >
+                    {cs.prototypeIframes.map(p => (
+                      <PrototypeBlock key={p.src} prototype={p} />
+                    ))}
+                  </motion.div>
+                </div>
               </CsSection>
             )}
 
