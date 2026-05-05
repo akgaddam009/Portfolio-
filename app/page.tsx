@@ -266,7 +266,7 @@ function AboutPanel() {
             fontFamily: "var(--font-body)",
             fontSize: "18px",
             fontWeight: 400,
-            lineHeight: "30px",
+            lineHeight: "22px",
             letterSpacing: 0,
             color: "var(--text)",
             marginBottom: "20px",

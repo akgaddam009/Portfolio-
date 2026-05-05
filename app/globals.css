@@ -7,7 +7,7 @@
    All grays carry a cool undertone (computed via systemGray rather than
    chromatic-neutral RGB) which is the technical move that makes Apple "premium." */
 :root {
-  --bg:       #ffffff;   /* page canvas — pure white. Cards lift via card-shadow, not surface contrast */
+  --bg:       #fafafa;   /* page canvas — off-white. Cards lift via card-shadow, not surface contrast */
   --surface:  #ffffff;   /* primary background — for elevated cards */
   --surface2: #f5f5f7;   /* tertiary — subtle differentiation for hover / inset */
   --border:   #d2d2d7;   /* opaque separator — visible cool gray */
