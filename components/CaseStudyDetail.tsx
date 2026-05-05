@@ -782,7 +782,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            {/* ── Live prototypes — astra only ────────────────────────── */}
+            {/* ── Live prototypes — astra only ──────────────────────────
+                The prototypes break out of the 680px .page-pad column so the
+                Claude artifact iframes have room to breathe (they were feeling
+                cramped inside the body column). The breakout uses the classic
+                `marginLeft: 50%` + `translateX(-50%)` pattern: position the
+                element relative to the parent, then pull it back by half its
+                own width so it centers on the viewport rather than the parent.
+                Capped at 1240px so it doesn't go edge-to-edge on huge monitors. */}
             {cs.slug === "astra" && cs.prototypeIframes && cs.prototypeIframes.length > 0 && (
               <CsSection label="Live prototype" id="cs-prototype">
                 <motion.div
@@ -790,7 +797,16 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
-                  style={{ display: "flex", flexDirection: "column", gap: "32px", maxWidth: "1180px" }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "32px",
+                    width: "min(1240px, calc(100vw - 48px))",
+                    maxWidth: "none",
+                    position: "relative",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                  }}
                 >
                   {cs.prototypeIframes.map(p => (
                     <PrototypeBlock key={p.src} prototype={p} />

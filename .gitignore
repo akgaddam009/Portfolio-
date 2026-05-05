@@ -40,9 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Large video assets (over GitHub's 100MB limit) — host elsewhere or via Git LFS
+# Large legacy video assets (>100MB) — keep local, deploy uses compressed .mp4
 public/images/system/overview.mov
-public/images/astra/overview.mov
 
 # Untracked giant media that snuck in via wildcard adds — keep local, don't push
 public/images/system/Screen Recording*

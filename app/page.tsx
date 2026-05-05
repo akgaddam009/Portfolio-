@@ -636,11 +636,11 @@ function MeshThumbnail({ index, type, confidential }: {
 /* ── Panel 2: Selected Work ── */
 
 const WORK_THUMBS: Record<string, string> = {
-  "astra":                "/images/astra/overview.mov",
-  "planful-esm-tables":   "/images/planful/planful%20product%20video.mov",
-  "apple-business-listings": "/images/reputation/after.mov",
+  "astra":                "/images/astra/overview.mp4",
+  "planful-esm-tables":   "/images/planful/planful%20product%20video.mp4",
+  "apple-business-listings": "/images/reputation/after.mp4",
   "fancode-ftux":         "/images/fancode/user-journey-map.jpg",
-  "fancode-homepage":     "/images/fancode/hp-overview.mov",
+  "fancode-homepage":     "/images/fancode/hp-overview.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
 };

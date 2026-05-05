@@ -213,7 +213,7 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "Moving a critical finance workflow from Excel to the web. Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app.",
 
-    contextVideo: "/images/planful/planful%20product%20video.mov",
+    contextVideo: "/images/planful/planful%20product%20video.mp4",
     chromeUrl: "app.planful.com",
 
     /* Plain prose at the top of the Context section — no card, no
@@ -635,7 +635,7 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "Bringing Apple into a Google-dominant dashboard without making it look broken, while giving all platforms equal respect.",
 
-    contextVideo: "/images/reputation/after.mov",
+    contextVideo: "/images/reputation/after.mp4",
 
     context:
       "When you search \"coffee shop near me\" on your phone, the results come from platforms like Google Maps, Apple Maps, or Bing. Each platform shows business information: hours, phone number, photos, reviews. Enterprises with hundreds or thousands of locations need to manage how they appear across all these platforms and track which ones actually bring customers through the door. That's what Reputation does, and the Business Listing Performance dashboard is where customers go to see if their listings are working.",
@@ -751,7 +751,7 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "More than 90% of FanCode users dropped past the first fold. India's all-in-one sports app (live streaming, scores, news, shop, 3M+ monthly active users) was running on a homepage where most of the page was dying below the fold. ==I restructured around how cricket fans actually think: tournament first, then match, then teams and players. The dead zone reversed.==",
 
-    contextVideo: "/images/fancode/hp-overview.mov",
+    contextVideo: "/images/fancode/hp-overview.mp4",
 
     context:
       "The homepage had become the company's growth bottleneck. Every new feature, content investment, or campaign had to fight for first-fold space because below the fold didn't work. Promotional placements, content launches, partnerships: every team was lobbying for the one slot that converted. Fixing the dead zone wasn't a UX project. It was a growth unlock for the entire product.",
