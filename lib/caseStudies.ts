@@ -761,7 +761,7 @@ export const caseStudies: CaseStudy[] = [
     problemBreakdown: {
       points: [
         "More than 90% of users dropped past the first fold without tapping anything below it",
-        "Match cards absorbed almost every click across every cohort (Organic, Marketing, Dream11 fantasy users)",
+        "Match cards absorbed almost every click across every cohort (Organic, Marketing, fantasy users)",
         "New and diverse content struggled to gain visibility against this concentration",
       ],
       impact: "Saurabh (the first-time user we built the brief around) opened the app from an ad, scrolled, and left without tapping anything past the match card.",
@@ -892,7 +892,6 @@ export const caseStudies: CaseStudy[] = [
     outcomes: [
       "~20% increase in new user retention post-launch.",
       "15–20% lift in homepage adoption across cohorts.",
-      "Dream11 users (match-card-only before) started opening tournament pages and detail surfaces.",
     ],
 
     scrappedDirections: [
