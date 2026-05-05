@@ -741,6 +741,17 @@ function SystemFeatureCard() {
           {/* Body */}
           <div style={{ padding: "12px 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+              <span style={{
+                fontFamily: "var(--font-mono)", fontSize: "9px",
+                letterSpacing: "0.06em", textTransform: "uppercase",
+                padding: "3px 8px",
+                background: "color-mix(in srgb, var(--accent-violet) 14%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--accent-violet) 35%, transparent)",
+                color: "var(--accent-violet)",
+                borderRadius: "8px",
+              }}>
+                AI Experiments
+              </span>
               {["Design Language", "Built with Claude"].map(tag => (
                 <span key={tag} style={{
                   fontFamily: "var(--font-mono)", fontSize: "9px",
@@ -860,6 +871,19 @@ function WorkPanel() {
                     {/* Body */}
                     <div style={{ padding: "12px 16px 16px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+                        {cs.slug === "astra" && (
+                          <span style={{
+                            fontFamily: "var(--font-mono)", fontSize: "9px",
+                            letterSpacing: "0.06em", textTransform: "uppercase",
+                            padding: "3px 8px",
+                            background: "color-mix(in srgb, var(--accent-violet) 14%, transparent)",
+                            border: "1px solid color-mix(in srgb, var(--accent-violet) 35%, transparent)",
+                            color: "var(--accent-violet)",
+                            borderRadius: "8px",
+                          }}>
+                            AI Experiments
+                          </span>
+                        )}
                         {cs.tags.slice(0, 2).map(tag => (
                           <span key={tag} style={{
                             fontFamily: "var(--font-mono)", fontSize: "9px",
@@ -903,10 +927,12 @@ function WorkPanel() {
                 </CardWrapper>
               </motion.div>
             );
-          })}
-
-          {/* Portfolio Design Language — meta artifact, always shown last */}
-          <SystemFeatureCard />
+          }).reduce<React.ReactNode[]>((acc, el, i) => {
+            acc.push(el);
+            // Insert Portfolio Design Language immediately after Astra (index 3)
+            if (allCards[i]?.slug === "astra") acc.push(<SystemFeatureCard key="system" />);
+            return acc;
+          }, [])}
         </div>
       </div>
     </div>
@@ -2249,9 +2275,9 @@ export default function Home() {
             overflowX: "auto",
             overflowY: "hidden",
             gap: "8px",
-            /* Top padding mirrors the inter-panel gap (8px) so the gap
-               between the nav and the first row of panels reads
-               consistent with the gap between adjacent panels. */
+            /* Top padding mirrors the inter-panel gap (8px) — matches
+               the gap between the name pill and theme toggle in the nav,
+               keeping spacing rhythm consistent across the layout. */
             padding: "8px 0 16px 24px",
             boxSizing: "border-box",
             scrollSnapType: "x proximity",

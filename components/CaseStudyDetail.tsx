@@ -140,7 +140,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   }, []);
 
   return (
-    <>
+    <div style={{ background: "var(--surface)" }}>
       {/* Scroll progress bar — animated AI-themed gradient. The bar
           itself uses scaleX to grow with scroll; the gradient runs
           across a 3× wide background that drifts horizontally,
@@ -307,7 +307,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             descriptive sentence. When absent, falls back to the
             classic value + caps-label below pattern. */}
         {cs.metrics && cs.metrics.length > 0 && (
-          <div style={{ background: "var(--surface)", padding: "28px 0" }}>
+          <div style={{ background: "var(--bg)", padding: "28px 0" }}>
             <div className="page-pad">
               <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (
@@ -1998,7 +1998,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </motion.nav>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
 
