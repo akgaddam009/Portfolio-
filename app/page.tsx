@@ -777,36 +777,41 @@ function SystemFeatureCard() {
 }
 
 function WorkPanel() {
+  // Explicit display order — astra moves in after fancode-homepage
+  const CARD_ORDER   = ["planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra"];
+  const COMING_SOON_SLUGS = ["fancode-ftux", "zetwerk-dc", "zetwerk-bu-ecosystem"];
+
+  const orderedCards = CARD_ORDER
+    .map(slug => caseStudies.find(cs => cs.slug === slug))
+    .filter((cs): cs is NonNullable<typeof cs> => !!cs);
+
+  const comingSoonCards = COMING_SOON_SLUGS
+    .map(slug => caseStudies.find(cs => cs.slug === slug))
+    .filter((cs): cs is NonNullable<typeof cs> => !!cs);
+
   return (
     <div id="work-panel">
       <PanelHeader label="Selected Work" />
-      <div style={{ padding: "16px 24px 32px" }}>
+      <div style={{ padding: "16px 24px 24px" }}>
         {/* Card gap mirrors the inter-panel gap on the page so the
             spacing rhythm reads consistent across the layout. */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
-          {(() => {
-            const COMING_SOON = new Set(["fancode-ftux", "zetwerk-dc", "zetwerk-bu-ecosystem"]);
-            return caseStudies.filter(cs => cs.slug !== "astra").map((cs, i) => {
+          {orderedCards.map((cs, i) => {
             const href = `/work/${cs.slug}`;
-            const comingSoon = COMING_SOON.has(cs.slug);
-            const CardWrapper = comingSoon
-              ? ({ children }: { children: React.ReactNode }) => <div style={{ cursor: "default" }}>{children}</div>
-              : ({ children }: { children: React.ReactNode }) => <Link href={href}>{children}</Link>;
             return (
               <motion.div
                 key={cs.slug}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={comingSoon ? {} : { y: -2 }}
+                whileHover={{ y: -2 }}
                 viewport={{ once: true, margin: "-20px" }}
                 transition={{
                   opacity: { duration: 0.5, ease: EASE, delay: i * 0.06 },
                   y: { type: "spring", stiffness: 320, damping: 28 },
                 }}
-                style={comingSoon ? { opacity: 0.45 } : {}}
               >
-                <CardWrapper>
+                <Link href={href}>
                   <div
                     className="work-card"
                     style={{
@@ -816,69 +821,41 @@ function WorkPanel() {
                       boxShadow: "var(--card-shadow)",
                       transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
                     }}
-                    onMouseEnter={e => {
-                      if (!comingSoon) e.currentTarget.style.boxShadow = "var(--card-shadow-hover)";
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.boxShadow = "var(--card-shadow)";
-                    }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
-                    {/* Thumbnail — always-visible image (or video for case studies
-                        where motion communicates the design better), mesh as fallback */}
+                    {/* Thumbnail */}
                     <div style={{ position: "relative", height: "220px", overflow: "hidden", padding: "12px 12px 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         isVideoThumb(WORK_THUMBS[cs.slug]) ? (
                           <video
                             className="work-thumb"
                             src={WORK_THUMBS[cs.slug]}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            preload="metadata"
-                            aria-hidden="true"
+                            autoPlay loop muted playsInline preload="metadata" aria-hidden="true"
                             style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                              objectPosition: "center top",
-                              display: "block",
-                              borderRadius: "8px 8px 0 0",
-                              background: "var(--surface)",
+                              width: "100%", height: "100%", objectFit: "cover",
+                              objectPosition: "center top", display: "block",
+                              borderRadius: "8px 8px 0 0", background: "var(--surface)",
                             }}
                           />
                         ) : (
                           <img
-                            className="work-thumb"
-                            src={WORK_THUMBS[cs.slug]}
-                            alt=""
-                            aria-hidden="true"
-                            loading="lazy"
-                            decoding="async"
+                            className="work-thumb" src={WORK_THUMBS[cs.slug]}
+                            alt="" aria-hidden="true" loading="lazy" decoding="async"
                             style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                              objectPosition: "center top",
-                              display: "block",
+                              width: "100%", height: "100%", objectFit: "cover",
+                              objectPosition: "center top", display: "block",
                               borderRadius: "8px 8px 0 0",
                             }}
                           />
                         )
                       ) : (
-                        <MeshThumbnail
-                          index={i}
-                          type={cs.type}
-                          confidential={cs.confidential}
-                        />
+                        <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
                       )}
                     </div>
 
                     {/* Body */}
                     <div style={{ padding: "12px 16px 16px" }}>
-                      {/* Tags row — mono uppercase to match the system used everywhere
-                          else (case study tags, panel headers). The numeric counter is
-                          dropped: the cards already have a clear visual order. */}
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
                         {cs.tags.slice(0, 2).map(tag => (
                           <span key={tag} style={{
@@ -890,22 +867,7 @@ function WorkPanel() {
                             {tag}
                           </span>
                         ))}
-                        {comingSoon && (
-                          <span style={{
-                            fontFamily: "var(--font-mono)", fontSize: "9px",
-                            letterSpacing: "0.06em", textTransform: "uppercase",
-                            padding: "3px 8px",
-                            background: "rgba(245,158,11,0.10)",
-                            border: "1px solid rgba(245,158,11,0.35)",
-                            color: "#f59e0b",
-                            borderRadius: "8px",
-                          }}>
-                            Coming soon
-                          </span>
-                        )}
                       </div>
-
-                      {/* Title — Figma: Inter 400 / 16px / line-height 18px / 0 tracking */}
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400,
                         lineHeight: "22px", letterSpacing: 0,
@@ -913,25 +875,56 @@ function WorkPanel() {
                       }}>
                         {cs.title}
                       </h3>
-
-                      {/* Impact line — replaces the problem-framing subtitle with
-                          the key project outcome. Falls back to cs.subtitle if
-                          cardImpact is not set. */}
                       <p style={{
                         fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
                         lineHeight: 1.5, letterSpacing: 0,
-                        color: "var(--muted)", marginBottom: "12px",
+                        color: "var(--muted)", marginBottom: "0",
                       }}>
                         {cs.cardImpact ?? cs.subtitle}
                       </p>
                     </div>
                   </div>
-                </CardWrapper>
+                </Link>
               </motion.div>
             );
-          });
-          })()}
+          })}
         </div>
+
+        {/* Coming soon — collapsed into chips so the panel stays clean.
+            Each chip is a quiet amber pill matching the "coming soon" tag
+            style used elsewhere in the system. */}
+        {comingSoonCards.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}
+            style={{ marginTop: "20px" }}
+          >
+            <p style={{
+              fontFamily: "var(--font-mono)", fontSize: "9px",
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)", marginBottom: "10px",
+            }}>
+              Coming soon
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              {comingSoonCards.map(cs => (
+                <span key={cs.slug} style={{
+                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  letterSpacing: "0.06em", textTransform: "uppercase",
+                  padding: "4px 10px",
+                  background: "rgba(245,158,11,0.08)",
+                  border: "1px solid rgba(245,158,11,0.28)",
+                  color: "#f59e0b",
+                  borderRadius: "20px",
+                }}>
+                  {cs.title}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );
@@ -2148,7 +2141,6 @@ const PANEL_SHADOW_ACTIVE_DARK = "0 0 0 1px rgba(255,255,255,0.09), 0 4px 12px r
 const PANEL_CONFIGS = [
   { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
   { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
-  { label: "AI",             width: "440px", minWidth: "380px", Component: AiExplorationsPanel },
   { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
   { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
   { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },
