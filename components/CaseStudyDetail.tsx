@@ -1540,36 +1540,20 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             {(cs.outcomesImage || cs.prototypeVideo) && (
               <CsSection label="Final Design">
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                  {/* Video(s) always render first */}
-                  {cs.prototypeVideo && (
-                    cs.slug === "fancode-homepage" && cs.contextVideo ? (
-                      /* FanCode: show overview + prototype videos side by side */
-                      <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.65, ease: EASE }}
-                        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
-                      >
-                        <div>
-                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>Overview</p>
-                          <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
-                        </div>
-                        <div>
-                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>Prototype flow</p>
-                          <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
-                        </div>
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.65, ease: EASE }}
-                      >
-                        <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
-                      </motion.div>
-                    )
+                  {/* Video renders first — for FanCode use contextVideo in this slot */}
+                  {(cs.slug === "fancode-homepage" ? cs.contextVideo : cs.prototypeVideo) && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.65, ease: EASE }}
+                    >
+                      <VideoBlock
+                        src={cs.slug === "fancode-homepage" ? cs.contextVideo! : cs.prototypeVideo!}
+                        appType={cs.type}
+                        chromeUrl={chromeUrl}
+                      />
+                    </motion.div>
                   )}
                   {/* Image renders below video */}
                   {cs.outcomesImage && (
