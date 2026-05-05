@@ -1385,11 +1385,25 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       {cs.slug === "planful-esm-tables" && d.title.startsWith("What comes next") ? (
                         <MapsDecisionBlock />
                       ) : (
-                        /* Route through BodyText so bullets / labelled lists
-                           inside the decision body render as proper structural
-                           lists (was rendering them as flat prose with literal
-                           dashes before). */
-                        <BodyText>{d.body}</BodyText>
+                        /* Split ==Impact:== into a tinted callout block.
+                           Any body without ==Impact:== renders as before. */
+                        (() => {
+                          const IMPACT_SPLIT = /\n\n==Impact:==/;
+                          const parts = d.body.split(IMPACT_SPLIT);
+                          const mainBody = parts[0];
+                          const impactText = parts[1]?.trim();
+                          return (
+                            <>
+                              <BodyText>{mainBody}</BodyText>
+                              {impactText && (
+                                <div style={{ marginTop: "14px", padding: "12px 14px", background: "rgba(16,185,129,0.07)", borderRadius: "8px", borderLeft: "2px solid rgba(16,185,129,0.35)", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgb(16,185,129)" }}>Impact</p>
+                                  <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{impactText}</p>
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()
                       )}
                       {d.videos && d.videos.length > 0 && (
                         <motion.div
@@ -1866,29 +1880,46 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {cs.scrappedDirections && cs.scrappedDirections.length > 0 && (
               <CsSection label="What We Tried & Killed">
-                <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                  {cs.scrappedDirections.map((dir, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 12 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
-                      style={{ display: "grid", gridTemplateColumns: "48px 1fr", gap: "24px" }}
-                    >
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", color: "var(--muted)", paddingTop: "2px" }}>
-                        {String(i + 1).padStart(2, "0")}
-                      </p>
-                      <div>
-                        <h3 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3, textDecoration: "line-through", textDecorationColor: "var(--border)" }}>
-                          {dir.title}
-                        </h3>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {cs.scrappedDirections.map((dir, i) => {
+                    /* Split on " vs " to extract the A and B options from the title.
+                       Falls back to just rendering the title if no "vs" separator. */
+                    const vsParts = dir.title.split(" vs ");
+                    const hasVs = vsParts.length === 2;
+                    const optionA = hasVs ? vsParts[0].trim() : null;
+                    const optionB = hasVs ? vsParts[1].trim() : null;
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
+                        style={{ background: "var(--surface)", borderRadius: "12px", padding: "16px 18px", boxShadow: "var(--card-shadow)" }}
+                      >
+                        {hasVs ? (
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
+                            {/* Chosen option — solid */}
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", background: "rgba(16,185,129,0.10)", border: "1px solid rgba(16,185,129,0.25)", borderRadius: "6px", padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                              <span style={{ color: "rgb(16,185,129)", fontSize: "10px" }}>✓</span>{optionA}
+                            </span>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)" }}>vs</span>
+                            {/* Rejected option — muted */}
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)", background: "var(--surface2)", borderRadius: "6px", padding: "4px 10px", textDecoration: "line-through", textDecorationColor: "var(--border)" }}>
+                              {optionB}
+                            </span>
+                          </div>
+                        ) : (
+                          <h3 style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3 }}>
+                            {dir.title}
+                          </h3>
+                        )}
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
                           {dir.reason}
                         </p>
-                      </div>
-                    </motion.div>
-                  ))}
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </CsSection>
             )}
