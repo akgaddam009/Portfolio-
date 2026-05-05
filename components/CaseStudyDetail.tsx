@@ -1540,19 +1540,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             {(cs.outcomesImage || cs.prototypeVideo) && (
               <CsSection label="Final Design">
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                  {/* Video renders first — for FanCode use contextVideo in this slot */}
-                  {(cs.slug === "fancode-homepage" ? cs.contextVideo : cs.prototypeVideo) && (
+                  {/* Video renders first */}
+                  {cs.prototypeVideo && (
                     <motion.div
                       initial={{ opacity: 0, y: 12 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.65, ease: EASE }}
                     >
-                      <VideoBlock
-                        src={cs.slug === "fancode-homepage" ? cs.contextVideo! : cs.prototypeVideo!}
-                        appType={cs.type}
-                        chromeUrl={chromeUrl}
-                      />
+                      <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
                     </motion.div>
                   )}
                   {/* Image renders below video */}
