@@ -21,6 +21,10 @@ export type CaseStudy = {
   number: string;
   title: string;
   subtitle: string;
+  /** Short impact statement shown on the Selected Work card thumbnail.
+      Replaces the subtitle in the card view — should convey the key outcome
+      in ≤ 12 words. If absent, falls back to the first metric or subtitle. */
+  cardImpact?: string;
   company?: string;
   type?: string;
   role: string;
@@ -178,6 +182,7 @@ export const caseStudies: CaseStudy[] = [
     title: "Moving a critical finance workflow from Excel to the web.",
     subtitle:
       "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
+    cardImpact: "~95% reduction in time on task — 3.5 hrs → 10–15 min",
     company: "Planful",
     type: "Enterprise SaaS · Fintech",
     role: "Senior Product Designer (IC)",
@@ -477,6 +482,7 @@ export const caseStudies: CaseStudy[] = [
     number: "00",
     title: "AI Contract Review & Approval Workflow",
     subtitle: "What does 85–90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
+    cardImpact: "Full working prototype shipped in a weekend — AI review + approval in 2 flows",
     company: "AI Exploration",
     type: "AI · B2B SaaS",
     role: "AI UX",
@@ -605,6 +611,7 @@ export const caseStudies: CaseStudy[] = [
     number: "07",
     title: "Bringing Apple Maps into Business Listing Performance",
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
+    cardImpact: "~68% weekly adoption from launch — Apple Maps data visible across 100M+ US users",
     company: "Reputation.com",
     type: "Enterprise SaaS · Analytics & Insights",
     role: "Senior UX Designer",
@@ -725,6 +732,7 @@ export const caseStudies: CaseStudy[] = [
     number: "06",
     title: "FanCode Homepage Redesign",
     subtitle: "We were sorting the homepage by content. Our users were sorting it by tournament.",
+    cardImpact: "Below-fold dead zone reversed — unused sections became active across every user cohort",
     company: "FanCode",
     type: "Consumer Mobile App · Sports & Streaming",
     role: "Manager UX (IC)",
@@ -934,6 +942,7 @@ export const caseStudies: CaseStudy[] = [
     number: "02",
     title: "First-Time User Experience",
     subtitle: "Users were deleting the app within 2 hours of download. The product worked. The first minute didn't.",
+    cardImpact: "5 features shipped from 15 interviews — free trial, splash redesign, restructured FTUX",
     company: "FanCode",
     type: "Consumer Mobile App Sports & Media",
     role: "Manager UX",
@@ -1084,6 +1093,7 @@ export const caseStudies: CaseStudy[] = [
     title: "Supply chain coordination at scale",
     subtitle:
       "Designed a digital delivery challan workflow for a 500+ supplier network, turning a paper-based process that tied up 8 employees full-time into a system any ops user could run, with built-in GST compliance for the tax team.",
+    cardImpact: "90% user adoption in first 3 months — 800+ monthly challans off paper",
     company: "Zetwerk",
     type: "Enterprise Application, Supply Chain",
     role: "Sr. Product Designer",
@@ -1268,6 +1278,7 @@ export const caseStudies: CaseStudy[] = [
     number: "04",
     title: "Enterprise Service Design & Operations Research",
     subtitle: "Five teams. Five broken workflows. Nobody had ever drawn the full picture.",
+    cardImpact: "5 competing backlogs → 1 sequenced plan — first complete view of how ops actually worked",
     company: "Zetwerk",
     type: "User Research",
     role: "User Research & UX Strategy",
