@@ -777,41 +777,44 @@ function SystemFeatureCard() {
 }
 
 function WorkPanel() {
-  // Explicit display order — astra moves in after fancode-homepage
-  const CARD_ORDER   = ["planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra"];
-  const COMING_SOON_SLUGS = ["fancode-ftux", "zetwerk-dc", "zetwerk-bu-ecosystem"];
+  // Explicit display order — astra moves in after fancode-homepage,
+  // coming-soon cards follow as full cards with a "Coming soon" chip on them.
+  const CARD_ORDER = [
+    "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
+    "fancode-ftux", "zetwerk-dc", "zetwerk-bu-ecosystem",
+  ];
+  const COMING_SOON = new Set(["fancode-ftux", "zetwerk-dc", "zetwerk-bu-ecosystem"]);
 
-  const orderedCards = CARD_ORDER
-    .map(slug => caseStudies.find(cs => cs.slug === slug))
-    .filter((cs): cs is NonNullable<typeof cs> => !!cs);
-
-  const comingSoonCards = COMING_SOON_SLUGS
+  const allCards = CARD_ORDER
     .map(slug => caseStudies.find(cs => cs.slug === slug))
     .filter((cs): cs is NonNullable<typeof cs> => !!cs);
 
   return (
     <div id="work-panel">
       <PanelHeader label="Selected Work" />
-      <div style={{ padding: "16px 24px 24px" }}>
-        {/* Card gap mirrors the inter-panel gap on the page so the
-            spacing rhythm reads consistent across the layout. */}
+      <div style={{ padding: "16px 24px 32px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
-          {orderedCards.map((cs, i) => {
+          {allCards.map((cs, i) => {
             const href = `/work/${cs.slug}`;
+            const comingSoon = COMING_SOON.has(cs.slug);
+            const CardWrapper = comingSoon
+              ? ({ children }: { children: React.ReactNode }) => <div style={{ cursor: "default" }}>{children}</div>
+              : ({ children }: { children: React.ReactNode }) => <Link href={href}>{children}</Link>;
             return (
               <motion.div
                 key={cs.slug}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -2 }}
+                whileHover={comingSoon ? {} : { y: -2 }}
                 viewport={{ once: true, margin: "-20px" }}
                 transition={{
                   opacity: { duration: 0.5, ease: EASE, delay: i * 0.06 },
                   y: { type: "spring", stiffness: 320, damping: 28 },
                 }}
+                style={comingSoon ? { opacity: 0.45 } : {}}
               >
-                <Link href={href}>
+                <CardWrapper>
                   <div
                     className="work-card"
                     style={{
@@ -821,7 +824,7 @@ function WorkPanel() {
                       boxShadow: "var(--card-shadow)",
                       transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+                    onMouseEnter={e => { if (!comingSoon) e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
                     {/* Thumbnail */}
@@ -867,6 +870,19 @@ function WorkPanel() {
                             {tag}
                           </span>
                         ))}
+                        {comingSoon && (
+                          <span style={{
+                            fontFamily: "var(--font-mono)", fontSize: "9px",
+                            letterSpacing: "0.06em", textTransform: "uppercase",
+                            padding: "3px 8px",
+                            background: "rgba(245,158,11,0.10)",
+                            border: "1px solid rgba(245,158,11,0.35)",
+                            color: "#f59e0b",
+                            borderRadius: "8px",
+                          }}>
+                            Coming soon
+                          </span>
+                        )}
                       </div>
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400,
@@ -884,47 +900,14 @@ function WorkPanel() {
                       </p>
                     </div>
                   </div>
-                </Link>
+                </CardWrapper>
               </motion.div>
             );
           })}
-        </div>
 
-        {/* Coming soon — collapsed into chips so the panel stays clean.
-            Each chip is a quiet amber pill matching the "coming soon" tag
-            style used elsewhere in the system. */}
-        {comingSoonCards.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}
-            style={{ marginTop: "20px" }}
-          >
-            <p style={{
-              fontFamily: "var(--font-mono)", fontSize: "9px",
-              letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)", marginBottom: "10px",
-            }}>
-              Coming soon
-            </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-              {comingSoonCards.map(cs => (
-                <span key={cs.slug} style={{
-                  fontFamily: "var(--font-mono)", fontSize: "9px",
-                  letterSpacing: "0.06em", textTransform: "uppercase",
-                  padding: "4px 10px",
-                  background: "rgba(245,158,11,0.08)",
-                  border: "1px solid rgba(245,158,11,0.28)",
-                  color: "#f59e0b",
-                  borderRadius: "20px",
-                }}>
-                  {cs.title}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        )}
+          {/* Portfolio Design Language — meta artifact, always shown last */}
+          <SystemFeatureCard />
+        </div>
       </div>
     </div>
   );
