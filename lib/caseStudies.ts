@@ -743,8 +743,8 @@ export const caseStudies: CaseStudy[] = [
     confidential: true,
 
     metrics: [
-      { value: ">90%", label: "of users dropped past the first fold (before)" },
-      { value: "3M+", label: "monthly active users on FanCode at the time" },
+      { value: "~20%", label: "increase in new user retention post-launch" },
+      { value: "15–20%", label: "lift in homepage adoption across cohorts" },
     ],
 
     summary:
@@ -890,9 +890,9 @@ export const caseStudies: CaseStudy[] = [
     },
 
     outcomes: [
-      "Dead zone reversed — single-digit below-fold sections started getting reached, scrolled, and clicked.",
+      "~20% increase in new user retention post-launch.",
+      "15–20% lift in homepage adoption across cohorts.",
       "Dream11 users (match-card-only before) started opening tournament pages and detail surfaces.",
-      "PMs stopped lobbying for the one slot. The homepage now had multiple working distribution points.",
     ],
 
     scrappedDirections: [
