@@ -1666,8 +1666,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}
                   >
                     {[
-                      { stat: "~20%", label: "New user retention", body: "Post-launch lift vs baseline" },
-                      { stat: "15–20%", label: "Homepage adoption", body: "Lift across all cohorts" },
+                      { stat: "~20%", label: "More new users stuck around", body: "Post-launch retention lift" },
+                      { stat: "15–20%", label: "More of the homepage used", body: "Lift across all user groups" },
                     ].map(({ stat, label, body }, i) => (
                       <div
                         key={i}

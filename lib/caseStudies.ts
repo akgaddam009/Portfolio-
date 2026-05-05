@@ -731,8 +731,8 @@ export const caseStudies: CaseStudy[] = [
     slug: "fancode-homepage",
     number: "06",
     title: "FanCode Homepage Redesign",
-    subtitle: "We were sorting the homepage by content. Our users were sorting it by tournament.",
-    cardImpact: "Below-fold dead zone reversed. unused sections became active across every user cohort",
+    subtitle: "We built the homepage around content types. Our users think in tournaments.",
+    cardImpact: "More new users stuck around. More of the page started working.",
     company: "FanCode",
     type: "Consumer Mobile App · Sports & Streaming",
     role: "Manager UX (IC)",
@@ -743,92 +743,92 @@ export const caseStudies: CaseStudy[] = [
     confidential: true,
 
     metrics: [
-      { value: "~20%", label: "increase in new user retention post-launch" },
-      { value: "15–20%", label: "lift in homepage adoption across cohorts" },
+      { value: "~20%", label: "more new users stuck around after launch" },
+      { value: "15–20%", label: "more of the homepage being used across all users" },
     ],
 
     summary:
-      "More than 90% of FanCode users dropped past the first fold. India's all-in-one sports app (live streaming, scores, news, shop, 3M+ monthly active users) was running on a homepage where most of the page was dying below the fold. ==I restructured around how cricket fans actually think: tournament first, then match, then teams and players. The dead zone reversed.==",
+      "90% of FanCode users scrolled the homepage and tapped nothing below the first screen. This is India's biggest sports app — live cricket, news, videos, a shop — and most of it was invisible. ==I reorganised the page around how cricket fans actually think: by tournament. Once we did that, the rest of the page came alive.==",
 
     contextVideo: "/images/fancode/hp-prototype.mov",
 
     context:
-      "Every team was lobbying for first-fold space because below the fold was dead. Fixing that dead zone wasn't a UX problem — it was the growth bottleneck for the entire product.",
+      "There was one part of the homepage that worked — the first screen. Everyone wanted it. Product, marketing, content — every team was fighting for the same tiny strip at the top because nothing below it was getting tapped. Fixing the rest of the page wasn't a design problem. It was the thing blocking every other team from growing.",
 
     problem:
-      "From the original brief: data suggests users scroll on the Homepage, but very few click or consume anything below the first fold.",
+      "Users scrolled the homepage. They just didn't tap anything when they got there.",
 
     problemBreakdown: {
       points: [
-        "More than 90% of users dropped past the first fold without tapping anything below it",
-        "Match cards absorbed almost every click across every cohort (Organic, Marketing, fantasy users)",
-        "New and diverse content struggled to gain visibility against this concentration",
+        "9 in 10 users scrolled the homepage and tapped nothing below the first screen",
+        "Almost every tap on the page went to match cards — that was it",
+        "Videos, news, exclusives — all basically invisible",
       ],
-      impact: "Saurabh (the first-time user we built the brief around) opened the app from an ad, scrolled, and left without tapping anything past the match card.",
+      impact: "Our target new user: came in from an ad, had a scroll, and left without tapping a single thing past the match card.",
     },
 
     insight:
-      "==The homepage sorted by content format. Cricket fans sort by tournament.== Match the structure to how users actually think, and the rest of the page starts working.",
+      "==The page was organised by content type. Cricket fans think in tournaments.== Fix that one thing, and everything else follows.",
 
     approach:
-      "The team had been trying to fix this for months. The metric wasn't moving.\n\nBefore touching any designs, I mapped everything already in the room: scroll data, PM feedback, CEO input, old research that had never gone anywhere. The same pattern kept showing up: the page was organised by content format. Cricket fans think in tournaments.\n\n==That shift — sort by tournament, not content type — became the whole strategy.== Every design move came from there.",
+      "The team had been trying to fix this for months. Nothing was moving.\n\nSo before opening Figma, I gathered every signal already in the building: scroll numbers, what PMs kept raising, what the CEO had said repeatedly, research sitting untouched in a shared drive. Same thing kept jumping out: the page spoke content format. Our users spoke tournament.\n\n==That one realisation — organise by tournament, not content type — became the entire strategy.==",
 
     uxGoals: [
       {
-        title: "Match tournament-first navigation",
-        body: "Cricket fans open the app thinking 'IPL today, India tour next'. not 'I want Top Videos'. Every below-fold section should answer a tournament question, not a content-format question.",
+        title: "Speak the user's language",
+        body: "A cricket fan opens the app thinking 'IPL is on, India plays tomorrow' — not 'let me find Top Videos'. Every section should answer a tournament question, not a content format one.",
       },
       {
-        title: "Make below-the-fold scannable",
-        body: "More than 90% of users dropped past the first fold without tapping. The structure needed to earn scroll. clear section shapes, consistent rhythm, and deliberate pattern breaks that signal value at a glance.",
+        title: "Make every screen worth scrolling to",
+        body: "9 in 10 users weren't tapping below the first screen. That's not a scrolling problem — it's a trust problem. Every section needed to earn its place at a glance.",
       },
       {
-        title: "Teach the pattern once, apply it everywhere",
-        body: "Each tournament section follows the same structure: matches → updates → videos. Learn it once on IPL and the entire page becomes legible. Cognitive load should drop with every new section, not reset.",
+        title: "One pattern, learned once",
+        body: "IPL, India tour, the Ashes — each tournament section works the same way: matches first, updates next, videos below. Learn it once on IPL and the whole page makes sense.",
       },
     ],
 
     productGoals: [
       {
-        title: "Reverse below-fold drop-off",
-        body: "The dead zone below the first fold wasn't a scroll problem. it was a trust problem. The goal was to turn single-digit below-fold consumption into real traffic distributed across the page.",
+        title: "Get the whole page working, not just the top",
+        body: "The dead space below the first screen wasn't just wasted. It was actively hurting the product. Every new feature, content deal, or campaign had nowhere to go.",
       },
       {
-        title: "Give PMs more than one slot",
-        body: "Every team was lobbying for first-fold space because nothing else converted. Fixing the structure meant unlocking multiple distribution points, so campaigns, partnerships, and content launches had somewhere to land.",
+        title: "Stop the fighting for one strip of screen",
+        body: "Everyone wanted the same first-screen slot because it was the only thing that converted. Fix the rest of the page and suddenly there's room for everyone.",
       },
       {
-        title: "Ship personalisation in two phases",
-        body: "Preference-based personalisation (Continue Watching, Recommended for You) ships immediately. Behaviour-based personalisation waits for the consumption pipeline. Two tracks, clear data milestone between them.",
+        title: "Ship something personal now, build the smart version later",
+        body: "We could get Continue Watching and basic recommendations live immediately — no data pipeline needed. The smarter, behaviour-based version would follow when we had the watch data to back it.",
       },
     ],
 
     researchEvidence:
-      "Before touching any designs, I mapped everything the team already knew: scroll data, PM feedback, CEO input, and months of old research that had never gone anywhere. Four signals kept appearing.",
+      "Before any design work, I pulled together everything the team already knew — scroll numbers, what product managers kept raising, what the CEO had said, research no one had acted on. Four things kept coming up.",
 
     researchFindings: [
       {
-        title: "Two named users we designed for",
-        body: "The brief defined two scenarios. Saurabh: 21-25, cricket-only fan, downloaded FanCode from an ad. Spends time on the homepage trying to understand what the app offers. Karan: 21-25, cricket-only, plays fantasy sports, mid-income, Android plus a Firestick. Already a FanCode user but defaults to Cricbuzz for daily news and scores. His own words from the research: 'FanCode to me should be working, functioning like Cricbuzz, with the value add of live streaming and shopping.' Both followed the same mental model: tournaments, then matches, then teams and players, then updates.",
+        title: "The two people we were designing for",
+        body: "The brief defined two scenarios. Saurabh: 21-25, cricket-only fan, downloaded FanCode from an ad. Spends time on the homepage trying to understand what the app offers. Karan: 21-25, cricket-only, plays fantasy sports, mid-income, Android plus a Firestick. Already a FanCode user but defaults to Cricbuzz for daily news and scores. His own words: 'FanCode should work like Cricbuzz, with the value add of live streaming.' Both had the same mental model: tournaments first, then matches, then teams and players.",
       },
       {
-        title: "What leadership signalled",
-        body: "Direct feedback from the CEO lined up with the data. One: make it easy to navigate and find things. Two: explore if we can reduce the size of the nudge in the first fold. Three: it lacks a sense of separation, it's hard to focus on content pieces in the homepage. The third call was the strongest signal that the structural problem was visible to leadership, not just the data.",
+        title: "What the CEO kept saying",
+        body: "Direct feedback from the CEO lined up exactly with the data. Make it easy to find things. Reduce the size of the nudge at the top. It lacks separation — it's hard to focus on anything. The fact that leadership was saying the same things as the data made the direction easy to defend.",
       },
       {
-        title: "Content team constraints",
-        body: "Sessions with the content team showed what was actually possible. Original and partnership content carried different freshness windows and licensing rules. Some sections could be repackaged, like Hot Right Now from breaking news. Others could not, like sponsored Featured Videos. Knowing what could be moved meant the new IA fit content reality, not fought it.",
+        title: "What we could and couldn't move",
+        body: "Sessions with the content team showed us what was actually possible. Some sections could be repackaged — like Hot Right Now, built from breaking news. Others couldn't, like sponsored Featured Videos. Knowing the rules meant we designed around reality, not against it.",
       },
       {
-        title: "The big-tournament exception",
-        body: "During IPL (India's biggest annual cricket tournament), one below-fold block pulled an order of magnitude more engagement than every other section. That gap was the proof point. The model could work below the fold when the content was high-value and the user was the right kind of fan. The fix was not teaching users to scroll. It was making every below-fold section earn its place the way IPL already did.",
+        title: "The one time below-the-fold actually worked",
+        body: "During IPL — India's biggest cricket tournament — one section below the first screen pulled 10x more engagement than everything else on the page. That was the proof. It wasn't that users wouldn't scroll. It was that the content below the fold hadn't earned it yet.",
       },
     ],
 
     decisions: [
       {
-        title: "Tournament-shaped, not content-shaped",
-        body: "Reorganised the homepage into modular tournament blocks. Each tournament = one entry point: matches, updates, videos, news. Content stopped scattering across unrelated sections.\n\n==Impact:== Same content started getting clicked — users could finally find it. Below-fold sections stopped feeling arbitrary.",
+        title: "Group by tournament, not content type",
+        body: "We grouped everything by tournament — not by format. IPL gets one block with its matches, news, and clips. India tour gets the same. The same content that was scattered across five sections was now in one place.\n\n==Impact:== Content that had sat unclicked started getting tapped. Users could finally find what they came for.",
         image: {
           src: "/images/fancode/hp-new-concepts.jpg",
           alt: "New FanCode homepage concept: each tournament gets its own block with matches, updates, and videos grouped together instead of scattered across content-format sections",
@@ -838,19 +838,19 @@ export const caseStudies: CaseStudy[] = [
         },
       },
       {
-        title: "One shape, repeated. Learned once, scanned everywhere.",
-        body: "Codified one repeating structure across every section:\n\n[Tournament] → Matches → Updates → Videos\n\nPattern breaks (Featured Videos, FanCode Exclusives) used as deliberate interruptions — interest without randomness. Directly addressed the CEO's 'lacks separation' call.\n\n==Impact:== New content ships into the pattern without redesigning the page. That unblocked every PM lobbying for first-fold space.",
+        title: "One shape, learned once, works everywhere",
+        body: "Every tournament section follows the same order: matches → updates → videos. Learn it on IPL and you can scan the whole page in seconds. We broke the pattern deliberately for Featured Videos and FanCode Exclusives — variety, but not chaos.\n\n==Impact:== The 'hard to focus' complaint went away. Any new content plugs straight into the pattern. No redesign needed.",
         image: {
           src: "/images/fancode/hp-concept-strategy.jpg",
           alt: "Concept strategy diagram showing the repeating layout pattern applied across tournament-level sections of the homepage",
-          caption: "the concept strategy in full: one shape repeated across every tournament section, with deliberate pattern breaks to add interest",
+          caption: "homepage design patterns are repeatable and reusable — one shape, applied across every tournament section, with deliberate breaks to keep it interesting",
           displayHeight: "700px",
           objectPosition: "top",
         },
       },
       {
-        title: "Each tournament got its own back-room",
-        body: "Built a dedicated page per tournament: hero video, all matches, articles, clips — in one place. Homepage = entry point. Tournament page = depth.\n\n==Impact:== Pressure came off the homepage to surface everything at once. Content distributed across the scroll instead of overloading the top.",
+        title: "A dedicated page for every tournament",
+        body: "Every tournament got its own page — hero video, all the matches, every article and clip, in one place. The homepage is the front door. The tournament page is the room.\n\n==Impact:== The homepage stopped trying to show everything at once. Content spread naturally across the page instead of piling up at the top.",
         images: [
           {
             src: "/images/fancode/hp-hybrid-listing.jpg",
@@ -869,8 +869,8 @@ export const caseStudies: CaseStudy[] = [
         ],
       },
       {
-        title: "Personalisation as a roadmap, not a launch feature",
-        body: "Shipped Continue Watching + Recommended for You immediately from preference signals. Behaviour-based tier (from actual watch data) deferred until the data pipeline was ready — with a clear milestone marking when it lands.\n\n==Impact:== Returning users got personalisation in weeks, not months. The structural fix shipped independently from the data pipeline.",
+        title: "Something personal on day one. Smarter later.",
+        body: "We shipped Continue Watching and a Recommended for You row straight away — built from what users told us they liked. The smarter version, based on what they actually watched, was planned for when the data was ready.\n\n==Impact:== Returning users got a personalised experience immediately. We didn't have to wait six months for the data team to catch up.",
         image: {
           src: "/images/fancode/hp-user-state-exploration.jpg",
           alt: "Design exploration showing the four homepage states across the personalisation roadmap: first-time user, repeat user with no signal, with partial preferences, and with full behavioural personalisation",
@@ -896,21 +896,21 @@ export const caseStudies: CaseStudy[] = [
 
     scrappedDirections: [
       {
-        title: "Partial personalisation now vs full personalisation later",
-        reason: "Chose: ship Continue Watching + Recommended row immediately from preference signals. Rejected: wait 6 months for the full behavioural pipeline. Six weeks of engineering vs six months — users got a surface today.",
+        title: "Basic recommendations now vs wait for the smart version",
+        reason: "We shipped Continue Watching and basic recommendations straight away using preference signals. Waiting for the full data pipeline meant six months of nothing. We chose to ship something real today and make it smarter later.",
       },
       {
-        title: "Cricket-first IA vs multisport parity at launch",
-        reason: "Chose: deep cricket-first IA, designed to extend to other sports later. Rejected: full parity across football, kabaddi, NBA at launch. Cricket was the sole priority sport for the year.",
+        title: "Go deep on cricket vs cover every sport from day one",
+        reason: "Cricket was everything for this audience. Building a great cricket experience — with a structure that could grow to other sports — beat spreading thin across football, kabaddi, and basketball from the start.",
       },
       {
-        title: "Shrunk nudge vs denser first-fold promo space",
-        reason: "Chose: shrink the nudge, give match cards and Featured Videos room. Rejected: denser first-fold for campaigns and brand pushes. Data and the CEO pointed the same direction.",
+        title: "Smaller promotional nudge vs more promo space at the top",
+        reason: "We made the promo nudge smaller to give match cards and Featured Videos more room. The data said match cards were where users actually went. The CEO said reduce the nudge. Both pointed the same way.",
       },
     ],
 
     lesson:
-      "Below-fold disengagement wasn't a UX problem — it was a growth bottleneck. Fixing it unblocked every team that needed homepage exposure for whatever they were shipping next.",
+      "When one part of your product doesn't work, the cost shows up everywhere. Every team was fighting for the same tiny slot because nothing else converted. Once more of the page worked, everyone had room.",
 
     reflection:
       "The CEO's feedback (hard to focus, lacks separation, reduce the nudge) was confirmed by the data before we ever heard it. That alignment made the decisions easier. Post-launch, I reviewed the numbers in Looker directly. The drop-off below the fold visibly reversed. But the deeper question, did Karan-shaped users open the competitor less, was never measured. That was the metric the brief actually asked for, and we never built the instrument to answer it.\n\nNext steps: a personalisation engine running on actual behaviour. Sport-level customisation as cricket-only stops being the constraint. Dynamic content ranking rather than static. A/B tests on layout patterns and modules to keep the system learning.",
