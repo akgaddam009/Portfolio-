@@ -18,12 +18,12 @@ const NAV_SECTIONS = [
 
 /* Tokens. direct extraction from globals.css (kept in sync manually).
    3-layer depth model in both themes: chrome (canvas) → bg (panel) → surface (card).
-   Light theme: cool near-white scale, panels float on a barely-tinted
-   canvas, cards lift one step further on white surfaces.
-   Dark theme: tight warm-neutral scale, panels barely lift off pure
-   black canvas, cards barely lift off panels. The whole dark scale
-   sits in the deepest 12% of the lightness range. high contrast for
-   text, no surface ever feels "lit". */
+   Light theme: cool near-white scale, panels float on a barely-tinted canvas (#f5f5f7),
+   cards lift one step further on white (#ffffff). Drop shadows do the heavy lifting.
+   Dark theme: lifted warm-neutral scale. Canvas is pure black (#000000); panels sit at
+   #141414 (20-unit step, visibly lifted); cards at #1c1c1c. The gap between canvas and
+   panel now matches the perceptual contrast of the light theme — legible without any
+   surface ever feeling "lit". Text always wins. */
 const COLORS = [
   { name: "--chrome",   light: "#f5f5f7", dark: "#000000", role: "Canvas. outermost layer the panels float on" },
   { name: "--bg",       light: "#fafafa", dark: "#141414", role: "Panel fill. sits just above canvas" },
@@ -241,8 +241,9 @@ export default function SystemPage() {
             {/* ── Foundations ── */}
             <CsSection id="system-foundations" label="Foundations">
               <ul style={listStyle}>
-                <li>Two themes, one shared architecture. light (cool near-white) and dark (tight warm-neutral)</li>
-                <li>Dark scale sits in the deepest 12% of lightness. surfaces never feel &quot;lit&quot;, text always wins</li>
+                <li>Two themes, one shared architecture. light (cool near-white) and dark (lifted warm-neutral)</li>
+                <li>Dark scale: canvas #000000, panels #141414, cards #1c1c1c. 20-unit canvas-to-panel step matches light-theme perceptual contrast</li>
+                <li>Case study detail page sits on <code style={{ fontFamily: "var(--font-mono)", fontSize: "11px" }}>--bg</code>; the impact metrics strip uses <code style={{ fontFamily: "var(--font-mono)", fontSize: "11px" }}>--surface</code> to lift above it</li>
                 <li>Inter 400 throughout; weight 500 only for inline emphasis. Zero letter-spacing as default</li>
                 <li>Ease-out-quint is the default motion curve across all transitions</li>
               </ul>
@@ -318,9 +319,14 @@ export default function SystemPage() {
                 <code style={codeChip}>--dur-base: 320ms</code>
                 <code style={codeChip}>--dur-slow: 650ms</code>
               </SpecRow>
-              <SpecRow label="Shadow tokens">
+              <SpecRow label="Card shadows">
                 <code style={codeChip}>--card-shadow</code>
                 <code style={codeChip}>--card-shadow-hover</code>
+              </SpecRow>
+              <SpecRow label="Panel shadows">
+                <code style={codeChip}>0 1px 2px rgba(0,0,0,…)</code>
+                <code style={codeChip}>0 6px 24px rgba(0,0,0,…)</code>
+                <code style={codeChip}>no border ring — smooth drop only</code>
               </SpecRow>
               <SpecRow label="Scroll progress bar" last>
                 <code style={codeChip}>1.5px AI gradient</code>
@@ -364,12 +370,13 @@ export default function SystemPage() {
               <ComponentBlock
                 name="Pill / Tag"
                 category="Metadata"
-                description="Mono-uppercase tags. --surface2 background to differentiate against page or card surfaces."
-                usedIn={["Case study tags", "Work card metadata", "System tags"]}
-                tokens={["--surface2", "--muted", "--font-mono", "letter-spacing: 0.06em"]}
+                description="Mono-uppercase tags. Two variants: filled (--surface2 bg) for standard metadata; border-only (transparent bg + 1px amber border) for Coming soon state. The border-only variant passes WCAG AA contrast in both themes."
+                usedIn={["Case study tags", "Work card metadata", "Coming soon label", "System tags"]}
+                tokens={["--surface2", "--muted", "--font-mono", "letter-spacing: 0.06em", "Coming soon: transparent + rgba(245,158,11,0.55) border + #f59e0b text"]}
                 states={[
-                  { label: "Single",  node: <Pill>Enterprise SaaS</Pill> },
-                  { label: "Set",     node: <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}><Pill>AI UX</Pill><Pill>Workflow</Pill><Pill>Confidential</Pill></div> },
+                  { label: "Filled",       node: <Pill>Enterprise SaaS</Pill> },
+                  { label: "Set",          node: <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}><Pill>AI UX</Pill><Pill>Workflow</Pill><Pill>Confidential</Pill></div> },
+                  { label: "Coming soon",  node: <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", borderRadius: "8px", background: "transparent", border: "1px solid rgba(245,158,11,0.55)", color: "#f59e0b" }}>Coming soon</span> },
                 ]}
               />
 
@@ -511,11 +518,11 @@ export default function SystemPage() {
                   },
                   {
                     label: "The Reverts",
-                    items: ["Dither backdrop. too noisy", "Full-page gradient overlay. killed contrast", "Chartreuse accent. wrong energy entirely"],
+                    items: ["Dither backdrop. too noisy", "Full-page gradient overlay. killed contrast", "Dark panel border ring. looked bolted on, not designed", "bg/chrome flip in dark. punched in, not elevated"],
                   },
                   {
                     label: "The Wins",
-                    items: ["Count-up metric on work cards", "Live IST clock in contact panel", "Scroll-progress gradient bar"],
+                    items: ["Count-up metric on work cards", "Live IST clock in contact panel", "Lifted dark scale. 20-unit canvas-to-panel step. legible in both themes", "Video poster frames. no more blank flash on load"],
                   },
                 ].map(card => (
                   <div key={card.label} style={{ padding: "16px 18px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
@@ -534,7 +541,7 @@ export default function SystemPage() {
               {/* Key insight callout */}
               <div style={{ padding: "18px 22px", background: "var(--surface)", borderRadius: "12px", borderLeft: "3px solid var(--border)", boxShadow: "var(--card-shadow)" }}>
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "var(--text)", lineHeight: 1.65, margin: 0, letterSpacing: "-0.01em" }}>
-                  AI-augmented design shifts the bottleneck from <em>&quot;can I produce this&quot;</em> to <em>&quot;do I know what I want.&quot;</em> The portfolio is the proof; the post-mortem essay is in progress.
+                  AI-augmented design shifts the bottleneck from <em>&quot;can I produce this&quot;</em> to <em>&quot;do I know what I want.&quot;</em> Every revert in this log is a decision made with taste, not a bug. The portfolio is the proof.
                 </p>
               </div>
 
