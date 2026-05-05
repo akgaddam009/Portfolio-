@@ -827,17 +827,6 @@ export const caseStudies: CaseStudy[] = [
 
     decisions: [
       {
-        title: "First fold: lead with what users already click",
-        body: "Match cards already absorbed nearly every click across every cohort. So I rebuilt the fold around what users were already doing. Live matches and key highlights got primary slots. I shrank the promo nudge directly addressing the CEO's call: explore if we can reduce the size of the nudge. That gave Featured Videos room to surface below. Match card structure stayed the same because the data proved it was the homepage's primary value. Featured Video size was being A/B tested at handoff. The 'New from FanCode' label was being trialled for removal.\n\n==Impact:== Featured Videos got the visual weight the click data already proved they deserved. The fold stopped competing with itself. The highest-value zone (live match cards) got room to breathe.",
-        image: {
-          src: "/images/fancode/hp-card-use-case.jpg",
-          alt: "Redesigned first fold: contextual filter chips at the top, match-card-led layout below, with the shrunk nudge giving Featured Videos room to surface",
-          caption: "the redesigned first fold: filter chips on top, match cards leading, Featured Videos given room below the shrunk nudge",
-          displayHeight: "600px",
-          objectPosition: "top",
-        },
-      },
-      {
         title: "Tournament-shaped, not content-shaped",
         body: "I reorganised the homepage into modular tournament-based sections. Each tournament got one entry point for everything from it: matches, updates, videos, news. Content from the same tournament stopped scattering across unrelated sections elsewhere on the page. This matched how Karan and Saurabh both navigated. The page finally read coherently for the way fans think.\n\n==Impact:== Below-fold sections stopped feeling random. Cricket fans could scan the page by the only unit that mattered to them: the tournament. The same content that previously got ignored started getting clicked, because users could now find it.",
         image: {

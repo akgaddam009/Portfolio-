@@ -1026,6 +1026,142 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               <CsSection label={cs.sectionLabels?.research ?? "Research"}>
                 <BodyText>{cs.researchEvidence}</BodyText>
                 {cs.researchFindings && cs.researchFindings.length > 0 && (
+                  cs.slug === "fancode-homepage" ? (
+                    /* ── FanCode-specific research layout ─────────────────────────
+                       4 signals, each visually distinct based on content type.   */
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.65, ease: EASE }}
+                      style={{ marginTop: "24px", display: "flex", flexDirection: "column", gap: "10px" }}
+                    >
+                      {/* Signal 1 — Two named users: split persona cards */}
+                      <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "4px" }}>Signal 01</span>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[0].title}</p>
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                          {/* Saurabh */}
+                          <div style={{ background: "var(--surface2)", borderRadius: "8px", padding: "14px 16px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+                              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "rgba(99,102,241,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <span style={{ fontSize: "13px" }}>🏏</span>
+                              </div>
+                              <div>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 600, color: "var(--text)", letterSpacing: "-0.01em" }}>Saurabh</p>
+                                <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>New user · cricket fan</p>
+                              </div>
+                            </div>
+                            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "5px" }}>
+                              <li style={{ display: "flex", gap: "7px", alignItems: "flex-start" }}>
+                                <span style={{ color: "var(--muted)", fontSize: "10px", marginTop: "2px", flexShrink: 0 }}>→</span>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "11.5px", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>Downloaded via ad. Exploring what the app offers.</p>
+                              </li>
+                              <li style={{ display: "flex", gap: "7px", alignItems: "flex-start" }}>
+                                <span style={{ color: "var(--muted)", fontSize: "10px", marginTop: "2px", flexShrink: 0 }}>→</span>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "11.5px", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>Spends time on the homepage trying to understand the offering.</p>
+                              </li>
+                            </ul>
+                          </div>
+                          {/* Karan */}
+                          <div style={{ background: "var(--surface2)", borderRadius: "8px", padding: "14px 16px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+                              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "rgba(16,185,129,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <span style={{ fontSize: "13px" }}>📱</span>
+                              </div>
+                              <div>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 600, color: "var(--text)", letterSpacing: "-0.01em" }}>Karan</p>
+                                <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>Existing user · fantasy player</p>
+                              </div>
+                            </div>
+                            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "5px" }}>
+                              <li style={{ display: "flex", gap: "7px", alignItems: "flex-start" }}>
+                                <span style={{ color: "var(--muted)", fontSize: "10px", marginTop: "2px", flexShrink: 0 }}>→</span>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "11.5px", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>Defaults to Cricbuzz for daily news. Returns to FanCode only for streams.</p>
+                              </li>
+                              <li style={{ display: "flex", gap: "7px", alignItems: "flex-start" }}>
+                                <span style={{ color: "var(--muted)", fontSize: "10px", marginTop: "2px", flexShrink: 0 }}>→</span>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "11.5px", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>"FanCode should work like Cricbuzz, with the value add of live streaming."</p>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        {/* Shared mental model */}
+                        <div style={{ marginTop: "10px", padding: "10px 14px", background: "var(--surface2)", borderRadius: "7px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>Shared mental model</p>
+                          {["Tournaments", "Matches", "Teams & players", "Updates"].map((step, idx, arr) => (
+                            <Fragment key={step}>
+                              <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "var(--text)", letterSpacing: "-0.01em", background: "var(--surface)", padding: "3px 8px", borderRadius: "5px", boxShadow: "var(--card-shadow)" }}>{step}</span>
+                              {idx < arr.length - 1 && <span style={{ color: "var(--muted)", fontSize: "10px" }}>→</span>}
+                            </Fragment>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Signal 2 — CEO feedback: 3 numbered bullets */}
+                      <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "4px" }}>Signal 02</span>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[1].title}</p>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                          {[
+                            { n: "1", text: "Make it easy to navigate and find things." },
+                            { n: "2", text: "Explore if we can reduce the size of the nudge in the first fold." },
+                            { n: "3", text: "It lacks a sense of separation — it's hard to focus on content pieces on the homepage." },
+                          ].map(item => (
+                            <div key={item.n} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--muted)", letterSpacing: "0.06em", minWidth: "16px", paddingTop: "1px", lineHeight: 1.5 }}>{item.n}.</span>
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", color: "var(--muted2)", lineHeight: 1.6, letterSpacing: "-0.01em" }}>{item.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Signals 3 + 4 — side by side */}
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                        {/* Signal 3 — Content constraints */}
+                        <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "4px" }}>Signal 03</span>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[2].title}</p>
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+                            {[
+                              { can: true,  label: "Hot Right Now (can repackage from breaking news)" },
+                              { can: false, label: "Featured Videos (sponsored — cannot move)" },
+                            ].map(item => (
+                              <div key={item.label} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                                <span style={{ fontSize: "11px", marginTop: "1px", flexShrink: 0 }}>{item.can ? "✓" : "✕"}</span>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "11.5px", color: item.can ? "var(--text)" : "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>{item.label}</p>
+                              </div>
+                            ))}
+                          </div>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "11.5px", color: "var(--muted2)", lineHeight: 1.6, letterSpacing: "-0.01em", marginTop: "10px" }}>
+                            Knowing what could move meant the new IA fit content reality, not fought it.
+                          </p>
+                        </div>
+
+                        {/* Signal 4 — IPL exception: standout callout */}
+                        <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)", position: "relative", overflow: "hidden" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "4px" }}>Signal 04</span>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[3].title}</p>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "baseline", gap: "6px", marginBottom: "8px" }}>
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "36px", fontWeight: 600, letterSpacing: "-0.04em", color: "var(--text)", lineHeight: 1 }}>10×</span>
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted2)", letterSpacing: "-0.01em" }}>more engagement during IPL</span>
+                          </div>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "11.5px", color: "var(--muted2)", lineHeight: 1.6, letterSpacing: "-0.01em" }}>
+                            The model worked below the fold when content earned its place. The fix wasn't teaching users to scroll — it was making every below-fold section earn the way IPL already did.
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                  /* ── Generic research findings grid ── */
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1040,6 +1176,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       </div>
                     ))}
                   </motion.div>
+                  )
                 )}
               </CsSection>
             )}
@@ -1389,6 +1526,38 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             {(cs.outcomesImage || cs.prototypeVideo) && (
               <CsSection label="Final Design">
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                  {/* Video(s) always render first */}
+                  {cs.prototypeVideo && (
+                    cs.slug === "fancode-homepage" && cs.contextVideo ? (
+                      /* FanCode: show overview + prototype videos side by side */
+                      <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.65, ease: EASE }}
+                        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
+                      >
+                        <div>
+                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>Overview</p>
+                          <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                        </div>
+                        <div>
+                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>Prototype flow</p>
+                          <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.65, ease: EASE }}
+                      >
+                        <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                      </motion.div>
+                    )
+                  )}
+                  {/* Image renders below video */}
                   {cs.outcomesImage && (
                     <motion.div
                       initial={{ opacity: 0, y: 12 }}
@@ -1407,16 +1576,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           {cs.outcomesImage.caption}
                         </p>
                       )}
-                    </motion.div>
-                  )}
-                  {cs.prototypeVideo && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 12 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.65, ease: EASE }}
-                    >
-                      <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
                     </motion.div>
                   )}
                 </div>
