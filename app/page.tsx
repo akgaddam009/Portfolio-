@@ -914,32 +914,16 @@ function WorkPanel() {
                         {cs.title}
                       </h3>
 
-                      {/* Impact line — replaces subtitle. Shows the key project outcome
-                          in a compact format: a small "Impact" chip followed by the
-                          cardImpact string. Falls back to cs.subtitle if cardImpact
-                          is not set. */}
-                      <div style={{ display: "flex", alignItems: "flex-start", gap: "7px", marginBottom: "12px" }}>
-                        <span style={{
-                          flexShrink: 0,
-                          fontFamily: "var(--font-mono)", fontSize: "9px",
-                          letterSpacing: "0.06em", textTransform: "uppercase",
-                          padding: "3px 7px",
-                          background: "color-mix(in srgb, var(--accent-warm) 12%, transparent)",
-                          color: "var(--accent-warm)",
-                          borderRadius: "6px",
-                          marginTop: "2px",
-                          lineHeight: "14px",
-                        }}>
-                          Impact
-                        </span>
-                        <p style={{
-                          fontFamily: "var(--font-body)", fontSize: "12.5px", fontWeight: 400,
-                          lineHeight: 1.5, letterSpacing: 0,
-                          color: "var(--muted)", margin: 0,
-                        }}>
-                          {cs.cardImpact ?? cs.subtitle}
-                        </p>
-                      </div>
+                      {/* Impact line — replaces the problem-framing subtitle with
+                          the key project outcome. Falls back to cs.subtitle if
+                          cardImpact is not set. */}
+                      <p style={{
+                        fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+                        lineHeight: 1.5, letterSpacing: 0,
+                        color: "var(--muted)", marginBottom: "12px",
+                      }}>
+                        {cs.cardImpact ?? cs.subtitle}
+                      </p>
                     </div>
                   </div>
                 </CardWrapper>
