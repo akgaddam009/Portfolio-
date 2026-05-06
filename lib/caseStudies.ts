@@ -268,7 +268,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Issues with the Excel Spotlight",
         image: {
-          src: "/images/planful/data-model-comparison.png",
+          src: "/images/planful/data-model-comparison.jpg",
           alt: "Excel Spotlight, the legacy tool it replaced",
           caption: "Excel Spotlight, the tool teams were using before",
         },
@@ -326,7 +326,7 @@ export const caseStudies: CaseStudy[] = [
         title: "A familiar spreadsheet, not a new tool to learn",
         body: "Users already know how spreadsheets work. We built on a battle tested enterprise grid (Syncfusion) so the muscle memory carried over: type, paste, drag, fill. We focused design effort on the workflow itself, not on rebuilding the grid. Scaled to large datasets and met the security standards non negotiable in fintech (SOC 2 Type 2 certified).",
         image: {
-          src: "/images/planful/Engg feasibility .png",
+          src: "/images/planful/engg-feasibility.jpg",
           alt: "The Syncfusion grid pattern that shaped the technical approach",
           caption: "Syncfusion, the grid pattern that shaped the technical approach",
         },
@@ -350,7 +350,7 @@ export const caseStudies: CaseStudy[] = [
         title: "Inside Dynamic Planning. fourth in the list, not the daily driver",
         body: "Dynamic Planning is the core modeling surface finance teams use every day. ESM Tables lives inside it as the fourth tab, not the first thing they open. No separate app to install, no new login. discovering the feature meant clicking one tab over from where they already were.",
         image: {
-          src: "/images/planful/Navigation.png",
+          src: "/images/planful/navigation.jpg",
           alt: "ESM Tables nested inside Dynamic Planning as the fourth tab",
           caption: "Nested inside Dynamic Planning, where the modeling work already happens",
         },
