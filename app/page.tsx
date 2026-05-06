@@ -654,6 +654,63 @@ const WORK_POSTERS: Record<string, string> = {
 // Video file extensions that should render through <video> instead of <img>.
 const isVideoThumb = (src: string) => /\.(mov|mp4|webm)$/i.test(src);
 
+/* ── Work card thumbnail shimmer wrapper ── */
+function WorkCardThumb({
+  src, poster, height = 200, borderRadius = "8px 8px 0 0",
+}: {
+  src: string; poster?: string; height?: number; borderRadius?: string;
+}) {
+  const [ready, setReady] = useState(false);
+  const isVideo = isVideoThumb(src);
+
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      {!ready && (
+        <div style={{
+          position: "absolute", inset: 0,
+          borderRadius,
+          background: "linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%)",
+          backgroundSize: "400% 100%",
+          animation: "shimmer 1.4s ease infinite",
+        }} />
+      )}
+      {isVideo ? (
+        <video
+          className="work-thumb"
+          src={src}
+          poster={poster}
+          autoPlay loop muted playsInline
+          preload="metadata"
+          aria-hidden="true"
+          onCanPlay={() => setReady(true)}
+          style={{
+            width: "100%", height: "100%", objectFit: "cover",
+            objectPosition: "center top", display: "block",
+            borderRadius,
+            opacity: ready ? 1 : 0,
+            transition: "opacity 0.3s ease",
+          }}
+        />
+      ) : (
+        <img
+          className="work-thumb"
+          src={src}
+          alt="" aria-hidden="true"
+          loading="lazy" decoding="async"
+          onLoad={() => setReady(true)}
+          style={{
+            width: "100%", height: "100%", objectFit: "cover",
+            objectPosition: "center top", display: "block",
+            borderRadius,
+            opacity: ready ? 1 : 0,
+            transition: "opacity 0.3s ease",
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
 /* ── Count-up animation for metric values ── */
 function MetricValue({ value }: { value: string }) {
   const [display, setDisplay] = useState(value);
@@ -723,25 +780,10 @@ function SystemFeatureCard() {
               design language in motion. Muted + looped, mirrors the case
               study video thumbnail pattern. */}
           <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
-            <video
-              className="work-thumb"
+            <WorkCardThumb
               src="/images/system/portfolio-design-language.mp4"
               poster="/images/system/cover.png"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              aria-hidden="true"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center top",
-                display: "block",
-                borderRadius: "8px 8px 0 0",
-                background: "var(--surface)",
-              }}
+              height={200}
             />
           </div>
 
@@ -848,29 +890,11 @@ function WorkPanel() {
                     {/* Thumbnail */}
                     <div style={{ position: "relative", height: "220px", overflow: "hidden", padding: "12px 12px 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
-                        isVideoThumb(WORK_THUMBS[cs.slug]) ? (
-                          <video
-                            className="work-thumb"
-                            src={WORK_THUMBS[cs.slug]}
-                            poster={WORK_POSTERS[cs.slug]}
-                            autoPlay loop muted playsInline preload="metadata" aria-hidden="true"
-                            style={{
-                              width: "100%", height: "100%", objectFit: "cover",
-                              objectPosition: "center top", display: "block",
-                              borderRadius: "8px 8px 0 0", background: "var(--surface)",
-                            }}
-                          />
-                        ) : (
-                          <img
-                            className="work-thumb" src={WORK_THUMBS[cs.slug]}
-                            alt="" aria-hidden="true" loading="lazy" decoding="async"
-                            style={{
-                              width: "100%", height: "100%", objectFit: "cover",
-                              objectPosition: "center top", display: "block",
-                              borderRadius: "8px 8px 0 0",
-                            }}
-                          />
-                        )
+                        <WorkCardThumb
+                          src={WORK_THUMBS[cs.slug]}
+                          poster={WORK_POSTERS[cs.slug]}
+                          height={220}
+                        />
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
                       )}
@@ -2106,30 +2130,11 @@ function AiExplorationsPanel() {
                 >
                   <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
                     {WORK_THUMBS[astra.slug] ? (
-                      isVideoThumb(WORK_THUMBS[astra.slug]) ? (
-                        <video
-                          className="work-thumb"
-                          src={WORK_THUMBS[astra.slug]}
-                          poster={WORK_POSTERS[astra.slug]}
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          preload="metadata"
-                          aria-hidden="true"
-                          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block", borderRadius: "8px 8px 0 0", background: "var(--surface)" }}
-                        />
-                      ) : (
-                        <img
-                          className="work-thumb"
-                          src={WORK_THUMBS[astra.slug]}
-                          alt=""
-                          aria-hidden="true"
-                          loading="lazy"
-                          decoding="async"
-                          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block", borderRadius: "8px 8px 0 0" }}
-                        />
-                      )
+                      <WorkCardThumb
+                        src={WORK_THUMBS[astra.slug]}
+                        poster={WORK_POSTERS[astra.slug]}
+                        height={200}
+                      />
                     ) : (
                       <MeshThumbnail index={0} type={astra.type} confidential={astra.confidential} />
                     )}
