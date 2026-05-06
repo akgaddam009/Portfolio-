@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 // Gachibowli, Hyderabad
 const HYD_LNG = 78.3489;
@@ -28,15 +29,6 @@ export function MapLibreMap({ height = 96 }: { height?: number }) {
     if (!containerRef.current) return;
 
     import("maplibre-gl").then(({ default: maplibregl }) => {
-      // Import CSS once
-      if (!document.querySelector("link[data-maplibre]")) {
-        const link = document.createElement("link");
-        link.rel  = "stylesheet";
-        link.href = "https://unpkg.com/maplibre-gl/dist/maplibre-gl.css";
-        link.setAttribute("data-maplibre", "1");
-        document.head.appendChild(link);
-      }
-
       if (mapRef.current || !containerRef.current) return;
 
       const map = new maplibregl.Map({

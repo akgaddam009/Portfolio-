@@ -29,7 +29,8 @@ const securityHeaders = [
       "img-src 'self' data: blob:",                      // blob: for maplibre canvas exports
       "media-src 'self'",                                // portfolio videos served from /public
       "font-src 'self'",                                 // next/font serves Inter locally
-      "connect-src 'self'",                              // no external API calls
+      "connect-src 'self' https://tiles.openfreemap.org", // maplibre fetches vector tiles, glyphs, sprites
+      "font-src 'self' https://tiles.openfreemap.org",  // maplibre glyph PBFs served as fonts
       "worker-src blob:",                                // maplibre Web Workers
       "frame-ancestors 'none'",                          // redundant with X-Frame-Options but belt-and-suspenders
     ].join("; "),
