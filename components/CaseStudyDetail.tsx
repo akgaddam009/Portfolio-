@@ -1558,18 +1558,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.65, ease: EASE }}
-                      onClick={() => setLightboxSrc(cs.outcomesImage!.src)}
                     >
-                      <img
+                      <OutcomesImage
                         src={cs.outcomesImage.src}
                         alt={cs.outcomesImage.alt}
-                        style={{ width: "100%", display: "block", cursor: "zoom-in", borderRadius: "12px" }}
+                        caption={cs.outcomesImage.caption}
+                        onOpen={() => setLightboxSrc(cs.outcomesImage!.src)}
                       />
-                      {cs.outcomesImage.caption && (
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
-                          {cs.outcomesImage.caption}
-                        </p>
-                      )}
                     </motion.div>
                   )}
                 </div>
@@ -2240,6 +2235,7 @@ function ZoomBadge() {
 
 function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; placeholder?: string; onOpen?: (src: string) => void }) {
   const [errored, setErrored] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const isEmpty = !image || errored;
 
   return (
@@ -2283,13 +2279,21 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
           </div>
         ) : (
           <div style={image?.displayHeight ? { height: image.displayHeight, overflow: "hidden" } : undefined}>
+            {!loaded && (
+              <Shimmer
+                height={image?.displayHeight ?? 300}
+                borderRadius="0"
+              />
+            )}
             <img
               src={image!.src}
               alt={image!.alt}
+              loading="lazy"
+              onLoad={() => setLoaded(true)}
               onError={() => setErrored(true)}
               style={{
                 width: "100%",
-                display: "block",
+                display: loaded ? "block" : "none",
                 objectFit: image?.displayHeight ? "cover" : "contain",
                 objectPosition: image?.objectPosition ?? "center center",
                 height: image?.displayHeight ? "100%" : undefined,
@@ -3163,6 +3167,42 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
   );
 }
 
+function Shimmer({ height, borderRadius = "12px" }: { height: number | string; borderRadius?: string }) {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height,
+        borderRadius,
+        background: "linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%)",
+        backgroundSize: "400% 100%",
+        animation: "shimmer 1.4s ease infinite",
+      }}
+    />
+  );
+}
+
+function OutcomesImage({ src, alt, caption, onOpen }: { src: string; alt: string; caption?: string; onOpen?: () => void }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div onClick={onOpen} style={{ cursor: onOpen ? "zoom-in" : undefined }}>
+      {!loaded && <Shimmer height={400} />}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        style={{ width: "100%", display: loaded ? "block" : "none", borderRadius: "12px" }}
+      />
+      {loaded && caption && (
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
+          {caption}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string; chromeUrl?: string }) {
   // Mobile case studies skip the macOS browser chrome — it's misleading for an
   // app prototype. Detect on the case-study `type` string (e.g. "Consumer Mobile App").
@@ -3170,18 +3210,24 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
   // URL pill in the chrome bar. Falls back to a generic "app.example.com" if no
   // chromeUrl is passed — but we always want to pass one to keep it accurate per case.
   const urlLabel = chromeUrl || "app.example.com";
+  const [ready, setReady] = useState(false);
 
   if (isMobile) {
     return (
       <div style={{ display: "flex", justifyContent: "center", background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}>
-        <video
-          src={src}
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{ maxHeight: "640px", maxWidth: "100%", display: "block", borderRadius: "12px", background: "#000" }}
-        />
+        <div style={{ position: "relative", width: "100%", maxWidth: "320px" }}>
+          {!ready && <Shimmer height={480} borderRadius="12px" />}
+          <video
+            src={src}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="none"
+            onCanPlay={() => setReady(true)}
+            style={{ maxHeight: "640px", maxWidth: "100%", display: ready ? "block" : "none", borderRadius: "12px", background: "#000" }}
+          />
+        </div>
       </div>
     );
   }
@@ -3207,6 +3253,8 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
           </span>
         </div>
       </div>
+      {/* Shimmer shown until video is ready to play */}
+      {!ready && <Shimmer height={400} borderRadius="0" />}
       {/* Video */}
       <video
         src={src}
@@ -3214,7 +3262,9 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
         loop
         muted
         playsInline
-        style={{ width: "100%", display: "block", maxHeight: "520px", objectFit: "contain", background: "var(--surface)" }}
+        preload="none"
+        onCanPlay={() => setReady(true)}
+        style={{ width: "100%", display: ready ? "block" : "none", maxHeight: "520px", objectFit: "contain", background: "var(--surface)" }}
       />
     </div>
   );
