@@ -337,7 +337,7 @@ export const caseStudies: CaseStudy[] = [
         body: "Two ways in, both first class: drop a file, or paste straight from a spreadsheet. For files of 50,000+ rows, the first 1,000 rows preview instantly so users can start working before the full upload finishes.",
         videos: [
           {
-            src: "/images/planful/Two%20ways%20in,%20with%20progress%20that%20doesn't%20make%20people%20wait%20.mov",
+            src: "/images/planful/two-ways-in.mp4",
             label: "Drag & drop or paste data",
             caption: "Live preview of the first 1,000 rows while the rest streams in.",
           },
@@ -363,7 +363,7 @@ export const caseStudies: CaseStudy[] = [
         body: "Every column has a type: text, number, date, formula, constant. A side panel opens from the column header showing only the settings relevant to that type. Power users get full control. Casual users aren't overwhelmed.",
         videos: [
           {
-            src: "/images/planful/%20Column%20settings%20without%20a%20maze%20of%20menus.mov",
+            src: "/images/planful/column-settings.mp4",
             label: "Column settings",
             caption: "Type aware side panel surfaces only what's relevant.",
           },
@@ -389,7 +389,7 @@ export const caseStudies: CaseStudy[] = [
         body: "When data fails validation, the cell itself flags up. A side panel groups issues by type, and each one carries a row link that takes the user straight to the cell. Fix in place, no need to start over.",
         videos: [
           {
-            src: "/images/planful/Errors%20flagged%20in%20context,%20not%20in%20a%20post-submission%20report.mov",
+            src: "/images/planful/errors-flagged.mp4",
             label: "Errors in context",
             caption: "Click a row in the side panel; the grid jumps to the cell.",
           },
@@ -402,7 +402,7 @@ export const caseStudies: CaseStudy[] = [
         body: "At period close, teams replace the full dataset. Mid cycle, they add rows without touching what's already there. Both modes are explicit at upload time, no scripting, no support ticket. A task that used to require rebuilding the whole table now takes a click.",
         videos: [
           {
-            src: "/images/planful/Bulk%20Update%20Video.mov",
+            src: "/images/planful/bulk-update.mp4",
             label: "Bulk update",
             caption: "Overwrite replaces. Append adds. Both visible at the moment they matter.",
           },
@@ -420,7 +420,7 @@ export const caseStudies: CaseStudy[] = [
         body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Data Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
         videos: [
           {
-            src: "/images/planful/MAPS.mov",
+            src: "/images/planful/maps.mp4",
             label: "Data Maps",
             caption: "Visual mapping from ESM columns to financial model dimensions.",
           },
@@ -750,7 +750,7 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "90% of FanCode users scrolled the homepage and tapped nothing below the first screen. This is India's biggest sports app — live cricket, news, videos, a shop — and most of it was invisible. ==I reorganised the page around how cricket fans actually think: by tournament. Once we did that, the rest of the page came alive.==",
 
-    contextVideo: "/images/fancode/hp-prototype.mov",
+    contextVideo: "/images/fancode/hp-prototype.mp4",
 
     context:
       "There was one part of the homepage that worked — the first screen. Everyone wanted it. Product, marketing, content — every team was fighting for the same tiny strip at the top because nothing below it was getting tapped. Fixing the rest of the page wasn't a design problem. It was the thing blocking every other team from growing.",
@@ -881,7 +881,7 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
 
-    prototypeVideo: "/images/fancode/hp-prototype.mov",
+    prototypeVideo: "/images/fancode/hp-prototype.mp4",
 
     outcomesImage: {
       src: "/images/fancode/hp-final-ui.jpg",
