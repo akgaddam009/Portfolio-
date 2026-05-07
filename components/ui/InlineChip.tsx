@@ -19,6 +19,12 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
   /* Line-height contract: chip's effective rendered height must NOT exceed the
      parent paragraph's line-height. Otherwise chip-bearing lines render taller
      than text-only lines and the paragraph rhythm breaks. */
+  /* Alignment contract: chip text sits on the same baseline as surrounding
+     plain text. Setting lineHeight to "inherit" keeps the chip box exactly
+     as tall as a line of the parent's text, and verticalAlign: baseline
+     anchors the chip text to the parent's baseline rather than its middle.
+     This fixes drift in headings (H1 lineHeight 1.25) where chip text
+     was floating below the plain-text baseline. */
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: hasIcon ? (isMatch ? "4px" : "3px") : "0",
@@ -31,8 +37,9 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
       fontFamily: "var(--font-body)",
       fontSize: isMatch ? "inherit" : "12px",
       fontWeight: 400, letterSpacing: "-0.01em",
-      lineHeight: isMatch ? 1.4 : 1.6,
-      verticalAlign: "middle", whiteSpace: "nowrap",
+      lineHeight: isMatch ? "inherit" : 1.6,
+      verticalAlign: isMatch ? "baseline" : "middle",
+      whiteSpace: "nowrap",
     }}>
       {Icon && <Icon size={isMatch ? 13 : 11} strokeWidth={1.5} style={{ flexShrink: 0 }} />}
       {label}
