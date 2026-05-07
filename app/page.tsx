@@ -393,7 +393,7 @@ const infoRows: { label: string; value: string; valueNode?: React.ReactNode; chi
   {
     label: "Industries",
     value: "",
-    chips: ["Fintech", "Manufacturing", "Healthcare", "HRIS", "Entertainment", "ERP", "Customer Experience"],
+    chips: ["B2B", "SaaS", "Fintech", "Manufacturing", "Healthcare", "HRIS", "Entertainment", "ERP", "Customer Experience"],
   },
 ];
 
@@ -520,7 +520,7 @@ function AboutPanel() {
                 padding: "7px 12px",
                 borderRadius: "6px",
                 border: "1px solid var(--border)",
-                background: "transparent",
+                background: "var(--surface)",
                 display: "inline-flex", alignItems: "center", gap: "6px",
                 transition: "color 0.18s, border-color 0.18s, background 0.18s",
               }}
@@ -533,7 +533,7 @@ function AboutPanel() {
               onMouseLeave={e => {
                 e.currentTarget.style.color = "var(--muted)";
                 e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.background = "var(--surface)";
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
@@ -2077,13 +2077,13 @@ function ContactPanel() {
               padding: "7px 12px",
               borderRadius: "6px",
               border: "1px solid var(--border)",
-              background: "transparent",
+              background: "var(--surface)",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s",
             }}
             onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "transparent"; e.currentTarget.style.boxShadow = "none"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -2098,13 +2098,13 @@ function ContactPanel() {
               padding: "7px 12px",
               borderRadius: "6px",
               border: "1px solid var(--border)",
-              background: "transparent",
+              background: "var(--surface)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s",
               boxSizing: "border-box",
             }}
             onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "transparent"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             LinkedIn
             <ArrowUpRight size={10} strokeWidth={1.5} />
