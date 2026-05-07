@@ -8,7 +8,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
 import ISTClock from "@/components/ISTClock";
-import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase } from "@/components/ui/Icon";
+import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure } from "@/components/ui/Icon";
 import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -386,7 +386,6 @@ function PortraitMagnify() {
 }
 
 const infoRows: { label: string; value: string; valueNode?: React.ReactNode; chips?: string[] }[] = [
-  { label: "Superpower", value: "Reducing complexity at scale. I find the one clear path through ambiguous, multi stakeholder product problems." },
   {
     label: "Experience",
     value: "Nearly a decade designing products for startups and large scale platforms with millions of users.",
@@ -425,15 +424,15 @@ function AboutPanel() {
           transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "20px",
+            fontSize: "24px",
             fontWeight: 400,
-            lineHeight: 1.5,
+            lineHeight: 1.6,
             letterSpacing: "-0.03em",
             color: "var(--text)",
             marginBottom: "20px",
           }}
         >
-          Helping business <InlineChip icon={LayoutGrid} label="design" tone="indigo" scale="match" /> products by aligning <InlineChip icon={Users} label="user needs" tone="teal" scale="match" />{" "}<InlineChip icon={Compass} label="business strategy" tone="amber" scale="match" />{" "}<InlineChip icon={Sparkles} label="AI" tone="violet" scale="match" />
+          Helping business <InlineChip label="design" tone="indigo" scale="match" /> products by aligning <InlineChip label="user needs" tone="teal" scale="match" /> <InlineChip label="business strategy" tone="amber" scale="match" />
         </motion.h1>
 
         {/* Bio. typography per Figma reference:
@@ -516,7 +515,7 @@ function AboutPanel() {
               transition={{ duration: 0.4, ease: EASE, delay: i * 0.06 }}
             >
               <div
-                style={{ padding: "12px 0", transition: "opacity 0.2s" }}
+                style={{ padding: "16px 0", transition: "opacity 0.2s" }}
                 onMouseEnter={e => {
                   e.currentTarget.style.opacity = "0.6";
                   const label = e.currentTarget.querySelector<HTMLElement>("[data-label]");
@@ -528,7 +527,7 @@ function AboutPanel() {
                   if (label) label.style.color = "var(--muted)";
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: row.chips ? "16px" : "10px" }}>
                   <p
                     data-label="true"
                     style={{
@@ -937,7 +936,7 @@ function SystemFeatureCard() {
             </div>
 
             <h3 style={{
-              fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400,
+              fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
               lineHeight: "22px", letterSpacing: 0,
               color: "var(--text)", marginBottom: "4px",
             }}>
@@ -1080,16 +1079,20 @@ function WorkPanel() {
                     {/* Body */}
                     <div style={{ padding: "12px 16px 16px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
-                        {cs.slug === "astra" && <AccentChip label="AI Experiments" tone="violet" icon={Sparkles} />}
-                        {cs.slug === "planful-esm-tables" && <AccentChip label="Fintech" tone="indigo" icon={Briefcase} />}
-                        {cs.slug === "apple-business-listings" && <AccentChip label="CXM" tone="teal" icon={Users} />}
+                        {cs.slug === "astra"                  && <AccentChip label="AI Experiments"  tone="violet"  icon={Sparkles} />}
+                        {cs.slug === "planful-esm-tables"     && <AccentChip label="Fintech"         tone="indigo"  icon={Briefcase} />}
+                        {cs.slug === "apple-business-listings"&& <AccentChip label="CXM"             tone="teal"    icon={Users} />}
+                        {cs.slug === "fancode-homepage"       && <AccentChip label="Consumer Mobile" tone="emerald" icon={LayoutGrid} />}
+                        {cs.slug === "fancode-ftux"           && <AccentChip label="Retention"       tone="emerald" icon={Compass} />}
+                        {cs.slug === "zetwerk-dc"             && <AccentChip label="Supply Chain"    tone="amber"   icon={Path} />}
+                        {cs.slug === "zetwerk-bu-ecosystem"   && <AccentChip label="Service Design"  tone="amber"   icon={TreeStructure} />}
                         {cs.tags.slice(0, 2).map(tag => (
                           <WorkChip key={tag} label={tag} />
                         ))}
                         {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
                       </div>
                       <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400,
+                        fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
                         lineHeight: "22px", letterSpacing: "-0.02em",
                         color: "var(--text)", marginBottom: "4px",
                       }}>
@@ -1995,9 +1998,9 @@ function ContactPanel() {
           transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "18px",
-            fontWeight: 400,
-            letterSpacing: 0,
+            fontSize: "20px",
+            fontWeight: 500,
+            letterSpacing: "-0.02em",
             lineHeight: 1.3,
             color: "var(--text)",
             marginBottom: "12px",
@@ -2018,7 +2021,7 @@ function ContactPanel() {
             marginBottom: "20px",
           }}
         >
-          Open to senior IC and lead roles at teams building complex, human centred products. Especially in <InlineChip icon={Sparkles} label="AI" tone="violet" scale="match" />{" "}<InlineChip icon={Briefcase} label="Enterprise" tone="indigo" scale="match" />{" "}<InlineChip icon={LayoutGrid} label="SaaS" tone="teal" scale="match" />{" "}<InlineChip icon={Users} label="Consumer Products" tone="emerald" scale="match" />
+          Open to senior IC and lead roles at teams building complex, human centred products. Especially in <InlineChip label="AI" tone="violet" scale="match" />{" "}<InlineChip label="Enterprise" tone="indigo" scale="match" />{" "}<InlineChip label="SaaS" tone="teal" scale="match" />{" "}<InlineChip label="Consumer Products" tone="emerald" scale="match" />
         </motion.p>
 
         {/* CTAs. always visible. marginBottom:24px gives mobile spacing
@@ -2265,7 +2268,7 @@ function AiExplorationsPanel() {
                         <WorkChip key={tag} label={tag} />
                       ))}
                     </div>
-                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400, lineHeight: "22px", letterSpacing: 0, color: "var(--text)", marginBottom: "4px" }}>
+                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500, lineHeight: "22px", letterSpacing: 0, color: "var(--text)", marginBottom: "4px" }}>
                       {astra.title}
                     </h3>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300, lineHeight: 1.5, letterSpacing: 0, color: "var(--muted)" }}>

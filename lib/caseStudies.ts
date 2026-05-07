@@ -206,7 +206,7 @@ export const caseStudies: CaseStudy[] = [
       overview: "Context",
       problem: "Problem",
       decisions: "Key design decisions",
-      outcomes: "Outcome",
+      outcomes: "Result",
       lesson: "What I learned",
       references: "References",
     },
@@ -636,7 +636,7 @@ export const caseStudies: CaseStudy[] = [
       overview: "What's a Business Listing?",
       problem: "The Challenge",
       decisions: "What I Did",
-      outcomes: "The Impact",
+      outcomes: "Result",
       lesson: "What This Taught Me",
     },
 
@@ -755,8 +755,8 @@ export const caseStudies: CaseStudy[] = [
     confidential: true,
 
     metrics: [
-      { value: "~20%", label: "more new users stuck around after launch" },
-      { value: "15–20%", label: "more of the homepage being used across all users" },
+      { value: "~20%", label: "Retention lift", body: "more new users stuck around after launch." },
+      { value: "15–20%", label: "Homepage engagement", body: "more of the homepage being used across all users." },
     ],
 
     summary:
@@ -840,7 +840,7 @@ export const caseStudies: CaseStudy[] = [
     decisions: [
       {
         title: "Group by tournament, not content type",
-        body: "We grouped everything by tournament — not by format. IPL gets one block with its matches, news, and clips. India tour gets the same. The same content that was scattered across five sections was now in one place.\n\n==Impact:== Content that had sat unclicked started getting tapped. Users could finally find what they came for.",
+        body: "We grouped everything by tournament — not by format. IPL gets one block with its matches, news, and clips. India tour gets the same. The same content that was scattered across five sections was now in one place. ==Content that had sat unclicked started getting tapped.== Users could finally find what they came for.",
         image: {
           src: "/images/fancode/hp-new-concepts.jpg",
           alt: "New FanCode homepage concept: each tournament gets its own block with matches, updates, and videos grouped together instead of scattered across content-format sections",
@@ -851,7 +851,7 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "One shape, learned once, works everywhere",
-        body: "Every tournament section follows the same order: matches → updates → videos. Learn it on IPL and you can scan the whole page in seconds. We broke the pattern deliberately for Featured Videos and FanCode Exclusives — variety, but not chaos.\n\n==Impact:== The 'hard to focus' complaint went away. Any new content plugs straight into the pattern. No redesign needed.",
+        body: "Every tournament section follows the same order: matches → updates → videos. Learn it on IPL and you can scan the whole page in seconds. We broke the pattern deliberately for Featured Videos and FanCode Exclusives — variety, but not chaos. ==The 'hard to focus' complaint went away.== Any new content plugs straight into the pattern. No redesign needed.",
         image: {
           src: "/images/fancode/hp-concept-strategy.jpg",
           alt: "Concept strategy diagram showing the repeating layout pattern applied across tournament-level sections of the homepage",
@@ -862,7 +862,7 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "A dedicated page for every tournament",
-        body: "Every tournament got its own page — hero video, all the matches, every article and clip, in one place. The homepage is the front door. The tournament page is the room.\n\n==Impact:== The homepage stopped trying to show everything at once. Content spread naturally across the page instead of piling up at the top.",
+        body: "Every tournament got its own page — hero video, all the matches, every article and clip, in one place. The homepage is the front door. The tournament page is the room. ==The homepage stopped trying to show everything at once.== Content spread naturally across the page instead of piling up at the top.",
         images: [
           {
             src: "/images/fancode/hp-hybrid-listing.jpg",
@@ -882,7 +882,7 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "Something personal on day one. Smarter later.",
-        body: "We shipped Continue Watching and a Recommended for You row straight away — built from what users told us they liked. The smarter version, based on what they actually watched, was planned for when the data was ready.\n\n==Impact:== Returning users got a personalised experience immediately. We didn't have to wait six months for the data team to catch up.",
+        body: "We shipped Continue Watching and a Recommended for You row straight away — built from what users told us they liked. The smarter version, based on what they actually watched, was planned for when the data was ready. ==Returning users got a personalised experience immediately.== We didn't have to wait six months for the data team to catch up.",
         image: {
           src: "/images/fancode/hp-user-state-exploration.jpg",
           alt: "Design exploration showing the four homepage states across the personalisation roadmap: first-time user, repeat user with no signal, with partial preferences, and with full behavioural personalisation",
@@ -933,8 +933,8 @@ export const caseStudies: CaseStudy[] = [
       "During IPL, FanCode was acquiring users fast and losing them faster. New users downloaded the app expecting to watch live cricket. Most found no live match. Those who did hit an immediate paywall. The app had no answer for the gap between what users expected and what they actually got. I led the research and redesign across onboarding, the match page, and the homepage to change what new users saw, felt, and decided in those first 60 seconds.",
 
     metrics: [
-      { value: "~2 hrs", label: "Time before new IPL users deleted the app" },
-      { value: "15", label: "Remote user interviews across Tier 1 and Tier 2 cities" },
+      { value: "~2 hrs", label: "Deletion window", body: "Time before new IPL users deleted the app." },
+      { value: "15", label: "User interviews", body: "Remote conversations across Tier 1 and Tier 2 cities." },
     ],
 
     context:
@@ -1096,9 +1096,9 @@ export const caseStudies: CaseStudy[] = [
       "Its delivery operations were bottlenecked on paper challans handwritten in multiple languages, reconciled through spreadsheets and email. I led end-to-end design of the Delivery Challan module, turning paper into a structured digital workflow embedded in the supply chain platform.",
 
     metrics: [
-      { value: "90%", label: "User adoption in first 3 months" },
-      { value: "800+", label: "Monthly challan requests handled" },
-      { value: "26", label: "Design QA improvements shipped" },
+      { value: "90%", label: "User adoption", body: "of the warehouse, quality, and logistics teams adopted the new flow in the first 3 months." },
+      { value: "800+", label: "Monthly volume", body: "challan requests handled per month after launch." },
+      { value: "26", label: "Design QA wins", body: "design QA improvements shipped across the workflow." },
     ],
 
     problem:
@@ -1278,7 +1278,7 @@ export const caseStudies: CaseStudy[] = [
     },
 
     metrics: [
-      { value: "5 backlogs → 1", label: "Competing team roadmaps replaced by a single sequenced plan the PM team could act on" },
+      { value: "5 backlogs → 1", label: "Sequenced roadmap", body: "Competing team roadmaps replaced by a single sequenced plan the PM team could act on." },
     ],
 
     problem:

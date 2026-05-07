@@ -25,8 +25,12 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
        above the surrounding text baseline).
      - verticalAlign: baseline so chip text and plain text share the
        same baseline.
-     - lineHeight: inherit so the chip box is exactly the parent's line
-       height, no taller, no shorter.
+     - lineHeight: a tight 1.25 (smaller than the parent's line-height) so
+       the chip background box is shorter than the line slot. Otherwise
+       chip-bearing lines on consecutive rows overlap visually because each
+       chip background fills the full line.
+     - Parent (H1, body) MUST have lineHeight ≥ 1.5 to give chips breathing
+       room between rows.
      - Icon sits inline next to text with its own vertical-align so it
        optical-centers on the cap height of the label.
 
@@ -36,14 +40,24 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
     return (
       <span style={{
         display: "inline-block",
-        padding: hasIcon ? "0 10px 0 8px" : "0 10px",
-        borderRadius: "8px",
+        /* Padding tuned for breathing room without overpowering surrounding
+           text. Horizontal 14 px so the chip body isn't cramped at small
+           sizes; vertical 0.1em (proportional, ≈1.4 px at 14 px Contact,
+           2.4 px at 24 px H1) so the bg has a sliver of space above/below
+           the cap height. Radius 0.3em — soft corners, not a pill. */
+        padding: hasIcon ? "0.1em 14px 0.1em 10px" : "0.1em 14px",
+        borderRadius: "0.3em",
         background: `var(--chip-${tone}-bg)`,
         color: `var(--chip-${tone}-text)`,
         fontFamily: "var(--font-body)",
         fontSize: "inherit",
-        fontWeight: "inherit", letterSpacing: "-0.01em",
-        lineHeight: "inherit",
+        /* fontWeight + letterSpacing inherit so chip text shares the
+           parent's typographic rhythm. Without this, chips would override
+           H1 (-0.03em) and body (-0.01em) tracking with a single value
+           that fits neither. */
+        fontWeight: "inherit",
+        letterSpacing: "inherit",
+        lineHeight: 1.25,
         verticalAlign: "baseline",
         whiteSpace: "nowrap",
       }}>

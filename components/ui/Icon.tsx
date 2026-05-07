@@ -22,6 +22,10 @@ import {
   Sparkle as PhSparkle,
   Briefcase as PhBriefcase,
   MagnifyingGlass as PhMagnifyingGlass,
+  Path as PhPath,
+  TreeStructure as PhTreeStructure,
+  Check as PhCheck,
+  X as PhX,
 } from "@phosphor-icons/react";
 
 type IconProps = {
@@ -198,6 +202,32 @@ export const Compass = (p: IconProps) => (
 /** Magnifying glass — Research (Phosphor Regular) */
 export const Search = (p: IconProps) => (
   <PhMagnifyingGlass size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** Path — flowing line, used as Supply Chain category icon on work cards.
+ *  Phosphor Regular so it matches the rest of the chip-icon family
+ *  (Briefcase, Users, Compass, LayoutGrid, Sparkles, MagnifyingGlass). */
+export const Path = (p: IconProps) => (
+  <PhPath size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** Tree structure — branching nodes, used as Service Design category icon
+ *  on work cards. Phosphor Regular for chip-icon family consistency. */
+export const TreeStructure = (p: IconProps) => (
+  <PhTreeStructure size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** Check — affirmative inline marker. Phosphor Regular so it matches the
+ *  rest of the chip-icon family at small sizes. Use this instead of the
+ *  Unicode ✓ character. */
+export const Check = (p: IconProps) => (
+  <PhCheck size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** XMark — negative inline marker (paired with Check). Named XMark to avoid
+ *  clashing with the hand-drawn `X` close icon used in nav. Phosphor Regular. */
+export const XMark = (p: IconProps) => (
+  <PhX size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
 );
 
 /** Sparkle — AI signal (Phosphor Regular, single sparkle for cleaner read at small sizes) */

@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
-import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle, ClipboardList, Scale, GitBranch } from "@/components/ui/Icon";
+import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle, ClipboardList, Scale, GitBranch, Check, XMark } from "@/components/ui/Icon";
 import { renderTitleWithChips } from "@/components/ui/InlineChip";
 
 /* Decision icons: keyed by the optional `icon` name on each
@@ -31,7 +31,7 @@ const ALL_NAV_SECTIONS = [
   { id: "cs-insight",   label: "Insight"   },
   { id: "cs-workflow",  label: "Workflow"  },
   { id: "decisions",    label: "Decisions" },
-  { id: "outcomes",     label: "Impact"  },
+  { id: "outcomes",     label: "Result"  },
   { id: "ownership",    label: "Ownership" },
 ];
 
@@ -331,7 +331,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               <motion.h1
                 variants={fadeUp}
-                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.25, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "16px" }}
+                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.5, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "16px" }}
               >
                 {renderTitleWithChips(cs.title, cs.titleHighlights)}
               </motion.h1>
@@ -465,7 +465,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 {[
                   { label: "Problem",  value: cs.tldr.problem  },
                   { label: "Approach", value: cs.tldr.approach },
-                  { label: "Impact",  value: cs.tldr.outcome  },
+                  { label: "Result",  value: cs.tldr.outcome  },
                 ].map(item => (
                   <div key={item.label}>
                     <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>
@@ -627,6 +627,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             </CsSection>
 
             <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} id="cs-problem">
+              {/* Persona preview — human anchor at the top of the Problem
+                  section. Renders only when this case study has personas
+                  attached to its decisions. */}
+              <PersonaPreview cs={cs} />
+
               {/* Render paths for the Problem section:
                   1. apple-business-listings → custom AppleChallengeBlock
                   2. cs.problemCards is set → optional plain prose, then
@@ -718,7 +723,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     );
                   })()}
                   <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}>
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>Impact</p>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{cs.problemBreakdown.impact}</p>
                   </div>
                 </motion.div>
@@ -1111,10 +1115,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <div style={{ background: "var(--surface2)", borderRadius: "8px", padding: "14px 16px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
                               <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "rgba(99,102,241,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                <span style={{ fontSize: "13px" }}>🏏</span>
+                                <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 500, color: "rgb(99,102,241)", letterSpacing: "0.04em" }}>S</span>
                               </div>
                               <div>
-                                <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 600, color: "var(--text)", letterSpacing: "-0.01em" }}>Saurabh</p>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em" }}>Saurabh</p>
                                 <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>New user · cricket fan</p>
                               </div>
                             </div>
@@ -1133,10 +1137,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <div style={{ background: "var(--surface2)", borderRadius: "8px", padding: "14px 16px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
                               <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "rgba(16,185,129,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                <span style={{ fontSize: "13px" }}>📱</span>
+                                <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 500, color: "rgb(16,185,129)", letterSpacing: "0.04em" }}>K</span>
                               </div>
                               <div>
-                                <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 600, color: "var(--text)", letterSpacing: "-0.01em" }}>Karan</p>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em" }}>Karan</p>
                                 <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>Existing user · fantasy player</p>
                               </div>
                             </div>
@@ -1198,7 +1202,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               { can: false, label: "Featured Videos (sponsored — cannot move)" },
                             ].map(item => (
                               <div key={item.label} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
-                                <span style={{ fontSize: "11px", marginTop: "1px", flexShrink: 0 }}>{item.can ? "✓" : "✕"}</span>
+                                {item.can
+                                  ? <Check size={12} strokeWidth={1.75} style={{ color: "var(--accent-success)", marginTop: "3px", flexShrink: 0 }} />
+                                  : <XMark  size={12} strokeWidth={1.75} style={{ color: "var(--muted)",          marginTop: "3px", flexShrink: 0 }} />
+                                }
                                 <p style={{ fontFamily: "var(--font-body)", fontSize: "11.5px", color: item.can ? "var(--text)" : "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>{item.label}</p>
                               </div>
                             ))}
@@ -1247,24 +1254,29 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {cs.insight && (
-              <section id="cs-insight" style={{ padding: "48px 0" }}>
+              <section id="cs-insight" style={{ padding: "80px 0" }}>
+                {/* Pull-quote treatment for the case study's core insight.
+                    Drops the card chrome and instead lets the insight breathe
+                    as a chapter-break in oversized type with a terracotta
+                    accent rule on the left. The eye registers it as a turn
+                    in the narrative, not another body block. */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
-                  style={{ background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}
+                  style={{ maxWidth: "720px", borderLeft: "3px solid var(--accent-warm)", paddingLeft: "28px" }}
                 >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "12px" }}>Core Insight</p>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "18px" }}>Core Insight</p>
                   {(() => {
                     const paras = cs.insight.split("\n\n");
                     return (
                       <>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)" }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 30px)", fontWeight: 300, lineHeight: 1.45, letterSpacing: "-0.02em", color: "var(--text)" }}>
                           {parseHighlights(paras[0])}
                         </p>
                         {paras.slice(1).map((para, i) => (
-                          <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", marginTop: "16px", maxWidth: "560px" }}>
+                          <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", marginTop: "22px" }}>
                             {parseHighlights(para)}
                           </p>
                         ))}
@@ -1450,25 +1462,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       {cs.slug === "planful-esm-tables" && d.title.startsWith("What comes next") ? (
                         <MapsDecisionBlock />
                       ) : (
-                        /* Split ==Impact:== into a tinted callout block.
-                           Any body without ==Impact:== renders as before. */
-                        (() => {
-                          const IMPACT_SPLIT = /\n\n==Impact:==/;
-                          const parts = d.body.split(IMPACT_SPLIT);
-                          const mainBody = parts[0];
-                          const impactText = parts[1]?.trim();
-                          return (
-                            <>
-                              <BodyText>{mainBody}</BodyText>
-                              {impactText && (
-                                <div style={{ marginTop: "14px", paddingTop: "14px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "4px" }}>
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>Impact</p>
-                                  <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{impactText}</p>
-                                </div>
-                              )}
-                            </>
-                          );
-                        })()
+                        /* Decisions render uniformly across all case studies.
+                           Impact / outcome statements use the same ==highlight==
+                           inline emphasis as every other inline accent — no
+                           per-case eyebrow callout. */
+                        <BodyText>{d.body}</BodyText>
                       )}
                       {d.videos && d.videos.length > 0 && (
                         <motion.div
@@ -1637,7 +1635,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            <CsSection label={cs.sectionLabels?.outcomes ?? "Impact"} id="outcomes">
+            <CsSection label={cs.sectionLabels?.outcomes ?? "Result"} id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                 {/* Impact tiles — Planful ESM Tables */}
                 {cs.slug === "planful-esm-tables" && (
@@ -1729,8 +1727,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}
                   >
                     {[
-                      { stat: "~20%", label: "More new users stuck around", body: "Post-launch retention lift" },
-                      { stat: "15–20%", label: "More of the homepage used", body: "Lift across all user groups" },
+                      { stat: "~20%", label: "Retention lift", body: "more new users stuck around after launch." },
+                      { stat: "15–20%", label: "Homepage engagement", body: "more of the homepage being used across all users." },
                     ].map(({ stat, label, body }, i) => (
                       <div
                         key={i}
@@ -1847,7 +1845,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           letterSpacing: "0.1em", textTransform: "uppercase",
                           color: "var(--muted)", margin: 0,
                         }}>
-                          {isAstra ? "Validation" : "Outcome"}
+                          {isAstra ? "Validation" : "Result"}
                         </p>
                         {astraMatch ? (
                           <>
@@ -1977,7 +1975,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
                             {/* Chosen option — solid */}
                             <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", background: "rgba(16,185,129,0.10)", border: "1px solid rgba(16,185,129,0.25)", borderRadius: "6px", padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: "5px" }}>
-                              <span style={{ color: "rgb(16,185,129)", fontSize: "10px" }}>✓</span>{optionA}
+                              <Check size={11} strokeWidth={1.75} style={{ color: "rgb(16,185,129)", flexShrink: 0 }} />{optionA}
                             </span>
                             <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)" }}>vs</span>
                             {/* Rejected option — muted */}
@@ -2649,6 +2647,83 @@ const modelDescStyle: React.CSSProperties = {
   fontFamily: "var(--font-body)", fontSize: "12.5px", lineHeight: 1.55,
   color: "var(--muted2)", margin: 0,
 };
+
+/* ─── PersonaPreview ───────────────────────────────────────────
+   Compact persona row at the top of the Problem section. Inspired by
+   Bradley Ziffer's Amazon case study, where the human stake of the
+   problem is introduced via named personas before the systemic
+   explanation. Reuses persona data from cs.decisions[].persona — the
+   full persona cards still render in their normal place under
+   Decisions; this preview just surfaces the names and 1-line pain
+   points up front so a recruiter sees humans before frameworks.
+
+   Renders null when no personas are attached. */
+function PersonaPreview({ cs }: { cs: CaseStudy }) {
+  const personas = cs.decisions
+    .filter(d => d.persona)
+    .map(d => d.persona!)
+    .filter((p, i, arr) => arr.findIndex(x => x.name === p.name) === i);
+
+  if (personas.length === 0) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, ease: EASE }}
+      style={{
+        marginBottom: "28px",
+        padding: "16px 20px",
+        background: "var(--surface2)",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
+      <p style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: "9px",
+        letterSpacing: "0.1em",
+        textTransform: "uppercase",
+        color: "var(--muted)",
+        margin: 0,
+      }}>
+        Who feels this problem
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        {personas.map(p => (
+          <div key={p.name} style={{ display: "flex", alignItems: "baseline", gap: "10px", flexWrap: "wrap" }}>
+            <span style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "13px",
+              fontWeight: 500,
+              color: "var(--text)",
+              letterSpacing: "-0.01em",
+            }}>{p.name}</span>
+            <span style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "9px",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+            }}>{p.role}</span>
+            <span style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "13px",
+              color: "var(--muted2)",
+              letterSpacing: "-0.01em",
+              flex: "1 1 240px",
+              minWidth: "200px",
+              lineHeight: 1.5,
+            }}>{p.pain}</span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
 
 /* ─── ProblemCardsBlock ────────────────────────────────────────
    Stacked Problem cards. Each has a title, optional lead paragraph,
