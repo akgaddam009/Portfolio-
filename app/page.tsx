@@ -29,6 +29,7 @@ const haptic = (pattern: number | number[]) => {
 function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: () => void; activePanel: number }) {
   return (
     <header
+      className="home-nav"
       style={{
         position: "fixed",
         /* 8px breathing room above the nav so it doesn't sit flush
@@ -2618,6 +2619,8 @@ export default function Home() {
         }
 
         @media (max-width: 640px) {
+          /* Align nav pill left edge with panel card left edge (both 12px) */
+          .home-nav { padding: 0 12px !important; }
           .home-main { height: auto !important; overflow: visible !important; }
           .panels-right-fade { display: none !important; }
           .panels-container {
