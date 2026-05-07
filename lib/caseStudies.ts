@@ -16,10 +16,18 @@ export type TaskFlowStage = {
   meta?: { label: string; value: string }[];
 };
 
+/* Tonal palette for inline chips embedded in case study hero titles.
+   Mirrors the home About panel H1 chip system. */
+export type CaseStudyChipTone = "indigo" | "teal" | "amber" | "violet" | "emerald";
+
 export type CaseStudy = {
   slug: string;
   number: string;
   title: string;
+  /** Optional map of phrase → tone. Each phrase found in `title` is rendered
+      as an InlineChip in the detail hero. Plain string remains the source of
+      truth (used for SEO, OG tags, sitemap, etc.). */
+  titleHighlights?: Record<string, CaseStudyChipTone>;
   subtitle: string;
   /** Short impact statement shown on the Selected Work card thumbnail.
       Replaces the subtitle in the card view. should convey the key outcome
@@ -180,6 +188,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "planful-esm-tables",
     number: "08",
     title: "Moving a critical finance workflow from Excel to the web.",
+    titleHighlights: { "Excel": "amber", "the web": "indigo" },
     subtitle:
       "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
     cardImpact: "~95% reduction in time on task. 3.5 hrs → 10 to 15 min",
@@ -481,6 +490,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "astra",
     number: "00",
     title: "AI Contract Review & Approval Workflow",
+    titleHighlights: { "AI": "violet", "Contract Review": "amber", "Approval Workflow": "indigo" },
     subtitle: "What does 85 to 90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
     cardImpact: "Full working prototype shipped in a weekend. AI review + approval in 2 flows",
     company: "AI Exploration",
@@ -610,6 +620,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "apple-business-listings",
     number: "07",
     title: "Bringing Apple Maps into Business Listing Performance",
+    titleHighlights: { "Apple Maps": "indigo", "Business Listing": "teal" },
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
     cardImpact: "~68% weekly adoption from launch. Apple Maps data visible across 100M+ US users",
     company: "Reputation.com",
@@ -731,6 +742,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "fancode-homepage",
     number: "06",
     title: "FanCode Homepage Redesign",
+    titleHighlights: { "FanCode": "emerald", "Homepage": "indigo" },
     subtitle: "We built the homepage around content types. Our users think in tournaments.",
     cardImpact: "More new users stuck around. More of the page started working.",
     company: "FanCode",
@@ -905,6 +917,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "fancode-ftux",
     number: "02",
     title: "First-Time User Experience",
+    titleHighlights: { "First-Time": "amber", "User Experience": "teal" },
     subtitle: "Users were deleting the app within 2 hours of download. The product worked. The first minute didn't.",
     cardImpact: "5 features shipped from 15 interviews. free trial, splash redesign, restructured FTUX",
     company: "FanCode",
@@ -1055,6 +1068,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "zetwerk-dc",
     number: "03",
     title: "Supply chain coordination at scale",
+    titleHighlights: { "Supply chain": "amber", "scale": "indigo" },
     subtitle:
       "Designed a digital delivery challan workflow for a 500+ supplier network, turning a paper-based process that tied up 8 employees full-time into a system any ops user could run, with built-in GST compliance for the tax team.",
     cardImpact: "90% user adoption in first 3 months. 800+ monthly challans off paper",
@@ -1241,6 +1255,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "zetwerk-bu-ecosystem",
     number: "04",
     title: "Enterprise Service Design & Operations Research",
+    titleHighlights: { "Service Design": "indigo", "Operations Research": "amber" },
     subtitle: "Five teams. Five broken workflows. Nobody had ever drawn the full picture.",
     cardImpact: "5 competing backlogs → 1 sequenced plan. first complete view of how ops actually worked",
     company: "Zetwerk",

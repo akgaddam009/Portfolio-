@@ -9,6 +9,7 @@ import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
 import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase } from "@/components/ui/Icon";
+import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -397,47 +398,8 @@ const infoRows: { label: string; value: string; valueNode?: React.ReactNode; chi
   },
 ];
 
-/* ── Inline concept chip — stroke icon + tinted pill embedded in prose ── */
-/* Premium tonal palette for InlineChip. Each tone resolves to theme-aware
-   CSS variables so chips pick the right hue automatically in light vs dark. */
-type ChipTone = "indigo" | "teal" | "amber" | "violet" | "emerald";
-
-function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
-  icon?: (p: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) => React.ReactElement;
-  label: string;
-  tone: ChipTone;
-  /** "default" → 12px chip for body prose; "match" → inherits parent font-size for headings. */
-  scale?: "default" | "match";
-}) {
-  const isMatch = scale === "match";
-  const hasIcon = Boolean(Icon);
-  /* Line-height contract: chip's effective rendered height must NOT exceed the
-     parent paragraph's line-height. Otherwise chip-bearing lines render taller
-     than text-only lines and the paragraph rhythm breaks.
-     - "match" (in headings): chip uses 1.4 to stay shorter than h1's 1.5 line-height.
-     - "default" (in body prose): chip uses 0 vertical padding + lineHeight: 1.6
-       so the rendered box ≈ font-size only. Combined with verticalAlign: middle,
-       this keeps chip-lines flush with the parent's 1.65 body line-height. */
-  return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: hasIcon ? (isMatch ? "4px" : "3px") : "0",
-      padding: isMatch
-        ? (hasIcon ? "0 10px 0 8px" : "0 10px")
-        : (hasIcon ? "0 8px 0 5px" : "0 8px"),
-      borderRadius: isMatch ? "8px" : "5px",
-      background: `var(--chip-${tone}-bg)`,
-      color: `var(--chip-${tone}-text)`,
-      fontFamily: "var(--font-body)",
-      fontSize: isMatch ? "inherit" : "12px",
-      fontWeight: 400, letterSpacing: "-0.01em",
-      lineHeight: isMatch ? 1.4 : 1.6,
-      verticalAlign: "middle", whiteSpace: "nowrap",
-    }}>
-      {Icon && <Icon size={isMatch ? 13 : 11} strokeWidth={1.5} style={{ flexShrink: 0 }} />}
-      {label}
-    </span>
-  );
-}
+/* InlineChip + ChipTone moved to components/ui/InlineChip.tsx so the case
+   study detail hero can reuse the same chip system. */
 
 function AboutPanel() {
   return (

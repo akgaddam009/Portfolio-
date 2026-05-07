@@ -7,6 +7,7 @@ import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
 import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle, ClipboardList, Scale, GitBranch } from "@/components/ui/Icon";
+import { renderTitleWithChips } from "@/components/ui/InlineChip";
 
 /* Decision icons: keyed by the optional `icon` name on each
    decision entry. Single source so icons stay consistent with
@@ -330,9 +331,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               <motion.h1
                 variants={fadeUp}
-                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.15, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "16px" }}
+                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.25, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "16px" }}
               >
-                {cs.title}
+                {renderTitleWithChips(cs.title, cs.titleHighlights)}
               </motion.h1>
 
               <motion.p
