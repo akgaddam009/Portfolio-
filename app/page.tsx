@@ -8,7 +8,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
 import ISTClock from "@/components/ISTClock";
-import { ArrowUpRight } from "@/components/ui/Icon";
+import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X } from "@/components/ui/Icon";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -19,8 +19,12 @@ const haptic = (pattern: number | number[]) => {
   }
 };
 
-/* ── Home nav. name + panel arrows ── */
-const PANEL_LABELS = ["About", "Work", "AI", "Career", "Testimonials", "Contact"];
+/* ── Home nav. name + panel arrows ──
+   PANEL_LABELS is derived from PANEL_CONFIGS (defined further down) so the
+   two arrays cannot drift out of sync. PANEL_CONFIGS is the single source.
+   This works at runtime because every PANEL_LABELS read happens inside a
+   React component body (HomeNav, FloatingPanelMenu), which executes after
+   all module-level `const` initialization completes. */
 
 function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: () => void; activePanel: number }) {
   return (
@@ -135,6 +139,164 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
   );
 }
 
+/* ── Floating panel menu (mobile only) ──
+   Bottom-right FAB. Tap to expand a sheet listing all six panels.
+   Auto-hides on scroll-down, reappears on scroll-up. Hidden via CSS
+   on desktop (≥641px) — desktop has its own dot-nav + arrows in HomeNav. */
+function FloatingPanelMenu({
+  activePanel,
+  onSelect,
+}: {
+  activePanel: number;
+  onSelect: (i: number) => void;
+}) {
+  const [open, setOpen]     = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const lastY  = useRef(0);
+  const ticking = useRef(false);
+
+  /* Auto-hide on scroll-down, restore on scroll-up. rAF-throttled
+     to stay within UX-PRO `debounce-throttle` and `main-thread-budget`. */
+  useEffect(() => {
+    const onScroll = () => {
+      if (ticking.current) return;
+      ticking.current = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const delta = y - lastY.current;
+        if (Math.abs(delta) > 4) {
+          if (delta > 0 && y > 60) setHidden(true);
+          else setHidden(false);
+          lastY.current = y;
+        }
+        ticking.current = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* Esc closes the sheet. Outside-tap handled by the backdrop layer below. */
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  return (
+    <>
+      {/* Outside-tap backdrop (transparent, only when open) */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            onClick={() => setOpen(false)}
+            className="floating-panel-menu-backdrop"
+            style={{
+              position: "fixed", inset: 0, zIndex: 149,
+              background: "transparent",
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <div
+        className="floating-panel-menu"
+        style={{
+          position: "fixed",
+          right: "20px",
+          bottom: "20px",
+          zIndex: 150,
+          transform: hidden && !open ? "translateY(140%)" : "translateY(0)",
+          transition: "transform 0.32s cubic-bezier(0.22,1,0.36,1)",
+        }}
+      >
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              role="menu"
+              aria-label="Panel navigation"
+              initial={{ opacity: 0, y: 8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              style={{
+                position: "absolute",
+                right: 0,
+                bottom: "56px",
+                minWidth: "180px",
+                padding: "6px",
+                borderRadius: "14px",
+                background: "color-mix(in srgb, var(--bg) 92%, transparent)",
+                border: "1px solid var(--border)",
+                boxShadow: "var(--card-shadow)",
+                backdropFilter: "blur(14px)",
+                WebkitBackdropFilter: "blur(14px)",
+                transformOrigin: "bottom right",
+              }}
+            >
+              {PANEL_LABELS.map((label, i) => (
+                <button
+                  key={label}
+                  role="menuitem"
+                  onClick={() => { onSelect(i); setOpen(false); }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    minHeight: "44px",
+                    textAlign: "left",
+                    padding: "12px 14px",
+                    borderRadius: "8px",
+                    border: "none",
+                    background: i === activePanel ? "var(--surface)" : "transparent",
+                    color: i === activePanel ? "var(--text)" : "var(--muted2)",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "10px",
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    fontWeight: 400,
+                    cursor: "pointer",
+                    transition: "background 0.18s, color 0.18s",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* FAB trigger */}
+        <button
+          onClick={() => setOpen(o => !o)}
+          aria-label={open ? "Close panel menu" : "Open panel menu"}
+          aria-expanded={open}
+          aria-haspopup="menu"
+          style={{
+            width: "44px", height: "44px",
+            borderRadius: "50%",
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            color: "var(--text)",
+            boxShadow: "var(--card-shadow)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer",
+            padding: 0,
+          }}
+        >
+          {open ? <X size={18} strokeWidth={1.5} /> : <Menu size={18} strokeWidth={1.5} />}
+        </button>
+      </div>
+    </>
+  );
+}
+
 /* ── Shared panel header ── */
 function PanelHeader({ label }: { label: string }) {
   return (
@@ -191,7 +353,8 @@ function PortraitMagnify() {
         style={{
           position: "relative",
           width: "100%", height: "100%",
-          cursor: "pointer",
+          /* No cursor:pointer — portrait is decorative-interactive (parallax tilt only),
+             not clickable. Misleading affordance per UX guideline. */
           borderRadius: "16px",
           overflow: "hidden",
           transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
@@ -220,7 +383,7 @@ const infoRows: { label: string; value: string; chips?: string[] }[] = [
   { label: "Superpower", value: "Reducing complexity at scale. I find the one clear path through ambiguous, multi stakeholder product problems." },
   {
     label: "Experience",
-    value: "Nearly a decade designing products for startups and large-scale platforms with millions of users. I focus on building scalable systems that solve real-world problems.",
+    value: "Nearly a decade designing products for startups and large scale platforms with millions of users. I focus on building scalable systems that solve real world problems.",
     chips: ["Fintech", "Manufacturing", "Healthcare", "HRIS", "Entertainment", "ERP", "Customer Experience"],
   },
 ];
@@ -252,12 +415,12 @@ function AboutPanel() {
             fontSize: "18px",
             fontWeight: 400,
             lineHeight: "30px",
-            letterSpacing: 0,
+            letterSpacing: "-0.02em",
             color: "var(--text)",
             marginBottom: "20px",
           }}
         >
-          I design complex systems, turning messy workflows into measurable outcomes using research, product thinking, and AI.
+          I help companies simplify high stakes product complexity by aligning user needs, business strategy, and scalable systems.
         </motion.h1>
 
         {/* Bio. typography per Figma reference:
@@ -275,8 +438,55 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          I&apos;m hands-on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
+          I&apos;m hands on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
         </motion.p>
+
+        {/* Contact links — moved above Focus, no label. Touch-target safe
+            (≥44px tall via 12px×16px padding + 12px text). */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
+          style={{
+            display: "flex", alignItems: "center", gap: "8px",
+            flexWrap: "wrap", marginBottom: "20px",
+          }}
+        >
+          {[
+            { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
+            { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
+            { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
+          ].map(({ label, href, external }) => (
+            <Link
+              key={label}
+              href={href}
+              target={external ? "_blank" : undefined}
+              rel={external ? "noopener noreferrer" : undefined}
+              style={{
+                fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                letterSpacing: "-0.01em",
+                color: "var(--muted)",
+                padding: "12px 16px",
+                borderRadius: "8px",
+                border: "1px solid var(--border)",
+                background: "transparent",
+                display: "inline-flex", alignItems: "center", gap: "6px",
+                transition: "color 0.18s, border-color 0.18s, background 0.18s",
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.color = "var(--text-hover)";
+                e.currentTarget.style.borderColor = "var(--text-hover)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.color = "var(--muted)";
+                e.currentTarget.style.borderColor = "var(--border)";
+              }}
+            >
+              <ArrowUpRight size={11} strokeWidth={1.5} />
+              {label}
+            </Link>
+          ))}
+        </motion.div>
 
         {/* Info rows */}
         <div>
@@ -319,7 +529,7 @@ function AboutPanel() {
                   fontFamily: "var(--font-body)", fontSize: "14px",
                   letterSpacing: "-0.01em",
                   color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
-                  marginBottom: row.chips ? "10px" : 0,
+                  marginBottom: row.chips ? "12px" : 0,
                 }}>
                   {row.value}
                 </p>
@@ -343,147 +553,125 @@ function AboutPanel() {
           ))}
         </div>
 
-        {/* Skills & Tools. marquee of chips, but with the same mono label +
-            dashed-line header used by the rows above (Role, Focus, Experience,
-            Superpower) for visual consistency. AI-forward sequence leads. */}
+        {/* Skills — single horizontal infinite marquee (DD32 pattern from the
+            Dribbble reference). All skills flow in one continuous row with
+            category labels as inline separators. Reuses .marquee-track +
+            .skills-ticker (28s loop, hover to pause) from globals.css. */}
         {(() => {
-          const skills = [
-            "Systems Thinking", "AI UX Design", "Product Thinking", "0→1 Design",
-            "Product Strategy", "Claude Code", "Agentic AI", "Service Design",
-            "Cross functional Leadership", "UX Strategy", "UX Research",
-            "Research Synthesis", "Stakeholder Alignment", "Design Systems",
-            "Information Architecture", "Interaction Design", "Prototyping",
-            "Usability Testing", "Contextual Inquiry", "Service Blueprints",
-            "Jobs-to-be-Done", "Figma", "Framer", "Next.js",
+          /* Flat sequence: each category label followed by its skills. Renders
+             as a single stream with visual breaks between groups. */
+          type Item = { kind: "label" | "skill"; text: string };
+          const sequence: Item[] = [
+            { kind: "label", text: "Strategy" },
+            { kind: "skill", text: "Systems Thinking" },
+            { kind: "skill", text: "Product Strategy" },
+            { kind: "skill", text: "0→1 Design" },
+            { kind: "label", text: "Research" },
+            { kind: "skill", text: "UX Research" },
+            { kind: "skill", text: "JTBD" },
+            { kind: "skill", text: "Service Design" },
+            { kind: "skill", text: "Research Synthesis" },
+            { kind: "label", text: "Execution" },
+            { kind: "skill", text: "Interaction Design" },
+            { kind: "skill", text: "Information Architecture" },
+            { kind: "skill", text: "Prototyping" },
+            { kind: "skill", text: "Design Systems" },
+            { kind: "label", text: "AI Workflow" },
+            { kind: "skill", text: "AI UX" },
+            { kind: "skill", text: "Claude" },
+            { kind: "skill", text: "Agentic AI" },
           ];
-          const ticker = [...skills, ...skills];
+          /* Doubled so the translateX(-50%) animation loops seamlessly. */
+          const ticker = [...sequence, ...sequence];
+
           return (
             <motion.div
-              className="skills-ticker"
               initial={{ opacity: 0, y: 6 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, ease: EASE, delay: 0.24 }}
               style={{ padding: "12px 0" }}
+              className="skills-ticker"
             >
-              {/* Header row. matches the infoRow label style above */}
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+              {/* Section header */}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
                 <p style={{
                   fontFamily: "var(--font-mono)", fontSize: "9px",
                   letterSpacing: "0.1em", textTransform: "uppercase",
                   color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
                 }}>
-                  Skills &amp; Tools
+                  Skills
                 </p>
                 <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
               </div>
 
-              {/* Marquee track */}
-              <div style={{ overflow: "hidden", position: "relative" }}>
-                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
-                <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to left, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+              {/* Marquee — overflow + edge fades + animated track */}
+              <div style={{ overflow: "hidden", position: "relative", padding: "4px 0" }}>
+                <div style={{
+                  position: "absolute", left: 0, top: 0, bottom: 0, width: "32px",
+                  background: "linear-gradient(to right, var(--bg), transparent)",
+                  zIndex: 1, pointerEvents: "none",
+                }} />
+                <div style={{
+                  position: "absolute", right: 0, top: 0, bottom: 0, width: "32px",
+                  background: "linear-gradient(to left, var(--bg), transparent)",
+                  zIndex: 1, pointerEvents: "none",
+                }} />
                 <div
                   className="marquee-track"
                   style={{
-                    ["--marquee-duration" as string]: "28s",
-                    display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
+                    ["--marquee-duration" as string]: "40s",
+                    display: "flex", alignItems: "center", whiteSpace: "nowrap",
                   }}
                 >
-                  {ticker.map((skill, i) => (
-                    <span key={`${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
-                      <span style={{
-                        fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
-                        letterSpacing: "-0.01em", color: "var(--muted2)",
-                        padding: "4px 10px",
-                        border: "1px solid var(--border)",
-                        borderRadius: "9999px",
-                        background: "var(--surface)",
-                        marginRight: "6px",
-                        whiteSpace: "nowrap",
+                  {ticker.map((item, i) => {
+                    /* Map category text → semantic icon. Lucide-geometry,
+                       inherits currentColor (so they tint with the label). */
+                    const labelIcon = item.kind === "label" ? ({
+                      "Strategy":    Compass,
+                      "Research":    Search,
+                      "Execution":   LayoutGrid,
+                      "AI Workflow": Sparkles,
+                    } as Record<string, typeof Compass>)[item.text] : null;
+                    return item.kind === "label" ? (
+                      /* Category label — icon + mono uppercase text. Brighter
+                         than chips so it reads as a typographic divider. */
+                      <span key={`${item.text}-${i}`} style={{
+                        fontFamily: "var(--font-mono)", fontSize: "9px",
+                        letterSpacing: "0.12em", textTransform: "uppercase",
+                        color: "var(--text)",
+                        marginRight: "8px",
+                        marginLeft: i === 0 ? "0" : "8px",
+                        display: "inline-flex", alignItems: "center", gap: "5px",
+                        flexShrink: 0,
                       }}>
-                        {skill}
+                        {labelIcon && (() => {
+                          const I = labelIcon;
+                          return <I size={11} strokeWidth={1.5} style={{ opacity: 0.85 }} />;
+                        })()}
+                        {item.text}
                       </span>
-                    </span>
-                  ))}
+                    ) : (
+                      /* Skill chip — same style as Experience chips */
+                      <span key={`${item.text}-${i}`} style={{
+                        fontFamily: "var(--font-mono)", fontSize: "8px",
+                        letterSpacing: "0.07em", textTransform: "uppercase",
+                        padding: "4px 10px", borderRadius: "6px",
+                        background: "var(--surface2)", color: "var(--muted)",
+                        border: "1px solid var(--border)",
+                        marginRight: "5px",
+                        display: "inline-block",
+                        flexShrink: 0,
+                      }}>
+                        {item.text}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             </motion.div>
           );
         })()}
-
-        {/* Availability anchor. closes the card with a clear signal,
-            using the same mono label + dashed line as the rows above. The
-            green status dot ties it to the brand accent (also in the OG image). */}
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: EASE, delay: 0.3 }}
-        >
-          <div style={{ padding: "12px 0" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-              <p style={{
-                fontFamily: "var(--font-mono)", fontSize: "9px",
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
-              }}>
-                Availability
-              </p>
-              <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
-              <span style={{
-                width: "8px", height: "8px", borderRadius: "50%",
-                background: "#34c759", display: "block", flexShrink: 0,
-              }} />
-              <p style={{
-                fontFamily: "var(--font-body)", fontSize: "14px",
-                letterSpacing: "-0.01em",
-                color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
-              }}>
-                Open to suitable opportunities
-              </p>
-            </div>
-
-            {/* Links. paired with availability so the CTA fires after full context */}
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-              {[
-                { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
-                { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
-                { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
-              ].map(({ label, href, external }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  target={external ? "_blank" : undefined}
-                  rel={external ? "noopener noreferrer" : undefined}
-                  style={{
-                    fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
-                    letterSpacing: "-0.01em",
-                    color: "var(--muted)",
-                    padding: "8px 14px",
-                    borderRadius: "8px",
-                    border: "1px solid var(--border)",
-                    background: "transparent",
-                    display: "inline-flex", alignItems: "center", gap: "5px",
-                    transition: "color 0.18s, border-color 0.18s, background 0.18s",
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.color = "var(--text-hover)";
-                    e.currentTarget.style.borderColor = "var(--text-hover)";
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.color = "var(--muted)";
-                    e.currentTarget.style.borderColor = "var(--border)";
-                  }}
-                >
-                  <ArrowUpRight size={11} strokeWidth={1.5} />
-                  {label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </motion.div>
 
       </div>
     </div>
@@ -1879,12 +2067,14 @@ function ContactPanel() {
           Open to senior IC and lead roles at companies building complex, human centred products. Especially in AI, enterprise SaaS, and consumer at scale.
         </motion.p>
 
-        {/* CTAs. always visible */}
+        {/* CTAs. always visible. marginBottom:24px gives mobile spacing
+            before Skills marquee; on desktop the marquee's marginTop:auto
+            still pushes it to the panel bottom so this gap is absorbed. */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE, delay: 0.16 }}
-          style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "0" }}
+          style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "48px" }}
         >
           <button
             onClick={copyEmail}
@@ -1893,12 +2083,13 @@ function ContactPanel() {
               fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
               letterSpacing: "-0.01em",
               color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "8px 14px",
+              padding: "12px 16px",
+              minHeight: "44px",
               borderRadius: "8px",
               border: "1px solid var(--border)",
               background: "transparent",
               cursor: "pointer",
-              display: "inline-flex", alignItems: "center", gap: "5px",
+              display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s",
             }}
             onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--text-hover)"; } }}
@@ -1914,12 +2105,14 @@ function ContactPanel() {
               fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
               letterSpacing: "-0.01em",
               color: "var(--muted)",
-              padding: "8px 14px",
+              padding: "12px 16px",
+              minHeight: "44px",
               borderRadius: "8px",
               border: "1px solid var(--border)",
               background: "transparent",
-              display: "inline-flex", alignItems: "center", gap: "5px",
+              display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s",
+              boxSizing: "border-box",
             }}
             onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--text-hover)"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
@@ -2173,6 +2366,10 @@ const PANEL_CONFIGS = [
   { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },
 ];
 
+/* Derive PANEL_LABELS from the single source above. Adding/removing a panel
+   here automatically updates the nav, dot indicator, and floating menu. */
+const PANEL_LABELS = PANEL_CONFIGS.map(p => p.label);
+
 /* ── Home ── */
 export default function Home() {
   const containerRef  = useRef<HTMLDivElement>(null);
@@ -2222,6 +2419,64 @@ export default function Home() {
     el.scrollBy({ left: dir * (current.offsetWidth + 8), behavior: "smooth" });
   }, [activePanel]);
 
+  /* Scroll directly to a panel by index — used by the mobile FAB menu.
+     On desktop scrolls horizontally inside the panels container; on mobile
+     uses scrollIntoView since panels are vertically stacked. */
+  const scrollToPanel = useCallback((i: number) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const panels = el.querySelectorAll<HTMLElement>(".panel");
+    const target = panels[i];
+    if (!target) return;
+    const isMobile = window.matchMedia("(max-width: 640px)").matches;
+    if (isMobile) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      el.scrollTo({ left: target.offsetLeft - 24, behavior: "smooth" });
+    }
+  }, []);
+
+  /* Mobile-only IntersectionObserver — tracks which panel is most in-view
+     and updates activePanel. The desktop horizontal scroll handler doesn't
+     fire on mobile since the panels-container's overflow-y is visible. */
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const mq = window.matchMedia("(max-width: 640px)");
+    let observer: IntersectionObserver | null = null;
+
+    const setup = () => {
+      observer?.disconnect();
+      observer = null;
+      if (!mq.matches) return;
+      const panels = Array.from(el.querySelectorAll<HTMLElement>(".panel"));
+      if (!panels.length) return;
+      observer = new IntersectionObserver(
+        (entries) => {
+          let bestIdx = -1;
+          let bestRatio = 0;
+          entries.forEach((entry) => {
+            const idx = panels.indexOf(entry.target as HTMLElement);
+            if (idx >= 0 && entry.intersectionRatio > bestRatio) {
+              bestRatio = entry.intersectionRatio;
+              bestIdx = idx;
+            }
+          });
+          if (bestIdx >= 0 && bestRatio > 0.3) setActivePanel(bestIdx);
+        },
+        { threshold: [0.3, 0.5, 0.7] }
+      );
+      panels.forEach((p) => observer!.observe(p));
+    };
+
+    setup();
+    mq.addEventListener("change", setup);
+    return () => {
+      observer?.disconnect();
+      mq.removeEventListener("change", setup);
+    };
+  }, []);
+
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -2269,6 +2524,8 @@ export default function Home() {
     <>
       <LoadingScreen visible={loading} />
       <HomeNav onPrev={() => scrollByPanel(-1)} onNext={() => scrollByPanel(1)} activePanel={activePanel} />
+      {/* Mobile-only floating panel menu — hidden ≥641px via CSS */}
+      <FloatingPanelMenu activePanel={activePanel} onSelect={scrollToPanel} />
 
       {/* Right-edge fade. hides on last panel */}
       <motion.div
@@ -2352,6 +2609,12 @@ export default function Home() {
         }
         .today-dot {
           animation: today-pulse 3.5s ease-out infinite;
+        }
+
+        /* Floating panel menu — desktop hidden, mobile shown */
+        .floating-panel-menu, .floating-panel-menu-backdrop { display: none; }
+        @media (max-width: 640px) {
+          .floating-panel-menu, .floating-panel-menu-backdrop { display: block; }
         }
 
         @media (max-width: 640px) {

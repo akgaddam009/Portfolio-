@@ -177,6 +177,72 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         }
       `}</style>
 
+      {/* ── Mobile responsive overrides ──────────────────────────────
+          All case study page breakages fixed here via class-based CSS
+          rather than scattered inline-style changes. Target: ≤ 640px */}
+      <style>{`
+        /* Section nav — desktop-only; hidden on mobile to prevent
+           right-edge overlap with scrollable content */
+        .cs-section-nav { display: flex !important; }
+        @media (max-width: 640px) {
+          .cs-section-nav { display: none !important; }
+        }
+
+        /* Back button — must meet 44px touch target */
+        .cs-back-link {
+          min-height: 44px;
+          display: inline-flex !important;
+          align-items: center;
+        }
+
+        /* Password gate form — stack vertically on mobile */
+        @media (max-width: 480px) {
+          .cs-pw-form {
+            flex-direction: column !important;
+            align-items: stretch !important;
+          }
+          .cs-pw-form input,
+          .cs-pw-form button {
+            min-height: 44px !important;
+            width: 100% !important;
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+          }
+        }
+
+        /* All 2-column grids → 1 column on mobile */
+        @media (max-width: 640px) {
+          .cs-2col {
+            grid-template-columns: 1fr !important;
+          }
+          /* Planful ESM outcomes side-by-side tiles */
+          .cs-flex-tiles {
+            flex-direction: column !important;
+          }
+          .cs-flex-tiles > * {
+            border-right: none !important;
+            border-bottom: 1px solid var(--border);
+          }
+          .cs-flex-tiles > *:last-child {
+            border-bottom: none !important;
+          }
+          /* Decision video grid — always stack on mobile regardless
+             of video count (repeat(N, 1fr) → 1fr) */
+          .cs-video-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        /* fullBleed images — negative margin causes horizontal overflow.
+           Reset to normal flow on mobile. */
+        @media (max-width: 640px) {
+          .cs-fullbleed-container {
+            margin-left: 0 !important;
+            width: 100% !important;
+          }
+        }
+      `}</style>
+
       {/* Minimal nav — matches HomeNav */}
       <motion.header
         initial={{ opacity: 0, y: -8 }}
@@ -198,6 +264,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Link
             href="/"
+            aria-label="Home. Arun Gaddam"
             style={{
               fontFamily: "var(--font-logo)",
               fontSize: "12px",
@@ -206,33 +273,20 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               letterSpacing: "0.06em",
               textTransform: "uppercase",
               height: "44px",
-              padding: "0 14px 0 6px",
+              padding: "0 14px",
               borderRadius: "12px",
               border: "none",
               background: "var(--surface)",
               boxShadow: "var(--card-shadow)",
               display: "inline-flex",
               alignItems: "center",
-              gap: "10px",
               textDecoration: "none",
+              userSelect: "none",
               transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
             }}
             onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
             onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
           >
-            <img
-              src="/Illustration image .png"
-              alt=""
-              aria-hidden="true"
-              style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "8px",
-                objectFit: "cover",
-                objectPosition: "center top",
-                display: "block",
-              }}
-            />
             Arun Gaddam
           </Link>
           <ThemeToggle />
@@ -253,8 +307,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               <motion.div variants={fadeUp} style={{ marginBottom: "32px" }}>
                 <Link
                   href="/#work"
-                  className="case-study-back-link"
-                  style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", transition: "color 0.2s cubic-bezier(0.22, 1, 0.36, 1)" }}
+                  className="case-study-back-link cs-back-link"
+                  style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", paddingLeft: "2px", paddingRight: "8px", transition: "color 0.2s cubic-bezier(0.22, 1, 0.36, 1)" }}
                   onMouseEnter={e => (e.currentTarget.style.color = "var(--text-hover)")}
                   onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
                 >
@@ -645,7 +699,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <svg key={5} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 1L1 14h14L8 1z"/><line x1="8" y1="6" x2="8" y2="9"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>,
                     ];
                     return (
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                      <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                         {cs.problemBreakdown!.points.map((point, i) => (
                           <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
                             <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{problemIcons[i]}</div>
@@ -700,6 +754,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
+                  className="cs-2col"
                   style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
                 >
                   {cs.users.map((u, idx) => {
@@ -760,6 +815,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
+                  className="cs-2col"
                   style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
                 >
                   {[
@@ -952,7 +1008,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         </p>
                       </div>
 
-                      <form onSubmit={handlePasswordSubmit} style={{ display: "flex", gap: "8px", width: "100%", maxWidth: "340px" }}>
+                      <form onSubmit={handlePasswordSubmit} className="cs-pw-form" style={{ display: "flex", gap: "8px", width: "100%", maxWidth: "340px" }}>
                         <input
                           type="password"
                           value={pwInput}
@@ -1042,7 +1098,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "4px" }}>Signal 01</span>
                           <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[0].title}</p>
                         </div>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                        <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                           {/* Saurabh */}
                           <div style={{ background: "var(--surface2)", borderRadius: "8px", padding: "14px 16px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
@@ -1121,7 +1177,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       </div>
 
                       {/* Signals 3 + 4 — side by side */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                      <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                         {/* Signal 3 — Content constraints */}
                         <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
@@ -1167,6 +1223,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.65, ease: EASE }}
+                    className="cs-2col"
                     style={{ marginTop: "24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}
                   >
                     {cs.researchFindings.map((f, i) => (
@@ -1413,7 +1470,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           transition={{ duration: 0.65, ease: EASE }}
                           style={{ marginTop: "24px" }}
                         >
-                          <div style={{ display: "grid", gridTemplateColumns: `repeat(${d.videos.length}, 1fr)`, gap: "12px", width: "100%" }}>
+                          <div className="cs-video-grid" style={{ display: "grid", gridTemplateColumns: `repeat(${d.videos.length}, 1fr)`, gap: "12px", width: "100%" }}>
                             {d.videos.map((v, vi) => (
                               <div key={vi} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                                 {v.label && (
@@ -1464,7 +1521,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           transition={{ duration: 0.65, ease: EASE }}
                           style={{ marginTop: "24px" }}
                         >
-                          <div style={{ display: "grid", gridTemplateColumns: d.imageStack ? "1fr" : "1fr 1fr", gap: "12px", width: "100%" }}>
+                          <div className={d.imageStack ? undefined : "cs-2col"} style={{ display: "grid", gridTemplateColumns: d.imageStack ? "1fr" : "1fr 1fr", gap: "12px", width: "100%" }}>
                             {d.images.map((img, idx) => (
                               <div key={idx} onClick={() => setLightboxSrc(img.src)} style={{ position: "relative", cursor: "zoom-in" }}>
                                 <img src={img.src} alt={img.alt} style={{ width: "100%", display: "block", objectFit: "contain" }} />
@@ -1484,6 +1541,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
                           transition={{ duration: 0.65, ease: EASE }}
+                          className="cs-fullbleed-container"
                           style={{ marginTop: "24px", marginLeft: "-72px", width: "calc(100% + 72px)", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}
                         >
                           <div style={{ position: "relative", width: "100%" }}>
@@ -1514,7 +1572,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               src={d.image.src}
                               alt={d.image.alt}
                               onClick={() => setLightboxSrc(d.image!.src)}
-                              style={{ width: d.image.width, display: "block", objectFit: "contain", cursor: "zoom-in" }}
+                              style={{ width: d.image.width, maxWidth: "100%", display: "block", objectFit: "contain", cursor: "zoom-in" }}
                             />
                             <ZoomBadge />
                           </div>
@@ -1580,6 +1638,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, ease: EASE }}
+                    className="cs-flex-tiles"
                     style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden" }}
                   >
                     {/* Tile 1: Time on task */}
@@ -1658,6 +1717,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.65, ease: EASE }}
+                    className="cs-2col"
                     style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}
                   >
                     {[
@@ -2140,6 +2200,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       <AnimatePresence>
         {navVisible && (
           <motion.nav
+            className="cs-section-nav"
             initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 12 }}
