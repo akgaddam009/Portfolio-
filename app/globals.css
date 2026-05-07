@@ -16,15 +16,15 @@
      Layer-step contrast (light → dark):
      chrome #f0ebe2  →  bg #fbf8f2  →  surface #f5f0e6  →  surface2 #ece4d3
      Every step has ~5-7 lightness units of separation, giving real depth. */
-  --bg:       #fbf8f2;   /* panel fill — warm parchment (was clinical white) */
-  --surface:  #f5f0e6;   /* card fill — visibly tinted warm beige, real lift over bg */
-  --surface2: #ece4d3;   /* hover/inset — deeper warm beige */
-  --border:   #e0d8c8;   /* hairline — warm taupe (was cool grey) */
-  --text:       #2a2520;   /* dark brown-black — ink-on-paper reading */
-  --text-hover: #4a4238;   /* hover — softened brown-black */
-  --muted:    #8b8276;   /* secondary label — warm taupe-grey */
-  --muted2:   #5d5547;   /* tertiary label — deeper warm taupe */
-  --chrome:   #f0ebe2;   /* outer canvas — warm cream (more visible behind panels) */
+  --bg:       #ffffff;   /* panel fill — clean white */
+  --surface:  #f9f9f8;   /* card fill — barely-off-white, just enough lift */
+  --surface2: #f2f2f0;   /* hover/inset — soft grey */
+  --border:   #e8e8e6;   /* hairline — neutral light grey */
+  --text:       #1a1a1a;   /* near-black */
+  --text-hover: #3a3a3a;   /* hover */
+  --muted:    #888886;   /* secondary label — neutral grey */
+  --muted2:   #555553;   /* tertiary label */
+  --chrome:   #f4f4f2;   /* outer canvas — very light neutral grey */
 
   --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Fira Mono', monospace;
