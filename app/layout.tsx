@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, DM_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/Cursor";
-import { Analytics } from "@vercel/analytics/next";
+import AnalyticsClient from "@/components/AnalyticsClient";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -107,7 +107,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-nav">Skip to content</a>
         <Cursor />
         {children}
-        <Analytics />
+        <AnalyticsClient />
       </body>
     </html>
   );
