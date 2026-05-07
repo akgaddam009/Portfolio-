@@ -26,7 +26,7 @@ export async function generateMetadata({
       title,
       description,
       type: "article",
-      url: `https://arungaddam.com/work/${slug}`,
+      url: `https://arungaddamux.vercel.app/work/${slug}`,
       ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630, alt: cs.title }] } : {}),
     },
     twitter: {

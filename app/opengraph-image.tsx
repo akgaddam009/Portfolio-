@@ -45,7 +45,7 @@ export default async function OpengraphImage() {
               display: "block",
             }}
           />
-          arungaddam.com
+          arungaddamux.vercel.app
         </div>
 
         {/* Vertical spacer that pushes the headline down */}

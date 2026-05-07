@@ -39,16 +39,16 @@ export const metadata: Metadata = {
   title: "Arun Gaddam — Senior Product Designer",
   description:
     "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",
-  metadataBase: new URL("https://arungaddam.com"),
+  metadataBase: new URL("https://arungaddamux.vercel.app"),
   alternates: {
-    canonical: "https://arungaddam.com",
+    canonical: "https://arungaddamux.vercel.app",
   },
   openGraph: {
     title: "Arun Gaddam — Senior Product Designer",
     description:
       "I design the systems that enterprise teams depend on — turning complex workflows, ambiguous data, and organizational chaos into products people actually trust.",
     type: "website",
-    url: "https://arungaddam.com",
+    url: "https://arungaddamux.vercel.app",
     siteName: "Arun Gaddam",
     locale: "en_US",
   },
@@ -87,7 +87,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Person",
               name: "Arun Gaddam",
-              url: "https://arungaddam.com",
+              url: "https://arungaddamux.vercel.app",
               jobTitle: "Senior Product Designer",
               description:
                 "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE_URL = "https://arungaddam.com";
+const BASE_URL = "https://arungaddamux.vercel.app";
 
 const caseStudySlugs = [
   "planful-esm-tables",
