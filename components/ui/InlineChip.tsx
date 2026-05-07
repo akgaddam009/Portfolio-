@@ -42,7 +42,7 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
         color: `var(--chip-${tone}-text)`,
         fontFamily: "var(--font-body)",
         fontSize: "inherit",
-        fontWeight: 400, letterSpacing: "-0.01em",
+        fontWeight: "inherit", letterSpacing: "-0.01em",
         lineHeight: "inherit",
         verticalAlign: "baseline",
         whiteSpace: "nowrap",
