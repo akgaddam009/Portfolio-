@@ -614,10 +614,11 @@ function AboutPanel() {
         {/* Skills — marquee with Contact-panel pill style */}
         {(() => {
           const skills = [
+            "AI UX", "Vibe Coding",
             "Systems Thinking", "Product Strategy", "0→1 Design",
             "UX Research", "JTBD", "Service Design", "Research Synthesis",
             "Interaction Design", "Information Architecture", "Prototyping", "Design Systems",
-            "AI UX", "Claude", "Agentic AI",
+            "Claude", "Agentic AI",
           ];
           const ticker = [...skills, ...skills];
 
@@ -2116,7 +2117,8 @@ function ContactPanel() {
             and the location card to the bottom of the panel. */}
         {(() => {
           const skills = [
-            "Systems Thinking", "AI UX Design", "Product Thinking", "0→1 Design",
+            "AI UX Design", "Vibe Coding",
+            "Systems Thinking", "Product Thinking", "0→1 Design",
             "Product Strategy", "Claude Code", "Agentic AI", "Service Design",
             "Cross functional Leadership", "UX Strategy", "UX Research",
             "Research Synthesis", "Stakeholder Alignment", "Design Systems",
