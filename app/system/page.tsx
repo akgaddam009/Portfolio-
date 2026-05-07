@@ -17,22 +17,34 @@ const NAV_SECTIONS = [
 ];
 
 /* Tokens. direct extraction from globals.css (kept in sync manually).
-   3-layer depth model in both themes: chrome (canvas) → bg (panel) → surface (card).
-   Light theme: cool near-white scale, panels float on a barely-tinted canvas (#f5f5f7),
-   cards lift one step further on white (#ffffff). Drop shadows do the heavy lifting.
+   Apple-inspired light system. Light: panels and cards both sit on pure
+   white (#ffffff) — definition comes from drop shadows alone, no border ring.
+   The grouped-background canvas (#f5f5f5) is the only surface beneath that lifts.
    Dark theme: lifted warm-neutral scale. Canvas is pure black (#000000); panels sit at
    #141414 (20-unit step, visibly lifted); cards at #1c1c1c. The gap between canvas and
    panel now matches the perceptual contrast of the light theme — legible without any
    surface ever feeling "lit". Text always wins. */
 const COLORS = [
-  { name: "--chrome",   light: "#f5f5f7", dark: "#000000", role: "Canvas. outermost layer the panels float on" },
-  { name: "--bg",       light: "#fafafa", dark: "#141414", role: "Panel fill. sits just above canvas" },
-  { name: "--surface",  light: "#ffffff", dark: "#1c1c1c", role: "Card fill. elevated above panel; case study page bg" },
+  { name: "--chrome",   light: "#f5f5f5", dark: "#000000", role: "Canvas. grouped-background that panels float on" },
+  { name: "--bg",       light: "#ffffff", dark: "#141414", role: "Panel fill. pure white in light, lifted #141414 in dark" },
+  { name: "--surface",  light: "#ffffff", dark: "#1c1c1c", role: "Card fill. shares bg in light — shadow defines the edge" },
   { name: "--surface2", light: "#f5f5f7", dark: "#242424", role: "Hover / inset. one subtle step further" },
   { name: "--border",   light: "#d2d2d7", dark: "#2a2a2a", role: "Opaque separator / hairline" },
   { name: "--text",     light: "#1d1d1f", dark: "#ffffff", role: "Primary label" },
   { name: "--muted",    light: "#6e6e73", dark: "#71717b", role: "Secondary label. passes AA on card surface" },
   { name: "--muted2",   light: "#424245", dark: "#a1a1aa", role: "Tertiary label. body and value text" },
+];
+
+/* Chip palette. five tonal accents shared across InlineChip (inline prose) and
+   AccentChip (bordered category badge). Light values run deeper for white-bg
+   contrast; dark values are desaturated lifts of Tailwind 300 tones so chips
+   read as muted accents rather than candy colors on the dark canvas. */
+const CHIP_TONES = [
+  { name: "indigo",  light: "#4f46e5", dark: "#a8b0d8", role: "Design / neutral primary. About H1 'design'." },
+  { name: "teal",    light: "#0d9488", dark: "#88c7be", role: "Users / research. About H1 'user needs'; SaaS." },
+  { name: "amber",   light: "#b45309", dark: "#d6c178", role: "Strategy / business. About H1 'business strategy'." },
+  { name: "violet",  light: "#6d28d9", dark: "#b8aed4", role: "AI / experiments. About H1 'AI'; AI Experiments badge." },
+  { name: "emerald", light: "#047857", dark: "#9bc9af", role: "Customer-facing. Contact 'Consumer Products'." },
 ];
 
 const ACCENTS = [
@@ -241,9 +253,10 @@ export default function SystemPage() {
             {/* ── Foundations ── */}
             <CsSection id="system-foundations" label="Foundations">
               <ul style={listStyle}>
-                <li>Two themes, one shared architecture. light (cool near-white) and dark (lifted warm-neutral)</li>
+                <li>Two themes, one shared architecture. light (Apple-inspired pure white) and dark (lifted warm-neutral)</li>
+                <li>Light scale: canvas #f5f5f5, panels and cards both pure white. Drop shadow alone defines card edges — no border ring</li>
                 <li>Dark scale: canvas #000000, panels #141414, cards #1c1c1c. 20-unit canvas-to-panel step matches light-theme perceptual contrast</li>
-                <li>Case study detail page sits on <code style={{ fontFamily: "var(--font-mono)", fontSize: "11px" }}>--bg</code>; the impact metrics strip uses <code style={{ fontFamily: "var(--font-mono)", fontSize: "11px" }}>--surface</code> to lift above it</li>
+                <li>Five-tone chip palette (indigo / teal / amber / violet / emerald). Inline tonal chips for prose emphasis, bordered AccentChips for category badges</li>
                 <li>Inter 400 throughout; weight 500 only for inline emphasis. Zero letter-spacing as default</li>
                 <li>Ease-out-quint is the default motion curve across all transitions</li>
               </ul>
@@ -272,6 +285,22 @@ export default function SystemPage() {
                     <p style={tokenName}>{c.name}</p>
                     <p style={tokenRole}>{c.role}</p>
                     <p style={tokenValue}>{c.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <SubHeading>Chip palette</SubHeading>
+              <div style={swatchGrid}>
+                {CHIP_TONES.map(t => (
+                  <div key={t.name} style={swatchCard}>
+                    <div style={{ display: "flex", gap: "6px", marginBottom: "10px" }}>
+                      <div style={{ ...swatchSquare, background: t.light }} />
+                      <div style={{ ...swatchSquare, background: t.dark }} />
+                    </div>
+                    <p style={tokenName}>--chip-{t.name}</p>
+                    <p style={tokenRole}>{t.role}</p>
+                    <p style={tokenValue}><span style={{ opacity: 0.7 }}>L:</span> {t.light}</p>
+                    <p style={tokenValue}><span style={{ opacity: 0.7 }}>D:</span> {t.dark}</p>
                   </div>
                 ))}
               </div>
@@ -320,8 +349,9 @@ export default function SystemPage() {
                 <code style={codeChip}>--dur-slow: 650ms</code>
               </SpecRow>
               <SpecRow label="Card shadows">
-                <code style={codeChip}>--card-shadow</code>
-                <code style={codeChip}>--card-shadow-hover</code>
+                <code style={codeChip}>--card-shadow (rest, alpha 0.06/0.07)</code>
+                <code style={codeChip}>--card-shadow-hover (alpha 0.07/0.10)</code>
+                <code style={codeChip}>--card-rest (non-interactive, light only)</code>
               </SpecRow>
               <SpecRow label="Panel shadows">
                 <code style={codeChip}>0 1px 2px rgba(0,0,0,…)</code>
@@ -346,9 +376,9 @@ export default function SystemPage() {
               <ComponentBlock
                 name="Card"
                 category="Surface"
-                description="Content cards across the portfolio. Shadow-elevated, no borders. Hover deepens the shadow stack."
+                description="Content cards across the portfolio. Shadow-elevated, no borders. Hover deepens the shadow stack. Resting shadow strengthened (alpha 0.06/0.07) so cards read on the white panel without a border ring."
                 usedIn={["Selected Work", "Career timeline", "Testimonials", "Location card"]}
-                tokens={["--surface", "--card-shadow", "--card-shadow-hover", "border-radius: 16px"]}
+                tokens={["--surface", "--card-shadow", "--card-shadow-hover", "--card-rest", "border-radius: 16px"]}
                 states={[
                   { label: "Resting", node: <DemoCard interactive={false} label="Resting" desc="Default. sits with subtle elevation." /> },
                   { label: "Hover",   node: <DemoCard interactive={true}  label="Hover me" desc="Shadow deepens; no border change." /> },
@@ -358,9 +388,9 @@ export default function SystemPage() {
               <ComponentBlock
                 name="Button"
                 category="Affordance"
-                description="Two button styles. Outlined for secondary, filled for primary. Color + border shifts on hover, no fill swap or scale."
-                usedIn={["Copy email + LinkedIn", "Footer CTAs", "Lightbox close"]}
-                tokens={["--text", "--muted", "--border", "border-radius: 10px"]}
+                description="DM Mono uppercase pill with trailing arrow. Default state has --surface fill and 1px hairline border to match the chip system. Hover lifts to --surface2 + drop shadow."
+                usedIn={["About panel: LinkedIn / Medium / CV", "Contact panel: Copy email / LinkedIn", "Footer CTAs"]}
+                tokens={["--surface", "--surface2", "--border", "--font-mono", "10px / 0.08em / uppercase", "border-radius: 6px"]}
                 states={[
                   { label: "Outlined", node: <DemoButton variant="outlined">Outlined</DemoButton> },
                   { label: "Filled",   node: <DemoButton variant="filled">Filled</DemoButton> },
@@ -368,10 +398,42 @@ export default function SystemPage() {
               />
 
               <ComponentBlock
+                name="InlineChip"
+                category="Inline emphasis"
+                description="Tonal chip embedded in prose. Phosphor Regular icon + label in a rounded pill, color resolves from the chip palette. Two scales: 'default' (12px body prose) and 'match' (inherits parent font-size for headings)."
+                usedIn={["About H1: design / user needs / business strategy / AI", "Contact subtext: AI / Enterprise / SaaS / Consumer Products"]}
+                tokens={["--chip-{tone}-text", "--chip-{tone}-bg", "@phosphor-icons/react Regular", "scale: default | match"]}
+                states={[
+                  { label: "Default tones", node: <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", fontSize: "12px" }}>
+                    <InlineChipDemo tone="indigo" label="design" />
+                    <InlineChipDemo tone="teal" label="user needs" />
+                    <InlineChipDemo tone="amber" label="business strategy" />
+                    <InlineChipDemo tone="violet" label="AI" />
+                    <InlineChipDemo tone="emerald" label="Consumer Products" />
+                  </div> },
+                ]}
+              />
+
+              <ComponentBlock
+                name="AccentChip"
+                category="Category badge"
+                description="Bordered category badge with mono-uppercase label and Phosphor icon. Used on work card metadata where one pill carries the category accent (Fintech, AI Experiments, CXM) and the rest stay neutral."
+                usedIn={["Work card metadata. one accent per card", "AI Experiments badge", "Coming soon variant"]}
+                tokens={["--chip-{tone}-bg", "--chip-{tone}-text", "1px tonal border @ 30% alpha", "9px / 0.06em / uppercase"]}
+                states={[
+                  { label: "Tonal set",    node: <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    <AccentChipDemo tone="indigo" label="Fintech" />
+                    <AccentChipDemo tone="violet" label="AI Experiments" />
+                    <AccentChipDemo tone="teal" label="CXM" />
+                  </div> },
+                ]}
+              />
+
+              <ComponentBlock
                 name="Pill / Tag"
                 category="Metadata"
-                description="Mono-uppercase tags. Two variants: filled (--surface2 bg) for standard metadata; border-only (transparent bg + 1px amber border) for Coming soon state. The border-only variant passes WCAG AA contrast in both themes."
-                usedIn={["Case study tags", "Work card metadata", "Coming soon label", "System tags"]}
+                description="Mono-uppercase tags for non-tonal metadata. Filled (--surface2 bg) for standard metadata; border-only (transparent bg + 1px amber border) for Coming soon. The border-only variant passes WCAG AA contrast in both themes."
+                usedIn={["Case study tags", "Work card non-accent metadata", "Coming soon label", "System tags"]}
                 tokens={["--surface2", "--muted", "--font-mono", "letter-spacing: 0.06em", "Coming soon: transparent + rgba(245,158,11,0.55) border + #f59e0b text"]}
                 states={[
                   { label: "Filled",       node: <Pill>Enterprise SaaS</Pill> },
@@ -814,6 +876,36 @@ function Pill({ children }: { children: React.ReactNode }) {
       padding: "3px 8px", background: "var(--surface2)",
       color: "var(--muted)", borderRadius: "8px",
     }}>{children}</span>
+  );
+}
+
+/* Static demo of InlineChip — keeps the system page self-contained
+   (no dependency on the production component or Phosphor icons here). */
+function InlineChipDemo({ tone, label }: { tone: "indigo" | "teal" | "amber" | "violet" | "emerald"; label: string }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center",
+      padding: "0 10px", borderRadius: "8px",
+      background: `var(--chip-${tone}-bg)`,
+      color: `var(--chip-${tone}-text)`,
+      fontFamily: "var(--font-body)", fontSize: "13px",
+      fontWeight: 400, letterSpacing: "-0.01em", lineHeight: 1.6,
+    }}>{label}</span>
+  );
+}
+
+/* Static demo of AccentChip — bordered category badge variant. */
+function AccentChipDemo({ tone, label }: { tone: "indigo" | "teal" | "amber" | "violet" | "emerald"; label: string }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center",
+      fontFamily: "var(--font-mono)", fontSize: "9px",
+      letterSpacing: "0.06em", textTransform: "uppercase",
+      padding: "3px 8px", borderRadius: "8px",
+      background: `var(--chip-${tone}-bg)`,
+      border: `1px solid color-mix(in srgb, var(--chip-${tone}-text) 30%, transparent)`,
+      color: `var(--chip-${tone}-text)`, lineHeight: 1.4,
+    }}>{label}</span>
   );
 }
 
