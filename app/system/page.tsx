@@ -5,6 +5,7 @@ import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import Footer from "@/components/Footer";
+import { InlineChip } from "@/components/ui/InlineChip";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -27,7 +28,7 @@ const NAV_SECTIONS = [
 const COLORS = [
   { name: "--chrome",   light: "#f5f5f5", dark: "#000000", role: "Canvas. grouped-background that panels float on" },
   { name: "--bg",       light: "#ffffff", dark: "#141414", role: "Panel fill. pure white in light, lifted #141414 in dark" },
-  { name: "--surface",  light: "#ffffff", dark: "#1c1c1c", role: "Card fill. shares bg in light — shadow defines the edge" },
+  { name: "--surface",  light: "#ffffff", dark: "#1c1c1c", role: "Card fill. Shares bg in light. Shadow defines the edge" },
   { name: "--surface2", light: "#f5f5f7", dark: "#242424", role: "Hover / inset. one subtle step further" },
   { name: "--border",   light: "#d2d2d7", dark: "#2a2a2a", role: "Opaque separator / hairline" },
   { name: "--text",     light: "#1d1d1f", dark: "#ffffff", role: "Primary label" },
@@ -213,18 +214,16 @@ export default function SystemPage() {
 
               <motion.h1
                 variants={fadeUp}
-                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.15, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "16px" }}
+                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.25, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "16px" }}
               >
-                The system extracted from this portfolio.
+                <InlineChip label="Design system" tone="indigo" scale="match" />{" "}<InlineChip label="documentation" tone="amber" scale="match" /> of my portfolio
               </motion.h1>
 
               <motion.p
                 variants={fadeUp}
                 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.65, color: "var(--muted)", maxWidth: "520px", marginBottom: "32px" }}
               >
-                Tokens, components, motion vocabulary, and recurring interaction patterns .
-                documented as they exist in the live site, not invented for the page.
-                Format follows Untitled UI&apos;s component-spec convention.
+                Built in Claude Code. No Figma. Tokens, components, and patterns from the live site.
               </motion.p>
             </motion.div>
           </div>
@@ -236,10 +235,9 @@ export default function SystemPage() {
             {/* ── Overview ── */}
             <CsSection id="system-overview" label="Overview">
               <ul style={listStyle}>
-                <li>Extracted from the live codebase. not speculative or invented for this page</li>
-                <li>Every example is wired to the same tokens and behaviors you see in the portfolio</li>
-                <li>Covers color + type tokens, components, interaction patterns, and the AI-augmented process</li>
-                <li>Format follows Untitled UI&apos;s component-spec convention</li>
+                <li>Live, not invented. Every example wired to production tokens.</li>
+                <li>Built end-to-end in Claude Code.</li>
+                <li>Format: Untitled UI component-spec.</li>
               </ul>
               <SpecRow label="Sections">
                 <span style={chipStyle}>Foundations</span>
@@ -252,12 +250,10 @@ export default function SystemPage() {
             {/* ── Foundations ── */}
             <CsSection id="system-foundations" label="Foundations">
               <ul style={listStyle}>
-                <li>Two themes, one shared architecture. light (Apple-inspired pure white) and dark (lifted warm-neutral)</li>
-                <li>Light scale: canvas #f5f5f5, panels and cards both pure white. Drop shadow alone defines card edges — no border ring</li>
-                <li>Dark scale: canvas #000000, panels #141414, cards #1c1c1c. 20-unit canvas-to-panel step matches light-theme perceptual contrast</li>
-                <li>Five-tone chip palette (indigo / teal / amber / violet / emerald). Inline tonal chips for prose emphasis, bordered AccentChips for category badges</li>
-                <li>Inter 400 throughout; weight 500 only for inline emphasis. Zero letter-spacing as default</li>
-                <li>Ease-out-quint is the default motion curve across all transitions</li>
+                <li>Light: pure white panels and cards. Shadow defines edges.</li>
+                <li>Dark: #000 canvas, #141414 panels, #1c1c1c cards.</li>
+                <li>Chip palette: 5 tones, theme-aware.</li>
+                <li>Type: Inter 400. Motion: ease-out-quint.</li>
               </ul>
 
               <SubHeading>Surfaces</SubHeading>
@@ -355,7 +351,7 @@ export default function SystemPage() {
               <SpecRow label="Panel shadows">
                 <code style={codeChip}>0 1px 2px rgba(0,0,0,…)</code>
                 <code style={codeChip}>0 6px 24px rgba(0,0,0,…)</code>
-                <code style={codeChip}>no border ring — smooth drop only</code>
+                <code style={codeChip}>no border ring. smooth drop only</code>
               </SpecRow>
               <SpecRow label="Scroll progress bar" last>
                 <code style={codeChip}>1.5px AI gradient</code>
@@ -367,15 +363,14 @@ export default function SystemPage() {
             {/* ── Components ── */}
             <CsSection id="system-components" label="Components">
               <ul style={listStyle}>
-                <li>Each component shown live. resting, hover, and active states where applicable</li>
-                <li>Consistent shadow-elevation language across content (cards) and chrome (buttons, pills)</li>
-                <li>No bespoke one-offs. every component is reused across at least two surfaces</li>
+                <li>Live components. Resting, hover, active states.</li>
+                <li>No one-offs. Each component used in 2+ places.</li>
               </ul>
 
               <ComponentBlock
                 name="Card"
                 category="Surface"
-                description="Content cards across the portfolio. Shadow-elevated, no borders. Hover deepens the shadow stack. Resting shadow strengthened (alpha 0.06/0.07) so cards read on the white panel without a border ring."
+                description="Shadow-lifted, no borders. Hover deepens the shadow."
                 usedIn={["Selected Work", "Career timeline", "Testimonials", "Location card"]}
                 tokens={["--surface", "--card-shadow", "--card-shadow-hover", "--card-rest", "border-radius: 16px"]}
                 states={[
@@ -387,7 +382,7 @@ export default function SystemPage() {
               <ComponentBlock
                 name="Button"
                 category="Affordance"
-                description="DM Mono uppercase pill with trailing arrow. Default state has --surface fill and 1px hairline border to match the chip system. Hover lifts to --surface2 + drop shadow."
+                description="DM Mono uppercase pill, trailing arrow. Surface fill, hairline border."
                 usedIn={["About panel: LinkedIn / Medium / CV", "Contact panel: Copy email / LinkedIn", "Footer CTAs"]}
                 tokens={["--surface", "--surface2", "--border", "--font-mono", "10px / 0.08em / uppercase", "border-radius: 6px"]}
                 states={[
@@ -399,7 +394,7 @@ export default function SystemPage() {
               <ComponentBlock
                 name="InlineChip"
                 category="Inline emphasis"
-                description="Tonal chip embedded in prose. Phosphor Regular icon + label in a rounded pill, color resolves from the chip palette. Two scales: 'default' (12px body prose) and 'match' (inherits parent font-size for headings)."
+                description="Tonal pill embedded in prose. Theme-aware. Two scales: body and heading."
                 usedIn={["About H1: design / user needs / business strategy / AI", "Contact subtext: AI / Enterprise / SaaS / Consumer Products"]}
                 tokens={["--chip-{tone}-text", "--chip-{tone}-bg", "@phosphor-icons/react Regular", "scale: default | match"]}
                 states={[
@@ -416,7 +411,7 @@ export default function SystemPage() {
               <ComponentBlock
                 name="AccentChip"
                 category="Category badge"
-                description="Bordered category badge with mono-uppercase label and Phosphor icon. Used on work card metadata where one pill carries the category accent (Fintech, AI Experiments, CXM) and the rest stay neutral."
+                description="Bordered category badge. One per card carries the accent."
                 usedIn={["Work card metadata. one accent per card", "AI Experiments badge", "Coming soon variant"]}
                 tokens={["--chip-{tone}-bg", "--chip-{tone}-text", "1px tonal border @ 30% alpha", "9px / 0.06em / uppercase"]}
                 states={[
@@ -431,7 +426,7 @@ export default function SystemPage() {
               <ComponentBlock
                 name="Pill / Tag"
                 category="Metadata"
-                description="Mono-uppercase tags for non-tonal metadata. Filled (--surface2 bg) for standard metadata; border-only (transparent bg + 1px amber border) for Coming soon. The border-only variant passes WCAG AA contrast in both themes."
+                description="Mono-caps tag. Filled by default. Amber border-only for Coming soon."
                 usedIn={["Case study tags", "Work card non-accent metadata", "Coming soon label", "System tags"]}
                 tokens={["--surface2", "--muted", "--font-mono", "letter-spacing: 0.06em", "Coming soon: transparent + rgba(245,158,11,0.55) border + #f59e0b text"]}
                 states={[
@@ -444,7 +439,7 @@ export default function SystemPage() {
               <ComponentBlock
                 name="Wordmark / Home pill"
                 category="Identity"
-                description="Brand mark across all top navs. Same elevation system as cards. Acts as a Home affordance everywhere."
+                description="Brand pill in every top nav. Returns home."
                 usedIn={["Home nav", "About nav", "Case study nav", "System nav"]}
                 tokens={["--surface", "--card-shadow", "--font-logo", "uppercase, ls 0.06em"]}
                 states={[
@@ -575,15 +570,15 @@ export default function SystemPage() {
                 {[
                   {
                     label: "The Setup",
-                    items: ["PRODUCT.md + DESIGN.md as ground truth", "Agent skills: impeccable, animate, design-taste-frontend", "Plan mode before every major change"],
+                    items: ["PRODUCT.md + DESIGN.md as context", "Skills: impeccable, animate, design-taste-frontend", "Plan mode before every major change"],
                   },
                   {
                     label: "The Reverts",
-                    items: ["Dither backdrop. too noisy", "Full-page gradient overlay. killed contrast", "Dark panel border ring. looked bolted on, not designed", "bg/chrome flip in dark. punched in, not elevated"],
+                    items: ["Dither backdrop. Too noisy", "Full-page gradient. Killed contrast", "Dark panel border ring. Bolted-on", "Dark chrome/bg flip. No lift", "Parchment light palette. Read brown"],
                   },
                   {
                     label: "The Wins",
-                    items: ["Count-up metric on work cards", "Live IST clock in contact panel", "Lifted dark scale. 20-unit canvas-to-panel step. legible in both themes", "Video poster frames. no more blank flash on load"],
+                    items: ["Count-up metric on work cards", "Live IST clock in contact", "20-unit dark scale. Both themes legible", "Video posters. No load flash"],
                   },
                 ].map(card => (
                   <div key={card.label} style={{ padding: "16px 18px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
@@ -602,7 +597,7 @@ export default function SystemPage() {
               {/* Key insight callout */}
               <div style={{ padding: "18px 22px", background: "var(--surface)", borderRadius: "12px", borderLeft: "3px solid var(--border)", boxShadow: "var(--card-shadow)" }}>
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "var(--text)", lineHeight: 1.65, margin: 0, letterSpacing: "-0.01em" }}>
-                  AI-augmented design shifts the bottleneck from <em>&quot;can I produce this&quot;</em> to <em>&quot;do I know what I want.&quot;</em> Every revert in this log is a decision made with taste, not a bug. The portfolio is the proof.
+                  Bottleneck shifts from <em>&quot;can I build it&quot;</em> to <em>&quot;do I know what I want.&quot;</em> Every revert is a taste call.
                 </p>
               </div>
 

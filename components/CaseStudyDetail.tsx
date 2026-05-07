@@ -371,7 +371,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             <div className="page-pad">
               <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (
-                  <div key={m.label} style={{ maxWidth: m.body ? "320px" : undefined, flex: m.body ? "1 1 280px" : undefined }}>
+                  <div key={m.label} style={{
+                    /* When there's only one metric, let it breathe across the full
+                       row instead of clamping body text into a 320px column that
+                       orphans words like "week." onto their own line. */
+                    maxWidth: m.body ? (cs.metrics!.length === 1 ? "560px" : "320px") : undefined,
+                    flex: m.body ? "1 1 280px" : undefined,
+                  }}>
                     {/* Eyebrow — always rendered as mono caps */}
                     <p style={{
                       fontFamily: "var(--font-mono)", fontSize: "9px",
@@ -423,7 +429,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "96px 0 64px" }}
+            style={{ padding: "48px 0" }}
           >
             <div className="page-pad">
               <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
@@ -435,7 +441,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "96px 0 64px" }}
+            style={{ padding: "48px 0" }}
           >
             <div className="page-pad">
               <VideoPlaceholder data={cs.videoPlaceholder} />
@@ -2876,7 +2882,7 @@ function AppleChallengeBlock({ text }: { text: string }) {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {blocks.map((block, i) => {
         if (i === bulletIdx) {
           return (
@@ -2891,7 +2897,6 @@ function AppleChallengeBlock({ text }: { text: string }) {
                 display: "grid",
                 gridTemplateColumns: "repeat(3, 1fr)",
                 gap: "12px",
-                marginTop: "4px",
               }}
             >
               {facts.map((f, j) => (
@@ -2953,7 +2958,6 @@ function AppleChallengeBlock({ text }: { text: string }) {
               viewport={{ once: true }}
               transition={{ duration: 0.65, ease: EASE }}
               style={{
-                marginTop: "8px",
                 background: "var(--surface)",
                 border: "1px solid var(--border)",
                 borderRadius: "16px",
