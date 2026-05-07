@@ -2055,7 +2055,7 @@ function ContactPanel() {
             marginBottom: "20px",
           }}
         >
-          Open to senior IC and lead roles at teams building complex, human centred products. Especially in <InlineChip icon={Sparkles} label="AI" tone="violet" scale="match" />{" "}<InlineChip icon={Briefcase} label="Enterprise" tone="indigo" scale="match" />{" "}<InlineChip icon={LayoutGrid} label="SaaS" tone="teal" scale="match" />{" "}<InlineChip icon={Users} label="Consumer products" tone="emerald" scale="match" />
+          Open to senior IC and lead roles at teams building complex, human centred products. Especially in <InlineChip icon={Sparkles} label="AI" tone="violet" scale="match" />{" "}<InlineChip icon={Briefcase} label="Enterprise" tone="indigo" scale="match" />{" "}<InlineChip icon={LayoutGrid} label="SaaS" tone="teal" scale="match" />{" "}<InlineChip icon={Users} label="Consumer Products" tone="emerald" scale="match" />
         </motion.p>
 
         {/* CTAs. always visible. marginBottom:24px gives mobile spacing
