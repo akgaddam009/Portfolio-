@@ -19,29 +19,61 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
   /* Line-height contract: chip's effective rendered height must NOT exceed the
      parent paragraph's line-height. Otherwise chip-bearing lines render taller
      than text-only lines and the paragraph rhythm breaks. */
-  /* Alignment contract: chip text sits on the same baseline as surrounding
-     plain text. Setting lineHeight to "inherit" keeps the chip box exactly
-     as tall as a line of the parent's text, and verticalAlign: baseline
-     anchors the chip text to the parent's baseline rather than its middle.
-     This fixes drift in headings (H1 lineHeight 1.25) where chip text
-     was floating below the plain-text baseline. */
+  /* Alignment contract for headings (match scale):
+     - display: inline-block so the chip's baseline IS its text baseline
+       (inline-flex's baseline is the bottom edge, which threw chip text
+       above the surrounding text baseline).
+     - verticalAlign: baseline so chip text and plain text share the
+       same baseline.
+     - lineHeight: inherit so the chip box is exactly the parent's line
+       height, no taller, no shorter.
+     - Icon sits inline next to text with its own vertical-align so it
+       optical-centers on the cap height of the label.
+
+     For body prose (default scale), the centered inline-flex layout
+     remains because the visual difference is sub-pixel at 12px. */
+  if (isMatch) {
+    return (
+      <span style={{
+        display: "inline-block",
+        padding: hasIcon ? "0 10px 0 8px" : "0 10px",
+        borderRadius: "8px",
+        background: `var(--chip-${tone}-bg)`,
+        color: `var(--chip-${tone}-text)`,
+        fontFamily: "var(--font-body)",
+        fontSize: "inherit",
+        fontWeight: 400, letterSpacing: "-0.01em",
+        lineHeight: "inherit",
+        verticalAlign: "baseline",
+        whiteSpace: "nowrap",
+      }}>
+        {Icon && (
+          <Icon
+            size={13}
+            strokeWidth={1.5}
+            style={{ verticalAlign: "middle", marginRight: "4px", marginTop: "-0.15em" }}
+          />
+        )}
+        {label}
+      </span>
+    );
+  }
+
   return (
     <span style={{
-      display: "inline-flex", alignItems: "center", gap: hasIcon ? (isMatch ? "4px" : "3px") : "0",
-      padding: isMatch
-        ? (hasIcon ? "0 10px 0 8px" : "0 10px")
-        : (hasIcon ? "0 8px 0 5px" : "0 8px"),
-      borderRadius: isMatch ? "8px" : "5px",
+      display: "inline-flex", alignItems: "center", gap: hasIcon ? "3px" : "0",
+      padding: hasIcon ? "0 8px 0 5px" : "0 8px",
+      borderRadius: "5px",
       background: `var(--chip-${tone}-bg)`,
       color: `var(--chip-${tone}-text)`,
       fontFamily: "var(--font-body)",
-      fontSize: isMatch ? "inherit" : "12px",
+      fontSize: "12px",
       fontWeight: 400, letterSpacing: "-0.01em",
-      lineHeight: isMatch ? "inherit" : 1.6,
-      verticalAlign: isMatch ? "baseline" : "middle",
+      lineHeight: 1.6,
+      verticalAlign: "middle",
       whiteSpace: "nowrap",
     }}>
-      {Icon && <Icon size={isMatch ? 13 : 11} strokeWidth={1.5} style={{ flexShrink: 0 }} />}
+      {Icon && <Icon size={11} strokeWidth={1.5} style={{ flexShrink: 0 }} />}
       {label}
     </span>
   );
