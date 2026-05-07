@@ -591,13 +591,15 @@ function AboutPanel() {
                   </p>
                 )}
                 {row.chips && (
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                     {row.chips.map(chip => (
                       <span key={chip} style={{
-                        fontFamily: "var(--font-mono)", fontSize: "8px",
-                        letterSpacing: "0.07em", textTransform: "uppercase",
-                        padding: "3px 8px", borderRadius: "4px",
-                        background: "var(--surface2)", color: "var(--muted)",
+                        fontFamily: "var(--font-body)", fontSize: "12px",
+                        fontWeight: 400, letterSpacing: "-0.01em",
+                        padding: "4px 10px", borderRadius: "9999px",
+                        background: "var(--surface)",
+                        border: "1px solid var(--border)",
+                        color: "var(--muted2)",
                       }}>
                         {chip}
                       </span>
