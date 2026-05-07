@@ -61,7 +61,7 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
             borderRadius: "12px",
             border: "none",
             background: "var(--surface)",
-            boxShadow: "var(--card-shadow)",
+            border: "var(--card-border)", boxShadow: "var(--card-shadow)",
             display: "inline-flex",
             alignItems: "center",
             textDecoration: "none",
@@ -122,7 +122,7 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
                   borderRadius: "12px",
                   border: "none",
                   background: "var(--surface)",
-                  boxShadow: "var(--card-shadow)",
+                  border: "var(--card-border)", boxShadow: "var(--card-shadow)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -239,7 +239,7 @@ function FloatingPanelMenu({
                 borderRadius: "14px",
                 background: "color-mix(in srgb, var(--bg) 92%, transparent)",
                 border: "1px solid var(--border)",
-                boxShadow: "var(--card-shadow)",
+                border: "var(--card-border)", boxShadow: "var(--card-shadow)",
                 backdropFilter: "blur(14px)",
                 WebkitBackdropFilter: "blur(14px)",
                 transformOrigin: "bottom right",
@@ -290,7 +290,7 @@ function FloatingPanelMenu({
             background: "var(--surface)",
             border: "1px solid var(--border)",
             color: "var(--text)",
-            boxShadow: "var(--card-shadow)",
+            border: "var(--card-border)", boxShadow: "var(--card-shadow)",
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer",
             padding: 0,
@@ -945,7 +945,7 @@ function SystemFeatureCard() {
             background: "var(--surface)",
             borderRadius: "16px",
             overflow: "hidden",
-            boxShadow: "var(--card-shadow)",
+            border: "var(--card-border)", boxShadow: "var(--card-shadow)",
             transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
           }}
           onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
@@ -1093,7 +1093,7 @@ function WorkPanel() {
                       background: "var(--surface)",
                       borderRadius: "16px",
                       overflow: "hidden",
-                      boxShadow: "var(--card-shadow)",
+                      border: "var(--card-border)", boxShadow: "var(--card-shadow)",
                       transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
                     }}
                     onMouseEnter={e => { if (!comingSoon) e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
@@ -1918,7 +1918,7 @@ function TestimonialsPanel() {
               style={{
                 borderRadius: "16px",
                 background: "var(--surface)",
-                boxShadow: "var(--card-shadow)",
+                border: "var(--card-border)", boxShadow: "var(--card-shadow)",
                 padding: "20px",
               }}
             >
@@ -2180,7 +2180,7 @@ function ContactPanel() {
           style={{
             borderRadius: "12px",
             overflow: "hidden",
-            boxShadow: "var(--card-shadow)",
+            border: "var(--card-border)", boxShadow: "var(--card-shadow)",
           }}
         >
           {/* Map area. MapLibre GL */}
@@ -2275,7 +2275,7 @@ function AiExplorationsPanel() {
                   className="work-card"
                   style={{
                     background: "var(--surface)", borderRadius: "16px", overflow: "hidden",
-                    boxShadow: "var(--card-shadow)",
+                    border: "var(--card-border)", boxShadow: "var(--card-shadow)",
                     transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
                   }}
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
