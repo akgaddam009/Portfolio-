@@ -388,7 +388,7 @@ const infoRows: { label: string; value: string; valueNode?: React.ReactNode; chi
   { label: "Superpower", value: "Reducing complexity at scale. I find the one clear path through ambiguous, multi stakeholder product problems." },
   {
     label: "Experience",
-    value: "Nearly a decade designing products for startups and large scale platforms with millions of users. I focus on building scalable systems that solve real world problems.",
+    value: "Nearly a decade designing products for startups and large scale platforms with millions of users.",
   },
   {
     label: "Industries",
