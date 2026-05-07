@@ -62,13 +62,17 @@ const nextConfig: NextConfig = {
     return [
       {
         // Astra prototype routes — allow same-origin framing so the case
-        // study can embed them. More specific match wins over the catch-all.
+        // study can embed them.
         source: "/astra/:path*",
         headers: astraEmbedHeaders,
       },
       {
         // Everything else — strictest clickjacking protection.
-        source: "/(.*)",
+        // Negative lookahead excludes /astra/* so the route-specific rule
+        // above isn't overridden by this catch-all (Next.js applies headers
+        // from every matching source; later matches override same-named
+        // headers from earlier ones).
+        source: "/((?!astra/).*)",
         headers: securityHeaders,
       },
     ];
