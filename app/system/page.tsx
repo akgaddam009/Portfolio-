@@ -133,22 +133,21 @@ export default function SystemPage() {
         }
       `}</style>
 
-      {/* Top nav. same chrome as the case study layout */}
+      {/* Top nav. matches HomeNav: transparent header with floating pill chips. */}
       <motion.header
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EASE }}
-        className="nav-glass"
         style={{
           position: "fixed",
-          top: 0, left: 0, right: 0,
+          top: "8px", left: 0, right: 0,
           zIndex: 200,
           height: "64px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           padding: "0 24px",
-          borderBottom: "1px solid var(--border)",
+          background: "transparent",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -181,7 +180,7 @@ export default function SystemPage() {
         </div>
       </motion.header>
 
-      <main style={{ paddingTop: "64px" }}>
+      <main style={{ paddingTop: "80px" }}>
 
         {/* Hero. same shape as case study hero */}
         <section style={{ padding: "48px 0" }}>
