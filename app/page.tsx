@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRef, useCallback, useState, useEffect } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import LoadingScreen from "@/components/LoadingScreen";
 import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
 import ISTClock from "@/components/ISTClock";
-import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X } from "@/components/ui/Icon";
+import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase } from "@/components/ui/Icon";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -88,8 +88,13 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
                 width: i === activePanel ? "16px" : "5px",
                 height: "5px",
                 borderRadius: "3px",
-                background: i === activePanel ? "var(--text)" : "var(--border)",
-                transition: "width 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s",
+                /* Inactive dots use --muted (warm taupe) instead of --border —
+                   the warm parchment chrome is too close in lightness to --border,
+                   so dots disappeared in light theme. --muted gives clear
+                   separation while staying clearly inactive vs --text. */
+                background: i === activePanel ? "var(--text)" : "var(--muted)",
+                opacity: i === activePanel ? 1 : 0.45,
+                transition: "width 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s, opacity 0.3s",
               }}
             />
           ))}
@@ -379,15 +384,60 @@ function PortraitMagnify() {
   );
 }
 
-const infoRows: { label: string; value: string; chips?: string[] }[] = [
-  { label: "Focus", value: "Enterprise SaaS and consumer products at scale, driven by design, strategy, and research." },
+const infoRows: { label: string; value: string; valueNode?: React.ReactNode; chips?: string[] }[] = [
   { label: "Superpower", value: "Reducing complexity at scale. I find the one clear path through ambiguous, multi stakeholder product problems." },
   {
     label: "Experience",
     value: "Nearly a decade designing products for startups and large scale platforms with millions of users. I focus on building scalable systems that solve real world problems.",
+  },
+  {
+    label: "Industries",
+    value: "",
     chips: ["Fintech", "Manufacturing", "Healthcare", "HRIS", "Entertainment", "ERP", "Customer Experience"],
   },
 ];
+
+/* ── Inline concept chip — stroke icon + tinted pill embedded in prose ── */
+/* Premium tonal palette for InlineChip. Each tone resolves to theme-aware
+   CSS variables so chips pick the right hue automatically in light vs dark. */
+type ChipTone = "indigo" | "teal" | "amber" | "violet" | "emerald";
+
+function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
+  icon?: (p: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) => React.ReactElement;
+  label: string;
+  tone: ChipTone;
+  /** "default" → 12px chip for body prose; "match" → inherits parent font-size for headings. */
+  scale?: "default" | "match";
+}) {
+  const isMatch = scale === "match";
+  const hasIcon = Boolean(Icon);
+  /* Line-height contract: chip's effective rendered height must NOT exceed the
+     parent paragraph's line-height. Otherwise chip-bearing lines render taller
+     than text-only lines and the paragraph rhythm breaks.
+     - "match" (in headings): chip uses 1.4 to stay shorter than h1's 1.5 line-height.
+     - "default" (in body prose): chip uses 0 vertical padding + lineHeight: 1.6
+       so the rendered box ≈ font-size only. Combined with verticalAlign: middle,
+       this keeps chip-lines flush with the parent's 1.65 body line-height. */
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: hasIcon ? (isMatch ? "4px" : "3px") : "0",
+      padding: isMatch
+        ? (hasIcon ? "0 10px 0 8px" : "0 10px")
+        : (hasIcon ? "0 8px 0 5px" : "0 8px"),
+      borderRadius: isMatch ? "8px" : "5px",
+      background: `var(--chip-${tone}-bg)`,
+      color: `var(--chip-${tone}-text)`,
+      fontFamily: "var(--font-body)",
+      fontSize: isMatch ? "inherit" : "12px",
+      fontWeight: 400, letterSpacing: "-0.01em",
+      lineHeight: isMatch ? 1.4 : 1.6,
+      verticalAlign: "middle", whiteSpace: "nowrap",
+    }}>
+      {Icon && <Icon size={isMatch ? 13 : 11} strokeWidth={1.5} style={{ flexShrink: 0 }} />}
+      {label}
+    </span>
+  );
+}
 
 function AboutPanel() {
   return (
@@ -413,15 +463,15 @@ function AboutPanel() {
           transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "18px",
+            fontSize: "20px",
             fontWeight: 400,
-            lineHeight: "30px",
-            letterSpacing: "-0.02em",
+            lineHeight: 1.5,
+            letterSpacing: "-0.03em",
             color: "var(--text)",
             marginBottom: "20px",
           }}
         >
-          I help companies simplify high stakes product complexity by aligning user needs, business strategy, and scalable systems.
+          Helping business <InlineChip icon={LayoutGrid} label="design" tone="indigo" scale="match" /> products by aligning <InlineChip icon={Users} label="user needs" tone="teal" scale="match" />{" "}<InlineChip icon={Compass} label="business strategy" tone="amber" scale="match" />{" "}<InlineChip icon={Sparkles} label="AI" tone="violet" scale="match" />
         </motion.h1>
 
         {/* Bio. typography per Figma reference:
@@ -464,11 +514,11 @@ function AboutPanel() {
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
               style={{
-                fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
-                letterSpacing: "-0.01em",
+                fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+                letterSpacing: "0.08em", textTransform: "uppercase",
                 color: "var(--muted)",
-                padding: "12px 16px",
-                borderRadius: "8px",
+                padding: "7px 12px",
+                borderRadius: "6px",
                 border: "1px solid var(--border)",
                 background: "transparent",
                 display: "inline-flex", alignItems: "center", gap: "6px",
@@ -476,15 +526,19 @@ function AboutPanel() {
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.color = "var(--text-hover)";
-                e.currentTarget.style.borderColor = "var(--text-hover)";
+                e.currentTarget.style.borderColor = "var(--border)";
+                e.currentTarget.style.background = "var(--surface2)";
+                e.currentTarget.style.boxShadow = "var(--card-shadow)";
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.color = "var(--muted)";
                 e.currentTarget.style.borderColor = "var(--border)";
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.boxShadow = "none";
               }}
             >
-              <ArrowUpRight size={11} strokeWidth={1.5} />
               {label}
+              <ArrowUpRight size={10} strokeWidth={1.5} />
             </Link>
           ))}
         </motion.div>
@@ -526,23 +580,24 @@ function AboutPanel() {
                   </p>
                   <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
                 </div>
-                <p style={{
-                  fontFamily: "var(--font-body)", fontSize: "14px",
-                  letterSpacing: "-0.01em",
-                  color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
-                  marginBottom: row.chips ? "12px" : 0,
-                }}>
-                  {row.value}
-                </p>
+                {(row.valueNode || row.value) && (
+                  <p style={{
+                    fontFamily: "var(--font-body)", fontSize: "14px",
+                    letterSpacing: "-0.01em",
+                    color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
+                    marginBottom: row.chips ? "12px" : 0,
+                  }}>
+                    {row.valueNode ?? row.value}
+                  </p>
+                )}
                 {row.chips && (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
                     {row.chips.map(chip => (
                       <span key={chip} style={{
                         fontFamily: "var(--font-mono)", fontSize: "8px",
                         letterSpacing: "0.07em", textTransform: "uppercase",
-                        padding: "3px 8px", borderRadius: "6px",
+                        padding: "3px 8px", borderRadius: "4px",
                         background: "var(--surface2)", color: "var(--muted)",
-                        border: "1px solid var(--border)",
                       }}>
                         {chip}
                       </span>
@@ -554,36 +609,15 @@ function AboutPanel() {
           ))}
         </div>
 
-        {/* Skills — single horizontal infinite marquee (DD32 pattern from the
-            Dribbble reference). All skills flow in one continuous row with
-            category labels as inline separators. Reuses .marquee-track +
-            .skills-ticker (28s loop, hover to pause) from globals.css. */}
+        {/* Skills — marquee with Contact-panel pill style */}
         {(() => {
-          /* Flat sequence: each category label followed by its skills. Renders
-             as a single stream with visual breaks between groups. */
-          type Item = { kind: "label" | "skill"; text: string };
-          const sequence: Item[] = [
-            { kind: "label", text: "Strategy" },
-            { kind: "skill", text: "Systems Thinking" },
-            { kind: "skill", text: "Product Strategy" },
-            { kind: "skill", text: "0→1 Design" },
-            { kind: "label", text: "Research" },
-            { kind: "skill", text: "UX Research" },
-            { kind: "skill", text: "JTBD" },
-            { kind: "skill", text: "Service Design" },
-            { kind: "skill", text: "Research Synthesis" },
-            { kind: "label", text: "Execution" },
-            { kind: "skill", text: "Interaction Design" },
-            { kind: "skill", text: "Information Architecture" },
-            { kind: "skill", text: "Prototyping" },
-            { kind: "skill", text: "Design Systems" },
-            { kind: "label", text: "AI Workflow" },
-            { kind: "skill", text: "AI UX" },
-            { kind: "skill", text: "Claude" },
-            { kind: "skill", text: "Agentic AI" },
+          const skills = [
+            "Systems Thinking", "Product Strategy", "0→1 Design",
+            "UX Research", "JTBD", "Service Design", "Research Synthesis",
+            "Interaction Design", "Information Architecture", "Prototyping", "Design Systems",
+            "AI UX", "Claude", "Agentic AI",
           ];
-          /* Doubled so the translateX(-50%) animation loops seamlessly. */
-          const ticker = [...sequence, ...sequence];
+          const ticker = [...skills, ...skills];
 
           return (
             <motion.div
@@ -607,72 +641,38 @@ function AboutPanel() {
               </div>
 
               {/* Marquee — overflow + edge fades + animated track */}
-              <div style={{ overflow: "hidden", position: "relative", padding: "4px 0" }}>
-                <div style={{
-                  position: "absolute", left: 0, top: 0, bottom: 0, width: "32px",
-                  background: "linear-gradient(to right, var(--bg), transparent)",
-                  zIndex: 1, pointerEvents: "none",
-                }} />
-                <div style={{
-                  position: "absolute", right: 0, top: 0, bottom: 0, width: "32px",
-                  background: "linear-gradient(to left, var(--bg), transparent)",
-                  zIndex: 1, pointerEvents: "none",
-                }} />
+              <div style={{ overflow: "hidden", position: "relative" }}>
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+                <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to left, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
                 <div
                   className="marquee-track"
                   style={{
-                    ["--marquee-duration" as string]: "40s",
-                    display: "flex", alignItems: "center", whiteSpace: "nowrap",
+                    ["--marquee-duration" as string]: "32s",
+                    display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
                   }}
                 >
-                  {ticker.map((item, i) => {
-                    /* Map category text → semantic icon. Lucide-geometry,
-                       inherits currentColor (so they tint with the label). */
-                    const labelIcon = item.kind === "label" ? ({
-                      "Strategy":    Compass,
-                      "Research":    Search,
-                      "Execution":   LayoutGrid,
-                      "AI Workflow": Sparkles,
-                    } as Record<string, typeof Compass>)[item.text] : null;
-                    return item.kind === "label" ? (
-                      /* Category label — icon + mono uppercase text. Brighter
-                         than chips so it reads as a typographic divider. */
-                      <span key={`${item.text}-${i}`} style={{
-                        fontFamily: "var(--font-mono)", fontSize: "9px",
-                        letterSpacing: "0.12em", textTransform: "uppercase",
-                        color: "var(--text)",
-                        marginRight: "8px",
-                        marginLeft: i === 0 ? "0" : "8px",
-                        display: "inline-flex", alignItems: "center", gap: "5px",
-                        flexShrink: 0,
-                      }}>
-                        {labelIcon && (() => {
-                          const I = labelIcon;
-                          return <I size={11} strokeWidth={1.5} style={{ opacity: 0.85 }} />;
-                        })()}
-                        {item.text}
-                      </span>
-                    ) : (
-                      /* Skill chip — same style as Experience chips */
-                      <span key={`${item.text}-${i}`} style={{
-                        fontFamily: "var(--font-mono)", fontSize: "8px",
-                        letterSpacing: "0.07em", textTransform: "uppercase",
-                        padding: "4px 10px", borderRadius: "6px",
-                        background: "var(--surface2)", color: "var(--muted)",
+                  {ticker.map((skill, i) => (
+                    <span key={`${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                      <span style={{
+                        fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                        letterSpacing: "-0.01em", color: "var(--muted2)",
+                        padding: "4px 10px",
                         border: "1px solid var(--border)",
-                        marginRight: "5px",
-                        display: "inline-block",
-                        flexShrink: 0,
+                        borderRadius: "9999px",
+                        background: "var(--surface)",
+                        marginRight: "6px",
+                        whiteSpace: "nowrap",
                       }}>
-                        {item.text}
+                        {skill}
                       </span>
-                    );
-                  })}
+                    </span>
+                  ))}
                 </div>
               </div>
             </motion.div>
           );
         })()}
+
 
       </div>
     </div>
@@ -823,7 +823,7 @@ const WORK_POSTERS: Record<string, string> = {
   "astra":                "/images/astra/cover.png",
   "planful-esm-tables":   "/images/planful/landing-page.jpg",
   "apple-business-listings": "/images/reputation/Thumbnail .png",
-  "fancode-homepage":     "/images/fancode/cover.png",
+  "fancode-homepage":     "/images/fancode/hp-final-ui.jpg",
 };
 
 // Video file extensions that should render through <video> instead of <img>.
@@ -965,26 +965,9 @@ function SystemFeatureCard() {
           {/* Body */}
           <div style={{ padding: "12px 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
-              <span style={{
-                fontFamily: "var(--font-mono)", fontSize: "9px",
-                letterSpacing: "0.06em", textTransform: "uppercase",
-                padding: "3px 8px",
-                background: "color-mix(in srgb, var(--accent-violet) 14%, transparent)",
-                border: "1px solid color-mix(in srgb, var(--accent-violet) 35%, transparent)",
-                color: "var(--accent-violet)",
-                borderRadius: "8px",
-              }}>
-                AI Experiments
-              </span>
+              <AccentChip label="AI Experiments" tone="violet" icon={Sparkles} />
               {["Design Language", "Built with Claude"].map(tag => (
-                <span key={tag} style={{
-                  fontFamily: "var(--font-mono)", fontSize: "9px",
-                  letterSpacing: "0.06em", textTransform: "uppercase",
-                  padding: "3px 8px", background: "var(--surface2)",
-                  color: "var(--muted)", borderRadius: "8px",
-                }}>
-                  {tag}
-                </span>
+                <WorkChip key={tag} label={tag} />
               ))}
             </div>
 
@@ -1008,6 +991,60 @@ function SystemFeatureCard() {
         </div>
       </Link>
     </motion.div>
+  );
+}
+
+/* Map a tag string to the most fitting icon. Returns null if no clear match. */
+function tagIcon(tag: string) {
+  const t = tag.toLowerCase();
+  if (t.includes("ai") || t.includes("claude")) return Sparkles;
+  if (t.includes("research") || t.includes("ftux")) return Search;
+  if (t.includes("enterprise") || t.includes("saas") || t.includes("fintech") || t.includes("b2b")) return Briefcase;
+  if (t.includes("consumer") || t.includes("cxm") || t.includes("sports") || t.includes("mobile")) return Users;
+  if (t.includes("design system") || t.includes("data") || t.includes("dashboard") || t.includes("workflow") || t.includes("ia") || t.includes("information")) return LayoutGrid;
+  if (t.includes("service") || t.includes("operations") || t.includes("supply") || t.includes("strategy") || t.includes("retention") || t.includes("product")) return Compass;
+  return LayoutGrid; // sensible fallback
+}
+
+/* Shared greyscale chip — icon + label, same mono style as before. */
+function WorkChip({ label }: { label: string }) {
+  const Icon = tagIcon(label);
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: "3px",
+      fontFamily: "var(--font-mono)", fontSize: "9px",
+      letterSpacing: "0.06em", textTransform: "uppercase",
+      padding: "3px 8px 3px 6px", background: "var(--surface2)",
+      color: "var(--muted)", borderRadius: "4px",
+    }}>
+      <Icon size={9} strokeWidth={1.5} style={{ flexShrink: 0, opacity: 0.7 }} />
+      {label}
+    </span>
+  );
+}
+
+/* Accent chip — tonal category badge (theme-aware). Stands out from the
+   standard greyscale WorkChip (e.g. "AI Experiments", "Coming soon"). */
+function AccentChip({ label, tone = "violet", icon: Icon }: {
+  label: string;
+  tone?: ChipTone;
+  icon?: (p: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) => React.ReactElement;
+}) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: Icon ? "4px" : "0",
+      fontFamily: "var(--font-mono)", fontSize: "9px",
+      letterSpacing: "0.06em", textTransform: "uppercase",
+      padding: Icon ? "3px 8px 3px 6px" : "3px 8px",
+      background: `var(--chip-${tone}-bg)`,
+      border: `1px solid color-mix(in srgb, var(--chip-${tone}-text) 30%, transparent)`,
+      color: `var(--chip-${tone}-text)`,
+      borderRadius: "8px",
+      lineHeight: 1.4,
+    }}>
+      {Icon && <Icon size={9} strokeWidth={1.5} style={{ flexShrink: 0 }} />}
+      {label}
+    </span>
   );
 }
 
@@ -1078,72 +1115,23 @@ function WorkPanel() {
                     {/* Body */}
                     <div style={{ padding: "12px 16px 16px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
-                        {cs.slug === "astra" && (
-                          <span style={{
-                            fontFamily: "var(--font-mono)", fontSize: "9px",
-                            letterSpacing: "0.06em", textTransform: "uppercase",
-                            padding: "3px 8px",
-                            background: "color-mix(in srgb, var(--accent-violet) 14%, transparent)",
-                            border: "1px solid color-mix(in srgb, var(--accent-violet) 35%, transparent)",
-                            color: "var(--accent-violet)",
-                            borderRadius: "8px",
-                          }}>
-                            AI Experiments
-                          </span>
-                        )}
-                        {cs.slug === "planful-esm-tables" && (
-                          <span style={{
-                            fontFamily: "var(--font-mono)", fontSize: "9px",
-                            letterSpacing: "0.06em", textTransform: "uppercase",
-                            padding: "3px 8px", background: "var(--surface2)",
-                            color: "var(--muted)", borderRadius: "8px",
-                          }}>
-                            Fintech
-                          </span>
-                        )}
-                        {cs.slug === "apple-business-listings" && (
-                          <span style={{
-                            fontFamily: "var(--font-mono)", fontSize: "9px",
-                            letterSpacing: "0.06em", textTransform: "uppercase",
-                            padding: "3px 8px", background: "var(--surface2)",
-                            color: "var(--muted)", borderRadius: "8px",
-                          }}>
-                            CXM
-                          </span>
-                        )}
+                        {cs.slug === "astra" && <AccentChip label="AI Experiments" tone="violet" icon={Sparkles} />}
+                        {cs.slug === "planful-esm-tables" && <AccentChip label="Fintech" tone="indigo" icon={Briefcase} />}
+                        {cs.slug === "apple-business-listings" && <AccentChip label="CXM" tone="teal" icon={Users} />}
                         {cs.tags.slice(0, 2).map(tag => (
-                          <span key={tag} style={{
-                            fontFamily: "var(--font-mono)", fontSize: "9px",
-                            letterSpacing: "0.06em", textTransform: "uppercase",
-                            padding: "3px 8px", background: "var(--surface2)",
-                            color: "var(--muted)", borderRadius: "8px",
-                          }}>
-                            {tag}
-                          </span>
+                          <WorkChip key={tag} label={tag} />
                         ))}
-                        {comingSoon && (
-                          <span style={{
-                            fontFamily: "var(--font-mono)", fontSize: "9px",
-                            letterSpacing: "0.06em", textTransform: "uppercase",
-                            padding: "3px 8px",
-                            background: "transparent",
-                            border: "1px solid rgba(245,158,11,0.55)",
-                            color: "#f59e0b",
-                            borderRadius: "8px",
-                          }}>
-                            Coming soon
-                          </span>
-                        )}
+                        {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
                       </div>
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400,
-                        lineHeight: "22px", letterSpacing: 0,
+                        lineHeight: "22px", letterSpacing: "-0.02em",
                         color: "var(--text)", marginBottom: "4px",
                       }}>
                         {cs.title}
                       </h3>
                       <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+                        fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300,
                         lineHeight: 1.5, letterSpacing: 0,
                         color: "var(--muted)", marginBottom: "0",
                       }}>
@@ -1913,7 +1901,7 @@ function TestimonialsPanel() {
           style={{
             fontFamily: "var(--font-body)", fontSize: "13px",
             lineHeight: 1.65, letterSpacing: "-0.01em",
-            color: "var(--muted)", marginBottom: "24px", fontWeight: 400,
+            color: "var(--muted)", marginBottom: "24px", fontWeight: 300,
           }}
         >
           From colleagues and managers I&apos;ve worked closely with.
@@ -2002,7 +1990,7 @@ function TestimonialsPanel() {
                     {t.name}
                   </p>
                   <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 400,
+                    fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 300,
                     letterSpacing: "-0.01em",
                     color: "var(--muted)", marginTop: "3px", lineHeight: 1.3,
                   }}>
@@ -2045,9 +2033,9 @@ function ContactPanel() {
             fontSize: "18px",
             fontWeight: 400,
             letterSpacing: 0,
-            lineHeight: "30px",
+            lineHeight: 1.3,
             color: "var(--text)",
-            marginBottom: "10px",
+            marginBottom: "12px",
           }}
         >
           Let&apos;s create stories together
@@ -2059,13 +2047,13 @@ function ContactPanel() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}
           style={{
-            fontFamily: "var(--font-body)", fontSize: "12px",
+            fontFamily: "var(--font-body)", fontSize: "14px",
             lineHeight: 1.65, letterSpacing: "-0.01em",
             color: "var(--muted)", fontWeight: 400,
             marginBottom: "20px",
           }}
         >
-          Open to senior IC and lead roles at companies building complex, human centred products. Especially in AI, enterprise SaaS, and consumer at scale.
+          Open to senior IC and lead roles at teams building complex, human centred products. Especially in <InlineChip icon={Sparkles} label="AI" tone="violet" scale="match" />{" "}<InlineChip icon={Briefcase} label="enterprise" tone="indigo" scale="match" />{" "}<InlineChip icon={LayoutGrid} label="SaaS" tone="teal" scale="match" />{" "}<InlineChip icon={Users} label="Consumer products" tone="emerald" scale="match" />
         </motion.p>
 
         {/* CTAs. always visible. marginBottom:24px gives mobile spacing
@@ -2081,20 +2069,19 @@ function ContactPanel() {
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
-              fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
-              letterSpacing: "-0.01em",
+              fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "12px 16px",
-              minHeight: "44px",
-              borderRadius: "8px",
+              padding: "7px 12px",
+              borderRadius: "6px",
               border: "1px solid var(--border)",
               background: "transparent",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--text-hover)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "transparent"; e.currentTarget.style.boxShadow = "none"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -2103,23 +2090,22 @@ function ContactPanel() {
             href="https://www.linkedin.com/in/akgaddam/"
             target="_blank" rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
-              letterSpacing: "-0.01em",
+              fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--muted)",
-              padding: "12px 16px",
-              minHeight: "44px",
-              borderRadius: "8px",
+              padding: "7px 12px",
+              borderRadius: "6px",
               border: "1px solid var(--border)",
               background: "transparent",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s",
               boxSizing: "border-box",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--text-hover)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "transparent"; e.currentTarget.style.boxShadow = "none"; }}
           >
-            <ArrowUpRight size={11} strokeWidth={1.5} />
             LinkedIn
+            <ArrowUpRight size={10} strokeWidth={1.5} />
           </Link>
         </motion.div>
 
@@ -2227,11 +2213,9 @@ function ContactPanel() {
           }}>
             © 2026 · Arun Gaddam{" "}
             <span style={{
-              color: "#f5b800",
-              /* Sun-glow drop shadow + a slight upward inset highlight via
-                 text-shadow trick, so the smile reads warm and lifted. */
-              textShadow: "0 0 6px rgba(245, 184, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.15)",
-              fontWeight: 500,
+              color: "#eab308",
+              textShadow: "0 0 6px rgba(234, 179, 8, 0.7)",
+              fontWeight: 700,
             }}>ツ</span>
           </p>
           <p style={{
@@ -2240,34 +2224,23 @@ function ContactPanel() {
             color: "var(--muted)", lineHeight: 1.3,
           }}>
             <span style={{ opacity: 0.6 }}>Designed with </span>
-            {/* 3D red heart. radial gradient gives volume, drop-shadow
-                provides cast. Inline-flex keeps it baseline-aligned with
-                the body type around it. */}
+            {/* Flat heart. Single solid red, no gradient/shadow — reads cleanly
+                in both light and dark themes without the muddy halo. */}
             <svg
-              width="13"
-              height="13"
+              width="11"
+              height="11"
               viewBox="0 0 24 24"
               style={{
                 display: "inline-block",
-                verticalAlign: "-2px",
+                verticalAlign: "-1px",
                 margin: "0 2px",
-                filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.35)) drop-shadow(0 0 4px rgba(255, 60, 60, 0.45))",
               }}
               aria-label="love"
             >
-              <defs>
-                <radialGradient id="heart-3d" cx="35%" cy="30%" r="75%">
-                  <stop offset="0%"   stopColor="#ff8a8a" />
-                  <stop offset="55%"  stopColor="#ff3b3b" />
-                  <stop offset="100%" stopColor="#a3000c" />
-                </radialGradient>
-              </defs>
               <path
-                fill="url(#heart-3d)"
+                fill="#e0394a"
                 d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
               />
-              {/* Specular highlight. small soft white blob top-left */}
-              <ellipse cx="9" cy="7.5" rx="2.2" ry="1.4" fill="rgba(255,255,255,0.55)" />
             </svg>
             <span style={{ opacity: 0.6 }}> using Claude Code</span>
           </p>
@@ -2321,19 +2294,15 @@ function AiExplorationsPanel() {
                   </div>
                   <div style={{ padding: "12px 16px 16px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "8px" }}>
-                        Live Prototype
-                      </span>
+                      <WorkChip label="Live Prototype" />
                       {astra.tags.slice(0, 2).map(tag => (
-                        <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "8px" }}>
-                          {tag}
-                        </span>
+                        <WorkChip key={tag} label={tag} />
                       ))}
                     </div>
                     <h3 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 400, lineHeight: "22px", letterSpacing: 0, color: "var(--text)", marginBottom: "4px" }}>
                       {astra.title}
                     </h3>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, color: "var(--muted)" }}>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300, lineHeight: 1.5, letterSpacing: 0, color: "var(--muted)" }}>
                       {astra.subtitle}
                     </p>
                   </div>

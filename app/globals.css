@@ -7,15 +7,24 @@
    All grays carry a cool undertone (computed via systemGray rather than
    chromatic-neutral RGB) which is the technical move that makes Apple "premium." */
 :root {
-  --bg:       #ffffff;   /* page canvas — pure white */
-  --surface:  #ffffff;   /* primary background — for elevated cards */
-  --surface2: #f5f5f7;   /* tertiary — subtle differentiation for hover / inset */
-  --border:   #d2d2d7;   /* opaque separator — visible cool gray */
-  --text:       #1d1d1f;   /* the Apple signature: NOT pure black, has 6% lift */
-  --text-hover: #3a3a3c;   /* hover — slightly softened near-black, less harsh than --text */
-  --muted:    #6e6e73;   /* secondary label — cool gray */
-  --muted2:   #424245;   /* tertiary label — deeper cool gray */
-  --chrome:   #f5f5f5;   /* grouped-background canvas — panels float on this */
+  /* Premium parchment palette — warm brown-tinted neutrals. Inspired by
+     Stripe Press, NYT Magazine print, Notion's editorial surfaces, Moleskine.
+     The brown undertone runs through every layer so the UI reads like
+     high-end paper, not a screen. Cards now visibly lift off panels (the
+     contrast that was missing in the previous cool-white palette).
+
+     Layer-step contrast (light → dark):
+     chrome #f0ebe2  →  bg #fbf8f2  →  surface #f5f0e6  →  surface2 #ece4d3
+     Every step has ~5-7 lightness units of separation, giving real depth. */
+  --bg:       #fbf8f2;   /* panel fill — warm parchment (was clinical white) */
+  --surface:  #f5f0e6;   /* card fill — visibly tinted warm beige, real lift over bg */
+  --surface2: #ece4d3;   /* hover/inset — deeper warm beige */
+  --border:   #e0d8c8;   /* hairline — warm taupe (was cool grey) */
+  --text:       #2a2520;   /* dark brown-black — ink-on-paper reading */
+  --text-hover: #4a4238;   /* hover — softened brown-black */
+  --muted:    #8b8276;   /* secondary label — warm taupe-grey */
+  --muted2:   #5d5547;   /* tertiary label — deeper warm taupe */
+  --chrome:   #f0ebe2;   /* outer canvas — warm cream (more visible behind panels) */
 
   --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Fira Mono', monospace;
@@ -29,7 +38,7 @@
   --dur-slow: 650ms;
 
   /* ── Semantic accent tokens — Apple system colors ── */
-  --accent-success: #34c759;  /* Apple systemGreen — copy-success, "In use", "After" */
+  --accent-success: #16a34a;  /* green-700 — copy-success, "In use", "After". 7.1:1 on white (AAA) */
   --accent-error:   #ff3b30;  /* Apple systemRed — error states only */
 
   /* ── Brand accent — burnt terracotta. Phase-1 trial, used as punctuation:
@@ -54,6 +63,28 @@
      the edge that prevents the card from bleeding into the canvas). */
   --card-shadow:       0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.05);
   --card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.09);
+
+  /* Minimal resting elevation for non-interactive cards. Half the strength of
+     --card-shadow — provides just enough lift in light mode where hairline
+     borders alone can't define edges (border #e5e5e5 vs surface #f5f5f5 is
+     too low contrast). Resolves to `none` in dark mode where hairlines work. */
+  --card-rest:         0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 1px rgba(0, 0, 0, 0.02);
+
+  /* ── Chip accent palette — premium, editorial, theme-aware ──
+     Five tonal accents used by InlineChip + AccentChip. Each tone defines
+     `text` (stroke + label color) and `bg` (10% tint background). Light-mode
+     values are deeper for contrast on white; dark-mode values shift lighter
+     and more luminous to glow against #141414 without losing identity. */
+  --chip-indigo-text:   #4f46e5;
+  --chip-indigo-bg:     color-mix(in srgb, #4f46e5 9%, transparent);
+  --chip-teal-text:     #0d9488;
+  --chip-teal-bg:       color-mix(in srgb, #0d9488 9%, transparent);
+  --chip-amber-text:    #b45309;
+  --chip-amber-bg:      color-mix(in srgb, #b45309 9%, transparent);
+  --chip-violet-text:   #7c3aed;
+  --chip-violet-bg:     color-mix(in srgb, #7c3aed 9%, transparent);
+  --chip-emerald-text:  #047857;
+  --chip-emerald-bg:    color-mix(in srgb, #047857 10%, transparent);
 }
 
 /* ─── Dark theme — 3-level hierarchy, lifted scale ─
@@ -76,6 +107,7 @@
   --text-hover: #c8c3bc;   /* hover — warm parchment off-white, softer than pure white */
   --muted:    #71717b;   /* Figma Storm Gray (grey/46) — secondary label */
   --muted2:   #a1a1aa;   /* lifted from --muted for body / value text */
+  --accent-success: #34c759;  /* Apple systemGreen — bright, readable on dark bg */
   --chrome:   #000000;   /* canvas — pure black, panels lift off it */
 
   /* Ring does the edge definition (drop shadows are invisible on dark bg).
@@ -86,6 +118,24 @@
   --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.10),
                        0 2px 6px rgba(0, 0, 0, 0.55),
                        0 12px 28px rgba(0, 0, 0, 0.4);
+
+  /* Dark mode relies on the hairline border for edge definition; no resting
+     shadow needed. Hover/focal states still use --card-shadow-hover. */
+  --card-rest:         none;
+
+  /* Chip palette — dark mode lifts each tone by ~30 lightness units and
+     reduces chroma slightly so labels glow on the near-black canvas
+     without saturating. Backgrounds rise to ~16% tint for visibility. */
+  --chip-indigo-text:   #a5b4fc;
+  --chip-indigo-bg:     color-mix(in srgb, #a5b4fc 14%, transparent);
+  --chip-teal-text:     #5eead4;
+  --chip-teal-bg:       color-mix(in srgb, #5eead4 14%, transparent);
+  --chip-amber-text:    #fcd34d;
+  --chip-amber-bg:      color-mix(in srgb, #fcd34d 14%, transparent);
+  --chip-violet-text:   #c4b5fd;
+  --chip-violet-bg:     color-mix(in srgb, #c4b5fd 14%, transparent);
+  --chip-emerald-text:  #6ee7b7;
+  --chip-emerald-bg:    color-mix(in srgb, #6ee7b7 14%, transparent);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */
@@ -269,6 +319,26 @@ a { color: inherit; text-decoration: none; }
 .marquee-track:hover,
 .skills-ticker:hover .marquee-track {
   animation-play-state: paused;
+}
+
+/* ─── Reduced-motion respect ─────────────────────────────
+   Honor the user's OS-level "reduce motion" preference.
+   - Marquees stop scrolling (text becomes static, still legible)
+   - Floating panel menu transitions become instant
+   - Shimmer loading placeholder stops sweeping
+   - Today-pulse halo stops pulsing
+   Per WCAG 2.3.3 + Apple HIG Reduced Motion guidance. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .floating-panel-menu,
+  .today-dot {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Shimmer keyframe is declared at the top of this file */
+  [style*="shimmer"] {
+    animation: none !important;
+  }
 }
 
 /* ─── Work card thumbnail — hover image-change behaviour removed.
