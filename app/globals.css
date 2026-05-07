@@ -128,19 +128,19 @@
   --card-rest:         none;
   --card-border:       1px solid rgba(255, 255, 255, 0.06);
 
-  /* Chip palette — dark mode lifts each tone by ~30 lightness units and
-     reduces chroma slightly so labels glow on the near-black canvas
-     without saturating. Backgrounds rise to ~16% tint for visibility. */
-  --chip-indigo-text:   #a5b4fc;
-  --chip-indigo-bg:     color-mix(in srgb, #a5b4fc 14%, transparent);
-  --chip-teal-text:     #5eead4;
-  --chip-teal-bg:       color-mix(in srgb, #5eead4 14%, transparent);
-  --chip-amber-text:    #fcd34d;
-  --chip-amber-bg:      color-mix(in srgb, #fcd34d 14%, transparent);
-  --chip-violet-text:   #c4b5fd;
-  --chip-violet-bg:     color-mix(in srgb, #c4b5fd 14%, transparent);
-  --chip-emerald-text:  #6ee7b7;
-  --chip-emerald-bg:    color-mix(in srgb, #6ee7b7 14%, transparent);
+  /* Chip palette — dark mode. Desaturated (~30% chroma reduction from
+     vivid Tailwind 300 tones) so labels read as muted accents rather than
+     candy-bright punches on the dark canvas. Backgrounds at 10% tint. */
+  --chip-indigo-text:   #a8b0d8;
+  --chip-indigo-bg:     color-mix(in srgb, #a8b0d8 10%, transparent);
+  --chip-teal-text:     #88c7be;
+  --chip-teal-bg:       color-mix(in srgb, #88c7be 10%, transparent);
+  --chip-amber-text:    #d6c178;
+  --chip-amber-bg:      color-mix(in srgb, #d6c178 10%, transparent);
+  --chip-violet-text:   #b8aed4;
+  --chip-violet-bg:     color-mix(in srgb, #b8aed4 10%, transparent);
+  --chip-emerald-text:  #9bc9af;
+  --chip-emerald-bg:    color-mix(in srgb, #9bc9af 10%, transparent);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */
