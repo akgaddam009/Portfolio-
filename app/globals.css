@@ -16,15 +16,15 @@
      Layer-step contrast (light → dark):
      chrome #f0ebe2  →  bg #fbf8f2  →  surface #f5f0e6  →  surface2 #ece4d3
      Every step has ~5-7 lightness units of separation, giving real depth. */
-  --bg:       #ffffff;   /* panel fill — clean white */
-  --surface:  #f9f9f8;   /* card fill — barely-off-white, just enough lift */
-  --surface2: #f2f2f0;   /* hover/inset — soft grey */
-  --border:   #e8e8e6;   /* hairline — neutral light grey */
-  --text:       #1a1a1a;   /* near-black */
-  --text-hover: #3a3a3a;   /* hover */
-  --muted:    #888886;   /* secondary label — neutral grey */
-  --muted2:   #555553;   /* tertiary label */
-  --chrome:   #f4f4f2;   /* outer canvas — very light neutral grey */
+  --bg:       #ffffff;   /* page canvas — pure white */
+  --surface:  #ffffff;   /* primary background — for elevated cards */
+  --surface2: #f5f5f7;   /* tertiary — subtle differentiation for hover / inset */
+  --border:   #d2d2d7;   /* opaque separator — visible cool gray */
+  --text:       #1d1d1f;   /* the Apple signature: NOT pure black, has 6% lift */
+  --text-hover: #3a3a3c;   /* hover — slightly softened near-black */
+  --muted:    #6e6e73;   /* secondary label — cool gray */
+  --muted2:   #424245;   /* tertiary label — deeper cool gray */
+  --chrome:   #f5f5f5;   /* grouped-background canvas — panels float on this */
 
   --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Fira Mono', monospace;
