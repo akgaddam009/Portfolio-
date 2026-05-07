@@ -1453,8 +1453,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             <>
                               <BodyText>{mainBody}</BodyText>
                               {impactText && (
-                                <div style={{ marginTop: "14px", padding: "12px 14px", background: "rgba(16,185,129,0.07)", borderRadius: "8px", borderLeft: "2px solid rgba(16,185,129,0.35)", display: "flex", flexDirection: "column", gap: "4px" }}>
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgb(16,185,129)" }}>Impact</p>
+                                <div style={{ marginTop: "14px", paddingTop: "14px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>Impact</p>
                                   <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{impactText}</p>
                                 </div>
                               )}

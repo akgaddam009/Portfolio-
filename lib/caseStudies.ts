@@ -894,21 +894,6 @@ export const caseStudies: CaseStudy[] = [
       "15–20% lift in homepage adoption across cohorts.",
     ],
 
-    scrappedDirections: [
-      {
-        title: "Basic recommendations now vs wait for the smart version",
-        reason: "We shipped Continue Watching and basic recommendations straight away using preference signals. Waiting for the full data pipeline meant six months of nothing. We chose to ship something real today and make it smarter later.",
-      },
-      {
-        title: "Go deep on cricket vs cover every sport from day one",
-        reason: "Cricket was everything for this audience. Building a great cricket experience — with a structure that could grow to other sports — beat spreading thin across football, kabaddi, and basketball from the start.",
-      },
-      {
-        title: "Smaller promotional nudge vs more promo space at the top",
-        reason: "We made the promo nudge smaller to give match cards and Featured Videos more room. The data said match cards were where users actually went. The CEO said reduce the nudge. Both pointed the same way.",
-      },
-    ],
-
     lesson:
       "When one part of your product doesn't work, the cost shows up everywhere. Every team was fighting for the same tiny slot because nothing else converted. Once more of the page worked, everyone had room.",
 
