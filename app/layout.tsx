@@ -39,16 +39,16 @@ export const metadata: Metadata = {
   title: "Arun Gaddam — Senior Product Designer",
   description:
     "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",
-  metadataBase: new URL("https://arungaddamux.vercel.app"),
+  metadataBase: new URL("https://arungaddam.com"),
   alternates: {
-    canonical: "https://arungaddamux.vercel.app",
+    canonical: "https://arungaddam.com",
   },
   openGraph: {
     title: "Arun Gaddam — Senior Product Designer",
     description:
       "I design the systems that enterprise teams depend on — turning complex workflows, ambiguous data, and organizational chaos into products people actually trust.",
     type: "website",
-    url: "https://arungaddamux.vercel.app",
+    url: "https://arungaddam.com",
     siteName: "Arun Gaddam",
     locale: "en_US",
   },

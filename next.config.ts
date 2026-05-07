@@ -1,39 +1,52 @@
 import type { NextConfig } from "next";
 
+/* CSP directives shared across every route. Frame-ancestors is overridden
+   per-route below — locked down for everything except the Astra prototype
+   pages, which are embedded as iframes inside /work/astra. */
+const baseCsp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval: maplibre WebGL shaders; unsafe-inline: Next.js chunks
+  "style-src 'self' 'unsafe-inline'",                // unsafe-inline: Framer Motion inline styles
+  "img-src 'self' data: blob:",                      // blob: for maplibre canvas exports
+  "media-src 'self'",                                // portfolio videos served from /public
+  "connect-src 'self' https://tiles.openfreemap.org", // maplibre vector tiles
+  "font-src 'self' https://tiles.openfreemap.org",   // next/font Inter + maplibre glyph PBFs
+  "worker-src blob:",                                // maplibre Web Workers
+];
+
+/* Default headers — applied to every route. Strictest possible clickjacking
+   protection: no frame embedding from anywhere. */
 const securityHeaders = [
-  // Prevent browsers from MIME-sniffing the content-type
   { key: "X-Content-Type-Options", value: "nosniff" },
-  // Deny framing by other origins (clickjacking protection)
   { key: "X-Frame-Options", value: "DENY" },
-  // Stop sending the full referrer URL cross-origin
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  // Force HTTPS for 1 year (only meaningful once on a real TLS domain)
   { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
-  // Disable access to sensitive browser APIs the portfolio doesn't need
   {
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
   },
-  // Content Security Policy — tuned for this specific stack:
-  //   • Next.js injects inline <script> and <style> tags (needs 'unsafe-inline' for styles)
-  //   • Framer Motion uses inline styles extensively
-  //   • maplibre-gl uses Web Workers (worker-src blob:) and WebGL eval (script-src 'unsafe-eval')
-  //   • Inter font is self-hosted via next/font (no remote font CDN needed)
-  //   • Videos/images served from same origin only
   {
     key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval: maplibre WebGL shaders; unsafe-inline: Next.js chunks
-      "style-src 'self' 'unsafe-inline'",                // unsafe-inline: Framer Motion inline styles
-      "img-src 'self' data: blob:",                      // blob: for maplibre canvas exports
-      "media-src 'self'",                                // portfolio videos served from /public
-      "font-src 'self'",                                 // next/font serves Inter locally
-      "connect-src 'self' https://tiles.openfreemap.org", // maplibre fetches vector tiles, glyphs, sprites
-      "font-src 'self' https://tiles.openfreemap.org",  // maplibre glyph PBFs served as fonts
-      "worker-src blob:",                                // maplibre Web Workers
-      "frame-ancestors 'none'",                          // redundant with X-Frame-Options but belt-and-suspenders
-    ].join("; "),
+    value: [...baseCsp, "frame-ancestors 'none'"].join("; "),
+  },
+];
+
+/* Astra prototype headers — same security stack, but frame-ancestors 'self'
+   and X-Frame-Options: SAMEORIGIN so the case study at /work/astra can
+   embed /astra/p1 and /astra/p2 as iframes. Cross-origin framing still
+   blocked. */
+const astraEmbedHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+  },
+  {
+    key: "Content-Security-Policy",
+    value: [...baseCsp, "frame-ancestors 'self'"].join("; "),
   },
 ];
 
@@ -48,7 +61,13 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        // Apply security headers to every route
+        // Astra prototype routes — allow same-origin framing so the case
+        // study can embed them. More specific match wins over the catch-all.
+        source: "/astra/:path*",
+        headers: astraEmbedHeaders,
+      },
+      {
+        // Everything else — strictest clickjacking protection.
         source: "/(.*)",
         headers: securityHeaders,
       },
