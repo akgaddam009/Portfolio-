@@ -851,7 +851,7 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           tag:  "The Paradox",
-          body: "It was the only reliable discovery surface in the product — so the pressure was relentless, and the space was finite.",
+          body: "It was the only reliable discovery surface in the product, so the pressure was relentless, and the space was finite.",
         },
       ],
     },
@@ -868,8 +868,8 @@ export const caseStudies: CaseStudy[] = [
     coreInsight: {
       heading: "The mental model shift",
       body: [
-        "Every research signal converged on one root cause: the homepage was organized by content format — news, video, multi-sport blocks, sport-specific blocks. But users don't follow content. They follow tournaments, teams, and players.",
-        "A fan following the IPL doesn't think in formats. They think in one question: show me everything about IPL right now. The new homepage had to mirror that — not the editorial workflow behind it.",
+        "Every research signal converged on one root cause: the homepage was organized by content format: news, video, multi-sport blocks, sport-specific blocks. But users don't follow content. They follow tournaments, teams, and players.",
+        "A fan following the IPL doesn't think in formats. They think in one question: show me everything about IPL right now. The new homepage had to mirror that, not the editorial workflow behind it.",
       ],
       beforeAfter: {
         before: {
@@ -903,7 +903,7 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           title: "Content organised for operations, not users",
-          body: "Sections were sorted by content type — news, scores, videos — not by what a sports fan actually looks for.",
+          body: "Sections were sorted by content type (news, scores, videos), not by what a sports fan actually looks for.",
         },
         {
           title: "Tournament discovery was broken",
@@ -911,7 +911,7 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           title: "The page felt stale",
-          body: "Some sections hadn't changed in weeks — a serious trust problem for a platform built on real-time sport.",
+          body: "Some sections hadn't changed in weeks, a serious trust problem for a platform built on real-time sport.",
         },
       ],
     },
@@ -921,7 +921,7 @@ export const caseStudies: CaseStudy[] = [
       principles: [
         {
           title: "Align to the user's mental model",
-          body: "Organize around sports, tournaments, teams, and players — not content formats. The page should feel built for how fans think, not how we operate internally.",
+          body: "Organize around sports, tournaments, teams, and players, not content formats. The page should feel built for how fans think, not how we operate internally.",
         },
         {
           title: "Design for scalability and daily freshness",
@@ -943,11 +943,11 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           title: "Scroll rhythm: pattern, break, pattern",
-          body: "The page alternates between contextual content blocks and pattern breaks — Quick Singles (a visual cricket snapshot) and the Tournaments discovery browser. The breaks prevent the scroll from feeling like a feed, and give users a reason to keep going.",
+          body: "The page alternates between contextual content blocks and pattern breaks: Quick Singles (a visual cricket snapshot) and the Tournaments discovery browser. The breaks prevent the scroll from feeling like a feed, and give users a reason to keep going.",
         },
         {
           title: "Deep linking throughout",
-          body: "Every component links directly into the relevant part of the app — not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination.",
+          body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination.",
         },
         {
           title: "A dedicated tournament discovery block",
@@ -960,33 +960,33 @@ export const caseStudies: CaseStudy[] = [
       {
         section: "discovery" as const,
         images: [
-          { src: "/images/fancode/OVERALL%20HOMEPAGE.jpg",                                        alt: "Overall homepage",               caption: "01 — Overall homepage"         },
-          { src: "/images/fancode/UX%20REVIEW%20CURRENT%20HOMEPAGE%20FIRST%20FOLD.jpg",           alt: "UX review — current first fold", caption: "02 — UX review, first fold"    },
-          { src: "/images/fancode/COMPETITIVE%20ANALYSIS.jpg",                                    alt: "Competitive analysis",           caption: "03 — Competitive analysis"     },
-          { src: "/images/fancode/COMPETITIVE%20ANALYSIS%20DEEP%20DIVE%20INTO%20THE%20PROBLEM.jpg", alt: "Competitive analysis deep dive", caption: "04 — Deep dive into the problem" },
+          { src: "/images/fancode/OVERALL%20HOMEPAGE.jpg",                                        alt: "Overall homepage",               caption: "01 · Overall homepage"         },
+          { src: "/images/fancode/UX%20REVIEW%20CURRENT%20HOMEPAGE%20FIRST%20FOLD.jpg",           alt: "UX review, current first fold",  caption: "02 · UX review, first fold"    },
+          { src: "/images/fancode/COMPETITIVE%20ANALYSIS.jpg",                                    alt: "Competitive analysis",           caption: "03 · Competitive analysis"     },
+          { src: "/images/fancode/COMPETITIVE%20ANALYSIS%20DEEP%20DIVE%20INTO%20THE%20PROBLEM.jpg", alt: "Competitive analysis deep dive", caption: "04 · Deep dive into the problem" },
         ],
       },
       {
         section: "approach" as const,
         images: [
-          { src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN%20WITH%20SEAMLESS%20DESIGN%20PATTERN%20FLOW.jpg",                                              alt: "Concept design — seamless pattern flow",  caption: "Seamless design pattern flow"  },
-          { src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN_FIRST%20TIME%20USERS%20AND%20RETURN%20USERS%20WITH%20HOMEPAGE%20PERSONALISATION%20IDEAS.jpg", alt: "Concept design — personalisation ideas",  caption: "Personalisation concepts"      },
+          { src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN%20WITH%20SEAMLESS%20DESIGN%20PATTERN%20FLOW.jpg",                                              alt: "Concept design, seamless pattern flow",   caption: "Seamless design pattern flow"  },
+          { src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN_FIRST%20TIME%20USERS%20AND%20RETURN%20USERS%20WITH%20HOMEPAGE%20PERSONALISATION%20IDEAS.jpg", alt: "Concept design, personalisation ideas",   caption: "Personalisation concepts"      },
         ],
       },
     ],
 
     homepageLayout: {
-      intro: "The first fold remained unchanged — it was performing well and carried strong broadcast-rights value. Everything below it was restructured.",
+      intro: "The first fold remained unchanged. It was performing well and carried strong broadcast-rights value. Everything below it was restructured.",
       firstFold: [
         { label: "Nudge cards + Live broadcast highlights" },
       ],
       belowFold: [
         { label: "Detailed coverage block (top live or upcoming story)", type: "content" },
-        { label: "\"What's Hot Right Now\" — trending sport/tournament component", type: "content" },
+        { label: "\"What's Hot Right Now\": trending sport/tournament component", type: "content" },
         { label: "Contextual coverage card (e.g. IPL, team match-day, player story)", type: "content" },
-        { label: "Pattern break — \"Quick Singles\": visual cricket snapshot", type: "break" },
+        { label: "Pattern break: \"Quick Singles\", visual cricket snapshot", type: "break" },
         { label: "Contextual coverage card (continued)", type: "content" },
-        { label: "Pattern break — Tournaments discovery browser", type: "break" },
+        { label: "Pattern break: Tournaments discovery browser", type: "break" },
         { label: "Additional sport-specific blocks (football, motorsport, etc.)", type: "content" },
       ],
     },
@@ -1015,12 +1015,12 @@ export const caseStudies: CaseStudy[] = [
 
     resultSection: {
       heading: "What the data showed",
-      intro: "The redesign was validated through a staged A/B rollout — starting with under 5% of users, monitoring engagement and retention metrics week-on-week, then expanding to 10%, and eventually rolling out to 100% of the user base as the numbers held.",
+      intro: "The redesign was validated through a staged A/B rollout, starting with under 5% of users, monitoring engagement and retention metrics week-on-week, then expanding to 10%, and eventually rolling out to 100% of the user base as the numbers held.",
       metrics: [
         { value: "15–20%", label: "lift in engagement below the first fold" },
-        { icon: true, label: "homepage adoption — more users entering multiple app journeys from home" },
+        { icon: true, label: "homepage adoption: more users entering multiple app journeys from home" },
       ],
-      body: "The 15–20% improvement in below-the-fold engagement was significant not just as a number, but as a validation of the core hypothesis: that organizing content around user mental models — rather than internal content types — would give users a genuine reason to scroll. It did.",
+      body: "The 15–20% improvement in below-the-fold engagement was significant not just as a number, but as a validation of the core hypothesis: that organizing content around user mental models, rather than internal content types, would give users a genuine reason to scroll. It did.",
       rollout: [
         { value: "<5%", label: "Initial A/B test" },
         { value: "10%", label: "Expanded rollout" },
@@ -1032,7 +1032,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Cricket-first, built to expand",
         subtitle: "Architecture decision",
-        body: "99% cricket audience. New sports slot in as content blocks — no structural rebuild needed.",
+        body: "99% cricket audience. New sports slot in as content blocks, no structural rebuild needed.",
         tags: ["Architecture", "Scalability"],
       },
       {
@@ -1062,7 +1062,7 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     lesson:
-      "The hardest design problems are rarely visual — they're structural. Reorganizing the homepage around how users think, not what we could produce, was the real decision; everything visual followed. Content strategy, partial personalization, and evidence-based pushback all reinforced the same principle: understand your constraints deeply, ship what moves the needle today, and design with tomorrow already in mind.",
+      "The hardest design problems are rarely visual; they're structural. Reorganizing the homepage around how users think, not what we could produce, was the real decision; everything visual followed. Content strategy, partial personalization, and evidence-based pushback all reinforced the same principle: understand your constraints deeply, ship what moves the needle today, and design with tomorrow already in mind.",
 
     reflection:
       "The hypothesis was validated. Organizing content around user mental models (tournaments, teams, trending moments) rather than content formats gave users a reason to scroll. The lift was measurable, sustained, and tied directly to the structural changes.\n\nWhat I'd do differently: instrument the team-level signals from day one. The Coverage Cards captured interest at the surface, but I never measured whether Karan-shaped users (the fantasy player who defaulted to Cricbuzz) opened the competitor less after the redesign. That was the metric the brief actually asked for.\n\nFollow-up work the foundation made possible: a personalization engine running on actual behavior, sport-level customisation as cricket-only stops being the constraint, dynamic content ranking rather than static, and ongoing A/B tests on layout patterns to keep the system learning.",
