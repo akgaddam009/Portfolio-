@@ -927,7 +927,7 @@ export const caseStudies: CaseStudy[] = [
     team: "Product, Engineering, Marketing, Content, UI Design",
     tags: ["Consumer Mobile", "Retention Design", "FTUX", "Research"],
     heroLabel: "Real Work",
-    confidential: false,
+    confidential: true,
 
     summary:
       "During IPL, FanCode was acquiring users fast and losing them faster. New users downloaded the app expecting to watch live cricket. Most found no live match. Those who did hit an immediate paywall. The app had no answer for the gap between what users expected and what they actually got. I led the research and redesign across onboarding, the match page, and the homepage to change what new users saw, felt, and decided in those first 60 seconds.",
@@ -1067,6 +1067,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "zetwerk-dc",
     number: "03",
+    confidential: true,
     title: "Supply chain coordination at scale",
     titleHighlights: { "Supply chain": "amber", "scale": "indigo" },
     subtitle:
@@ -1254,6 +1255,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "zetwerk-bu-ecosystem",
     number: "04",
+    confidential: true,
     title: "Enterprise Service Design & Operations Research",
     titleHighlights: { "Service Design": "indigo", "Operations Research": "amber" },
     subtitle: "Five teams. Five broken workflows. Nobody had ever drawn the full picture.",

@@ -1013,13 +1013,13 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
 }
 
 function WorkPanel() {
-  // Explicit display order. astra moves in after fancode-homepage,
-  // coming-soon cards follow as full cards with a "Coming soon" chip on them.
+  // Explicit display order. Only 4 cases shown in the public grid.
+  // The 3 confidential cases (fancode-ftux, zetwerk-dc, zetwerk-bu-ecosystem)
+  // are accessible via direct URL only — share with recruiters as needed.
   const CARD_ORDER = [
     "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
-    "fancode-ftux", "zetwerk-bu-ecosystem",
   ];
-  const COMING_SOON = new Set(["fancode-ftux", "zetwerk-bu-ecosystem"]);
+  const COMING_SOON = new Set<string>();
 
   const allCards = CARD_ORDER
     .map(slug => caseStudies.find(cs => cs.slug === slug))

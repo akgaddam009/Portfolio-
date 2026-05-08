@@ -2,14 +2,14 @@ import type { MetadataRoute } from "next";
 
 const BASE_URL = "https://arungaddamux.vercel.app";
 
+// Only public case studies are indexed. Confidential cases (fancode-ftux,
+// zetwerk-dc, zetwerk-bu-ecosystem) are intentionally omitted so search
+// engines don't surface them — recruiters get direct URLs as needed.
 const caseStudySlugs = [
   "planful-esm-tables",
   "astra",
   "apple-business-listings",
   "fancode-homepage",
-  "fancode-ftux",
-  "zetwerk-dc",
-  "zetwerk-bu-ecosystem",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

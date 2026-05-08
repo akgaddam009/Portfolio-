@@ -551,3 +551,16 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
+
+/* ─── Executive mode ─────────────────────────────────────
+   Hides non-essential case study content for a ~60 second scan.
+   Activated by data-mode="executive" on <html>. Hero, metrics
+   strip, insight pull-quote, decision titles, and outcomes stay
+   visible. Long prose, research findings, decision images,
+   contribution, lesson, reflection, references collapse out. */
+html[data-mode="executive"] .exec-hide,
+html[data-mode="executive"] .exec-decision-body,
+html[data-mode="executive"] .exec-decision-image {
+  display: none !important;
+}
+

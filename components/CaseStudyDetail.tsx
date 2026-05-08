@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import ModeToggle from "@/components/ModeToggle";
 import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from "framer-motion";
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
@@ -82,9 +83,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Password gate — any case study with `confidential: true`.
   // One shared key in localStorage — entering the password on any gated case study
   // unlocks all of them globally and persists across browser sessions.
-  const PASSWORD = "password";
+  const PASSWORD = "Nothing@123$";
   const isGated = !!cs.confidential;
-  const GLOBAL_UNLOCK_KEY = "cs-portfolio-unlocked";
+  const GLOBAL_UNLOCK_KEY = "cs-portfolio-unlocked-v2";
   const [unlocked, setUnlocked] = useState(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1";
@@ -292,6 +293,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             Arun Gaddam
           </Link>
           <ThemeToggle />
+          <ModeToggle />
         </div>
 
         {/* Right cluster — Copy email + LinkedIn, matching the
@@ -514,7 +516,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         <article style={{ padding: "0" }}>
           <div className="page-pad">
 
-            <CsSection label={cs.sectionLabels?.overview ?? "Overview"} id="cs-overview">
+            <CsSection label={cs.sectionLabels?.overview ?? "Overview"} id="cs-overview" className="exec-hide">
               {/* Three-layer Overview rendering:
                     1. context prose (plain, no card chrome)
                     2. ESM vs OLAP visual diagram (slug-gated)
@@ -1084,14 +1086,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* My Approach — renders when present (research-led case studies) */}
             {cs.approach && (
-              <CsSection label={cs.sectionLabels?.approach ?? "My Approach"}>
+              <CsSection label={cs.sectionLabels?.approach ?? "My Approach"} className="exec-hide">
                 <BodyText>{cs.approach}</BodyText>
               </CsSection>
             )}
 
             {/* Research — renders as its own section when approach is present */}
             {cs.approach && cs.researchEvidence && (
-              <CsSection label={cs.sectionLabels?.research ?? "Research"}>
+              <CsSection label={cs.sectionLabels?.research ?? "Research"} className="exec-hide">
                 <BodyText>{cs.researchEvidence}</BodyText>
                 {cs.researchFindings && cs.researchFindings.length > 0 && (
                   cs.slug === "fancode-homepage" ? (
@@ -1466,10 +1468,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                            Impact / outcome statements use the same ==highlight==
                            inline emphasis as every other inline accent — no
                            per-case eyebrow callout. */
-                        <BodyText>{d.body}</BodyText>
+                        <div className="exec-decision-body">
+                          <BodyText>{d.body}</BodyText>
+                        </div>
                       )}
                       {d.videos && d.videos.length > 0 && (
                         <motion.div
+                          className="exec-decision-image"
                           initial={{ opacity: 0, y: 12 }}
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
@@ -1521,6 +1526,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       )}
                       {(d.images && d.images.length > 0 ? (
                         <motion.div
+                          className="exec-decision-image"
                           initial={{ opacity: 0, y: 12 }}
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
@@ -1547,7 +1553,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
                           transition={{ duration: 0.65, ease: EASE }}
-                          className="cs-fullbleed-container"
+                          className="cs-fullbleed-container exec-decision-image"
                           style={{ marginTop: "24px", marginLeft: "-72px", width: "calc(100% + 72px)", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}
                         >
                           <div style={{ position: "relative", width: "100%" }}>
@@ -1567,6 +1573,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         </motion.div>
                       ) : d.image?.width ? (
                         <motion.div
+                          className="exec-decision-image"
                           initial={{ opacity: 0, y: 12 }}
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
@@ -1589,9 +1596,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           )}
                         </motion.div>
                       ) : d.image?.zoomLens ? (
-                        <ZoomLensImage image={d.image} onOpen={setLensLightboxSrc} />
+                        <div className="exec-decision-image">
+                          <ZoomLensImage image={d.image} onOpen={setLensLightboxSrc} />
+                        </div>
                       ) : d.image ? (
-                        <ImageBlock image={d.image} placeholder="Wireframe, prototype or design artifact" onOpen={setLightboxSrc} />
+                        <div className="exec-decision-image">
+                          <ImageBlock image={d.image} placeholder="Wireframe, prototype or design artifact" onOpen={setLightboxSrc} />
+                        </div>
                       ) : null)}
                     </div>
                   </motion.div>
@@ -1602,7 +1613,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             {/* Final Design — the polished result. Static design hero first
                 (instant "what shipped") then prototype motion (the product live). */}
             {(cs.outcomesImage || cs.prototypeVideo) && (
-              <CsSection label="Final Design">
+              <CsSection label="Final Design" className="exec-hide">
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
                   {/* Video renders first */}
                   {cs.prototypeVideo && (
@@ -1915,7 +1926,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             </CsSection>
 
             {cs.contribution && (
-              <CsSection label="What I owned" id="ownership">
+              <CsSection label="What I owned" id="ownership" className="exec-hide">
                 <BodyText>{cs.contribution}</BodyText>
                 {cs.contributionArtifacts && cs.contributionArtifacts.length > 0 && (
                   <motion.div
@@ -1953,7 +1964,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {cs.scrappedDirections && cs.scrappedDirections.length > 0 && (
-              <CsSection label="What We Tried & Killed">
+              <CsSection label="What We Tried & Killed" className="exec-hide">
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   {cs.scrappedDirections.map((dir, i) => {
                     /* Split on " vs " to extract the A and B options from the title.
@@ -2008,7 +2019,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               const headline = dotIdx > -1 ? cs.lesson.slice(0, dotIdx + 1) : cs.lesson;
               const body = dotIdx > -1 ? cs.lesson.slice(dotIdx + 2) : "";
               return (
-                <CsSection label={cs.sectionLabels?.lesson ?? "What I learned"}>
+                <CsSection label={cs.sectionLabels?.lesson ?? "What I learned"} className="exec-hide">
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2vw, 22px)", fontWeight: 400, lineHeight: 1.4, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "640px" }}>
                     {headline}
                   </p>
@@ -2024,7 +2035,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             {/* "What I'd Do Differently" section hidden across all case studies. Data
                 preserved in cs.reflection in case we want to bring it back. */}
             {false && cs.reflection && (
-              <CsSection label="What I'd Do Differently">
+              <CsSection label="What I'd Do Differently" className="exec-hide">
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "580px" }}>
                   {cs.reflection}
                 </p>
@@ -2032,7 +2043,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {cs.references && cs.references.length > 0 && (
-              <CsSection label={cs.sectionLabels?.references ?? "References"}>
+              <CsSection label={cs.sectionLabels?.references ?? "References"} className="exec-hide">
                 <ul style={{ display: "flex", flexDirection: "column", gap: "10px", listStyle: "none", padding: 0, margin: 0, maxWidth: "640px" }}>
                   {cs.references.map((ref, i) => (
                     <li key={i}>
@@ -3178,10 +3189,11 @@ function CaseStudyContactCluster() {
   );
 }
 
-function CsSection({ label, children, id }: { label: string; children: React.ReactNode; id?: string }) {
+function CsSection({ label, children, id, className }: { label: string; children: React.ReactNode; id?: string; className?: string }) {
   return (
     <motion.section
       id={id}
+      className={className}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}

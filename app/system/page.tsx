@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
+import ModeToggle from "@/components/ModeToggle";
 import Footer from "@/components/Footer";
 import { InlineChip } from "@/components/ui/InlineChip";
 
@@ -178,6 +179,7 @@ export default function SystemPage() {
             Arun Gaddam
           </Link>
           <ThemeToggle />
+          <ModeToggle />
         </div>
       </motion.header>
 
