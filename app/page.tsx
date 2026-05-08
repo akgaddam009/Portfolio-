@@ -1017,7 +1017,7 @@ function WorkPanel() {
   // The 3 confidential cases (fancode-ftux, zetwerk-dc, zetwerk-bu-ecosystem)
   // are accessible via direct URL only — share with recruiters as needed.
   const CARD_ORDER = [
-    "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
+    "planful-esm-tables", "apple-business-listings", "astra",
   ];
   const COMING_SOON = new Set<string>();
 
