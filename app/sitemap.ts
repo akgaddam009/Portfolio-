@@ -3,9 +3,8 @@ import type { MetadataRoute } from "next";
 const BASE_URL = "https://arungaddamux.vercel.app";
 
 // Only public case studies are indexed. Confidential / hidden cases
-// (fancode-ftux, zetwerk-dc, zetwerk-bu-ecosystem) are intentionally
-// omitted so search engines don't surface them — recruiters get direct
-// URLs as needed.
+// (zetwerk-dc, zetwerk-bu-ecosystem) are intentionally omitted so search
+// engines don't surface them — recruiters get direct URLs as needed.
 const caseStudySlugs = [
   "planful-esm-tables",
   "astra",

@@ -777,7 +777,6 @@ const WORK_THUMBS: Record<string, string> = {
   "astra":                "/images/astra/overview.mp4",
   "planful-esm-tables":   "/images/planful/planful%20product%20video.mp4",
   "apple-business-listings": "/images/reputation/after.mp4",
-  "fancode-ftux":         "/images/fancode/user-journey-map.jpg",
   "fancode-homepage":     "/images/fancode/FANCODE%20HOMEPAGE%20AFTER%20.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
@@ -787,7 +786,7 @@ const WORK_POSTERS: Record<string, string> = {
   "astra":                "/images/astra/cover.png",
   "planful-esm-tables":   "/images/planful/landing-page.jpg",
   "apple-business-listings": "/images/reputation/Thumbnail .png",
-  "fancode-homepage":     "/images/fancode/hp-final-ui.jpg",
+  "fancode-homepage":     "/images/fancode/New%20Homepage%20.jpg",
 };
 
 // Video file extensions that should render through <video> instead of <img>.
@@ -1014,8 +1013,8 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
 
 function WorkPanel() {
   // Explicit display order. Only 4 cases shown in the public grid.
-  // The 3 confidential cases (fancode-ftux, zetwerk-dc, zetwerk-bu-ecosystem)
-  // are accessible via direct URL only — share with recruiters as needed.
+  // The 2 confidential cases (zetwerk-dc, zetwerk-bu-ecosystem) are
+  // accessible via direct URL only — share with recruiters as needed.
   const CARD_ORDER = [
     "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
   ];
@@ -1083,7 +1082,6 @@ function WorkPanel() {
                         {cs.slug === "planful-esm-tables"     && <AccentChip label="Fintech"         tone="indigo"  icon={Briefcase} />}
                         {cs.slug === "apple-business-listings"&& <AccentChip label="CXM"             tone="teal"    icon={Users} />}
                         {cs.slug === "fancode-homepage"       && <AccentChip label="Consumer Mobile" tone="emerald" icon={LayoutGrid} />}
-                        {cs.slug === "fancode-ftux"           && <AccentChip label="Retention"       tone="emerald" icon={Compass} />}
                         {cs.slug === "zetwerk-dc"             && <AccentChip label="Supply Chain"    tone="amber"   icon={Path} />}
                         {cs.slug === "zetwerk-bu-ecosystem"   && <AccentChip label="Service Design"  tone="amber"   icon={TreeStructure} />}
                         {cs.tags.slice(0, 2).map(tag => (

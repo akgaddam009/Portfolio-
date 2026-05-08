@@ -10,7 +10,6 @@ import CaseStudyDetail from "@/components/CaseStudyDetail";
    Listed here rather than in caseStudies.ts because the hide is a
    routing decision, not a data field. */
 const HIDDEN_SLUGS = new Set<string>([
-  "fancode-ftux",
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",
 ]);

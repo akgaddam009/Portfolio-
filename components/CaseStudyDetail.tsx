@@ -54,7 +54,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Wraps to the first study after the last one. If the immediate next is a
   // coming-soon or hidden study, we suppress the CTA entirely (Option B) rather
   // than skip ahead, so visitors never click into something that isn't ready.
-  const HIDDEN_NEXT_SLUGS = new Set(["fancode-ftux", "zetwerk-bu-ecosystem", "zetwerk-dc"]);
+  const HIDDEN_NEXT_SLUGS = new Set(["zetwerk-bu-ecosystem", "zetwerk-dc"]);
   const currentIndex = caseStudies.findIndex(c => c.slug === cs.slug);
   const nextCandidate = caseStudies[(currentIndex + 1) % caseStudies.length];
   const next = nextCandidate && !HIDDEN_NEXT_SLUGS.has(nextCandidate.slug) ? nextCandidate : null;
