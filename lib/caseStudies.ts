@@ -813,7 +813,7 @@ export const caseStudies: CaseStudy[] = [
     title: "Rethinking the Homepage of India's premier sports app",
     titleHighlights: { "Homepage": "indigo" },
     subtitle: "How a mental-model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15–20%.",
-    cardImpact: "15–20% lift below the 1st fold of the homepage. Reorganized around how fans think: by tournament, not content type.",
+    cardImpact: "15–20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",
     company: "FanCode",
     type: "Consumer Mobile App · Sports & Streaming",
     role: "UX Manager",
