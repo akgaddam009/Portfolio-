@@ -243,6 +243,30 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             width: 100% !important;
           }
         }
+
+        /* Core-insight phone mockup — the JSX builds two 260px-wide phone
+           frames + arrow, totalling ~604px wide. Below 640px we scale the
+           whole block down so it fits a 375px viewport without overflow.
+           Wrapper height compensates for the scale so following content
+           doesn't shift. */
+        @media (max-width: 640px) {
+          .cs-phone-pair-wrap {
+            height: 320px !important; /* 503px (rendered) * 0.62 */
+            overflow: visible !important;
+          }
+          .cs-phone-pair {
+            transform: scale(0.62) !important;
+            transform-origin: top center !important;
+          }
+        }
+        @media (max-width: 380px) {
+          .cs-phone-pair-wrap {
+            height: 285px !important; /* 503px * 0.55 */
+          }
+          .cs-phone-pair {
+            transform: scale(0.55) !important;
+          }
+        }
       `}</style>
 
       {/* Minimal nav — matches HomeNav: transparent header with floating
@@ -419,13 +443,36 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </div>
         )}
 
-        {/* Hero video — placed before TLDR so a recruiter sees the final UI in
-            motion within the first scroll. Asymmetric vertical padding: heavier on
-            top to clearly separate the panel from the metrics bar above, lighter
-            on bottom to lead the eye into the TLDR. Falls back to a styled
-            placeholder when `videoPlaceholder` is set and `contextVideo` isn't,
-            so the page reserves the slot for a planned video. */}
-        {cs.contextVideo ? (
+        {/* Hero video slot — placed right after the metrics/impact strip.
+            When outcomesCompare is set, shows both BEFORE and AFTER videos
+            side by side so the transformation is visible immediately.
+            Otherwise falls back to the single contextVideo hero.
+            Falls back to a styled placeholder when videoPlaceholder is set. */}
+        {cs.outcomesCompare ? (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{ padding: "48px 0" }}
+          >
+            <div className="page-pad">
+              <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                {([
+                  { label: "Before", src: cs.outcomesCompare.before },
+                  { label: "After",  src: cs.outcomesCompare.after  },
+                ] as const).map(({ label, src }) => (
+                  <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
+                    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                      <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.section>
+        ) : cs.contextVideo ? (
           <motion.section
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -626,9 +673,90 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 </div>
               )}
 
+              {/* contextStats — large-number stat blocks (e.g. "100M+ users") */}
+              {cs.contextStats && cs.contextStats.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: cs.context || (cs.contextCards && cs.contextCards.length > 0) ? "28px" : "8px" }}
+                >
+                  {cs.contextStats.map((s, i) => (
+                    <div key={i} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.4vw, 28px)", fontWeight: 300, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--text)", margin: 0 }}>{s.stat}</p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{s.label}</p>
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+
+              {/* App store links */}
+              {cs.appStoreLinks && (
+                <div style={{ display: "flex", gap: "20px", marginTop: "16px", flexWrap: "wrap", alignItems: "center" }}>
+                  {cs.appStoreLinks.android && (
+                    <a href={cs.appStoreLinks.android} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: "var(--muted)" }}><path d="M3.18 23.76c.3.17.64.24.99.2l12.6-11.55-2.99-2.99L3.18 23.76zm16.14-13.03l-2.96-2.96-2.26 2.06 2.99 2.99 2.23-2.09zM2.1.41C1.75.69 1.5 1.13 1.5 1.7v20.6c0 .57.25 1.01.6 1.29L14.17 12 2.1.41zm20.1 10.02l-2.87-1.64-2.51 2.29 2.52 2.52 2.86-1.64c.82-.47.82-1.99 0-2.53z"/></svg>
+                      <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", letterSpacing: "-0.01em" }}>Google Play</span>
+                    </a>
+                  )}
+                  {cs.appStoreLinks.ios && (
+                    <a href={cs.appStoreLinks.ios} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: "var(--muted)" }}><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                      <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", letterSpacing: "-0.01em" }}>App Store</span>
+                    </a>
+                  )}
+                </div>
+              )}
+
             </CsSection>
 
+            {/* ── Context Section (optional named section between Overview and Problem) ── */}
+            {cs.contextSection && (
+              <CsSection label={cs.contextSection.title}>
+                {cs.contextSection.intro && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 20px" }}
+                  >
+                    {cs.contextSection.intro}
+                  </motion.p>
+                )}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" }}
+                >
+                  {cs.contextSection.cards.map((card, i) => (
+                    <div key={i} style={{ padding: "24px 26px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "14px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{card.tag}</span>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{card.body}</p>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
             <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} id="cs-problem">
+              {/* Problem stat — number stacked above short label */}
+              {cs.problemStat && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.55, ease: EASE }}
+                  style={{ marginBottom: "28px", display: "flex", flexDirection: "column", gap: "8px" }}
+                >
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.4vw, 28px)", fontWeight: 300, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--text)" }}>{cs.problemStat.stat}</span>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0, maxWidth: "480px" }}>{cs.problemStat.label}</p>
+                </motion.div>
+              )}
+
               {/* Persona preview — human anchor at the top of the Problem
                   section. Renders only when this case study has personas
                   attached to its decisions. */}
@@ -690,7 +818,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   )}
                 </>
               ) : (
-                <BodyText>{cs.problem}</BodyText>
+                cs.problem && <BodyText>{cs.problem}</BodyText>
               )}
 
               {cs.problemBreakdown && (
@@ -1255,38 +1383,262 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
+            {/* ── Discovery & Research ── */}
+            {cs.discoverySection && (
+              <CsSection label="Discovery & Research">
+                {cs.discoverySection.intro && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55, ease: EASE }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 24px" }}
+                  >
+                    {cs.discoverySection.intro}
+                  </motion.p>
+                )}
+                {cs.discoverySection.findings.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE }}
+                    style={{ border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
+                  >
+                    {cs.discoverySection.findings.map((f, i) => (
+                      <div
+                        key={i}
+                        style={{ padding: "20px 24px", borderBottom: i < cs.discoverySection!.findings.length - 1 ? "1px solid var(--border)" : "none" }}
+                      >
+                        <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{f.title}</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{f.body}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </CsSection>
+            )}
+
+            {/* ── Canvas board — Discovery & Research ── */}
+            {cs.canvasBoards?.find(b => b.section === "discovery") && (() => {
+              const board = cs.canvasBoards!.find(b => b.section === "discovery")!;
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, ease: EASE }}
+                  style={{
+                    marginBottom: "80px",
+                    borderRadius: "16px",
+                    border: "1px solid var(--border)",
+                    overflow: "hidden",
+                    background: "var(--surface2)",
+                    backgroundImage: "radial-gradient(circle, var(--border) 1px, transparent 1px)",
+                    backgroundSize: "20px 20px",
+                    padding: "28px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "12px",
+                    alignItems: "start",
+                  }}
+                >
+                  {board.images.map((img, i) => (
+                    <motion.div
+                      key={i}
+                      whileHover={{ scale: 1.02, zIndex: 10 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={() => setLightboxSrc(img.src)}
+                      style={{
+                        cursor: "zoom-in",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                        gridColumn: img.span === "wide" ? "span 2" : "span 1",
+                        gridRow: img.span === "tall" ? "span 2" : "span 1",
+                        position: "relative",
+                      }}
+                    >
+                      <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", boxShadow: "0 2px 12px rgba(0,0,0,0.08)", position: "relative" }}>
+                        <CanvasBoardImage src={img.src} alt={img.alt} aspectRatio={img.span === "tall" ? "3/4" : "16/9"} />
+                        <div style={{ position: "absolute", inset: 0, background: "transparent", transition: "background 0.15s" }} className="canvas-hover-overlay" />
+                      </div>
+                      {img.caption && (
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, textAlign: "center" }}>
+                          {img.caption}
+                        </p>
+                      )}
+                    </motion.div>
+                  ))}
+                </motion.div>
+              );
+            })()}
+
+            {/* ── Core Insight — after Discovery & Research ── */}
             {cs.insight && (
               <section id="cs-insight" style={{ padding: "80px 0" }}>
-                {/* Pull-quote treatment for the case study's core insight.
-                    Drops the card chrome and instead lets the insight breathe
-                    as a chapter-break in oversized type with a terracotta
-                    accent rule on the left. The eye registers it as a turn
-                    in the narrative, not another body block. */}
+                {/* heading block */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
-                  style={{ maxWidth: "720px", borderLeft: "3px solid var(--accent-warm)", paddingLeft: "28px" }}
+                  style={{ maxWidth: "720px" }}
                 >
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "18px" }}>Core Insight</p>
-                  {(() => {
-                    const paras = cs.insight.split("\n\n");
-                    return (
-                      <>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 30px)", fontWeight: 300, lineHeight: 1.45, letterSpacing: "-0.02em", color: "var(--text)" }}>
-                          {parseHighlights(paras[0])}
-                        </p>
-                        {paras.slice(1).map((para, i) => (
-                          <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", marginTop: "22px" }}>
-                            {parseHighlights(para)}
+                  {cs.coreInsight ? (
+                    <>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 30px)", fontWeight: 300, lineHeight: 1.4, letterSpacing: "-0.025em", color: "var(--text)", margin: "0 0 18px" }}>
+                        {cs.coreInsight.heading}
+                      </p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>
+                        {parseHighlights(cs.coreInsight.body[0] ?? "")}
+                      </p>
+                    </>
+                  ) : (
+                    (() => {
+                      const paras = cs.insight.split("\n\n");
+                      return (
+                        <>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 30px)", fontWeight: 300, lineHeight: 1.45, letterSpacing: "-0.02em", color: "var(--text)" }}>
+                            {parseHighlights(paras[0])}
                           </p>
-                        ))}
-                      </>
-                    );
-                  })()}
+                          {paras.slice(1).map((para, i) => (
+                            <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", marginTop: "22px" }}>
+                              {parseHighlights(para)}
+                            </p>
+                          ))}
+                        </>
+                      );
+                    })()
+                  )}
                 </motion.div>
+
                 {cs.slug === "zetwerk-dc" && <ZetwerkDualUserBlock />}
+
+                {/* ── Before / After phone mockup — homepageLayout style ──
+                    Wrapped in `.cs-phone-pair-wrap` so the inner `.cs-phone-pair`
+                    can `transform: scale()` on mobile without leaving an empty
+                    layout gap (transforms don't reflow surrounding content). */}
+                {cs.coreInsight?.beforeAfter && (
+                  <div className="cs-phone-pair-wrap" style={{ marginTop: "44px" }}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE, delay: 0.1 }}
+                    className="cs-phone-pair"
+                    style={{ display: "flex", gap: "32px", flexWrap: "nowrap", alignItems: "flex-start", padding: "12px 8px 4px", justifyContent: "center" }}
+                  >
+                    {/* BEFORE phone */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", flexShrink: 0 }}>
+                      <div style={{
+                        width: "260px", height: "460px",
+                        border: "1.5px solid var(--border)", borderRadius: "44px",
+                        boxShadow: "0 0 0 6px var(--surface2)",
+                        overflow: "hidden", fontFamily: "var(--font-body)",
+                        display: "flex", flexDirection: "column",
+                      }}>
+                        {/* Notch */}
+                        <div style={{ display: "flex", justifyContent: "center", paddingTop: "18px", paddingBottom: "10px", background: "var(--bg)", flexShrink: 0 }}>
+                          <div style={{ width: "72px", height: "22px", background: "var(--surface2)", borderRadius: "11px" }} />
+                        </div>
+                        {/* Section label */}
+                        <div style={{ padding: "8px 20px 14px", background: "var(--bg)", flexShrink: 0 }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>How it was organized</span>
+                        </div>
+                        {/* Items — fill entire content area */}
+                        <div style={{ padding: "0 14px", display: "flex", flexDirection: "column", gap: "6px", flex: 1 }}>
+                          {cs.coreInsight.beforeAfter.before.items.map((item, i) => (
+                            <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "11px 14px", background: "var(--surface)", borderRadius: "10px", border: "1px solid var(--border)", flex: 1 }}>
+                              <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
+                              <span style={{ fontSize: "11px", color: "var(--muted2)", lineHeight: 1.4, letterSpacing: "-0.01em" }}>{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Home bar */}
+                        <div style={{ display: "flex", justifyContent: "center", padding: "20px 0 18px", flexShrink: 0 }}>
+                          <div style={{ width: "48px", height: "4px", background: "var(--border)", borderRadius: "2px" }} />
+                        </div>
+                      </div>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "260px" }}>
+                        {cs.coreInsight.beforeAfter.before.footnote}
+                      </p>
+                    </div>
+
+                    {/* Arrow between phones — circle */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "52px", flexShrink: 0, alignSelf: "stretch" }}>
+                      <div style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1.5px solid var(--border)", background: "var(--surface)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "var(--muted2)", lineHeight: 1 }}>&#8594;</span>
+                      </div>
+                    </div>
+
+                    {/* AFTER phone */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", flexShrink: 0 }}>
+                      <div style={{
+                        width: "260px", height: "460px",
+                        border: "1.5px solid var(--border)", borderRadius: "44px",
+                        boxShadow: "0 0 0 6px var(--surface2)",
+                        overflow: "hidden", fontFamily: "var(--font-body)",
+                        display: "flex", flexDirection: "column",
+                      }}>
+                        {/* Notch */}
+                        <div style={{ display: "flex", justifyContent: "center", paddingTop: "18px", paddingBottom: "10px", background: "var(--bg)", flexShrink: 0 }}>
+                          <div style={{ width: "72px", height: "22px", background: "var(--surface2)", borderRadius: "11px" }} />
+                        </div>
+                        {/* Section label */}
+                        <div style={{ padding: "8px 20px 14px", background: "var(--bg)", flexShrink: 0 }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>How users actually think</span>
+                        </div>
+                        {/* Content — fill entire area */}
+                        <div style={{ padding: "0 14px", display: "flex", flexDirection: "column", gap: "6px", flex: 1 }}>
+                          {/* Featured block */}
+                          <div style={{ padding: "12px 14px", border: "1.5px solid var(--border)", borderRadius: "12px", background: "var(--surface2)", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "block", marginBottom: "8px" }}>Featured</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                              <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "var(--muted2)", flexShrink: 0 }} />
+                              <span style={{ fontSize: "11px", color: "var(--text)", lineHeight: 1.4, letterSpacing: "-0.01em" }}>{cs.coreInsight.beforeAfter.after.items[0]}</span>
+                            </div>
+                          </div>
+                          {/* Remaining items */}
+                          {cs.coreInsight.beforeAfter.after.items.slice(1).map((item, i) => (
+                            <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "11px 14px", background: "var(--surface)", borderRadius: "10px", border: "1px solid var(--border)", flex: 1 }}>
+                              <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
+                              <span style={{ fontSize: "11px", color: "var(--muted2)", lineHeight: 1.4, letterSpacing: "-0.01em" }}>{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Home bar */}
+                        <div style={{ display: "flex", justifyContent: "center", padding: "20px 0 18px", flexShrink: 0 }}>
+                          <div style={{ width: "48px", height: "4px", background: "var(--border)", borderRadius: "2px" }} />
+                        </div>
+                      </div>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "260px" }}>
+                        {cs.coreInsight.beforeAfter.after.footnote}
+                      </p>
+                    </div>
+                  </motion.div>
+                  </div>
+                )}
+
+                {/* second body para — below phones */}
+                {cs.coreInsight?.body[1] && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: EASE, delay: 0.05 }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 300, lineHeight: 1.7, letterSpacing: "-0.015em", color: "var(--text)", margin: "36px 0 0", borderLeft: "2px solid var(--accent-warm)", paddingLeft: "16px", maxWidth: "640px" }}
+                  >
+                    {parseHighlights(cs.coreInsight.body[1])}
+                  </motion.p>
+                )}
+
                 {cs.insightImage && (
                   <ImageBlock image={cs.insightImage} placeholder="" onOpen={setLightboxSrc} />
                 )}
@@ -1296,6 +1648,224 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </p>
                 )}
               </section>
+            )}
+
+            {/* ── Design Strategy ── */}
+            {cs.designStrategy && (
+              <CsSection label="Design Strategy">
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2vw, 22px)", fontWeight: 300, letterSpacing: "-0.02em", lineHeight: 1.3, color: "var(--text)", margin: "0 0 28px" }}
+                >
+                  {cs.designStrategy.heading}
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
+                >
+                  {cs.designStrategy.principles.map((p, i) => (
+                    <div key={i} style={{ padding: "20px 24px", borderBottom: i < cs.designStrategy!.principles.length - 1 ? "1px solid var(--border)" : "none", display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{p.title}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{p.body}</p>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
+            {/* ── Design Approach ── */}
+            {cs.designApproach && (
+              <CsSection label="Design Approach">
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 20px" }}
+                >
+                  {cs.designApproach.intro}
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
+                >
+                  {cs.designApproach.decisions.map((d, i) => (
+                    <div key={i} style={{ padding: "22px 24px", borderBottom: i < cs.designApproach!.decisions.length - 1 ? "1px solid var(--border)" : "none", display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{d.body}</p>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
+            {/* ── Canvas board — Design Approach ── */}
+            {cs.canvasBoards?.find(b => b.section === "approach") && (() => {
+              const board = cs.canvasBoards!.find(b => b.section === "approach")!;
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, ease: EASE }}
+                  style={{
+                    marginBottom: "80px",
+                    borderRadius: "16px",
+                    border: "1px solid var(--border)",
+                    overflow: "hidden",
+                    background: "var(--surface2)",
+                    backgroundImage: "radial-gradient(circle, var(--border) 1px, transparent 1px)",
+                    backgroundSize: "20px 20px",
+                    padding: "28px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "12px",
+                    alignItems: "start",
+                  }}
+                >
+                  {board.images.map((img, i) => (
+                    <motion.div
+                      key={i}
+                      whileHover={{ scale: 1.02, zIndex: 10 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={() => setLightboxSrc(img.src)}
+                      style={{
+                        cursor: "zoom-in",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                        gridColumn: img.span === "wide" ? "span 2" : "span 1",
+                        gridRow: img.span === "tall" ? "span 2" : "span 1",
+                        position: "relative",
+                      }}
+                    >
+                      <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
+                        <CanvasBoardImage src={img.src} alt={img.alt} aspectRatio={img.span === "tall" ? "3/4" : "16/9"} />
+                      </div>
+                      {img.caption && (
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, textAlign: "center" }}>
+                          {img.caption}
+                        </p>
+                      )}
+                    </motion.div>
+                  ))}
+                </motion.div>
+              );
+            })()}
+
+            {/* ── Homepage Layout ── */}
+            {cs.homepageLayout && (
+              <CsSection label="Homepage Layout">
+                {cs.homepageLayout.intro && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 24px" }}
+                  >
+                    {cs.homepageLayout.intro}
+                  </motion.p>
+                )}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", justifyContent: "center" }}
+                >
+                  <div style={{ width: "360px", border: "1.5px solid var(--border)", borderRadius: "44px", boxShadow: "0 0 0 6px var(--surface2)", overflow: "hidden", fontFamily: "var(--font-body)" }}>
+                    {/* Notch */}
+                    <div style={{ display: "flex", justifyContent: "center", paddingTop: "18px", paddingBottom: "10px", background: "var(--bg)" }}>
+                      <div style={{ width: "80px", height: "22px", background: "var(--surface2)", borderRadius: "11px" }} />
+                    </div>
+                    {/* Architecture label */}
+                    <div style={{ padding: "10px 22px 12px", background: "var(--bg)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>Page Architecture</span>
+                    </div>
+                    {/* First fold */}
+                    <div style={{ margin: "0 16px", padding: "12px 16px", border: "1.5px solid var(--border)", borderRadius: "12px", background: "var(--surface2)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "block", marginBottom: "6px" }}>First Fold — Unchanged</span>
+                      {cs.homepageLayout.firstFold.map((item, i) => (
+                        <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: i > 0 ? "5px" : 0 }}>
+                          <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
+                          <span style={{ fontSize: "11px", color: "var(--muted2)", lineHeight: 1.4 }}>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Dashed divider */}
+                    <div style={{ display: "flex", alignItems: "center", padding: "10px 18px", gap: "8px" }}>
+                      <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>Restructured below</span>
+                      <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+                    </div>
+                    {/* Below fold items */}
+                    <div style={{ padding: "0 16px 20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+                      {cs.homepageLayout.belowFold.map((item, i) => (
+                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "9px", padding: "9px 12px", background: item.type === "break" ? "var(--surface2)" : "var(--surface)", borderRadius: "9px", border: "1px solid var(--border)" }}>
+                          <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0, marginTop: "4px" }} />
+                          <span style={{ fontSize: "11px", color: "var(--muted)", lineHeight: 1.5 }}>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Home indicator */}
+                    <div style={{ display: "flex", justifyContent: "center", paddingBottom: "18px" }}>
+                      <div style={{ width: "48px", height: "4px", background: "var(--border)", borderRadius: "2px" }} />
+                    </div>
+                  </div>
+                </motion.div>
+              </CsSection>
+            )}
+
+            {/* ── Key Design Decisions (side-by-side cards) ── */}
+            {cs.keyDecisions && cs.keyDecisions.length > 0 && (
+              <CsSection label="Key Design Decisions">
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" }}
+                >
+                  {cs.keyDecisions.map((d, i) => (
+                    <div key={i} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "24px", padding: "24px 26px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "14px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                        {d.stat && (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 3vw, 38px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.05, color: "var(--text)", margin: 0 }}>{d.stat.value}</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{d.stat.label}</p>
+                          </div>
+                        )}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                          <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(14px, 1.3vw, 15px)", fontWeight: 500, color: "var(--text)", lineHeight: 1.3 }}>{d.title}</span>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>{d.subtitle}</span>
+                        </div>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300, color: "var(--muted2)", lineHeight: 1.65, margin: 0 }}>{d.body}</p>
+                      </div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                        {d.tags.map((tag, ti) => (
+                          <span key={ti} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", borderRadius: "100px", padding: "3px 9px" }}>{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
             )}
 
             {cs.slug === "zetwerk-dc" ? (
@@ -1325,7 +1895,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </section>
             )}
 
-            {cs.decisions.some(d => d.persona) && (
+            {cs.decisions?.some(d => d.persona) && (
               <CsSection label="Who We Designed For">
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
@@ -1344,7 +1914,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     scrollbarWidth: "none",
                   }}
                 >
-                  {cs.decisions.filter(d => d.persona).map((d, i) => {
+                  {cs.decisions?.filter(d => d.persona).map((d, i) => {
                     const accents = [
                       { bg: "rgba(113,112,255,0.10)", text: "#7170ff", avatarBg: "rgba(113,112,255,0.15)" },
                       { bg: "rgba(16,185,129,0.10)",  text: "#10b981", avatarBg: "rgba(16,185,129,0.15)"  },
@@ -1416,202 +1986,37 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            <CsSection label={cs.sectionLabels?.decisions ?? "Key Design Decisions"} id="decisions">
-              {cs.decisionsIntro && (
-                <div style={{ marginBottom: "48px" }}>
-                  <BodyText>{cs.decisionsIntro}</BodyText>
-                </div>
-              )}
-              <style>{`
-                .decision-num-badge {
-                  background: rgba(99, 102, 241, 0.12);
-                }
-                .decision-num-text {
-                  color: rgb(165, 168, 255);
-                }
-                [data-theme="light"] .decision-num-badge {
-                  background: rgba(99, 102, 241, 0.10);
-                }
-                [data-theme="light"] .decision-num-text {
-                  color: rgb(67, 56, 202);
-                }
-              `}</style>
-              <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
-                {cs.decisions.map((d, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, ease: EASE, delay: i * 0.06 }}
-                    style={{ display: "grid", gridTemplateColumns: "48px 1fr", gap: "24px" }}
-                  >
-                    <div style={{ display: "flex", paddingTop: "1px" }}>
-                      <div className="decision-num-badge" style={{ width: "28px", height: "28px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <span className="decision-num-text" style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", lineHeight: 1 }}>
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
+
+            {/* ── Final Design — repeat the before/after video pair so the
+                case study book-ends with motion. The same videos render up
+                top as the outcomes hero; here they sit before the result
+                metrics as the final visual beat. ── */}
+            {cs.outcomesCompare && (
+              <CsSection label="Final Design">
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                  className="cs-2col"
+                  style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}
+                >
+                  {([
+                    { label: "Before", src: cs.outcomesCompare.before },
+                    { label: "After",  src: cs.outcomesCompare.after  },
+                  ] as const).map(({ label, src }) => (
+                    <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
+                      <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                        <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
                       </div>
                     </div>
-                    <div>
-                      <h3 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3, display: "flex", alignItems: "center", gap: "8px" }}>
-                        {d.icon && DECISION_ICONS[d.icon] && (() => {
-                          const IconComp = DECISION_ICONS[d.icon];
-                          return <IconComp size={14} strokeWidth={1.6} style={{ color: "var(--muted)", flexShrink: 0 }} />;
-                        })()}
-                        {d.title}
-                      </h3>
-                      {cs.slug === "planful-esm-tables" && d.title.startsWith("What comes next") ? (
-                        <MapsDecisionBlock />
-                      ) : (
-                        /* Decisions render uniformly across all case studies.
-                           Impact / outcome statements use the same ==highlight==
-                           inline emphasis as every other inline accent — no
-                           per-case eyebrow callout. */
-                        <div className="exec-decision-body">
-                          <BodyText>{d.body}</BodyText>
-                        </div>
-                      )}
-                      {d.videos && d.videos.length > 0 && (
-                        <motion.div
-                          className="exec-decision-image"
-                          initial={{ opacity: 0, y: 12 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.65, ease: EASE }}
-                          style={{ marginTop: "24px" }}
-                        >
-                          <div className="cs-video-grid" style={{ display: "grid", gridTemplateColumns: `repeat(${d.videos.length}, 1fr)`, gap: "12px", width: "100%" }}>
-                            {d.videos.map((v, vi) => (
-                              <div key={vi} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                                {v.label && (
-                                  <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)" }}>
-                                    {v.label}
-                                  </p>
-                                )}
-                                <div
-                                  onClick={() => setLightboxSrc(v.src)}
-                                  style={{ position: "relative", cursor: "zoom-in", borderRadius: "12px", overflow: "hidden", background: "var(--surface)" }}
-                                >
-                                  <video
-                                    src={v.src}
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    preload="metadata"
-                                    style={{ width: "100%", display: "block", pointerEvents: "none" }}
-                                  />
-                                  {/* Expand affordance — small badge top-right signalling
-                                      the video is clickable to view full-size in the lightbox. */}
-                                  <div style={{ position: "absolute", top: "8px", right: "8px", background: "rgba(0,0,0,0.65)", borderRadius: "6px", padding: "5px 8px", display: "flex", alignItems: "center", gap: "4px", color: "#fff", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "-0.01em", pointerEvents: "none", backdropFilter: "blur(4px)" }}>
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                      <polyline points="15 3 21 3 21 9" />
-                                      <polyline points="9 21 3 21 3 15" />
-                                      <line x1="21" y1="3" x2="14" y2="10" />
-                                      <line x1="3" y1="21" x2="10" y2="14" />
-                                    </svg>
-                                    <span>Expand</span>
-                                  </div>
-                                </div>
-                                {v.caption && (
-                                  <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)", textAlign: "center" }}>
-                                    {v.caption}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                      {(d.images && d.images.length > 0 ? (
-                        <motion.div
-                          className="exec-decision-image"
-                          initial={{ opacity: 0, y: 12 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.65, ease: EASE }}
-                          style={{ marginTop: "24px" }}
-                        >
-                          <div className={d.imageStack ? undefined : "cs-2col"} style={{ display: "grid", gridTemplateColumns: d.imageStack ? "1fr" : "1fr 1fr", gap: "12px", width: "100%" }}>
-                            {d.images.map((img, idx) => (
-                              <div key={idx} onClick={() => setLightboxSrc(img.src)} style={{ position: "relative", cursor: "zoom-in" }}>
-                                <img src={img.src} alt={img.alt} style={{ width: "100%", display: "block", objectFit: "contain" }} />
-                                <ZoomBadge />
-                                {img.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "8px", textAlign: "center" }}>
-                                    {img.caption}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      ) : d.image?.fullBleed ? (
-                        <motion.div
-                          initial={{ opacity: 0, y: 12 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.65, ease: EASE }}
-                          className="cs-fullbleed-container exec-decision-image"
-                          style={{ marginTop: "24px", marginLeft: "-72px", width: "calc(100% + 72px)", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}
-                        >
-                          <div style={{ position: "relative", width: "100%" }}>
-                            <img
-                              src={d.image.src}
-                              alt={d.image.alt}
-                              onClick={() => setLightboxSrc(d.image!.src)}
-                              style={{ width: "100%", display: "block", objectFit: "contain", cursor: "zoom-in" }}
-                            />
-                            <ZoomBadge />
-                          </div>
-                          {d.image.caption && (
-                            <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-                              {d.image.caption}
-                            </p>
-                          )}
-                        </motion.div>
-                      ) : d.image?.width ? (
-                        <motion.div
-                          className="exec-decision-image"
-                          initial={{ opacity: 0, y: 12 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.65, ease: EASE }}
-                          style={{ marginTop: "24px", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}
-                        >
-                          <div style={{ position: "relative", display: "inline-block" }}>
-                            <img
-                              src={d.image.src}
-                              alt={d.image.alt}
-                              onClick={() => setLightboxSrc(d.image!.src)}
-                              style={{ width: d.image.width, maxWidth: "100%", display: "block", objectFit: "contain", cursor: "zoom-in" }}
-                            />
-                            <ZoomBadge />
-                          </div>
-                          {d.image.caption && (
-                            <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-                              {d.image.caption}
-                            </p>
-                          )}
-                        </motion.div>
-                      ) : d.image?.zoomLens ? (
-                        <div className="exec-decision-image">
-                          <ZoomLensImage image={d.image} onOpen={setLensLightboxSrc} />
-                        </div>
-                      ) : d.image ? (
-                        <div className="exec-decision-image">
-                          <ImageBlock image={d.image} placeholder="Wireframe, prototype or design artifact" onOpen={setLightboxSrc} />
-                        </div>
-                      ) : null)}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </CsSection>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
 
-            {/* Final Design — the polished result. Static design hero first
-                (instant "what shipped") then prototype motion (the product live). */}
+            {/* Prototype video / outcomes image — the polished result. */}
             {(cs.outcomesImage || cs.prototypeVideo) && (
               <CsSection label="Final Design" className="exec-hide">
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
@@ -1648,6 +2053,61 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             <CsSection label={cs.sectionLabels?.outcomes ?? "Result"} id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+
+                {/* ── FanCode Homepage — structured result block ── */}
+                {cs.resultSection && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE }}
+                    style={{ display: "flex", flexDirection: "column", gap: "32px" }}
+                  >
+                    {/* Primary metric tiles */}
+                    <div style={{ display: "grid", gridTemplateColumns: `repeat(${cs.resultSection.metrics.length}, 1fr)`, gap: "1px", background: "var(--border)", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}>
+                      {cs.resultSection.metrics.map((m, i) => (
+                        <div key={i} style={{ padding: "28px 24px 24px", display: "flex", flexDirection: "column", gap: "12px", background: "var(--bg)" }}>
+                          {m.icon ? (
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ color: "var(--text)" }}>
+                              <path d="M10 2L5 8h3.5v5h3V8H15L10 2Z" fill="currentColor" opacity="0.35" />
+                              <path d="M10 8L5 14h3.5v4h3v-4H15L10 8Z" fill="currentColor" />
+                            </svg>
+                          ) : (
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 3vw, 38px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text)" }}>
+                              {m.value}
+                            </span>
+                          )}
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>
+                            {m.label}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Body paragraph */}
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0, maxWidth: "640px" }}>
+                      {cs.resultSection.body}
+                    </p>
+
+                    {/* Rollout progression — mono eyebrow + number */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>Rollout</p>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1px", background: "var(--border)", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}>
+                        {cs.resultSection.rollout.map((r, i) => (
+                          <div key={i} style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: "6px", background: "var(--bg)" }}>
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2.2vw, 26px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text)" }}>
+                              {r.value}
+                            </span>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>
+                              {r.label}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
                 {/* Impact tiles — Planful ESM Tables */}
                 {cs.slug === "planful-esm-tables" && (
                   <motion.div
@@ -1727,39 +2187,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 )}
 
-                {/* FanCode homepage — two-stat hero block */}
-                {cs.slug === "fancode-homepage" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.65, ease: EASE }}
-                    className="cs-2col"
-                    style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}
-                  >
-                    {[
-                      { stat: "~20%", label: "Retention lift", body: "more new users stuck around after launch." },
-                      { stat: "15–20%", label: "Homepage engagement", body: "more of the homepage being used across all users." },
-                    ].map(({ stat, label, body }, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          background: "var(--surface)",
-                          borderRadius: "16px",
-                          padding: "32px 28px 28px",
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "12px",
-                          boxShadow: "var(--card-shadow)",
-                        }}
-                      >
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(40px, 6vw, 64px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 0.95, color: "var(--text)", margin: 0 }}>{stat}</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{body}</p>
-                      </div>
-                    ))}
-                  </motion.div>
-                )}
 
                 {/* Outcomes — planful-esm-tables, Zetwerk BU, and FanCode have their own custom blocks above */}
                 {cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && cs.slug !== "fancode-homepage" && (() => {
@@ -1925,41 +2352,20 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </div>
             </CsSection>
 
-            {cs.contribution && (
-              <CsSection label="What I owned" id="ownership" className="exec-hide">
-                <BodyText>{cs.contribution}</BodyText>
-                {cs.contributionArtifacts && cs.contributionArtifacts.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.55, ease: EASE }}
-                    style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "20px" }}
-                  >
-                    {cs.contributionArtifacts.map((artifact, i) => (
-                      <motion.span
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.92 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.3, ease: EASE, delay: i * 0.04 }}
-                        style={{
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "9px",
-                          letterSpacing: "0.06em",
-                          textTransform: "uppercase",
-                          color: "var(--muted2)",
-                          background: "var(--surface)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "8px",
-                          padding: "5px 10px",
-                        }}
-                      >
-                        {artifact}
-                      </motion.span>
-                    ))}
-                  </motion.div>
-                )}
+            {/* ── Learnings — closing reflection. Currently scoped to
+                fancode-homepage; other case studies had this section
+                intentionally removed earlier in the design pass. ── */}
+            {cs.slug === "fancode-homepage" && cs.lesson && (
+              <CsSection label="Learnings">
+                <motion.p
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.6vw, 18px)", fontWeight: 300, lineHeight: 1.7, letterSpacing: "-0.015em", color: "var(--text)", margin: 0, maxWidth: "720px" }}
+                >
+                  {parseHighlights(cs.lesson)}
+                </motion.p>
               </CsSection>
             )}
 
@@ -2009,28 +2415,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            {cs.lesson && (() => {
-              /* Lead with the first sentence as a headline, then route the
-                 rest through BodyText so multi-paragraph lessons render as
-                 distinct blocks (and bullets render as bullets). Earlier
-                 this collapsed everything after the first sentence into
-                 one wall of prose. */
-              const dotIdx = cs.lesson.indexOf(". ");
-              const headline = dotIdx > -1 ? cs.lesson.slice(0, dotIdx + 1) : cs.lesson;
-              const body = dotIdx > -1 ? cs.lesson.slice(dotIdx + 2) : "";
-              return (
-                <CsSection label={cs.sectionLabels?.lesson ?? "What I learned"} className="exec-hide">
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2vw, 22px)", fontWeight: 400, lineHeight: 1.4, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "640px" }}>
-                    {headline}
-                  </p>
-                  {body && (
-                    <div style={{ marginTop: "16px" }}>
-                      <BodyText>{body}</BodyText>
-                    </div>
-                  )}
-                </CsSection>
-              );
-            })()}
 
             {/* "What I'd Do Differently" section hidden across all case studies. Data
                 preserved in cs.reflection in case we want to bring it back. */}
@@ -2670,7 +3054,7 @@ const modelDescStyle: React.CSSProperties = {
 
    Renders null when no personas are attached. */
 function PersonaPreview({ cs }: { cs: CaseStudy }) {
-  const personas = cs.decisions
+  const personas = (cs.decisions ?? [])
     .filter(d => d.persona)
     .map(d => d.persona!)
     .filter((p, i, arr) => arr.findIndex(x => x.name === p.name) === i);
@@ -3353,6 +3737,29 @@ function OutcomesImage({ src, alt, caption, onOpen }: { src: string; alt: string
           {caption}
         </p>
       )}
+    </div>
+  );
+}
+
+/* Canvas-board image with shimmer placeholder. Each board image is a JPEG
+   that can take a moment on slow networks; without this the dot-grid panel
+   shows empty white cards. */
+function CanvasBoardImage({ src, alt, aspectRatio }: { src: string; alt: string; aspectRatio: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div style={{ position: "relative", aspectRatio, width: "100%" }}>
+      {!loaded && (
+        <div style={{ position: "absolute", inset: 0 }}>
+          <Shimmer height="100%" borderRadius="0" />
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        style={{ width: "100%", height: "100%", display: "block", objectFit: "cover", opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
+      />
     </div>
   );
 }

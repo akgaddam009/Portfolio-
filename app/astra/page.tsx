@@ -6,10 +6,10 @@ export default function AstraIndex() {
   return (
     <>
       <nav className="astra-nav">
-        <Link href="/work/astra" className="astra-nav-brand">
+        <Link href="/work/astra" target="_top" className="astra-nav-brand">
           Indemn <span className="astra-nav-brand-v">demo</span>
         </Link>
-        <Link href="/work/astra" className="astra-nav-back">
+        <Link href="/work/astra" target="_top" className="astra-nav-back">
           ← Back to case study
         </Link>
       </nav>

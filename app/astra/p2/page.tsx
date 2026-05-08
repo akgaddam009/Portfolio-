@@ -59,7 +59,7 @@ export default function P2Page() {
   return (
     <>
       <nav className="astra-nav">
-        <Link href="/work/astra" className="astra-nav-brand">
+        <Link href="/work/astra" target="_top" className="astra-nav-brand">
           Indemn <span className="astra-nav-brand-v">Workflow</span>
         </Link>
         <div className="astra-nav-role-section">
@@ -70,7 +70,7 @@ export default function P2Page() {
             </button>
           </div>
         </div>
-        <Link href="/work/astra" className="astra-nav-back">← Back to case study</Link>
+        <Link href="/work/astra" target="_top" className="astra-nav-back">← Back to case study</Link>
       </nav>
 
       <div className="astra-screen">

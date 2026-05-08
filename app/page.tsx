@@ -778,7 +778,7 @@ const WORK_THUMBS: Record<string, string> = {
   "planful-esm-tables":   "/images/planful/planful%20product%20video.mp4",
   "apple-business-listings": "/images/reputation/after.mp4",
   "fancode-ftux":         "/images/fancode/user-journey-map.jpg",
-  "fancode-homepage":     "/images/fancode/hp-overview.mp4",
+  "fancode-homepage":     "/images/fancode/FANCODE%20HOMEPAGE%20AFTER%20.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
 };
@@ -1017,7 +1017,7 @@ function WorkPanel() {
   // The 3 confidential cases (fancode-ftux, zetwerk-dc, zetwerk-bu-ecosystem)
   // are accessible via direct URL only — share with recruiters as needed.
   const CARD_ORDER = [
-    "planful-esm-tables", "apple-business-listings", "astra",
+    "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
   ];
   const COMING_SOON = new Set<string>();
 

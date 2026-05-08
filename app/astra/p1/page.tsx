@@ -73,7 +73,7 @@ export default function P1Page() {
     <>
       {/* ─── Branded nav with role switcher ─── */}
       <nav className="astra-nav">
-        <Link href="/work/astra" className="astra-nav-brand">
+        <Link href="/work/astra" target="_top" className="astra-nav-brand">
           Indemn <span className="astra-nav-brand-v">Review</span>
         </Link>
         <div className="astra-nav-role-section">
@@ -93,7 +93,7 @@ export default function P1Page() {
             </button>
           </div>
         </div>
-        <Link href="/work/astra" className="astra-nav-back">← Back to case study</Link>
+        <Link href="/work/astra" target="_top" className="astra-nav-back">← Back to case study</Link>
       </nav>
 
       <div className="astra-screen">
