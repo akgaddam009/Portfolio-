@@ -958,6 +958,11 @@ export const caseStudies: CaseStudy[] = [
         {
           title: "Deep linking throughout and personalisation for new and return users",
           body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination. The same architecture supports personalised rails (Continue Watching, Recommended For You) that adapt for new versus returning users.",
+          image: {
+            src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN_FIRST%20TIME%20USERS%20AND%20RETURN%20USERS%20WITH%20HOMEPAGE%20PERSONALISATION%20IDEAS.jpg",
+            alt: "Concept design, personalisation states for first-time and returning users",
+            caption: "Personalisation concepts for new and returning users",
+          },
         },
         {
           title: "A dedicated tournament discovery block",
@@ -979,12 +984,6 @@ export const caseStudies: CaseStudy[] = [
           { src: "/images/fancode/UX%20REVIEW%20CURRENT%20HOMEPAGE%20FIRST%20FOLD.jpg",           alt: "UX review, current first fold",  caption: "02 · UX review, first fold"    },
           { src: "/images/fancode/COMPETITIVE%20ANALYSIS.jpg",                                    alt: "Competitive analysis",           caption: "03 · Competitive analysis"     },
           { src: "/images/fancode/COMPETITIVE%20ANALYSIS%20DEEP%20DIVE%20INTO%20THE%20PROBLEM.jpg", alt: "Competitive analysis deep dive", caption: "04 · Deep dive into the problem" },
-        ],
-      },
-      {
-        section: "approach" as const,
-        images: [
-          { src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN_FIRST%20TIME%20USERS%20AND%20RETURN%20USERS%20WITH%20HOMEPAGE%20PERSONALISATION%20IDEAS.jpg", alt: "Concept design, personalisation ideas",   caption: "Personalisation concepts", span: "wide" as const },
         ],
       },
     ],
