@@ -251,22 +251,22 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
            doesn't shift. */
         @media (max-width: 640px) {
           .cs-phone-pair-wrap {
-            height: 320px !important; /* 503px (rendered) * 0.62 */
+            height: 260px !important; /* 503px (rendered) * 0.50 */
             overflow: visible !important;
           }
           .cs-phone-pair {
-            gap: 32px !important; /* tighter gap on mobile so scaled pair fits viewport */
-            transform: scale(0.55) !important;
+            gap: 28px !important; /* tighter gap on mobile so scaled pair fits content column */
+            transform: scale(0.50) !important;
             transform-origin: top center !important;
           }
         }
         @media (max-width: 380px) {
           .cs-phone-pair-wrap {
-            height: 250px !important;
+            height: 215px !important; /* 503px * 0.42 */
           }
           .cs-phone-pair {
-            gap: 24px !important;
-            transform: scale(0.48) !important;
+            gap: 20px !important;
+            transform: scale(0.42) !important;
           }
         }
       `}</style>
