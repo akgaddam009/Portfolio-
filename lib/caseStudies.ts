@@ -1088,7 +1088,6 @@ export const caseStudies: CaseStudy[] = [
       northStar: "The hardest design problems are rarely visual — they're structural.",
       items: [
         "Reorganize around how users think, not what you can produce. The mental model shift was the real design decision; every visual choice followed from it.",
-        "Push back with evidence. Content strategy and partial personalisation only landed because the research gave them credibility.",
         "Understand your constraints deeply, ship what moves the needle today, and build with tomorrow already in mind.",
       ],
     },

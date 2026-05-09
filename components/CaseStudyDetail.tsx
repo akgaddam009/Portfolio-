@@ -1416,7 +1416,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
                           <div style={{ display: "flex", flexDirection: "column", gap: "5px", flex: 1, minWidth: 0 }}>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{f.title}</p>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{f.body}</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{f.body}</p>
                             {f.image && (
                               <div
                                 onClick={() => setLightboxSrc(f.image!.src)}
@@ -1424,7 +1424,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               >
                                 <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
                                 {f.image.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "8px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
                                     {f.image.caption}
                                   </p>
                                 )}
@@ -1440,7 +1440,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   >
                                     <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
                                     {img.caption && (
-                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "8px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
                                         {img.caption}
                                       </p>
                                     )}
@@ -1707,7 +1707,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{p.title}</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{p.body}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{p.body}</p>
                       </div>
                     </div>
                   ))}
@@ -1723,7 +1723,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, ease: EASE }}
-                  style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 20px" }}
+                  style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 24px" }}
                 >
                   {cs.designApproach.intro}
                 </motion.p>
@@ -1735,11 +1735,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ display: "flex", flexDirection: "column", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
                 >
                   {cs.designApproach.decisions.map((d, i) => (
-                    <div key={i} style={{ padding: "22px 24px", borderBottom: i < cs.designApproach!.decisions.length - 1 ? "1px solid var(--border)" : "none", display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                    <div key={i} style={{ padding: "24px 24px", borderBottom: i < cs.designApproach!.decisions.length - 1 ? "1px solid var(--border)" : "none", display: "flex", gap: "16px", alignItems: "flex-start" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{d.body}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{d.body}</p>
                         {d.image && (
                           <div
                             onClick={() => setLightboxSrc(d.image!.src)}
@@ -1752,7 +1752,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                 the full card width (lightbox shows full size). */}
                             <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
                             {d.image.caption && (
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
                                 {d.image.caption}
                               </p>
                             )}
@@ -2416,7 +2416,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ maxWidth: "720px", display: "flex", flexDirection: "column", gap: "32px" }}
                 >
                   {/* North star — featured headline insight */}
-                  <div style={{ padding: "24px 28px", background: "var(--surface)", borderRadius: "12px", borderLeft: "3px solid var(--accent-warm)" }}>
+                  <div style={{ padding: "24px 24px", background: "var(--surface)", borderRadius: "12px", border: "1px solid var(--border)", borderTop: "2px solid var(--accent-warm)" }}>
                     <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--accent-warm)", margin: "0 0 12px" }}>North star</p>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 1.8vw, 22px)", fontWeight: 300, lineHeight: 1.5, letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
                       {cs.learnings.northStar}
@@ -2427,7 +2427,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     {cs.learnings.items.map((item, i) => (
                       <div
                         key={i}
-                        style={{ display: "flex", gap: "16px", alignItems: "flex-start", padding: "16px 20px", borderBottom: i < cs.learnings!.items.length - 1 ? "1px solid var(--border)" : "none" }}
+                        style={{ display: "flex", gap: "16px", alignItems: "flex-start", padding: "16px 24px", borderBottom: i < cs.learnings!.items.length - 1 ? "1px solid var(--border)" : "none" }}
                       >
                         <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 8px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{item}</p>
@@ -3653,7 +3653,7 @@ function CsSection({ label, children, id, className }: { label: string; children
       transition={{ duration: 0.65, ease: EASE }}
       style={{ padding: "48px 0" }}
     >
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "28px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>{label}</p>
       {children}
     </motion.section>
   );
