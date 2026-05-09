@@ -213,7 +213,7 @@ export type CaseStudy = {
   /** Optional Design Approach section rendered after Design Strategy. */
   designApproach?: {
     intro: string;
-    decisions: { title: string; body: string; image?: { src: string; alt: string; caption?: string } }[];
+    decisions: { title: string; body: string; image?: { src: string; alt: string; caption?: string; compact?: boolean } }[];
   };
   /** Optional before/after video comparison for the outcomes section. */
   outcomesCompare?: { before: string; after: string };
@@ -971,6 +971,7 @@ export const caseStudies: CaseStudy[] = [
             src: "/images/fancode/Tour%20Collection.jpg",
             alt: "Tournament collection discovery block",
             caption: "Tournament discovery block",
+            compact: true,
           },
         },
       ],

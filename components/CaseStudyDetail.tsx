@@ -1712,12 +1712,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {d.image && (
                           <div
                             onClick={() => setLightboxSrc(d.image!.src)}
-                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", maxWidth: "100%" }}
+                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", maxWidth: d.image.compact ? "440px" : "100%" }}
                           >
                             {/* Renders the image at its natural aspect ratio so both
-                                wide screenshots (Tour Updates ~2.7:1) and tall flow
-                                diagrams (Seamless ~1:3) display fully without crop. */}
-                            <DesignApproachImage src={d.image.src} alt={d.image.alt} />
+                                wide screenshots and tall flow diagrams display fully
+                                without crop. `compact` halves the max height for
+                                visuals that don't need full inline detail (e.g. the
+                                Tour Collection wireframe — lightbox shows full size). */}
+                            <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 180 : 360} />
                             {d.image.caption && (
                               <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
                                 {d.image.caption}
@@ -3788,7 +3790,7 @@ function CanvasBoardImage({ src, alt, aspectRatio }: { src: string; alt: string;
    fully. Shimmer placeholder while loading. Uses an effect to catch the
    case where the browser already has the image cached (onLoad never
    fires for those, so the ref check is the only reliable signal). */
-function DesignApproachImage({ src, alt }: { src: string; alt: string }) {
+function DesignApproachImage({ src, alt, maxHeight = 360 }: { src: string; alt: string; maxHeight?: number }) {
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
@@ -3807,7 +3809,7 @@ function DesignApproachImage({ src, alt }: { src: string; alt: string }) {
         alt={alt}
         loading="lazy"
         onLoad={() => setLoaded(true)}
-        style={{ width: "100%", height: "auto", maxHeight: "360px", objectFit: "contain", display: "block", opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
+        style={{ width: "100%", height: "auto", maxHeight: `${maxHeight}px`, objectFit: "contain", display: "block", opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
       />
     </div>
   );
