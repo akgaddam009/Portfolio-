@@ -830,7 +830,7 @@ export const caseStudies: CaseStudy[] = [
 
     metrics: [
       { value: ">90% drop-off", label: "Before", body: "Below the 1st fold of the homepage, over 90% of users dropped off." },
-      { value: "15–20% more engagement", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15–20% across user cohorts." },
+      { value: "↑ ~15–20%", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15–20% across user cohorts." },
     ],
 
     summary: "",
@@ -874,7 +874,6 @@ export const caseStudies: CaseStudy[] = [
       heading: "The mental model shift",
       body: [
         "Users don't follow content. They follow tournaments, teams, and players. Every research signal pointed to the same root cause: the homepage was organised around what we could produce, not how fans think.",
-        "A fan following the IPL doesn't think in formats. They think in one question: show me everything about IPL right now. The new homepage had to mirror that, not the editorial workflow behind it.",
       ],
       beforeAfter: {
         before: {
