@@ -4192,14 +4192,27 @@ function OutcomesImage({ src, alt, caption, onOpen }: { src: string; alt: string
   const [loaded, setLoaded] = useState(false);
   return (
     <div onClick={onOpen} style={{ cursor: onOpen ? "zoom-in" : undefined }}>
-      {!loaded && <Shimmer height={400} />}
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy"
-        onLoad={() => setLoaded(true)}
-        style={{ width: "100%", display: loaded ? "block" : "none", borderRadius: "12px" }}
-      />
+      <div style={{ position: "relative" }}>
+        {!loaded && (
+          <div style={{ position: "absolute", inset: 0 }}>
+            <Shimmer height={400} />
+          </div>
+        )}
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+          style={{
+            width: "100%",
+            display: "block",
+            borderRadius: "12px",
+            opacity: loaded ? 1 : 0,
+            transition: "opacity 0.3s ease",
+          }}
+        />
+      </div>
       {loaded && caption && (
         <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
           {caption}
