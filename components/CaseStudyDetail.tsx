@@ -2101,7 +2101,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* ── Rollout — standalone section ── */}
             {cs.resultSection?.rollout && cs.resultSection.rollout.length > 0 && (
-              <CsSection label="Rollout">
+              <CsSection label="Rollout plan">
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
