@@ -1635,7 +1635,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, ease: EASE, delay: 0.05 }}
-                    style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 300, lineHeight: 1.7, letterSpacing: "-0.015em", color: "var(--text)", margin: "36px 0 0", borderLeft: "2px solid var(--accent-warm)", paddingLeft: "16px", maxWidth: "640px" }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "36px 0 0", borderLeft: "2px solid var(--accent-warm)", paddingLeft: "16px", maxWidth: "640px" }}
                   >
                     {parseHighlights(cs.coreInsight.body[1])}
                   </motion.p>
