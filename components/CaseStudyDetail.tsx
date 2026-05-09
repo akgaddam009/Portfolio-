@@ -2846,80 +2846,70 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.6, ease: EASE }}
                 style={{
-                  paddingTop: "64px",
+                  paddingTop: "48px",
                   paddingBottom: "120px",
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  gap: "24px",
+                  alignItems: "center",
+                  gap: "16px",
                   borderTop: "1px solid var(--border)",
                 }}
               >
-                {/* Previous */}
                 {prev ? (
                   <Link
                     href={`/work/${prev.slug}`}
-                    style={{ display: "inline-flex", flexDirection: "column", gap: "8px", textDecoration: "none" }}
-                  >
-                    <span style={{
-                      fontFamily: "var(--font-mono)", fontSize: "10px",
-                      letterSpacing: "0.08em", textTransform: "uppercase",
-                      color: "var(--muted)",
-                      display: "inline-flex", alignItems: "center", gap: "6px",
-                    }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M20 11H8l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L8 13h12v-2z"/>
-                      </svg>
-                      Previous
-                    </span>
-                    <span style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "clamp(15px, 1.8vw, 20px)",
-                      fontWeight: 400,
-                      letterSpacing: "-0.02em",
-                      lineHeight: 1.2,
+                    aria-label={`Previous case study: ${prev.title}`}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "44px",
+                      height: "44px",
+                      borderRadius: "12px",
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      boxShadow: "var(--card-shadow)",
                       color: "var(--text)",
-                      maxWidth: "320px",
-                    }}>
-                      {prev.title}
-                    </span>
+                      textDecoration: "none",
+                      flexShrink: 0,
+                      transition: "box-shadow 0.2s cubic-bezier(0.22,1,0.36,1)",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <polyline points="15 18 9 12 15 6" />
+                    </svg>
                   </Link>
-                ) : <div />}
+                ) : <div style={{ width: "44px" }} />}
 
-                {/* Next */}
                 {next ? (
                   <Link
                     href={`/work/${next.slug}`}
-                    className="case-study-next-link"
-                    style={{ display: "inline-flex", flexDirection: "column", gap: "8px", textDecoration: "none", alignItems: "flex-end", textAlign: "right" }}
+                    aria-label={`Next case study: ${next.title}`}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "44px",
+                      height: "44px",
+                      borderRadius: "12px",
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      boxShadow: "var(--card-shadow)",
+                      color: "var(--text)",
+                      textDecoration: "none",
+                      flexShrink: 0,
+                      transition: "box-shadow 0.2s cubic-bezier(0.22,1,0.36,1)",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
-                    <span style={{
-                      fontFamily: "var(--font-mono)", fontSize: "10px",
-                      letterSpacing: "0.08em", textTransform: "uppercase",
-                      color: "var(--muted)",
-                      display: "inline-flex", alignItems: "center", gap: "6px",
-                    }}>
-                      Next
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M4 11v2h12l-5.59 5.59L12 20l8-8-8-8-1.41 1.41L16 11H4z"/>
-                      </svg>
-                    </span>
-                    <span
-                      className="case-study-next-title"
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: "clamp(15px, 1.8vw, 20px)",
-                        fontWeight: 400,
-                        letterSpacing: "-0.02em",
-                        lineHeight: 1.2,
-                        color: "var(--text)",
-                        maxWidth: "320px",
-                      }}
-                    >
-                      {next.title}
-                    </span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <polyline points="9 6 15 12 9 18" />
+                    </svg>
                   </Link>
-                ) : <div />}
+                ) : <div style={{ width: "44px" }} />}
               </motion.div>
             )}
 
