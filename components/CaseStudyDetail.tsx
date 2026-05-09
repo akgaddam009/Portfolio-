@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
-import ModeToggle from "@/components/ModeToggle";
 import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from "framer-motion";
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
@@ -319,7 +318,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             Arun Gaddam
           </Link>
           <ThemeToggle />
-          <ModeToggle />
         </div>
 
         {/* Right cluster — Copy email + LinkedIn, matching the
