@@ -57,6 +57,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   const currentIndex = caseStudies.findIndex(c => c.slug === cs.slug);
   const nextCandidate = caseStudies[(currentIndex + 1) % caseStudies.length];
   const next = nextCandidate && !HIDDEN_NEXT_SLUGS.has(nextCandidate.slug) ? nextCandidate : null;
+  const prevIndex = (currentIndex - 1 + caseStudies.length) % caseStudies.length;
+  const prevCandidate = caseStudies[prevIndex];
+  const prev = prevCandidate && !HIDDEN_NEXT_SLUGS.has(prevCandidate.slug) ? prevCandidate : null;
 
   // Scroll progress bar
   const { scrollYProgress } = useScroll();
@@ -1745,7 +1748,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{d.body}</p>
+                        <DecisionBodyText>{d.body}</DecisionBodyText>
                         {d.image && (
                           <figure style={{ margin: 0, marginTop: "6px" }}>
                             <div
@@ -1992,7 +1995,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{d.body}</p>
+                        <DecisionBodyText>{d.body}</DecisionBodyText>
                         {/* Single image */}
                         {d.image && (
                           <figure style={{ margin: 0, marginTop: "6px" }}>
@@ -2671,52 +2674,90 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             </> /* end gated content wrapper */
             )}
 
-            {/* Next case study — mono-uppercase forward CTA at the end of the page,
-                mirrors the "Back to work" treatment at the top. Eyebrow line for
-                the system label, larger line for the actual destination title. */}
-            {next && (
+            {/* Prev / Next navigation — shown whenever at least one neighbour exists.
+                Previous on the left, Next on the right, both aligned to their edge.
+                Hidden slugs are suppressed on both sides. */}
+            {(prev || next) && (
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.6, ease: EASE }}
-                style={{ paddingTop: "64px", paddingBottom: "120px" }}
+                style={{
+                  paddingTop: "64px",
+                  paddingBottom: "120px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  gap: "24px",
+                  borderTop: "1px solid var(--border)",
+                }}
               >
-                <Link
-                  href={`/work/${next.slug}`}
-                  className="case-study-next-link"
-                  style={{
-                    display: "inline-flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                    textDecoration: "none",
-                  }}
-                >
-                  <span style={{
-                    fontFamily: "var(--font-mono)", fontSize: "10px",
-                    letterSpacing: "0.08em", textTransform: "uppercase",
-                    color: "var(--muted)",
-                    display: "inline-flex", alignItems: "center", gap: "6px",
-                  }}>
-                    Next case study
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M4 11v2h12l-5.59 5.59L12 20l8-8-8-8-1.41 1.41L16 11H4z"/>
-                    </svg>
-                  </span>
-                  <span
-                    className="case-study-next-title"
-                    style={{
+                {/* Previous */}
+                {prev ? (
+                  <Link
+                    href={`/work/${prev.slug}`}
+                    style={{ display: "inline-flex", flexDirection: "column", gap: "8px", textDecoration: "none" }}
+                  >
+                    <span style={{
+                      fontFamily: "var(--font-mono)", fontSize: "10px",
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      color: "var(--muted)",
+                      display: "inline-flex", alignItems: "center", gap: "6px",
+                    }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M20 11H8l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L8 13h12v-2z"/>
+                      </svg>
+                      Previous
+                    </span>
+                    <span style={{
                       fontFamily: "var(--font-body)",
-                      fontSize: "clamp(20px, 2.4vw, 28px)",
+                      fontSize: "clamp(15px, 1.8vw, 20px)",
                       fontWeight: 400,
                       letterSpacing: "-0.02em",
                       lineHeight: 1.2,
                       color: "var(--text)",
-                    }}
+                      maxWidth: "320px",
+                    }}>
+                      {prev.title}
+                    </span>
+                  </Link>
+                ) : <div />}
+
+                {/* Next */}
+                {next ? (
+                  <Link
+                    href={`/work/${next.slug}`}
+                    className="case-study-next-link"
+                    style={{ display: "inline-flex", flexDirection: "column", gap: "8px", textDecoration: "none", alignItems: "flex-end", textAlign: "right" }}
                   >
-                    {next.title}
-                  </span>
-                </Link>
+                    <span style={{
+                      fontFamily: "var(--font-mono)", fontSize: "10px",
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      color: "var(--muted)",
+                      display: "inline-flex", alignItems: "center", gap: "6px",
+                    }}>
+                      Next
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M4 11v2h12l-5.59 5.59L12 20l8-8-8-8-1.41 1.41L16 11H4z"/>
+                      </svg>
+                    </span>
+                    <span
+                      className="case-study-next-title"
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: "clamp(15px, 1.8vw, 20px)",
+                        fontWeight: 400,
+                        letterSpacing: "-0.02em",
+                        lineHeight: 1.2,
+                        color: "var(--text)",
+                        maxWidth: "320px",
+                      }}
+                    >
+                      {next.title}
+                    </span>
+                  </Link>
+                ) : <div />}
               </motion.div>
             )}
 
@@ -5041,3 +5082,57 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
     </motion.div>
   );
 }
+/* ─── DecisionBodyText ─────────────────────────────────────────────────────
+   Renders a decision body string at the compact 13px/muted style used inside
+   the decisions blocks. Handles:
+     • ==highlight== markers  (via parseHighlights)
+     • \n\n paragraph breaks
+     • - bullet lists          (lines starting with "- ")
+     • Label: body lists       (first line ends ":", rest are "- " bullets)
+   Keeps decision title (13px/500) visually dominant over the body (13px/400). */
+const DECISION_BODY_STYLE: React.CSSProperties = {
+  fontFamily: "var(--font-body)",
+  fontSize: "13px",
+  lineHeight: 1.7,
+  letterSpacing: "-0.01em",
+  color: "var(--muted)",
+  margin: 0,
+};
+
+function DecisionBodyText({ children }: { children: string }) {
+  const blocks = children.split("\n\n");
+
+  function renderBlock(block: string, key: number): React.ReactNode {
+    const lines = block.split("\n").filter(Boolean);
+    if (lines.length > 1 && lines.every(l => l.startsWith("- "))) {
+      return (
+        <ul key={key} style={{ margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "3px" }}>
+          {lines.map((l, i) => (
+            <li key={i} style={DECISION_BODY_STYLE}>{parseHighlights(l.slice(2))}</li>
+          ))}
+        </ul>
+      );
+    }
+    if (lines.length > 1 && lines[0].endsWith(":") && lines.slice(1).every(l => l.startsWith("- "))) {
+      return (
+        <div key={key}>
+          <p style={DECISION_BODY_STYLE}>{parseHighlights(lines[0])}</p>
+          <ul style={{ margin: "4px 0 0", paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "3px" }}>
+            {lines.slice(1).map((l, i) => (
+              <li key={i} style={DECISION_BODY_STYLE}>{parseHighlights(l.slice(2))}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    return <p key={key} style={DECISION_BODY_STYLE}>{parseHighlights(block)}</p>;
+  }
+
+  if (blocks.length === 1) return <>{renderBlock(blocks[0], 0)}</>;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      {blocks.map((block, i) => renderBlock(block, i))}
+    </div>
+  );
+}
+

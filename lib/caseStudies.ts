@@ -558,7 +558,7 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     lesson:
-      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.\n\nThe 95% time reduction didn't come from a faster grid. It came from asking: \"What decisions can the system make so users only decide when it matters?\"",
+      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.",
   },
   {
     slug: "astra",
@@ -801,7 +801,7 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     lesson:
-      "Small tasks aren't always small. What started as \"add Apple to the dashboard\" became a 3 month strategic redesign involving weeks of stakeholder alignment, iterative exploration, and post launch discovery.\n\nPatience through consensus-building pays off. 45 days to finalize the approach felt slow, but that collaborative process with PM, engineering, and leadership created buy-in that made execution smooth and led to a better solution.\n\nSometimes the best UX isn't changing the system. It's helping users understand it. We couldn't change Apple's privacy threshold, but we could educate users about why it exists and what to do about it.",
+      "Small tasks aren't always small. What started as \"add Apple to the dashboard\" became a 3 month strategic redesign involving weeks of stakeholder alignment, iterative exploration, and post launch discovery.",
 
     references: [
       { label: "Reputation launches integration with Apple Business Connect (Reputation press room)", url: "https://reputation.com/press-room/reputation-launches-integration-with-apple-business-connect/" },
