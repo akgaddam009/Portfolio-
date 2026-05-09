@@ -251,22 +251,22 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
            doesn't shift. */
         @media (max-width: 640px) {
           .cs-phone-pair-wrap {
-            height: 260px !important; /* 503px (rendered) * 0.50 */
+            height: 195px !important; /* 361px (rendered) * 0.54 */
             overflow: visible !important;
           }
           .cs-phone-pair {
-            gap: 28px !important; /* tighter gap on mobile so scaled pair fits content column */
-            transform: scale(0.50) !important;
+            gap: 22px !important; /* tighter gap on mobile so scaled pair fits content column */
+            transform: scale(0.54) !important;
             transform-origin: top center !important;
           }
         }
         @media (max-width: 380px) {
           .cs-phone-pair-wrap {
-            height: 215px !important; /* 503px * 0.42 */
+            height: 163px !important; /* 361px * 0.45 */
           }
           .cs-phone-pair {
-            gap: 20px !important;
-            transform: scale(0.42) !important;
+            gap: 16px !important;
+            transform: scale(0.45) !important;
           }
         }
       `}</style>
@@ -1566,92 +1566,92 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.65, ease: EASE, delay: 0.1 }}
                     className="cs-phone-pair"
-                    style={{ display: "flex", gap: "72px", flexWrap: "nowrap", alignItems: "flex-start", padding: "12px 8px 4px", justifyContent: "center" }}
+                    style={{ display: "flex", gap: "54px", flexWrap: "nowrap", alignItems: "flex-start", padding: "12px 8px 4px", justifyContent: "center" }}
                   >
                     {/* BEFORE phone */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", flexShrink: 0 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "9px", flexShrink: 0 }}>
                       <div style={{
-                        width: "260px", height: "460px",
-                        border: "1.5px solid var(--border)", borderRadius: "44px",
-                        boxShadow: "0 0 0 6px var(--surface2)",
+                        width: "195px", height: "345px",
+                        border: "1.5px solid var(--border)", borderRadius: "33px",
+                        boxShadow: "0 0 0 5px var(--surface2)",
                         overflow: "hidden", fontFamily: "var(--font-body)",
                         display: "flex", flexDirection: "column",
                       }}>
                         {/* Notch */}
-                        <div style={{ display: "flex", justifyContent: "center", paddingTop: "18px", paddingBottom: "10px", background: "var(--bg)", flexShrink: 0 }}>
-                          <div style={{ width: "72px", height: "22px", background: "var(--surface2)", borderRadius: "11px" }} />
+                        <div style={{ display: "flex", justifyContent: "center", paddingTop: "14px", paddingBottom: "8px", background: "var(--bg)", flexShrink: 0 }}>
+                          <div style={{ width: "54px", height: "17px", background: "var(--surface2)", borderRadius: "8px" }} />
                         </div>
                         {/* Section label */}
-                        <div style={{ padding: "8px 20px 14px", background: "var(--bg)", flexShrink: 0 }}>
+                        <div style={{ padding: "6px 15px 10px", background: "var(--bg)", flexShrink: 0 }}>
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>How it was organized</span>
                         </div>
                         {/* Items — fill entire content area */}
-                        <div style={{ padding: "0 14px", display: "flex", flexDirection: "column", gap: "6px", flex: 1 }}>
+                        <div style={{ padding: "0 10px", display: "flex", flexDirection: "column", gap: "5px", flex: 1 }}>
                           {cs.coreInsight.beforeAfter.before.items.map((item, i) => (
-                            <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "11px 14px", background: "var(--surface)", borderRadius: "10px", border: "1px solid var(--border)", flex: 1 }}>
-                              <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
+                            <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", background: "var(--surface)", borderRadius: "8px", border: "1px solid var(--border)", flex: 1 }}>
+                              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
                               <span style={{ fontSize: "11px", color: "var(--muted2)", lineHeight: 1.4, letterSpacing: "-0.01em" }}>{item}</span>
                             </div>
                           ))}
                         </div>
                         {/* Home bar */}
-                        <div style={{ display: "flex", justifyContent: "center", padding: "20px 0 18px", flexShrink: 0 }}>
-                          <div style={{ width: "48px", height: "4px", background: "var(--border)", borderRadius: "2px" }} />
+                        <div style={{ display: "flex", justifyContent: "center", padding: "15px 0 14px", flexShrink: 0 }}>
+                          <div style={{ width: "36px", height: "3px", background: "var(--border)", borderRadius: "2px" }} />
                         </div>
                       </div>
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "260px" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "195px" }}>
                         {cs.coreInsight.beforeAfter.before.footnote}
                       </p>
                     </div>
 
                     {/* Arrow between phones — circle */}
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "52px", flexShrink: 0, alignSelf: "stretch" }}>
-                      <div style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1.5px solid var(--border)", background: "var(--surface)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "var(--muted2)", lineHeight: 1 }}>&#8594;</span>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "39px", flexShrink: 0, alignSelf: "stretch" }}>
+                      <div style={{ width: "27px", height: "27px", borderRadius: "50%", border: "1.5px solid var(--border)", background: "var(--surface)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "var(--muted2)", lineHeight: 1 }}>&#8594;</span>
                       </div>
                     </div>
 
                     {/* AFTER phone */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", flexShrink: 0 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "9px", flexShrink: 0 }}>
                       <div style={{
-                        width: "260px", height: "460px",
-                        border: "1.5px solid var(--border)", borderRadius: "44px",
-                        boxShadow: "0 0 0 6px var(--surface2)",
+                        width: "195px", height: "345px",
+                        border: "1.5px solid var(--border)", borderRadius: "33px",
+                        boxShadow: "0 0 0 5px var(--surface2)",
                         overflow: "hidden", fontFamily: "var(--font-body)",
                         display: "flex", flexDirection: "column",
                       }}>
                         {/* Notch */}
-                        <div style={{ display: "flex", justifyContent: "center", paddingTop: "18px", paddingBottom: "10px", background: "var(--bg)", flexShrink: 0 }}>
-                          <div style={{ width: "72px", height: "22px", background: "var(--surface2)", borderRadius: "11px" }} />
+                        <div style={{ display: "flex", justifyContent: "center", paddingTop: "14px", paddingBottom: "8px", background: "var(--bg)", flexShrink: 0 }}>
+                          <div style={{ width: "54px", height: "17px", background: "var(--surface2)", borderRadius: "8px" }} />
                         </div>
                         {/* Section label */}
-                        <div style={{ padding: "8px 20px 14px", background: "var(--bg)", flexShrink: 0 }}>
+                        <div style={{ padding: "6px 15px 10px", background: "var(--bg)", flexShrink: 0 }}>
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>How users actually think</span>
                         </div>
                         {/* Content — fill entire area */}
-                        <div style={{ padding: "0 14px", display: "flex", flexDirection: "column", gap: "6px", flex: 1 }}>
+                        <div style={{ padding: "0 10px", display: "flex", flexDirection: "column", gap: "5px", flex: 1 }}>
                           {/* Featured block */}
-                          <div style={{ padding: "12px 14px", border: "1.5px solid var(--border)", borderRadius: "12px", background: "var(--surface2)", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "block", marginBottom: "8px" }}>Featured</span>
-                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                              <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "var(--muted2)", flexShrink: 0 }} />
+                          <div style={{ padding: "9px 10px", border: "1.5px solid var(--border)", borderRadius: "9px", background: "var(--surface2)", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "block", marginBottom: "6px" }}>Featured</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted2)", flexShrink: 0 }} />
                               <span style={{ fontSize: "11px", color: "var(--text)", lineHeight: 1.4, letterSpacing: "-0.01em" }}>{cs.coreInsight.beforeAfter.after.items[0]}</span>
                             </div>
                           </div>
                           {/* Remaining items */}
                           {cs.coreInsight.beforeAfter.after.items.slice(1).map((item, i) => (
-                            <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "11px 14px", background: "var(--surface)", borderRadius: "10px", border: "1px solid var(--border)", flex: 1 }}>
-                              <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
+                            <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", background: "var(--surface)", borderRadius: "8px", border: "1px solid var(--border)", flex: 1 }}>
+                              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
                               <span style={{ fontSize: "11px", color: "var(--muted2)", lineHeight: 1.4, letterSpacing: "-0.01em" }}>{item}</span>
                             </div>
                           ))}
                         </div>
                         {/* Home bar */}
-                        <div style={{ display: "flex", justifyContent: "center", padding: "20px 0 18px", flexShrink: 0 }}>
-                          <div style={{ width: "48px", height: "4px", background: "var(--border)", borderRadius: "2px" }} />
+                        <div style={{ display: "flex", justifyContent: "center", padding: "15px 0 14px", flexShrink: 0 }}>
+                          <div style={{ width: "36px", height: "3px", background: "var(--border)", borderRadius: "2px" }} />
                         </div>
                       </div>
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "260px" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "195px" }}>
                         {cs.coreInsight.beforeAfter.after.footnote}
                       </p>
                     </div>
