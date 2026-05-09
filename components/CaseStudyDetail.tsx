@@ -1421,33 +1421,36 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{f.title}</p>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{f.body}</p>
                             {f.image && (
-                              <div
-                                onClick={() => setLightboxSrc(f.image!.src)}
-                                style={{ marginTop: "10px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
-                              >
-                                <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
+                              <figure style={{ margin: 0, marginTop: "10px" }}>
+                                <div
+                                  onClick={() => setLightboxSrc(f.image!.src)}
+                                  style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                >
+                                  <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
+                                </div>
                                 {f.image.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", textAlign: "center" }}>
+                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                     {f.image.caption}
-                                  </p>
+                                  </figcaption>
                                 )}
-                              </div>
+                              </figure>
                             )}
                             {f.images && f.images.length > 0 && (
                               <div style={{ marginTop: "10px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px" }}>
                                 {f.images.map((img, j) => (
-                                  <div
-                                    key={j}
-                                    onClick={() => setLightboxSrc(img.src)}
-                                    style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
-                                  >
-                                    <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
+                                  <figure key={j} style={{ margin: 0 }}>
+                                    <div
+                                      onClick={() => setLightboxSrc(img.src)}
+                                      style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                    >
+                                      <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
+                                    </div>
                                     {img.caption && (
-                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", textAlign: "center" }}>
+                                      <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                         {img.caption}
-                                      </p>
+                                      </figcaption>
                                     )}
-                                  </div>
+                                  </figure>
                                 ))}
                               </div>
                             )}
@@ -1744,22 +1747,24 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{d.body}</p>
                         {d.image && (
-                          <div
-                            onClick={() => setLightboxSrc(d.image!.src)}
-                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
-                          >
-                            {/* Renders the image at its natural aspect ratio so both
-                                wide screenshots and tall flow diagrams display fully
-                                without crop. `compact` images are capped at a shorter
-                                max height and centered so they don't stretch to fill
-                                the full card width (lightbox shows full size). */}
-                            <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
+                          <figure style={{ margin: 0, marginTop: "6px" }}>
+                            <div
+                              onClick={() => setLightboxSrc(d.image!.src)}
+                              style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                            >
+                              {/* Renders the image at its natural aspect ratio so both
+                                  wide screenshots and tall flow diagrams display fully
+                                  without crop. `compact` images are capped at a shorter
+                                  max height and centered so they don't stretch to fill
+                                  the full card width (lightbox shows full size). */}
+                              <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
+                            </div>
                             {d.image.caption && (
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", textAlign: "center" }}>
+                              <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                 {d.image.caption}
-                              </p>
+                              </figcaption>
                             )}
-                          </div>
+                          </figure>
                         )}
                       </div>
                     </div>
@@ -1934,19 +1939,27 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 </motion.div>
               </section>
             ) : cs.taskFlow && (
-              <section id="cs-workflow" style={{ padding: "48px 0" }}>
+              <CsSection label={cs.taskFlow.heading ?? "The workflow"} id="cs-workflow">
                 <motion.div
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.65, ease: EASE }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", gap: "28px" }}
                 >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>
-                    {cs.taskFlow!.heading ?? "The New Workflow"}
-                  </p>
-                  <TaskFlowDiagram stages={cs.taskFlow.stages} />
+                  {cs.taskFlow.stages.map((stage, i) => (
+                    <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>{stage.number}</span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{stage.label}</p>
+                        {stage.description && (
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{stage.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </motion.div>
-              </section>
+              </CsSection>
             )}
 
             {/* ── Key design decisions ──────────────────────────────────────────
