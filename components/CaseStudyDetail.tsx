@@ -2338,8 +2338,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   {/* Image renders below video */}
                   {cs.outcomesImage && (
                     <motion.div
-                      initial={{ opacity: 0, y: 12 }}
-                      whileInView={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.65, ease: EASE }}
                     >
@@ -4210,7 +4210,6 @@ function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt:
             display: "block",
             borderRadius: "12px",
             opacity: loaded ? 1 : 0,
-            transition: "opacity 0.3s ease",
           }}
         />
       </div>
