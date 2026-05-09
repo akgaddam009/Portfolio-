@@ -301,7 +301,7 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "Moving a critical finance workflow from Excel to the web. Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app.",
 
-    contextVideo: "/images/planful/planful%20product%20video.mp4",
+    contextVideo: "/images/planful/planful-product-video.mp4",
     chromeUrl: "app.planful.com",
 
     /* Plain prose at the top of the Context section. no card, no
@@ -733,7 +733,7 @@ export const caseStudies: CaseStudy[] = [
       "When you search \"coffee shop near me\" on your phone, the results come from platforms like Google Maps, Apple Maps, or Bing. Each platform shows business information: hours, phone number, photos, reviews. Enterprises with hundreds or thousands of locations need to manage how they appear across all these platforms and track which ones actually bring customers through the door. That's what Reputation does, and the Business Listing Performance dashboard is where customers go to see if their listings are working.",
 
     contextImage: {
-      src: "/images/reputation/Thumbnail .png",
+      src: "/images/reputation/thumbnail.png",
       alt: "Listings Performance dashboard",
     },
 
@@ -755,7 +755,7 @@ export const caseStudies: CaseStudy[] = [
         body:
           "Removed low value Google widgets:\n\n- Deprecated APIs (Google was sunsetting them anyway)\n- Niche insights with low engagement (time of day calling patterns)\n- Redundant visualizations (had both donut + line chart for many metrics)\n\nResult:\n- Reduced from 20 widgets → 12 focused sections\n- Cut scroll length by 40%\n- Increased value per widget\n\n==This was risky== (customers relied on some of those insights), but data showed users wanted breadth over depth: quick answers across all platforms, not exhaustive detail on one.",
         image: {
-          src: "/images/reputation/overview before:after .png",
+          src: "/images/reputation/overview-before-after.png",
           alt: "Overview cards before and after: brand colour removed in favour of neutral, data-legible design",
         },
       },
@@ -764,7 +764,7 @@ export const caseStudies: CaseStudy[] = [
         body:
           "Sunburst chart with drill-down.\n\n==Benefits:== Unified view AND platform specific insights. No tab switching or modals needed. Users explore at their own pace.",
         image: {
-          src: "/images/reputation/Sunburst Chart Interaction.jpg",
+          src: "/images/reputation/sunburst-chart.jpg",
           alt: "Sunburst chart interaction: top-level Actions breakdown, click-through showing source-level distribution",
           caption: "Left: Default view showing action types across all platforms (Calls, Directions, Website). Right: Drill-down view showing platform breakdown after clicking \"Website\".",
         },
@@ -774,7 +774,7 @@ export const caseStudies: CaseStudy[] = [
         body:
           "The original dashboard had 20+ widgets with no grouping. common metrics mixed with Google-specific data, making it impossible to scan. The redesign organized everything into 5 clear sections:\n\nOverview: Cross-platform summary (All platforms)\nActions: Calls, directions, website clicks (All platforms)\nImpressions: Listing views breakdown (All platforms)\nDiscovery: Search patterns, device types (Google only)\nAdditional Actions: Platform-unique actions (Per platform)\n\n==Key insight:== By explicitly labeling platform specific sections, users understood why Apple wasn't everywhere. It's not a gap, it's a capability difference.",
         image: {
-          src: "/images/reputation/Before:After image .jpg",
+          src: "/images/reputation/before-after-image.jpg",
           alt: "Before and after of the Listings Performance dashboard: from a wall of 20+ Google-heavy widgets to a clear 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
           caption: "before: 20+ widgets, no grouping, Google-heavy. After: 5 clear sections, platform equity, Apple integrated.",
         },
@@ -784,14 +784,14 @@ export const caseStudies: CaseStudy[] = [
         body:
           "During live testing, we discovered Apple suppresses metrics below a privacy threshold (undocumented in their API). Some customers saw zeros and thought it was broken.\n\nSolution: Added a dismissible banner explaining Apple's privacy policy and suggesting longer date ranges for accurate data.\n\n==Proactive transparency > reactive support tickets.==",
         image: {
-          src: "/images/reputation/Honest about what Apple can't show.jpg",
+          src: "/images/reputation/honest-apple-cant-show.jpg",
           alt: "Apple data suppression notice on the Listings Performance dashboard",
         },
       },
     ],
 
     outcomesImage: {
-      src: "/images/reputation/Listings Performance_Final Design.jpg",
+      src: "/images/reputation/listings-performance.jpg",
       alt: "Final design of the Listings Performance dashboard: 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
       caption: "the final dashboard: 5 sections, platform equity, Apple integrated.",
     },
@@ -835,7 +835,7 @@ export const caseStudies: CaseStudy[] = [
 
     summary: "",
 
-    contextVideo: "/images/fancode/FANCODE%20HOMEPAGE%20BEFORE%20.mp4",
+    contextVideo: "/images/fancode/fancode-homepage-before.mp4",
 
     contextStats: [
       { stat: "100M+ users", label: "FanCode is India's premier live sports streaming platform, part of the Dream Sports group." },
@@ -906,7 +906,7 @@ export const caseStudies: CaseStudy[] = [
           title: "The first fold turf war",
           body: "Every team competed for the same strip of real estate with no one accountable for the page's coherence.",
           image: {
-            src: "/images/fancode/UX%20REVIEW%20CURRENT%20HOMEPAGE%20FIRST%20FOLD.jpg",
+            src: "/images/fancode/ux-review-current-homepage.jpg",
             alt: "UX review of the current first fold",
             caption: "UX review · first fold",
           },
@@ -915,7 +915,7 @@ export const caseStudies: CaseStudy[] = [
           title: "Content organised for operations, not users",
           body: "Sections were sorted by content type (news, scores, videos), not by what a sports fan actually looks for.",
           image: {
-            src: "/images/fancode/OVERALL%20HOMEPAGE.jpg",
+            src: "/images/fancode/overall-homepage.jpg",
             alt: "UX review of overall homepage",
             caption: "UX review of overall homepage",
           },
@@ -928,8 +928,8 @@ export const caseStudies: CaseStudy[] = [
           title: "The page felt stale",
           body: "Some sections hadn't changed in weeks, a serious trust problem for a platform built on real time sport.",
           images: [
-            { src: "/images/fancode/COMPETITIVE%20ANALYSIS.jpg",                                      alt: "Competitive analysis",           caption: "Competitive analysis"         },
-            { src: "/images/fancode/COMPETITIVE%20ANALYSIS%20DEEP%20DIVE%20INTO%20THE%20PROBLEM.jpg", alt: "Competitive analysis deep dive", caption: "Deep dive into the problem"   },
+            { src: "/images/fancode/competitive-analysis.jpg",                                      alt: "Competitive analysis",           caption: "Competitive analysis"         },
+            { src: "/images/fancode/competitive-analysis-deep-dive.jpg", alt: "Competitive analysis deep dive", caption: "Deep dive into the problem"   },
           ],
         },
       ],
@@ -961,7 +961,7 @@ export const caseStudies: CaseStudy[] = [
           title: "The reusable contextual component",
           body: "Built a single Coverage Card that could be populated with any sport, tournament, team, or player story. The structural pattern was fixed; the content logic was configurable. This meant the page could feel fresh every day without requiring a design change.",
           image: {
-            src: "/images/fancode/The%20reusable%20contextual%20component.jpg",
+            src: "/images/fancode/reusable-contextual-component.jpg",
             alt: "Reusable Coverage Card component, populated with multiple story types",
             caption: "Reusable Coverage Card component",
           },
@@ -970,7 +970,7 @@ export const caseStudies: CaseStudy[] = [
           title: "Scroll rhythm: pattern, break, pattern",
           body: "The page alternates between contextual content blocks and pattern breaks: Quick Singles (a visual cricket snapshot) and the Tournaments discovery browser. The breaks prevent the scroll from feeling like a feed, and give users a reason to keep going.",
           image: {
-            src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN%20WITH%20SEAMLESS%20DESIGN%20PATTERN%20FLOW.jpg",
+            src: "/images/fancode/new-homepage-seamless-flow.jpg",
             alt: "Concept design, seamless pattern flow",
             caption: "Seamless design pattern flow",
           },
@@ -979,7 +979,7 @@ export const caseStudies: CaseStudy[] = [
           title: "Deep linking throughout and personalisation for new and returning users",
           body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination. The same architecture supports personalised rails (Continue Watching, Recommended For You) that adapt for new versus returning users. The IA and content strategy underpinning this ensured every section had a clear ownership, a content type, and a hierarchy — so the page scaled without becoming chaotic.",
           image: {
-            src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN_FIRST%20TIME%20USERS%20AND%20RETURN%20USERS%20WITH%20HOMEPAGE%20PERSONALISATION%20IDEAS.jpg",
+            src: "/images/fancode/new-homepage-first-return-users.jpg",
             alt: "Concept design, personalisation states for first-time and returning users",
             caption: "Personalisation concepts for new and returning users",
           },
@@ -988,7 +988,7 @@ export const caseStudies: CaseStudy[] = [
           title: "A dedicated tournament discovery block",
           body: "A scrollable row of all active tournaments, positioned in the below fold section. Directly addresses the discovery gap the data surfaced: if a tournament wasn't in the first fold, users couldn't find it.",
           image: {
-            src: "/images/fancode/Tour%20Collection.jpg",
+            src: "/images/fancode/tour-collection.jpg",
             alt: "Tournament collection discovery block",
             caption: "Tournament discovery block",
             compact: true,
@@ -1025,13 +1025,13 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     outcomesCompare: {
-      before: "/images/fancode/FANCODE%20HOMEPAGE%20BEFORE%20.mp4",
-      after:  "/images/fancode/FANCODE%20HOMEPAGE%20AFTER%20.mp4",
+      before: "/images/fancode/fancode-homepage-before.mp4",
+      after:  "/images/fancode/fancode-homepage-after.mp4",
     },
 
     beforeAfterImages: {
-      before: { src: "/images/fancode/Earlier%20Homepage%20.jpg", label: "Earlier homepage" },
-      after:  { src: "/images/fancode/New%20Homepage%20.jpg",     label: "Redesigned homepage"  },
+      before: { src: "/images/fancode/earlier-homepage.jpg", label: "Earlier homepage" },
+      after:  { src: "/images/fancode/new-homepage.jpg",     label: "Redesigned homepage"  },
     },
 
     resultSection: {

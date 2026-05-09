@@ -371,7 +371,7 @@ function PortraitMagnify() {
       >
         {/* Portrait. single image, no hover swap */}
         <img
-          src="/arun gaddam.png"
+          src="/arun-gaddam.png"
           alt="Arun Gaddam"
           style={{
             position: "absolute", inset: 0,
@@ -775,9 +775,9 @@ function MeshThumbnail({ index, type, confidential }: {
 
 const WORK_THUMBS: Record<string, string> = {
   "astra":                "/images/astra/overview.mp4",
-  "planful-esm-tables":   "/images/planful/planful%20product%20video.mp4",
+  "planful-esm-tables":   "/images/planful/planful-product-video.mp4",
   "apple-business-listings": "/images/reputation/after.mp4",
-  "fancode-homepage":     "/images/fancode/FANCODE%20HOMEPAGE%20AFTER%20.mp4",
+  "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
 };
@@ -785,8 +785,8 @@ const WORK_THUMBS: Record<string, string> = {
 const WORK_POSTERS: Record<string, string> = {
   "astra":                "/images/astra/cover.png",
   "planful-esm-tables":   "/images/planful/landing-page.jpg",
-  "apple-business-listings": "/images/reputation/Thumbnail .png",
-  "fancode-homepage":     "/images/fancode/New%20Homepage%20.jpg",
+  "apple-business-listings": "/images/reputation/thumbnail.png",
+  "fancode-homepage":     "/images/fancode/new-homepage.jpg",
 };
 
 // Video file extensions that should render through <video> instead of <img>.
