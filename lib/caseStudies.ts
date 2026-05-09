@@ -956,8 +956,8 @@ export const caseStudies: CaseStudy[] = [
           },
         },
         {
-          title: "Deep linking throughout",
-          body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination.",
+          title: "Deep linking throughout and personalisation for new and return users",
+          body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination. The same architecture supports personalised rails (Continue Watching, Recommended For You) that adapt for new versus returning users.",
         },
         {
           title: "A dedicated tournament discovery block",
