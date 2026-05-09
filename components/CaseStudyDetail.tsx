@@ -115,6 +115,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // The executive/detailed mode toggle has been removed from the nav.
+  // Reset data-mode to "detailed" on every mount so any stale
+  // "executive" value from a previous session doesn't hide sections.
+  useEffect(() => {
+    document.documentElement.setAttribute("data-mode", "detailed");
+    localStorage.removeItem("portfolio-mode");
+  }, []);
+
   useEffect(() => {
     // Filter to sections that actually exist in the rendered DOM, then set up
     // IntersectionObservers for active-section tracking. Merged into one effect
