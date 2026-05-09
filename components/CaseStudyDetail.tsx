@@ -2335,6 +2335,20 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
                     </motion.div>
                   )}
+                  {/* Optional intro text above the image */}
+                  {cs.outcomesIntro && (
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "14px",
+                      lineHeight: 1.65,
+                      letterSpacing: "-0.01em",
+                      color: "var(--muted2)",
+                      margin: 0,
+                      maxWidth: "560px",
+                    }}>
+                      {cs.outcomesIntro}
+                    </p>
+                  )}
                   {/* Image renders below video */}
                   {cs.outcomesImage && (
                     <motion.div
@@ -2862,14 +2876,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      width: "44px",
+                      gap: "8px",
                       height: "44px",
+                      padding: "0 16px",
                       borderRadius: "12px",
                       background: "var(--surface)",
                       border: "1px solid var(--border)",
                       boxShadow: "var(--card-shadow)",
-                      color: "var(--text)",
+                      color: "var(--muted)",
                       textDecoration: "none",
                       flexShrink: 0,
                       transition: "box-shadow 0.2s cubic-bezier(0.22,1,0.36,1)",
@@ -2877,11 +2891,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <polyline points="15 18 9 12 15 6" />
                     </svg>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase" }}>Previous</span>
                   </Link>
-                ) : <div style={{ width: "44px" }} />}
+                ) : <div />}
 
                 {next ? (
                   <Link
@@ -2890,14 +2905,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      width: "44px",
+                      gap: "8px",
                       height: "44px",
+                      padding: "0 16px",
                       borderRadius: "12px",
                       background: "var(--surface)",
                       border: "1px solid var(--border)",
                       boxShadow: "var(--card-shadow)",
-                      color: "var(--text)",
+                      color: "var(--muted)",
                       textDecoration: "none",
                       flexShrink: 0,
                       transition: "box-shadow 0.2s cubic-bezier(0.22,1,0.36,1)",
@@ -2905,11 +2920,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase" }}>Next</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <polyline points="9 6 15 12 9 18" />
                     </svg>
                   </Link>
-                ) : <div style={{ width: "44px" }} />}
+                ) : <div />}
               </motion.div>
             )}
 

@@ -87,6 +87,8 @@ export type CaseStudy = {
   }[];
   outcomesImage?: CaseStudyImage;
   outcomesImages?: CaseStudyImage[];
+  /** Optional short text rendered above the outcomesImage in the Final Design section. */
+  outcomesIntro?: string;
   /** Optional video shown above the outcome text in the Result section. */
   outcomesVideo?: string;
   outcomes: string[];
@@ -849,6 +851,8 @@ export const caseStudies: CaseStudy[] = [
         },
       },
     ],
+
+    outcomesIntro: "The final dashboard unified Apple, Google, Bing, and Facebook into a single view — 5 clear sections, consistent data treatment across platforms, and graceful handling of Apple's privacy suppression. Customers went from no Apple visibility to checking Apple Maps performance weekly.",
 
     outcomesImage: {
       src: "/images/reputation/listings-performance.jpg",
