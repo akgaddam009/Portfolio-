@@ -1948,19 +1948,96 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: EASE }}
-                  style={{ display: "flex", flexDirection: "column", gap: "28px" }}
                 >
-                  {cs.taskFlow.stages.map((stage, i) => (
-                    <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>{stage.number}</span>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{stage.label}</p>
-                        {stage.description && (
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{stage.description}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                  {/* Connected flow diagram — pills sit on a horizontal rule.
+                      The page background behind each pill cuts through the line
+                      so they appear to float on it. Collapses to a left-rail
+                      vertical layout on mobile. */}
+                  <div className="taskflow-stages" style={{ display: "flex", alignItems: "flex-start", position: "relative" }}>
+                    {/* Connector line — horizontally spans all steps */}
+                    <div className="taskflow-connector" style={{
+                      position: "absolute",
+                      top: "9px",
+                      left: "0",
+                      right: "0",
+                      height: "1px",
+                      background: "var(--border)",
+                      pointerEvents: "none",
+                    }} />
+                    {cs.taskFlow.stages.map((stage, i) => (
+                      <motion.div
+                        key={i}
+                        className="taskflow-stage"
+                        initial={{ opacity: 0, y: 8 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
+                        style={{
+                          flex: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: "14px",
+                          padding: "0 10px",
+                        }}
+                      >
+                        {/* Pill — page-background fill punches through the connector */}
+                        <span style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.06em",
+                          color: "var(--muted)",
+                          background: "var(--bg)",
+                          border: "1px solid var(--border)",
+                          borderRadius: "999px",
+                          padding: "2px 9px",
+                          position: "relative",
+                          zIndex: 1,
+                          whiteSpace: "nowrap",
+                          flexShrink: 0,
+                        }}>
+                          {stage.number}
+                        </span>
+                        <div style={{ textAlign: "center" }}>
+                          <p style={{
+                            fontFamily: "var(--font-body)",
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            letterSpacing: "-0.01em",
+                            color: "var(--text)",
+                            margin: "0 0 5px",
+                          }}>
+                            {stage.label}
+                          </p>
+                          {stage.description && (
+                            <p style={{
+                              fontFamily: "var(--font-body)",
+                              fontSize: "12px",
+                              lineHeight: 1.55,
+                              letterSpacing: "-0.005em",
+                              color: "var(--muted)",
+                              margin: 0,
+                            }}>
+                              {stage.description}
+                            </p>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                  <style>{`
+                    @media (max-width: 600px) {
+                      .taskflow-stages { flex-direction: column !important; gap: 0 !important; }
+                      .taskflow-connector { display: none !important; }
+                      .taskflow-stage {
+                        flex-direction: row !important;
+                        align-items: flex-start !important;
+                        padding: 0 0 22px !important;
+                        gap: 14px !important;
+                      }
+                      .taskflow-stage > div { text-align: left !important; }
+                    }
+                  `}</style>
                 </motion.div>
               </CsSection>
             )}
