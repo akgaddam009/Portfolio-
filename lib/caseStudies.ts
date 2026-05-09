@@ -864,7 +864,6 @@ export const caseStudies: CaseStudy[] = [
       intro: "",
       metrics: [
         { value: "~68%", label: "of customers check Apple Maps data week on week post-launch" },
-        { icon: true, label: "Apple, Google, Bing, and Facebook unified in a single dashboard — the Apple Maps blind spot closed" },
       ],
       body: "",
     },
