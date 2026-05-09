@@ -783,9 +783,9 @@ const WORK_THUMBS: Record<string, string> = {
 };
 
 const WORK_POSTERS: Record<string, string> = {
-  "astra":                "/images/astra/cover.png",
+  "astra":                "/images/astra/cover.jpg",
   "planful-esm-tables":   "/images/planful/landing-page.jpg",
-  "apple-business-listings": "/images/reputation/thumbnail.png",
+  "apple-business-listings": "/images/reputation/thumbnail.jpg",
   "fancode-homepage":     "/images/fancode/new-homepage.jpg",
 };
 

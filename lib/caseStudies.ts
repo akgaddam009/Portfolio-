@@ -792,7 +792,7 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     contextImage: {
-      src: "/images/reputation/thumbnail.png",
+      src: "/images/reputation/thumbnail.jpg",
       alt: "Listings Performance dashboard",
     },
 
@@ -1284,7 +1284,7 @@ export const caseStudies: CaseStudy[] = [
         title: "PO-driven auto-population",
         body: "Integrated challan creation directly with the existing order system: enter a Supplier PO and Bill From, Bill To, GST inherit from the order record. The largest class of manual error vanished, in exchange for a hard dependency on order-data quality.",
         image: {
-          src: "/images/zetwerk/dc-create.png",
+          src: "/images/zetwerk/dc-create.jpg",
           alt: "Create Delivery Challan form showing transaction details, supply type selection, and auto-populated Bill From and Bill To sections",
           caption: "Enter a Supplier PO. Bill From, Bill To, GST inherit from the order record.",
         },
@@ -1293,7 +1293,7 @@ export const caseStudies: CaseStudy[] = [
         title: "Mandatory preview before creation",
         body: "A challan is a legal document that can't be deleted once created, so we added a formatted PDF preview of the exact document about to be generated. The preview is the moment BizOps' speed and Tax's accuracy meet, against the small cost of one extra screen.",
         image: {
-          src: "/images/zetwerk/dc-preview.png",
+          src: "/images/zetwerk/dc-preview.jpg",
           alt: "Preview of Delivery Challan showing formatted PDF with CNH Manufacturing as sender, item descriptions, quantities, and GST amounts",
           caption: "Preview the exact legal document before it becomes a compliance record.",
         },
@@ -1302,7 +1302,7 @@ export const caseStudies: CaseStudy[] = [
         title: "One detail page, three documents",
         body: "Brought the DC document, linked E-way bill, and transport details onto a single detail page rather than three separate views. Density beats navigation when the original failure was context-switching.",
         image: {
-          src: "/images/zetwerk/dc-detail.png",
+          src: "/images/zetwerk/dc-detail.jpg",
           alt: "Delivery Challan detail view showing DC document attached, E-way bill with dates, and transportation details including logistics company",
           caption: "DC, E-way bill, and transport on one page. Reconciliation stops being three tabs.",
         },
@@ -1311,7 +1311,7 @@ export const caseStudies: CaseStudy[] = [
         title: "Return and Dispatch tracking, added scope",
         body: "Added a Return or Dispatch tab on the DC detail so individual goods can be marked dispatched or returned, each action time-stamped to the original challan and invoice. Tax surfaced this as a regulatory requirement in research, so we took the scope hit in exchange for a tighter timeline.",
         image: {
-          src: "/images/zetwerk/dc-return-dispatch.png",
+          src: "/images/zetwerk/dc-return-dispatch.jpg",
           alt: "Return or Dispatch tab on DC detail showing Mark Dispatch and Mark Return actions with reference IDs, dates, and return/dispatch types",
           caption: "Return or Dispatch: full lifecycle of the goods, on the same record.",
         },

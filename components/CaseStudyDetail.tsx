@@ -2166,7 +2166,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   onClick={() => setLightboxSrc(img.src)}
                                   style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                                 >
-                                  <img src={img.src} alt={img.alt} style={{ width: "100%", display: "block" }} />
+                                  <img src={img.src} alt={img.alt} loading="lazy" decoding="async" style={{ width: "100%", display: "block" }} />
                                 </div>
                                 {img.caption && (
                                   <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
@@ -5003,7 +5003,7 @@ function ZoomLensImage({ image, onOpen }: { image: CaseStudyImage; onOpen?: (src
         transform: `scale(${ZOOM})`,
         transformOrigin: `${pos.x}px ${pos.y}px`,
       }}>
-        <img src={image.src} alt="" style={{ width: "100%", display: "block", objectFit: "contain" }} />
+        <img src={image.src} alt="" loading="lazy" decoding="async" style={{ width: "100%", display: "block", objectFit: "contain" }} />
       </div>
     </motion.div>
   );
@@ -5022,7 +5022,7 @@ function ZoomLensImage({ image, onOpen }: { image: CaseStudyImage; onOpen?: (src
         onMouseMove={handleMouseMove}
         style={{ position: "relative", overflow: "hidden", background: "var(--surface2)", cursor: "crosshair" }}
       >
-        <img src={image.src} alt={image.alt} style={{ width: "100%", display: "block", objectFit: "contain" }} />
+        <img src={image.src} alt={image.alt} loading="lazy" decoding="async" style={{ width: "100%", display: "block", objectFit: "contain" }} />
         <AnimatePresence>
           {isHovering && zoomedLayer}
         </AnimatePresence>
