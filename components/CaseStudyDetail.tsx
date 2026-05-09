@@ -1992,7 +1992,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               style={{ width: "100%", display: "block", borderRadius: "6px 6px 0 0" }}
                             />
                             {d.image.caption && (
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)", margin: 0, padding: "10px 14px 12px" }}>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", margin: 0, padding: "10px 14px 12px" }}>
                                 {d.image.caption}
                               </p>
                             )}
@@ -2005,7 +2005,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               <div key={vi}>
                                 <VideoBlock src={v.src} appType={cs.type} chromeUrl={chromeUrl} />
                                 {v.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)", margin: "8px 0 0" }}>
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", margin: "8px 0 0" }}>
                                     {v.caption}
                                   </p>
                                 )}
@@ -2024,7 +2024,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               >
                                 <img src={img.src} alt={img.alt} style={{ width: "100%", display: "block", borderRadius: "6px 6px 0 0" }} />
                                 {img.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)", margin: 0, padding: "10px 14px 12px" }}>
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", margin: 0, padding: "10px 14px 12px" }}>
                                     {img.caption}
                                   </p>
                                 )}
@@ -2512,7 +2512,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 FanCode's northStar card), additional paragraphs render as
                 standard body prose below it. ── */}
             {cs.lesson && cs.slug !== "fancode-homepage" && (
-              <CsSection label={cs.sectionLabels?.lesson ?? "What I Learned"}>
+              <CsSection label={cs.sectionLabels?.lesson ?? "Learnings"}>
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -2539,7 +2539,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 fancode-homepage; other case studies had this section
                 intentionally removed earlier in the design pass. ── */}
             {cs.slug === "fancode-homepage" && cs.learnings && (
-              <CsSection label="Learnings">
+              <CsSection label={cs.sectionLabels?.lesson ?? "Learnings"}>
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -3152,7 +3152,6 @@ function ContextCardsBlock({ cards }: { cards: NonNullable<CaseStudy["contextCar
           transition={{ duration: 0.55, ease: EASE, delay: i * 0.04 }}
           style={{
             background: "var(--surface)",
-            border: "1px solid var(--border)",
             borderRadius: "12px",
             padding: "20px 22px",
           }}
@@ -3574,7 +3573,7 @@ function AppleChallengeBlock({ text }: { text: string }) {
                   key={j}
                   style={{
                     background: "var(--surface)",
-                    border: "1px solid var(--border)",
+                    boxShadow: "var(--card-shadow)",
                     borderRadius: "12px",
                     padding: "20px 18px 18px",
                     display: "flex",

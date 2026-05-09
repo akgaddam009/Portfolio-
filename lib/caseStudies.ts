@@ -281,7 +281,7 @@ export const caseStudies: CaseStudy[] = [
       problem: "Problem",
       decisions: "Key design decisions",
       outcomes: "Result",
-      lesson: "What I learned",
+      lesson: "Learnings",
       references: "References",
     },
 
@@ -709,9 +709,9 @@ export const caseStudies: CaseStudy[] = [
     sectionLabels: {
       overview: "What's a Business Listing?",
       problem: "The Challenge",
-      decisions: "What I Did",
+      decisions: "Key design decisions",
       outcomes: "Result",
-      lesson: "What This Taught Me",
+      lesson: "Learnings",
     },
 
     chromeUrl: "app.reputation.com",
