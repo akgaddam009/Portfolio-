@@ -1729,10 +1729,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: EASE }}
-                  style={{ display: "flex", flexDirection: "column", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
+                  style={{ display: "flex", flexDirection: "column", gap: "44px" }}
                 >
                   {cs.designApproach.decisions.map((d, i) => (
-                    <div key={i} style={{ padding: "24px 24px", borderBottom: i < cs.designApproach!.decisions.length - 1 ? "1px solid var(--border)" : "none", display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                    <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
