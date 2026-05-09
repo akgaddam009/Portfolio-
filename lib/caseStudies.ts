@@ -213,7 +213,7 @@ export type CaseStudy = {
   /** Optional Design Approach section rendered after Design Strategy. */
   designApproach?: {
     intro: string;
-    decisions: { title: string; body: string }[];
+    decisions: { title: string; body: string; image?: { src: string; alt: string; caption?: string } }[];
   };
   /** Optional before/after video comparison for the outcomes section. */
   outcomesCompare?: { before: string; after: string };
@@ -924,7 +924,7 @@ export const caseStudies: CaseStudy[] = [
           body: "Organize around sports, tournaments, teams, and players, not content formats. The page should feel built for how fans think, not how we operate internally.",
         },
         {
-          title: "Design for scalability and daily freshness",
+          title: "Design for scalability and daily content freshness",
           body: "Build a reusable component that can be populated with any story. The structural pattern stays consistent; the content makes it feel new every day.",
         },
         {
@@ -944,6 +944,11 @@ export const caseStudies: CaseStudy[] = [
         {
           title: "Scroll rhythm: pattern, break, pattern",
           body: "The page alternates between contextual content blocks and pattern breaks: Quick Singles (a visual cricket snapshot) and the Tournaments discovery browser. The breaks prevent the scroll from feeling like a feed, and give users a reason to keep going.",
+          image: {
+            src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN%20WITH%20SEAMLESS%20DESIGN%20PATTERN%20FLOW.jpg",
+            alt: "Concept design, seamless pattern flow",
+            caption: "Seamless design pattern flow",
+          },
         },
         {
           title: "Deep linking throughout",
@@ -969,8 +974,7 @@ export const caseStudies: CaseStudy[] = [
       {
         section: "approach" as const,
         images: [
-          { src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN%20WITH%20SEAMLESS%20DESIGN%20PATTERN%20FLOW.jpg",                                              alt: "Concept design, seamless pattern flow",   caption: "Seamless design pattern flow"  },
-          { src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN_FIRST%20TIME%20USERS%20AND%20RETURN%20USERS%20WITH%20HOMEPAGE%20PERSONALISATION%20IDEAS.jpg", alt: "Concept design, personalisation ideas",   caption: "Personalisation concepts"      },
+          { src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN_FIRST%20TIME%20USERS%20AND%20RETURN%20USERS%20WITH%20HOMEPAGE%20PERSONALISATION%20IDEAS.jpg", alt: "Concept design, personalisation ideas",   caption: "Personalisation concepts", span: "wide" as const },
         ],
       },
     ],

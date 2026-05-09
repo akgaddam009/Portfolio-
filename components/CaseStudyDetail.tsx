@@ -1706,9 +1706,22 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   {cs.designApproach.decisions.map((d, i) => (
                     <div key={i} style={{ padding: "22px 24px", borderBottom: i < cs.designApproach!.decisions.length - 1 ? "1px solid var(--border)" : "none", display: "flex", gap: "16px", alignItems: "flex-start" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{d.body}</p>
+                        {d.image && (
+                          <div
+                            onClick={() => setLightboxSrc(d.image!.src)}
+                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", maxWidth: "100%" }}
+                          >
+                            <CanvasBoardImage src={d.image.src} alt={d.image.alt} aspectRatio="16/9" />
+                            {d.image.caption && (
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                                {d.image.caption}
+                              </p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
