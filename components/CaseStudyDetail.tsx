@@ -1982,53 +1982,56 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{d.body}</p>
                         {/* Single image */}
                         {d.image && (
-                          <div
-                            onClick={() => setLightboxSrc(d.image!.src)}
-                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
-                          >
-                            <img
-                              src={d.image.src}
-                              alt={d.image.alt}
-                              style={{ width: "100%", display: "block", borderRadius: "6px 6px 0 0" }}
-                            />
+                          <figure style={{ margin: 0, marginTop: "6px" }}>
+                            <div
+                              onClick={() => setLightboxSrc(d.image!.src)}
+                              style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                            >
+                              <img
+                                src={d.image.src}
+                                alt={d.image.alt}
+                                style={{ width: "100%", display: "block" }}
+                              />
+                            </div>
                             {d.image.caption && (
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", margin: 0, padding: "10px 14px 12px" }}>
+                              <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
                                 {d.image.caption}
-                              </p>
+                              </figcaption>
                             )}
-                          </div>
+                          </figure>
                         )}
                         {/* Videos */}
                         {d.videos && d.videos.length > 0 && (
                           <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "6px" }}>
                             {d.videos.map((v, vi) => (
-                              <div key={vi}>
+                              <figure key={vi} style={{ margin: 0 }}>
                                 <VideoBlock src={v.src} appType={cs.type} chromeUrl={chromeUrl} />
                                 {v.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", margin: "8px 0 0" }}>
+                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
                                     {v.caption}
-                                  </p>
+                                  </figcaption>
                                 )}
-                              </div>
+                              </figure>
                             ))}
                           </div>
                         )}
                         {/* Multiple images */}
                         {d.images && d.images.length > 0 && (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "6px" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "6px" }}>
                             {d.images.map((img, ii) => (
-                              <div
-                                key={ii}
-                                onClick={() => setLightboxSrc(img.src)}
-                                style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
-                              >
-                                <img src={img.src} alt={img.alt} style={{ width: "100%", display: "block", borderRadius: "6px 6px 0 0" }} />
+                              <figure key={ii} style={{ margin: 0 }}>
+                                <div
+                                  onClick={() => setLightboxSrc(img.src)}
+                                  style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                >
+                                  <img src={img.src} alt={img.alt} style={{ width: "100%", display: "block" }} />
+                                </div>
                                 {img.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", margin: 0, padding: "10px 14px 12px" }}>
+                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
                                     {img.caption}
-                                  </p>
+                                  </figcaption>
                                 )}
-                              </div>
+                              </figure>
                             ))}
                           </div>
                         )}
@@ -3561,60 +3564,53 @@ function AppleChallengeBlock({ text }: { text: string }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: EASE }}
-              className="apple-challenge-facts"
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "12px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "28px",
               }}
             >
               {facts.map((f, j) => (
                 <div
                   key={j}
                   style={{
-                    background: "var(--surface)",
-                    boxShadow: "var(--card-shadow)",
-                    borderRadius: "12px",
-                    padding: "20px 18px 18px",
                     display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
+                    gap: "16px",
+                    alignItems: "flex-start",
                   }}
                 >
-                  <p
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      lineHeight: 1.45,
-                      letterSpacing: "-0.01em",
-                      color: "var(--text)",
-                      margin: 0,
-                    }}
-                  >
-                    {f.lead}
-                  </p>
-                  {f.body && (
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{j + 1}</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                     <p
                       style={{
                         fontFamily: "var(--font-body)",
-                        fontSize: "13px",
-                        lineHeight: 1.6,
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: 1.45,
                         letterSpacing: "-0.01em",
-                        color: "var(--muted2)",
+                        color: "var(--text)",
                         margin: 0,
                       }}
                     >
-                      {f.body}
+                      {f.lead}
                     </p>
-                  )}
+                    {f.body && (
+                      <p
+                        style={{
+                          fontFamily: "var(--font-body)",
+                          fontSize: "13px",
+                          lineHeight: 1.6,
+                          letterSpacing: "-0.01em",
+                          color: "var(--muted2)",
+                          margin: 0,
+                        }}
+                      >
+                        {f.body}
+                      </p>
+                    )}
+                  </div>
                 </div>
               ))}
-              <style>{`
-                @media (max-width: 720px) {
-                  .apple-challenge-facts { grid-template-columns: 1fr !important; }
-                }
-              `}</style>
             </motion.div>
           );
         }
