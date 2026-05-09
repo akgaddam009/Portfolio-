@@ -725,6 +725,25 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             {/* ── Context Section (optional named section between Overview and Problem) ── */}
             {cs.contextSection && (
               <CsSection label={cs.contextSection.title}>
+                {/* Hero stat — large number above the cards */}
+                {cs.contextSection.stat && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55, ease: EASE }}
+                    style={{ marginBottom: "28px", display: "flex", flexDirection: "column", gap: "6px" }}
+                  >
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text)", margin: 0 }}>
+                      {cs.contextSection.stat}
+                    </p>
+                    {cs.contextSection.statLabel && (
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>
+                        {cs.contextSection.statLabel}
+                      </p>
+                    )}
+                  </motion.div>
+                )}
                 {cs.contextSection.intro && (
                   <motion.p
                     initial={{ opacity: 0, y: 10 }}
@@ -741,10 +760,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: EASE }}
-                  style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" }}
+                  style={{ display: "flex", flexDirection: "column", gap: "10px" }}
                 >
                   {cs.contextSection.cards.map((card, i) => (
-                    <div key={i} style={{ padding: "24px 26px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "14px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div key={i} style={{ padding: "20px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{card.tag}</span>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{card.body}</p>
                     </div>
@@ -1949,93 +1968,123 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: EASE }}
                 >
-                  {/* Connected flow diagram — pills sit on a horizontal rule.
-                      The page background behind each pill cuts through the line
-                      so they appear to float on it. Collapses to a left-rail
-                      vertical layout on mobile. */}
-                  <div className="taskflow-stages" style={{ display: "flex", alignItems: "flex-start", position: "relative" }}>
-                    {/* Connector line — horizontally spans all steps */}
-                    <div className="taskflow-connector" style={{
-                      position: "absolute",
-                      top: "9px",
-                      left: "0",
-                      right: "0",
-                      height: "1px",
-                      background: "var(--border)",
-                      pointerEvents: "none",
-                    }} />
-                    {cs.taskFlow.stages.map((stage, i) => (
-                      <motion.div
-                        key={i}
-                        className="taskflow-stage"
-                        initial={{ opacity: 0, y: 8 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
-                        style={{
-                          flex: 1,
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          gap: "14px",
-                          padding: "0 10px",
-                        }}
-                      >
-                        {/* Pill — page-background fill punches through the connector */}
-                        <span style={{
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "9px",
-                          letterSpacing: "0.08em",
-                          color: "var(--muted)",
-                          background: "var(--bg)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "999px",
-                          padding: "2px 9px",
-                          position: "relative",
-                          zIndex: 1,
-                          whiteSpace: "nowrap",
-                          flexShrink: 0,
-                        }}>
-                          {stage.number}
-                        </span>
-                        <div style={{ textAlign: "center" }}>
-                          <p style={{
-                            fontFamily: "var(--font-body)",
-                            fontSize: "13px",
-                            fontWeight: 500,
-                            letterSpacing: "-0.01em",
-                            color: "var(--text)",
-                            margin: "0 0 5px",
-                          }}>
-                            {stage.label}
-                          </p>
-                          {stage.description && (
-                            <p style={{
-                              fontFamily: "var(--font-body)",
-                              fontSize: "12px",
-                              lineHeight: 1.55,
-                              letterSpacing: "-0.005em",
+                  {/* Desktop: individual step cards separated by chevron connectors.
+                      Mobile: single bordered container — steps merge into one unit
+                      with internal dividers, chevrons hidden. */}
+                  <div className="taskflow-wrapper">
+                    <div className="taskflow-stages" style={{ display: "grid", alignItems: "stretch" }}>
+                      {cs.taskFlow.stages.map((stage, i) => (
+                        <Fragment key={i}>
+                          <motion.div
+                            className="taskflow-stage"
+                            initial={{ opacity: 0, y: 12 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.55, ease: EASE, delay: i * 0.08 }}
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "12px",
+                              padding: "22px 22px 24px",
+                              background: "var(--surface)",
+                              border: "1px solid var(--border)",
+                              borderRadius: "14px",
+                            }}
+                          >
+                            <span style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "var(--font-mono)",
+                              fontSize: "10px",
+                              fontWeight: 500,
+                              letterSpacing: "0.08em",
                               color: "var(--muted)",
-                              margin: 0,
+                              background: "var(--bg)",
+                              border: "1px solid var(--border)",
+                              borderRadius: "8px",
+                              width: "30px",
+                              height: "22px",
+                              fontVariantNumeric: "tabular-nums",
                             }}>
-                              {stage.description}
-                            </p>
+                              {stage.number}
+                            </span>
+                            <div>
+                              <p style={{
+                                fontFamily: "var(--font-body)",
+                                fontSize: "15px",
+                                fontWeight: 500,
+                                letterSpacing: "-0.015em",
+                                color: "var(--text)",
+                                margin: "0 0 6px",
+                              }}>
+                                {stage.label}
+                              </p>
+                              {stage.description && (
+                                <p style={{
+                                  fontFamily: "var(--font-body)",
+                                  fontSize: "12.5px",
+                                  lineHeight: 1.6,
+                                  letterSpacing: "-0.005em",
+                                  color: "var(--muted2)",
+                                  margin: 0,
+                                }}>
+                                  {stage.description}
+                                </p>
+                              )}
+                            </div>
+                          </motion.div>
+                          {i < cs.taskFlow!.stages.length - 1 && (
+                            <div className="taskflow-chevron" aria-hidden="true" style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "var(--muted)",
+                              padding: "0 6px",
+                            }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="9 6 15 12 9 18" />
+                              </svg>
+                            </div>
                           )}
-                        </div>
-                      </motion.div>
-                    ))}
+                        </Fragment>
+                      ))}
+                    </div>
                   </div>
                   <style>{`
-                    @media (max-width: 600px) {
-                      .taskflow-stages { flex-direction: column !important; gap: 0 !important; }
-                      .taskflow-connector { display: none !important; }
-                      .taskflow-stage {
-                        flex-direction: row !important;
-                        align-items: flex-start !important;
-                        padding: 0 0 22px !important;
-                        gap: 14px !important;
+                    /* Desktop — individual cards separated by chevrons */
+                    .taskflow-stages {
+                      grid-template-columns: ${cs.taskFlow.stages.map(() => "1fr").join(" auto ")};
+                    }
+
+                    /* Mobile — merge into one collective unit */
+                    @media (max-width: 720px) {
+                      .taskflow-wrapper {
+                        background: var(--surface);
+                        border: 1px solid var(--border);
+                        border-radius: 14px;
+                        overflow: hidden;
                       }
-                      .taskflow-stage > div { text-align: left !important; }
+                      .taskflow-stages {
+                        grid-template-columns: 1fr !important;
+                        gap: 0 !important;
+                      }
+                      /* Each step loses its individual card shell on mobile */
+                      .taskflow-stage {
+                        background: transparent !important;
+                        border: none !important;
+                        border-radius: 0 !important;
+                        border-bottom: 1px solid var(--border) !important;
+                        padding: 20px 20px 22px !important;
+                      }
+                      /* Last step has no bottom divider */
+                      .taskflow-stage:last-of-type {
+                        border-bottom: none !important;
+                      }
+                      /* Hide chevron connectors — dividers do the job */
+                      .taskflow-chevron {
+                        display: none !important;
+                      }
                     }
                   `}</style>
                 </motion.div>
@@ -2132,6 +2181,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
                   ))}
                 </motion.div>
+
+                {/* ── epilogue — forward-looking note below shipped decisions ── */}
+                {cs.epilogue && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{ paddingTop: "32px", borderTop: "1px solid var(--border)" }}
+                  >
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--muted)", lineHeight: 1.7, letterSpacing: "-0.01em", margin: 0 }}>
+                      {cs.epilogue}
+                    </p>
+                  </motion.div>
+                )}
               </CsSection>
             )}
 
@@ -2317,6 +2381,26 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             <CsSection label={cs.sectionLabels?.outcomes ?? "Result"} id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+
+                {/* ── outcomesVideo — optional video above outcome content ── */}
+                {cs.outcomesVideo && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: EASE }}
+                    style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)" }}
+                  >
+                    <video
+                      src={cs.outcomesVideo}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      style={{ width: "100%", display: "block" }}
+                    />
+                  </motion.div>
+                )}
 
                 {/* ── FanCode Homepage — structured result block ── */}
                 {cs.resultSection && (
@@ -2931,25 +3015,29 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         )}
       </AnimatePresence>
 
-      {/* Section nav */}
+      {/* Section nav — sticky pill container, appears after first fold */}
       <AnimatePresence>
-        {navVisible && (
+        {navVisible && NAV_SECTIONS.length > 0 && (
           <motion.nav
             className="cs-section-nav"
-            initial={{ opacity: 0, x: 12 }}
+            initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 12 }}
-            transition={{ duration: 0.25, ease: EASE }}
+            exit={{ opacity: 0, x: 16 }}
+            transition={{ duration: 0.3, ease: EASE }}
             style={{
               position: "fixed",
-              right: "24px",
+              right: "20px",
               top: "50%",
               transform: "translateY(-50%)",
               zIndex: 30,
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-end",
-              gap: "2px",
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: "12px",
+              padding: "6px 0",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+              minWidth: "110px",
             }}
           >
             {NAV_SECTIONS.map(({ id, label }) => {
@@ -2958,38 +3046,51 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 <a
                   key={id}
                   href={`#${id}`}
+                  onClick={e => {
+                    e.preventDefault();
+                    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
                   style={{
                     display: "flex",
                     alignItems: "center",
                     gap: "8px",
                     textDecoration: "none",
-                    padding: "4px 0",
-                    transition: "opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
-                    opacity: isActive ? 1 : 0.4,
+                    padding: "7px 14px 7px 12px",
+                    position: "relative",
+                    transition: "background 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+                    background: isActive ? "color-mix(in srgb, var(--text) 5%, transparent)" : "transparent",
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = "1")}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = isActive ? "1" : "0.4")}
+                  onMouseEnter={e => {
+                    if (!isActive) e.currentTarget.style.background = "color-mix(in srgb, var(--text) 4%, transparent)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = isActive ? "color-mix(in srgb, var(--text) 5%, transparent)" : "transparent";
+                  }}
                 >
+                  {/* Active indicator — left edge bar */}
+                  <span style={{
+                    position: "absolute",
+                    left: 0,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "2px",
+                    height: isActive ? "16px" : "0px",
+                    background: "var(--text)",
+                    borderRadius: "0 1px 1px 0",
+                    transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+                  }} />
                   <span style={{
                     fontFamily: "var(--font-mono)",
-                    fontSize: "8px",
-                    letterSpacing: "0.08em",
+                    fontSize: "10px",
+                    letterSpacing: "0.06em",
                     textTransform: "uppercase",
                     color: isActive ? "var(--text)" : "var(--muted)",
-                    transition: "color 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
+                    fontWeight: isActive ? 500 : 400,
+                    transition: "color 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+                    whiteSpace: "nowrap",
                   }}>
                     {label}
                   </span>
-                  <span style={{
-                    width: "6px",
-                    height: "6px",
-                    borderRadius: "50%",
-                    background: isActive ? "var(--text)" : "var(--border)",
-                    flexShrink: 0,
-                    // Active dot scales up — anchors the eye to "you are here"
-                    transform: isActive ? "scale(1.4)" : "scale(1)",
-                    transition: "background 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
-                  }} />
                 </a>
               );
             })}
@@ -3286,6 +3387,7 @@ function ContextCardsBlock({ cards }: { cards: NonNullable<CaseStudy["contextCar
           transition={{ duration: 0.55, ease: EASE, delay: i * 0.04 }}
           style={{
             background: "var(--surface)",
+            border: "1px solid var(--border)",
             borderRadius: "12px",
             padding: "20px 22px",
           }}
@@ -3308,7 +3410,7 @@ function ContextCardsBlock({ cards }: { cards: NonNullable<CaseStudy["contextCar
             </ul>
           )}
           {card.modelPair && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "12px", alignItems: "stretch", marginTop: "4px" }}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "12px", alignItems: "stretch", marginTop: "14px" }}
                  className="ctx-model-pair">
               <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
                 <span style={modelTagStyle}>{card.modelPair.leftTag}</span>
@@ -3330,7 +3432,7 @@ function ContextCardsBlock({ cards }: { cards: NonNullable<CaseStudy["contextCar
             </div>
           )}
           {card.vsGrid && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "4px" }}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "14px" }}
                  className="ctx-vs-grid">
               <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", fontWeight: 600, color: "var(--text)", margin: 0, marginBottom: "4px" }}>{card.vsGrid.leftLabel}</p>
@@ -3620,19 +3722,33 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
                 color: "var(--text)",
               }}>{s.label}</span>
             </div>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0, marginBottom: "4px" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0, marginBottom: "3px" }}>
               {s.name}
             </p>
-            {/* Roles — body font, sentence case, sits in the same
-                typographic family as the body sentence below it. The
-                old mono caps treatment broke type rhythm with the
-                rest of the card. */}
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", letterSpacing: "-0.005em", color: "var(--muted)", margin: 0, marginBottom: "10px" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", letterSpacing: "-0.005em", color: "var(--muted)", margin: 0, marginBottom: "14px" }}>
               {s.roles}
             </p>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0 }}>
-              {s.body}
-            </p>
+            {/* Quote — core user question, displayed prominently */}
+            {s.quote && (
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontStyle: "italic", lineHeight: 1.5, letterSpacing: "-0.01em", color: "var(--text)", margin: "0 0 12px", borderLeft: "2px solid var(--border)", paddingLeft: "12px" }}>
+                &ldquo;{s.quote}&rdquo;
+              </p>
+            )}
+            {/* Bullets — tight list replacing prose body */}
+            {s.bullets && s.bullets.length > 0 ? (
+              <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "7px" }}>
+                {s.bullets.map((b, j) => (
+                  <li key={j} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
+                    <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "var(--muted)", marginTop: "7px", flexShrink: 0 }} />
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : s.body ? (
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0 }}>
+                {s.body}
+              </p>
+            ) : null}
           </motion.div>
         ))}
       </div>
@@ -3653,149 +3769,175 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
 function AppleChallengeBlock({ text }: { text: string }) {
   const blocks = text.split("\n\n");
 
-  // Locate diagnosis bullets and design question by content shape.
-  const bulletIdx = blocks.findIndex(b => b.split("\n").every(l => l.trim().startsWith("- ")) && b.split("\n").length >= 2);
+  // Locate structural blocks by content shape.
+  const bulletIdx   = blocks.findIndex(b => b.split("\n").every(l => l.trim().startsWith("- ")) && b.split("\n").length >= 2);
   const questionIdx = blocks.findIndex(b => /design question:/i.test(b) && /\?\s*$/.test(b));
+  // "The real problem…" intro sits right before the bullets.
+  const insightIdx  = bulletIdx > 0 ? bulletIdx - 1 : -1;
 
-  // Parse each diagnosis bullet into a "lead" (first phrase / stat) and
-  // a "body" (the rest, often a parenthetical qualifier). The lead
-  // becomes the card's headline; the body sits below as supporting text.
-  const FACT_RE = /^\s*-\s+(.+?)(?:\s*[(,]\s*(.+?)\s*\)?)?$/;
+  // Parse each bullet into short lead + optional qualifier body.
+  const FACT_RE = /^\s*-\s+(.+?)(?:\s+\((.+?)\)\s*)?$/;
   const facts = bulletIdx >= 0
     ? blocks[bulletIdx].split("\n").map(line => {
         const m = line.match(FACT_RE);
         if (!m) return { lead: line.replace(/^\s*-\s*/, ""), body: "" };
-        const lead = m[1].trim();
-        const body = (m[2] || "").trim();
-        return { lead, body };
+        return { lead: m[1].trim(), body: (m[2] || "").trim() };
       })
     : [];
 
-  // Split the design question into label + question text.
+  // Split the design question into label + body.
   let qLabel = "";
-  let qBody = "";
+  let qBody  = "";
   if (questionIdx >= 0) {
-    const m = blocks[questionIdx].match(/^([^:]+:)\s*(.+)$/);
-    if (m) {
-      qLabel = m[1];
-      qBody = m[2];
-    } else {
-      qBody = blocks[questionIdx];
-    }
+    const m = blocks[questionIdx].match(/^([^:]+:)\s*([\s\S]+)$/);
+    if (m) { qLabel = m[1]; qBody = m[2]; }
+    else   { qBody = blocks[questionIdx]; }
   }
 
+  // The "after" goals paired to each "before" fact — hard-coded because
+  // this component is Reputation-specific and the goals come from the
+  // design decisions, not from user-facing text.
+  const goals = [
+    { lead: "Platform equity",          body: "Google, Apple, Bing, Facebook on equal footing" },
+    { lead: "5 clear sections",         body: "Grouped by what data means, not where it comes from" },
+    { lead: "Consistent structure",     body: "Cross-platform metrics separated from platform-specific ones" },
+  ];
+
+  const MONO_LABEL: React.CSSProperties = {
+    fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em",
+    textTransform: "uppercase", color: "var(--muted)", margin: 0, marginBottom: "18px",
+  };
+  const ITEM_LEAD: React.CSSProperties = {
+    fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500,
+    lineHeight: 1.4, letterSpacing: "-0.01em", color: "var(--text)", margin: 0,
+  };
+  const ITEM_BODY: React.CSSProperties = {
+    fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55,
+    letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0,
+  };
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      {blocks.map((block, i) => {
-        if (i === bulletIdx) {
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: EASE }}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "28px",
-              }}
-            >
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+
+      {/* ── Lede paragraph ─────────────────────────────────────── */}
+      {blocks[0] && <BodyText>{blocks[0]}</BodyText>}
+
+      {/* ── Insight heading — large editorial statement ─────────── */}
+      {insightIdx >= 0 && (
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: EASE }}
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "clamp(20px, 2.4vw, 26px)",
+            fontWeight: 300,
+            lineHeight: 1.4,
+            letterSpacing: "-0.025em",
+            color: "var(--text)",
+            margin: 0,
+          }}
+        >
+          {/* Keep only the first sentence — the "The real problem…" opener */}
+          {blocks[insightIdx].split(".")[0].trim()}.
+        </motion.p>
+      )}
+
+      {/* ── Before / After comparison card ──────────────────────── */}
+      {facts.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.65, ease: EASE }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "1px",
+            background: "var(--border)",
+            border: "1px solid var(--border)",
+            borderRadius: "16px",
+            overflow: "hidden",
+          }}
+        >
+          {/* LEFT — Before */}
+          <div style={{ background: "var(--bg)", padding: "24px 24px 28px" }}>
+            <p style={MONO_LABEL}>The existing dashboard</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               {facts.map((f, j) => (
-                <div
-                  key={j}
-                  style={{
-                    display: "flex",
-                    gap: "16px",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{j + 1}</span>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                    <p
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        lineHeight: 1.45,
-                        letterSpacing: "-0.01em",
-                        color: "var(--text)",
-                        margin: 0,
-                      }}
-                    >
-                      {f.lead}
-                    </p>
-                    {f.body && (
-                      <p
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: "13px",
-                          lineHeight: 1.6,
-                          letterSpacing: "-0.01em",
-                          color: "var(--muted2)",
-                          margin: 0,
-                        }}
-                      >
-                        {f.body}
-                      </p>
-                    )}
+                <div key={j} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: "var(--font-mono)", fontSize: "9px",
+                    color: "var(--muted)", background: "var(--surface2)",
+                    borderRadius: "999px", padding: "2px 8px",
+                    marginTop: "2px", flexShrink: 0,
+                  }}>
+                    {String(j + 1).padStart(2, "0")}
+                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                    <p style={ITEM_LEAD}>{f.lead}</p>
+                    {f.body && <p style={ITEM_BODY}>{f.body}</p>}
                   </div>
                 </div>
               ))}
-            </motion.div>
-          );
-        }
-        if (i === questionIdx) {
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.65, ease: EASE }}
-              style={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: "16px",
-                padding: "32px 28px 30px",
-                position: "relative",
-              }}
-            >
-              {qLabel && (
-                <p
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "var(--muted)",
-                    margin: 0,
-                    marginBottom: "14px",
-                  }}
-                >
-                  {qLabel.replace(/:$/, "")}
-                </p>
-              )}
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "14px",
-                  fontWeight: 400,
-                  lineHeight: 1.65,
-                  letterSpacing: "-0.01em",
-                  color: "var(--text)",
-                  margin: 0,
-                  maxWidth: "640px",
-                }}
-              >
-                {qBody}
-              </p>
-            </motion.div>
-          );
-        }
-        // Default: regular paragraph(s) — let BodyText handle this block.
-        return <BodyText key={i}>{block}</BodyText>;
-      })}
+            </div>
+          </div>
+
+          {/* RIGHT — Design goal */}
+          <div style={{ background: "var(--surface)", padding: "24px 24px 28px" }}>
+            <p style={MONO_LABEL}>Design goal</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {goals.map((g, j) => (
+                <div key={j} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: "var(--font-mono)", fontSize: "9px",
+                    color: "var(--muted)", background: "color-mix(in srgb, var(--accent-warm) 12%, transparent)",
+                    borderRadius: "999px", padding: "2px 8px",
+                    marginTop: "2px", flexShrink: 0,
+                  }}>
+                    {String(j + 1).padStart(2, "0")}
+                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                    <p style={ITEM_LEAD}>{g.lead}</p>
+                    <p style={ITEM_BODY}>{g.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ── Design question — left-accent callout ───────────────── */}
+      {questionIdx >= 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.05 }}
+          style={{
+            borderLeft: "2px solid var(--accent-warm)",
+            paddingLeft: "20px",
+          }}
+        >
+          {qLabel && (
+            <p style={{
+              fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em",
+              textTransform: "uppercase", color: "var(--muted)", margin: 0, marginBottom: "10px",
+            }}>
+              {qLabel.replace(/:$/, "")}
+            </p>
+          )}
+          <p style={{
+            fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
+            lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--text)",
+            margin: 0, maxWidth: "600px",
+          }}>
+            {qBody}
+          </p>
+        </motion.div>
+      )}
     </div>
   );
 }
@@ -4651,10 +4793,11 @@ function BulletList({ items }: { items: string[] }) {
             aria-hidden="true"
             style={{
               position: "absolute",
-              left: 0,
-              top: "0.55em",
-              width: "6px",
-              height: "1px",
+              left: "2px",
+              top: "0.6em",
+              width: "4px",
+              height: "4px",
+              borderRadius: "50%",
               background: "var(--muted)",
             }}
           />

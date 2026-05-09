@@ -87,7 +87,13 @@ export type CaseStudy = {
   }[];
   outcomesImage?: CaseStudyImage;
   outcomesImages?: CaseStudyImage[];
+  /** Optional video shown above the outcome text in the Result section. */
+  outcomesVideo?: string;
   outcomes: string[];
+  /** Optional epilogue note rendered below the decisions block without a
+      number pill or section label. Used for forward-looking context that
+      doesn't belong alongside shipped decisions (e.g. "next phase" work). */
+  epilogue?: string;
   insightDiagram?: "olap-vs-esm";
   researchEvidence?: string;
   approach?: string;
@@ -133,7 +139,16 @@ export type CaseStudy = {
   userSegments?: {
     intro?: string;
     closing?: string;
-    segments: { label: string; name: string; roles: string; body: string }[];
+    segments: {
+      label: string;
+      name: string;
+      roles: string;
+      body: string;
+      /** Optional core user question — displayed prominently above bullets. */
+      quote?: string;
+      /** Optional tight bullets replacing the prose body. */
+      bullets?: string[];
+    }[];
   };
   /** Optional contextCards. structured Context section with multiple
       titled cards. Each card may carry a lead paragraph and / or a
@@ -190,7 +205,14 @@ export type CaseStudy = {
   /** Optional app store links rendered in the Overview. */
   appStoreLinks?: { android?: string; ios?: string };
   /** Optional named context section rendered between Overview and Problem. */
-  contextSection?: { title: string; intro?: string; cards: { tag: string; body: string }[] };
+  contextSection?: {
+    title: string;
+    intro?: string;
+    /** Optional hero stat displayed large above the cards. */
+    stat?: string;
+    statLabel?: string;
+    cards: { tag: string; body: string }[];
+  };
   /** Optional display stat at the top of the Problem section. */
   problemStat?: { stat: string; label: string };
   /** Optional sub-heading rendered above the problemCards list. */
@@ -302,6 +324,7 @@ export const caseStudies: CaseStudy[] = [
       "Moving a critical finance workflow from Excel to the web. Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app.",
 
     contextVideo: "/images/planful/planful-product-video.mp4",
+    outcomesVideo: "/images/planful/planful-product-video.mp4",
     chromeUrl: "app.planful.com",
 
     /* Plain prose at the top of the Context section. no card, no
@@ -338,15 +361,16 @@ export const caseStudies: CaseStudy[] = [
        reading about how the workspace feeds the model. */
     insightDiagram: "olap-vs-esm",
 
-    /* Problem section. plain prose sets the scene, the Issues
-       card carries the screenshot, breakdown grid, and business
-       impact. Image is nested inside the card (not standalone). */
-    problem:
-      "Before ESM Tables existed, this workflow already had a tool. A key part of it lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug in for Excel, PowerPoint, and Word. It worked. but it came with real friction.",
+    /* Challenge section. Impact statement leads — the cost comes
+       first, then the breakdown explains why. */
+    problemStat: {
+      stat: "Only experts could use it. Everyone else waited.",
+      label: "The existing workflow ran through a Windows-only Excel plug-in that locked access to a handful of power users.",
+    },
 
-    /* Issues card. single card with the screenshot, breakdown
-       grid, and business-impact callout. Image sits inside the
-       card so the visual and the diagnosis stay together. */
+    problem:
+      "The tool was [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/) — a custom Excel plug-in. It worked, but it came with real access and usability friction.",
+
     problemCards: [
       {
         title: "Issues with the Excel Spotlight",
@@ -357,15 +381,10 @@ export const caseStudies: CaseStudy[] = [
         },
         breakdown: {
           points: [
-            "Windows only and desktop bound",
-            "Required manual install and regular updates",
-            "Couldn't be used on a Mac or in a browser",
-            "Hard to use and requires significant training cost. Demands high user cognition during the task",
+            "Windows only — no Mac, no browser",
+            "Manual install and frequent updates required",
+            "Steep learning curve, high cognitive load for non-experts",
           ],
-          impact: {
-            title: "What it cost the business",
-            text: "Only a small group of experts could confidently use it. Slower decisions and delayed forecasts. A knowledge bottleneck that didn't scale as the business grew.",
-          },
         },
       },
     ],
@@ -376,17 +395,28 @@ export const caseStudies: CaseStudy[] = [
           label: "User group 1",
           name: "Occasional contributor",
           roles: "Sales ops · Marketing · HR",
-          body: "Owns a slice of the company's data and updates it on a schedule. Not a finance person. Wants to be in and out fast, drop in numbers, see they look right, get back to the day job.",
+          body: "",
+          quote: "Just let me drop the numbers in and go.",
+          bullets: [
+            "Quarterly data owner — not a finance person",
+            "No appetite for training or complexity",
+            "Done when the numbers look right",
+          ],
         },
         {
           label: "User group 2",
           name: "Senior finance team",
           roles: "FP&A · Finance analysts",
-          body: "Maintains the structure itself, defining tables, writing the calculation logic, deciding when data is ready to publish. Years of Excel experience. Cares deeply about precision and won't accept a tool that takes away control.",
+          body: "",
+          quote: "I need the same control I have in Excel.",
+          bullets: [
+            "Owns the model: structure, logic, publish",
+            "Excel fluency is load-bearing — not optional",
+            "Any loss of precision is a dealbreaker",
+          ],
         },
       ],
-      closing:
-        "The challenge wasn't designing for one or the other. It was finding a level of clarity where the contributor could work alone without help, and the finance team didn't feel they'd lost any control.",
+      closing: "Speed for one. Control for the other. Both non-negotiable.",
     },
 
     contribution:
@@ -416,7 +446,7 @@ export const caseStudies: CaseStudy[] = [
       },
       /* 2. clearer copy + section walkthrough video. */
       {
-        title: "Drag, drop, or paste. no waiting for big files",
+        title: "Drag, drop, or paste. No waiting for big files",
         body: "Two ways in, both first class: drop a file, or paste straight from a spreadsheet. For files of 50,000+ rows, the first 1,000 rows preview instantly so users can start working before the full upload finishes.",
         videos: [
           {
@@ -430,7 +460,7 @@ export const caseStudies: CaseStudy[] = [
          key feature; ESM Tables lives inside it, sequenced fourth
          because it is not part of everyday modeling work. */
       {
-        title: "Inside Dynamic Planning. fourth in the list, not the daily driver",
+        title: "Inside Dynamic Planning. Fourth in the list, not the daily driver",
         body: "Dynamic Planning is the core modeling surface finance teams use every day. ESM Tables lives inside it as the fourth tab, not the first thing they open. No separate app to install, no new login. discovering the feature meant clicking one tab over from where they already were.",
         image: {
           src: "/images/planful/navigation.jpg",
@@ -495,21 +525,9 @@ export const caseStudies: CaseStudy[] = [
          The end-to-end story is now: load → transform → validate
          → publish → map (next decision). Publish-specific friction
          doesn't earn its own beat. */
-      /* 8. Data Maps: the next phase. No static image (the video covers
-         it). Title reframes this as a forward-looking project beat,
-         not a post-publish step. */
-      {
-        title: "The next phase of the project",
-        body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Data Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
-        videos: [
-          {
-            src: "/images/planful/maps.mp4",
-            label: "Data Maps",
-            caption: "Visual mapping from ESM columns to financial model dimensions.",
-          },
-        ],
-      },
     ],
+
+    epilogue: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Data Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
 
     users: [
       {
@@ -730,7 +748,48 @@ export const caseStudies: CaseStudy[] = [
     contextVideo: "/images/reputation/after.mp4",
 
     context:
-      "When you search \"coffee shop near me\" on your phone, the results come from platforms like Google Maps, Apple Maps, or Bing. Each platform shows business information: hours, phone number, photos, reviews. Enterprises with hundreds or thousands of locations need to manage how they appear across all these platforms and track which ones actually bring customers through the door. That's what Reputation does, and the Business Listing Performance dashboard is where customers go to see if their listings are working.",
+      "When someone searches \"coffee shop near me\", the results come from platforms like Google Maps, Apple Maps, or Bing — each surfacing your listing to potential customers.",
+
+    contextSection: {
+      title: "Why Apple Business Listings matter",
+      stat: "100M+",
+      statLabel: "US customers use Apple Maps daily",
+      cards: [
+        {
+          tag: "Apple Maps reach",
+          body: "The default navigation app on every iPhone, iPad, Mac, and CarPlay system. For any business with physical locations, it's a primary discovery channel alongside Google.",
+        },
+        {
+          tag: "What a listing drives",
+          body: "A Business Listing on Apple Maps determines whether a customer calls, gets directions, or visits a website. At enterprise scale — hundreds of locations — even marginal improvements compound across the entire portfolio.",
+        },
+        {
+          tag: "The visibility gap",
+          body: "Reputation partnered with Apple in 2023 to surface Apple Business Connect data. The dashboard hadn't caught up — leaving customers with no way to see how their Apple Maps listings were actually performing.",
+        },
+      ],
+    },
+
+    contextCards: [
+      {
+        title: "What each listing shows",
+        lead: "Every platform surfaces the same signals to people searching nearby.",
+        points: [
+          "Hours, address, and phone number",
+          "Photos and customer reviews",
+          "Direction requests and website clicks",
+        ],
+      },
+      {
+        title: "The enterprise challenge",
+        vsGrid: {
+          leftLabel: "What they manage",
+          leftDesc: "Hundreds or thousands of location listings across Google, Apple, Bing, and Facebook — each needing accurate, consistent information.",
+          rightLabel: "What they need to know",
+          rightDesc: "Which platforms actually drive calls, directions, and foot traffic — not just views. That's what the Business Listing Performance dashboard answers.",
+        },
+      },
+    ],
 
     contextImage: {
       src: "/images/reputation/thumbnail.png",
@@ -742,11 +801,11 @@ export const caseStudies: CaseStudy[] = [
 
     projectGoals: {
       business:
-        "Reputation partnered with Apple in 2023. The dashboard hadn't caught up.\n\n- Deliver on the Apple partnership promise by surfacing Apple Business Connect performance data\n- Close the blind spot for 100M+ iOS users who use Apple Maps as default navigation\n- Strengthen Reputation's position as the only platform with unified multi platform listing insights at enterprise scale",
+        "- Apple partnership since 2023 — the dashboard hadn't caught up\n- Surface Apple Business Connect data inside the dashboard\n- Remove the Apple Maps blind spot for 100M+ daily US users\n- Make Reputation the only platform with unified multi-platform listing analytics",
       ux:
-        "- Create platform equity when data capabilities vary dramatically (Google = rich behavioral data, Apple/Bing = basic engagement metrics)\n- Avoid making the dashboard feel like \"Google insights with other platforms tacked on\"\n- Prevent empty states that would make Apple integration look broken or incomplete\n- Enable unified cross platform performance view without sacrificing valuable platform specific insights",
+        "- Platform equity — Apple, Bing, and Facebook alongside Google, not as afterthoughts\n- No broken empty states when Apple suppresses data below its privacy threshold\n- Unified cross-platform view; platform-specific depth available on demand",
       user:
-        "- Marketing managers and local SEO specialists managing dozens to thousands of locations\n- Can customers find us on Apple Maps?\n- Which platform drives more direction requests, Google or Apple?\n- Why is our Austin location underperforming on Apple compared to Dallas?\n- Did updating our photos across platforms actually increase engagement?",
+        "- Marketing managers and local SEO teams managing hundreds of locations\n- Can customers find us on Apple Maps?\n- Which platform drives more direction requests — Google or Apple?\n- Why is our Austin location underperforming on Apple vs. Dallas?\n- Did updating photos across platforms actually move the needle?",
     },
 
     decisions: [
