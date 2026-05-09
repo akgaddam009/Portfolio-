@@ -821,7 +821,7 @@ export const caseStudies: CaseStudy[] = [
     team: "Product, Data Science, Content, Engineering, CEO",
     tags: ["Consumer Mobile", "Sports", "Information Architecture", "Mental Model Design", "Component Systems", "Content Strategy"],
     heroLabel: "Real Work",
-    confidential: false,
+    confidential: true,
 
     metrics: [
       { value: ">90% disengaged", label: "Before", body: "Below the 1st fold of the homepage, over 90% of users dropped off." },
@@ -968,8 +968,8 @@ export const caseStudies: CaseStudy[] = [
           title: "A dedicated tournament discovery block",
           body: "A scrollable row of all active tournaments, positioned in the below-fold section. Directly addresses the discovery gap the data surfaced: if a tournament wasn't in the first fold, users couldn't find it.",
           image: {
-            src: "/images/fancode/Tour%20Updates%20.jpg",
-            alt: "Tournament updates discovery block",
+            src: "/images/fancode/Tour%20Collection.jpg",
+            alt: "Tournament collection discovery block",
             caption: "Tournament discovery block",
           },
         },
