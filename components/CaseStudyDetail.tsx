@@ -1949,6 +1949,96 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </section>
             )}
 
+            {/* ── Key design decisions ──────────────────────────────────────────
+                Renders for all case studies that have a top-level cs.decisions
+                array (Planful, Apple, Astra, Zetwerk DC, Zetwerk BU).
+                FanCode uses cs.designApproach.decisions instead and is excluded
+                via the !cs.designApproach guard. ── */}
+            {cs.decisions && cs.decisions.length > 0 && !cs.designApproach && (
+              <CsSection label={cs.sectionLabels?.decisions ?? "Key design decisions"} id="decisions">
+                {cs.decisionsIntro && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 24px" }}
+                  >
+                    {cs.decisionsIntro}
+                  </motion.p>
+                )}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", gap: "44px" }}
+                >
+                  {cs.decisions.map((d, i) => (
+                    <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{d.body}</p>
+                        {/* Single image */}
+                        {d.image && (
+                          <div
+                            onClick={() => setLightboxSrc(d.image!.src)}
+                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
+                          >
+                            <img
+                              src={d.image.src}
+                              alt={d.image.alt}
+                              style={{ width: "100%", display: "block", borderRadius: "6px 6px 0 0" }}
+                            />
+                            {d.image.caption && (
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)", margin: 0, padding: "10px 14px 12px" }}>
+                                {d.image.caption}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                        {/* Videos */}
+                        {d.videos && d.videos.length > 0 && (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "6px" }}>
+                            {d.videos.map((v, vi) => (
+                              <div key={vi}>
+                                <VideoBlock src={v.src} appType={cs.type} chromeUrl={chromeUrl} />
+                                {v.caption && (
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)", margin: "8px 0 0" }}>
+                                    {v.caption}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {/* Multiple images */}
+                        {d.images && d.images.length > 0 && (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "6px" }}>
+                            {d.images.map((img, ii) => (
+                              <div
+                                key={ii}
+                                onClick={() => setLightboxSrc(img.src)}
+                                style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
+                              >
+                                <img src={img.src} alt={img.alt} style={{ width: "100%", display: "block", borderRadius: "6px 6px 0 0" }} />
+                                {img.caption && (
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)", margin: 0, padding: "10px 14px 12px" }}>
+                                    {img.caption}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
             {cs.decisions?.some(d => d.persona) && (
               <CsSection label="Who We Designed For">
                 <motion.div
