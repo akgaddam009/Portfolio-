@@ -28,9 +28,10 @@ export default function CaseStudyCard({
 
   if (featured) {
     return (
-      <Link href={href}>
+      <Link href={href} prefetch>
         <motion.div
           whileHover={{ y: -3 }}
+          whileTap={{ scale: 0.985 }}
           transition={{ type: "spring", stiffness: 280, damping: 28 }}
           style={{
             background: "var(--surface)",
@@ -138,9 +139,10 @@ export default function CaseStudyCard({
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.65, ease: EASE, delay: (index % 2) * 0.07 }}
     >
-      <Link href={href}>
+      <Link href={href} prefetch>
         <motion.div
           whileHover={{ y: -3 }}
+          whileTap={{ scale: 0.985 }}
           transition={{ type: "spring", stiffness: 280, damping: 28 }}
           style={{
             background: "var(--surface)",

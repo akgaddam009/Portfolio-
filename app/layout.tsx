@@ -3,6 +3,7 @@ import { Inter, DM_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/Cursor";
 import AnalyticsClient from "@/components/AnalyticsClient";
+import RouteProgress from "@/components/RouteProgress";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -106,6 +107,7 @@ export default function RootLayout({
         {/* Skip to main content — for keyboard/screen-reader users (CSS-only, no JS needed) */}
         <a href="#main-content" className="skip-nav">Skip to content</a>
         <Cursor />
+        <RouteProgress />
         {children}
         <AnalyticsClient />
       </body>
