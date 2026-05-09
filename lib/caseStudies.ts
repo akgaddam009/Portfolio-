@@ -1021,10 +1021,7 @@ export const caseStudies: CaseStudy[] = [
     contributionArtifacts: [
       "Cross functional research synthesis",
       "Strategy alignment with CEO + leadership",
-      "Reusable component system",
       "IA + content strategy",
-      "Staged A/B test plan",
-      "4-state stakeholder alignment workshop",
     ],
 
     outcomesCompare: {
