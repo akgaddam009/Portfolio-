@@ -3807,7 +3807,7 @@ function DesignApproachImage({ src, alt }: { src: string; alt: string }) {
         alt={alt}
         loading="lazy"
         onLoad={() => setLoaded(true)}
-        style={{ width: "100%", height: "auto", maxHeight: "520px", objectFit: "contain", display: "block", opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
+        style={{ width: "100%", height: "auto", maxHeight: "360px", objectFit: "contain", display: "block", opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
       />
     </div>
   );
