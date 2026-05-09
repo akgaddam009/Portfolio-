@@ -1414,9 +1414,22 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       >
                         <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "5px", flex: 1, minWidth: 0 }}>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{f.title}</p>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{f.body}</p>
+                            {f.image && (
+                              <div
+                                onClick={() => setLightboxSrc(f.image!.src)}
+                                style={{ marginTop: "10px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                              >
+                                <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
+                                {f.image.caption && (
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "8px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                                    {f.image.caption}
+                                  </p>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1528,7 +1541,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     can `transform: scale()` on mobile without leaving an empty
                     layout gap (transforms don't reflow surrounding content). */}
                 {cs.coreInsight?.beforeAfter && (
-                  <div className="cs-phone-pair-wrap" style={{ marginTop: "44px" }}>
+                  <div className="cs-phone-pair-wrap" style={{ marginTop: "44px", maxWidth: "680px", margin: "44px auto 0" }}>
                   <motion.div
                     initial={{ opacity: 0, y: 14 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1712,14 +1725,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {d.image && (
                           <div
                             onClick={() => setLightboxSrc(d.image!.src)}
-                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", maxWidth: d.image.compact ? "440px" : "100%" }}
+                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                           >
                             {/* Renders the image at its natural aspect ratio so both
                                 wide screenshots and tall flow diagrams display fully
-                                without crop. `compact` halves the max height for
-                                visuals that don't need full inline detail (e.g. the
-                                Tour Collection wireframe — lightbox shows full size). */}
-                            <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 180 : 360} />
+                                without crop. `compact` images are capped at a shorter
+                                max height and centered so they don't stretch to fill
+                                the full card width (lightbox shows full size). */}
+                            <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
                             {d.image.caption && (
                               <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
                                 {d.image.caption}
@@ -3790,7 +3803,7 @@ function CanvasBoardImage({ src, alt, aspectRatio }: { src: string; alt: string;
    fully. Shimmer placeholder while loading. Uses an effect to catch the
    case where the browser already has the image cached (onLoad never
    fires for those, so the ref check is the only reliable signal). */
-function DesignApproachImage({ src, alt, maxHeight = 360 }: { src: string; alt: string; maxHeight?: number }) {
+function DesignApproachImage({ src, alt, maxHeight = 360, compact = false }: { src: string; alt: string; maxHeight?: number; compact?: boolean }) {
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
@@ -3809,7 +3822,18 @@ function DesignApproachImage({ src, alt, maxHeight = 360 }: { src: string; alt: 
         alt={alt}
         loading="lazy"
         onLoad={() => setLoaded(true)}
-        style={{ width: "100%", height: "auto", maxHeight: `${maxHeight}px`, objectFit: "contain", display: "block", opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
+        style={{
+          /* compact images: natural size, centered, not stretched */
+          width: compact ? "auto" : "100%",
+          maxWidth: "100%",
+          height: "auto",
+          maxHeight: `${maxHeight}px`,
+          objectFit: "contain",
+          display: "block",
+          margin: compact ? "0 auto" : undefined,
+          opacity: loaded ? 1 : 0,
+          transition: "opacity 0.3s ease",
+        }}
       />
     </div>
   );

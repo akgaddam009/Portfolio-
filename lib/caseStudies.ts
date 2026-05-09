@@ -194,7 +194,7 @@ export type CaseStudy = {
   discoverySection?: {
     intro?: string;
     stats?: { value: string; label: string }[];
-    findings: { title: string; body: string }[];
+    findings: { title: string; body: string; image?: { src: string; alt: string; caption?: string } }[];
   };
   /** Optional Core Insight section rendered after Discovery & Research. */
   coreInsight?: {
@@ -900,10 +900,20 @@ export const caseStudies: CaseStudy[] = [
         {
           title: "The first-fold turf war",
           body: "Every squad competed for the same strip of real estate with no one accountable for the page's coherence.",
+          image: {
+            src: "/images/fancode/UX%20REVIEW%20CURRENT%20HOMEPAGE%20FIRST%20FOLD.jpg",
+            alt: "UX review of the current first fold",
+            caption: "UX review · first fold",
+          },
         },
         {
           title: "Content organised for operations, not users",
           body: "Sections were sorted by content type (news, scores, videos), not by what a sports fan actually looks for.",
+          image: {
+            src: "/images/fancode/OVERALL%20HOMEPAGE.jpg",
+            alt: "UX review of overall homepage",
+            caption: "UX review of overall homepage",
+          },
         },
         {
           title: "Tournament discovery was broken",
@@ -981,10 +991,8 @@ export const caseStudies: CaseStudy[] = [
       {
         section: "discovery" as const,
         images: [
-          { src: "/images/fancode/OVERALL%20HOMEPAGE.jpg",                                        alt: "Overall homepage",               caption: "01 · Overall homepage"         },
-          { src: "/images/fancode/UX%20REVIEW%20CURRENT%20HOMEPAGE%20FIRST%20FOLD.jpg",           alt: "UX review, current first fold",  caption: "02 · UX review, first fold"    },
-          { src: "/images/fancode/COMPETITIVE%20ANALYSIS.jpg",                                    alt: "Competitive analysis",           caption: "03 · Competitive analysis"     },
-          { src: "/images/fancode/COMPETITIVE%20ANALYSIS%20DEEP%20DIVE%20INTO%20THE%20PROBLEM.jpg", alt: "Competitive analysis deep dive", caption: "04 · Deep dive into the problem" },
+          { src: "/images/fancode/COMPETITIVE%20ANALYSIS.jpg",                                    alt: "Competitive analysis",           caption: "01 · Competitive analysis"     },
+          { src: "/images/fancode/COMPETITIVE%20ANALYSIS%20DEEP%20DIVE%20INTO%20THE%20PROBLEM.jpg", alt: "Competitive analysis deep dive", caption: "02 · Deep dive into the problem" },
         ],
       },
     ],
