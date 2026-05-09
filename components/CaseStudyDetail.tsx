@@ -2419,11 +2419,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </p>
                   </div>
                   {/* Supporting takeaways — scannable list */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
                     {cs.learnings.items.map((item, i) => (
                       <div
                         key={i}
-                        style={{ display: "flex", gap: "16px", alignItems: "flex-start", padding: "16px 24px", borderBottom: i < cs.learnings!.items.length - 1 ? "1px solid var(--border)" : "none" }}
+                        style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
                       >
                         <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 8px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{item}</p>
