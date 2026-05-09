@@ -836,6 +836,7 @@ export const caseStudies: CaseStudy[] = [
           src: "/images/reputation/before-after-image.jpg",
           alt: "Before and after of the Listings Performance dashboard: from a wall of 20+ Google-heavy widgets to a clear 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
           caption: "before: 20+ widgets, no grouping, Google-heavy. After: 5 clear sections, platform equity, Apple integrated.",
+          width: "70%",
         },
       },
       {
@@ -853,6 +854,7 @@ export const caseStudies: CaseStudy[] = [
       src: "/images/reputation/listings-performance.jpg",
       alt: "Final design of the Listings Performance dashboard: 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
       caption: "the final dashboard: 5 sections, platform equity, Apple integrated.",
+      width: "50%",
     },
 
     outcomes: [

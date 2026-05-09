@@ -2347,6 +2347,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         src={cs.outcomesImage.src}
                         alt={cs.outcomesImage.alt}
                         caption={cs.outcomesImage.caption}
+                        width={cs.outcomesImage.width}
                         onOpen={() => setLightboxSrc(cs.outcomesImage!.src)}
                       />
                     </motion.div>
@@ -4188,10 +4189,10 @@ function Shimmer({ height, borderRadius = "12px" }: { height: number | string; b
   );
 }
 
-function OutcomesImage({ src, alt, caption, onOpen }: { src: string; alt: string; caption?: string; onOpen?: () => void }) {
+function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt: string; caption?: string; width?: string; onOpen?: () => void }) {
   const [loaded, setLoaded] = useState(false);
   return (
-    <div onClick={onOpen} style={{ cursor: onOpen ? "zoom-in" : undefined }}>
+    <div onClick={onOpen} style={{ cursor: onOpen ? "zoom-in" : undefined, width: width ?? "100%" }}>
       <div style={{ position: "relative" }}>
         {!loaded && (
           <div style={{ position: "absolute", inset: 0 }}>
