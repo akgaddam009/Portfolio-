@@ -852,8 +852,6 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
 
-    outcomesIntro: "The final dashboard unified Apple, Google, Bing, and Facebook into a single view — 5 clear sections, consistent data treatment across platforms, and graceful handling of Apple's privacy suppression. Customers went from no Apple visibility to checking Apple Maps performance weekly.",
-
     outcomesImage: {
       src: "/images/reputation/listings-performance.jpg",
       alt: "Final design of the Listings Performance dashboard: 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
