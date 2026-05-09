@@ -829,8 +829,8 @@ export const caseStudies: CaseStudy[] = [
     confidential: true,
 
     metrics: [
-      { value: ">90% disengaged", label: "Before", body: "Below the 1st fold of the homepage, over 90% of users dropped off." },
-      { value: "15–20% lifted", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15–20% across user cohorts." },
+      { value: ">90% drop-off", label: "Before", body: "Below the 1st fold of the homepage, over 90% of users dropped off." },
+      { value: "15–20% more engagement", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15–20% across user cohorts." },
     ],
 
     summary: "",
