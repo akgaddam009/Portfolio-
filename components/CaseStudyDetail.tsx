@@ -1417,7 +1417,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             {f.image && (
                               <div
                                 onClick={() => setLightboxSrc(f.image!.src)}
-                                style={{ marginTop: "10px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                style={{ marginTop: "10px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
                               >
                                 <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
                                 {f.image.caption && (
@@ -1433,7 +1433,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   <div
                                     key={j}
                                     onClick={() => setLightboxSrc(img.src)}
-                                    style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                    style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
                                   >
                                     <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
                                     {img.caption && (
@@ -1740,7 +1740,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {d.image && (
                           <div
                             onClick={() => setLightboxSrc(d.image!.src)}
-                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                            style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", paddingTop: "12px" }}
                           >
                             {/* Renders the image at its natural aspect ratio so both
                                 wide screenshots and tall flow diagrams display fully
