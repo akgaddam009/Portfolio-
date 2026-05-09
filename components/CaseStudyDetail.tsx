@@ -1572,7 +1572,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     can `transform: scale()` on mobile without leaving an empty
                     layout gap (transforms don't reflow surrounding content). */}
                 {cs.coreInsight?.beforeAfter && (
-                  <div className="cs-phone-pair-wrap" style={{ maxWidth: "720px", marginTop: "80px", marginBottom: "24px" }}>
+                  <div className="cs-phone-pair-wrap" style={{ maxWidth: "720px", marginTop: "40px", marginBottom: "24px" }}>
                   <motion.div
                     initial={{ opacity: 0, y: 14 }}
                     whileInView={{ opacity: 1, y: 0 }}
