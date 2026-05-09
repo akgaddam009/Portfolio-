@@ -1717,7 +1717,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* ── Design Approach ── */}
             {cs.designApproach && (
-              <CsSection label="Design Approach">
+              <CsSection label="Design Exploration">
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -2416,7 +2416,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ maxWidth: "720px", display: "flex", flexDirection: "column", gap: "32px" }}
                 >
                   {/* North star — featured headline insight */}
-                  <div style={{ padding: "24px 24px", background: "var(--surface)", borderRadius: "12px", border: "1px solid var(--border)", borderTop: "2px solid var(--accent-warm)" }}>
+                  <div style={{ padding: "24px 24px", background: "var(--surface)", borderRadius: "12px", border: "1px solid var(--border)" }}>
                     <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--accent-warm)", margin: "0 0 12px" }}>North star</p>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 1.8vw, 22px)", fontWeight: 300, lineHeight: 1.5, letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
                       {cs.learnings.northStar}
