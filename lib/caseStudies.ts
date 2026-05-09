@@ -878,14 +878,14 @@ export const caseStudies: CaseStudy[] = [
       ],
       beforeAfter: {
         before: {
-          header: "How the homepage was organized",
+          header: "How the homepage was organised",
           items: [
             "News & updates",
             "Video",
             "Multi-sport blocks",
             "Sport specific blocks",
           ],
-          footnote: "Organized by content format",
+          footnote: "Organised by content format",
         },
         after: {
           header: "How users actually think",
@@ -941,7 +941,7 @@ export const caseStudies: CaseStudy[] = [
       principles: [
         {
           title: "Align to the user's mental model",
-          body: "Organize around sports, tournaments, teams, and players, not content formats. The page should feel built for how fans think, not how we operate internally.",
+          body: "Organise around sports, tournaments, teams, and players, not content formats. The page should feel built for how fans think, not how we operate internally.",
         },
         {
           title: "Design for scalability and daily content freshness",
@@ -1016,7 +1016,7 @@ export const caseStudies: CaseStudy[] = [
     },
 
     contribution:
-      "With multiple teams, product and design leadership, and the CEO all invested in the homepage, alignment was as important as the design work itself. I ran a structured workshop where I presented the redesign across four distinct user states, not just the final happy path:\n\n1. First-time user. How does the homepage feel on day one? What signals trust, surfaces the product's value immediately, and drives initial activation?\n2. Returning user, no personalization. The baseline experience for most users. Content led, editorially curated, always fresh through the Coverage Card system.\n3. Returning user, partial personalization. Continue Watching and Recommended for You active. The page begins to recognize you and reflect your history.\n4. Returning user, full personalization. The future state. Homepage fully tailored to followed sports, teams, and players. Built into the architecture today; shipped in a future sprint.\n\nPresenting all four states together did two things. It gave stakeholders a coherent long-term vision: this wasn't a one off visual refresh, it was a platform with room to grow. And it gave every team a clear picture of how their content would surface across each state, ==substantially reducing the internal competition for the first fold==. The system now had multiple discovery surfaces. There was room for everyone.",
+      "With multiple teams, product and design leadership, and the CEO all invested in the homepage, alignment was as important as the design work itself. I ran a structured workshop where I presented the redesign across four distinct user states, not just the final happy path:\n\n1. First-time user. How does the homepage feel on day one? What signals trust, surfaces the product's value immediately, and drives initial activation?\n2. Returning user, no personalisation. The baseline experience for most users. Content led, editorially curated, always fresh through the Coverage Card system.\n3. Returning user, partial personalisation. Continue Watching and Recommended for You active. The page begins to recognise you and reflect your history.\n4. Returning user, full personalisation. The future state. Homepage fully tailored to followed sports, teams, and players. Built into the architecture today; shipped in a future sprint.\n\nPresenting all four states together did two things. It gave stakeholders a coherent long-term vision: this wasn't a one off visual refresh, it was a platform with room to grow. And it gave every team a clear picture of how their content would surface across each state, ==substantially reducing the internal competition for the first fold==. The system now had multiple discovery surfaces. There was room for everyone.",
 
     contributionArtifacts: [
       "Cross functional research synthesis",
@@ -1057,10 +1057,10 @@ export const caseStudies: CaseStudy[] = [
         tags: ["Architecture", "Scalability"],
       },
       {
-        title: "Partial over full personalization",
+        title: "Partial over full personalisation",
         subtitle: "Scope decision",
         body: "Scoped to \"Continue Watching\" and \"Recommended For You.\" Follow buttons seed the system for future use.",
-        tags: ["Personalization", "Scoping"],
+        tags: ["Personalisation", "Scoping"],
       },
       {
         title: "The \"too simple\" challenge",
@@ -1071,7 +1071,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Stakeholder alignment",
         subtitle: "Alignment as a design deliverable",
-        body: "Mapped five personalization states in one workshop. Leadership saw the full picture. Approval followed.",
+        body: "Mapped five personalisation states in one workshop. Leadership saw the full picture. Approval followed.",
         tags: ["Workshop", "Alignment"],
       },
     ],
@@ -1079,19 +1079,19 @@ export const caseStudies: CaseStudy[] = [
     outcomes: [
       "Shipped through a staged A/B rollout: starting at sub-5% of users, validating week on week before expanding to 10%, then 25%, then full rollout. At each stage, the hypothesis was validated before proceeding.",
       "15–20% increase in engagement below the 1st fold of the homepage, sustained post-launch across cohorts. Directly tied to the structural changes in the redesign.",
-      "Homepage adoption broadened: the Coverage Cards, Tournaments Explorer, and partial personalization rails created multiple distinct entry points into the app's core experiences. The homepage stopped being a single gateway. It became a multi-lane on ramp into the product.",
+      "Homepage adoption broadened: the Coverage Cards, Tournaments Explorer, and partial personalisation rails created multiple distinct entry points into the app's core experiences. The homepage stopped being a single gateway. It became a multi-lane on ramp into the product.",
     ],
 
     learnings: {
       northStar: "The hardest design problems are rarely visual. They're structural.",
       items: [
-        "Reorganize around how users think, not what you can produce. The mental model shift was the real design decision; every visual choice followed from it.",
+        "Reorganise around how users think, not what you can produce. The mental model shift was the real design decision; every visual choice followed from it.",
         "Understand your constraints deeply, ship what moves the needle today, and design with tomorrow already in mind.",
       ],
     },
 
     reflection:
-      "The hypothesis was validated. Organizing content around user mental models (tournaments, teams, trending moments) rather than content formats gave users a reason to scroll. The lift was measurable, sustained, and tied directly to the structural changes.\n\nWhat I'd do differently: instrument the team-level signals from day one. The Coverage Cards captured interest at the surface, but I never measured whether Karan-shaped users (the fantasy player who defaulted to Cricbuzz) opened the competitor less after the redesign. That was the metric the brief actually asked for.\n\nFollow-up work the foundation made possible: a personalization engine running on actual behavior, sport-level customisation as cricket only stops being the constraint, dynamic content ranking rather than static, and ongoing A/B tests on layout patterns to keep the system learning.",
+      "The hypothesis was validated. Organising content around user mental models (tournaments, teams, trending moments) rather than content formats gave users a reason to scroll. The lift was measurable, sustained, and tied directly to the structural changes.\n\nWhat I'd do differently: instrument the team-level signals from day one. The Coverage Cards captured interest at the surface, but I never measured whether Karan-shaped users (the fantasy player who defaulted to Cricbuzz) opened the competitor less after the redesign. That was the metric the brief actually asked for.\n\nFollow-up work the foundation made possible: a personalisation engine running on actual behaviour, sport-level customisation as cricket only stops being the constraint, dynamic content ranking rather than static, and ongoing A/B tests on layout patterns to keep the system learning.",
   },
   {
     slug: "zetwerk-dc",
