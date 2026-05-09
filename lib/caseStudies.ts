@@ -957,6 +957,11 @@ export const caseStudies: CaseStudy[] = [
         {
           title: "A dedicated tournament discovery block",
           body: "A scrollable row of all active tournaments, positioned in the below-fold section. Directly addresses the discovery gap the data surfaced: if a tournament wasn't in the first fold, users couldn't find it.",
+          image: {
+            src: "/images/fancode/Tour%20Updates%20.jpg",
+            alt: "Tournament updates discovery block",
+            caption: "Tournament discovery block",
+          },
         },
       ],
     },

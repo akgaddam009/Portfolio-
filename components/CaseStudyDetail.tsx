@@ -1714,7 +1714,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             onClick={() => setLightboxSrc(d.image!.src)}
                             style={{ marginTop: "6px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in", maxWidth: "100%" }}
                           >
-                            <CanvasBoardImage src={d.image.src} alt={d.image.alt} aspectRatio="16/9" />
+                            {/* Renders the image at its natural aspect ratio so both
+                                wide screenshots (Tour Updates ~2.7:1) and tall flow
+                                diagrams (Seamless ~1:3) display fully without crop. */}
+                            <DesignApproachImage src={d.image.src} alt={d.image.alt} />
                             {d.image.caption && (
                               <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
                                 {d.image.caption}
@@ -3774,6 +3777,37 @@ function CanvasBoardImage({ src, alt, aspectRatio }: { src: string; alt: string;
         loading="lazy"
         onLoad={() => setLoaded(true)}
         style={{ width: "100%", height: "100%", display: "block", objectFit: "cover", opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
+      />
+    </div>
+  );
+}
+
+/* Inline image inside a Design Approach decision card. Unlike the canvas
+   board (fixed 16/9 / 3/4 ratios), this renders at the image's natural
+   aspect ratio with a max height so wide and tall images both display
+   fully. Shimmer placeholder while loading. Uses an effect to catch the
+   case where the browser already has the image cached (onLoad never
+   fires for those, so the ref check is the only reliable signal). */
+function DesignApproachImage({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    if (imgRef.current?.complete) setLoaded(true);
+  }, [src]);
+  return (
+    <div style={{ position: "relative", width: "100%", minHeight: loaded ? undefined : "120px" }}>
+      {!loaded && (
+        <div style={{ position: "absolute", inset: 0 }}>
+          <Shimmer height="100%" borderRadius="0" />
+        </div>
+      )}
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        style={{ width: "100%", height: "auto", maxHeight: "520px", objectFit: "contain", display: "block", opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
       />
     </div>
   );
