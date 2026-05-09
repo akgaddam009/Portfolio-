@@ -977,7 +977,7 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           title: "Deep linking throughout and personalisation for new and returning users",
-          body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination. The same architecture supports personalised rails (Continue Watching, Recommended For You) that adapt for new versus returning users.",
+          body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination. The same architecture supports personalised rails (Continue Watching, Recommended For You) that adapt for new versus returning users. The IA and content strategy underpinning this ensured every section had a clear ownership, a content type, and a hierarchy — so the page scaled without becoming chaotic.",
           image: {
             src: "/images/fancode/NEW%20HOMEPAGE%20CONCEPT%20DESIGN_FIRST%20TIME%20USERS%20AND%20RETURN%20USERS%20WITH%20HOMEPAGE%20PERSONALISATION%20IDEAS.jpg",
             alt: "Concept design, personalisation states for first-time and returning users",
