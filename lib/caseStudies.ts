@@ -817,7 +817,7 @@ export const caseStudies: CaseStudy[] = [
     number: "06",
     title: "Rethinking the Homepage of India's premier sports app",
     titleHighlights: { "Homepage": "indigo" },
-    subtitle: "How a mental-model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15–20%.",
+    subtitle: "How a mental model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15–20%.",
     cardImpact: "15–20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",
     company: "FanCode",
     type: "Consumer Mobile App · Sports & Streaming",
@@ -873,7 +873,7 @@ export const caseStudies: CaseStudy[] = [
     coreInsight: {
       heading: "The mental model shift",
       body: [
-        "Every research signal converged on one root cause: the homepage was organized by content format: news, video, multi-sport blocks, sport-specific blocks. But users don't follow content. They follow tournaments, teams, and players.",
+        "Every research signal converged on one root cause: the homepage was organized by content format: news, video, multi-sport blocks, sport specific blocks. But users don't follow content. They follow tournaments, teams, and players.",
         "A fan following the IPL doesn't think in formats. They think in one question: show me everything about IPL right now. The new homepage had to mirror that, not the editorial workflow behind it.",
       ],
       beforeAfter: {
@@ -883,7 +883,7 @@ export const caseStudies: CaseStudy[] = [
             "News & updates",
             "Video",
             "Multi-sport blocks",
-            "Sport-specific blocks",
+            "Sport specific blocks",
           ],
           footnote: "Organized by content format",
         },
@@ -903,7 +903,7 @@ export const caseStudies: CaseStudy[] = [
       intro: "Inputs that shaped the strategy",
       findings: [
         {
-          title: "The first-fold turf war",
+          title: "The first fold turf war",
           body: "Every squad competed for the same strip of real estate with no one accountable for the page's coherence.",
           image: {
             src: "/images/fancode/UX%20REVIEW%20CURRENT%20HOMEPAGE%20FIRST%20FOLD.jpg",
@@ -926,7 +926,7 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           title: "The page felt stale",
-          body: "Some sections hadn't changed in weeks, a serious trust problem for a platform built on real-time sport.",
+          body: "Some sections hadn't changed in weeks, a serious trust problem for a platform built on real time sport.",
           images: [
             { src: "/images/fancode/COMPETITIVE%20ANALYSIS.jpg",                                      alt: "Competitive analysis",           caption: "Competitive analysis"         },
             { src: "/images/fancode/COMPETITIVE%20ANALYSIS%20DEEP%20DIVE%20INTO%20THE%20PROBLEM.jpg", alt: "Competitive analysis deep dive", caption: "Deep dive into the problem"   },
@@ -948,7 +948,7 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           title: "Create multiple journey entry points",
-          body: "Every section below the fold should deep-link into specific parts of the app. The homepage becomes a multi-lane launchpad, not a single gateway.",
+          body: "Every section below the fold should deep link into specific parts of the app. The homepage becomes a multi-lane launchpad, not a single gateway.",
         },
       ],
     },
@@ -985,7 +985,7 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           title: "A dedicated tournament discovery block",
-          body: "A scrollable row of all active tournaments, positioned in the below-fold section. Directly addresses the discovery gap the data surfaced: if a tournament wasn't in the first fold, users couldn't find it.",
+          body: "A scrollable row of all active tournaments, positioned in the below fold section. Directly addresses the discovery gap the data surfaced: if a tournament wasn't in the first fold, users couldn't find it.",
           image: {
             src: "/images/fancode/Tour%20Collection.jpg",
             alt: "Tournament collection discovery block",
@@ -999,26 +999,26 @@ export const caseStudies: CaseStudy[] = [
     canvasBoards: [],
 
     homepageLayout: {
-      intro: "The first fold remained unchanged. It was performing well and carried strong broadcast-rights value. Everything below it was restructured.",
+      intro: "The first fold remained unchanged. It was performing well and carried strong broadcast rights value. Everything below it was restructured.",
       firstFold: [
         { label: "Nudge cards + Live broadcast highlights" },
       ],
       belowFold: [
         { label: "Detailed coverage block (top live or upcoming story)", type: "content" },
         { label: "\"What's Hot Right Now\": trending sport/tournament component", type: "content" },
-        { label: "Contextual coverage card (e.g. IPL, team match-day, player story)", type: "content" },
+        { label: "Contextual coverage card (e.g. IPL, team match day, player story)", type: "content" },
         { label: "Pattern break: \"Quick Singles\", visual cricket snapshot", type: "break" },
         { label: "Contextual coverage card (continued)", type: "content" },
         { label: "Pattern break: Tournaments discovery browser", type: "break" },
-        { label: "Additional sport-specific blocks (football, motorsport, etc.)", type: "content" },
+        { label: "Additional sport specific blocks (football, motorsport, etc.)", type: "content" },
       ],
     },
 
     contribution:
-      "With multiple squads, product and design leadership, and the CEO all invested in the homepage, alignment was as important as the design work itself. I ran a structured workshop where I presented the redesign across four distinct user states, not just the final happy path:\n\n1. First-time user. How does the homepage feel on day one? What signals trust, surfaces the product's value immediately, and drives initial activation?\n2. Returning user, no personalization. The baseline experience for most users. Content-led, editorially curated, always fresh through the Coverage Card system.\n3. Returning user, partial personalization. Continue Watching and Recommended for You active. The page begins to recognize you and reflect your history.\n4. Returning user, full personalization. The future state. Homepage fully tailored to followed sports, teams, and players. Built into the architecture today; shipped in a future sprint.\n\nPresenting all four states together did two things. It gave stakeholders a coherent long-term vision: this wasn't a one-off visual refresh, it was a platform with room to grow. And it gave every squad a clear picture of how their content would surface across each state, ==substantially reducing the internal competition for the first fold==. The system now had multiple discovery surfaces. There was room for everyone.",
+      "With multiple squads, product and design leadership, and the CEO all invested in the homepage, alignment was as important as the design work itself. I ran a structured workshop where I presented the redesign across four distinct user states, not just the final happy path:\n\n1. First-time user. How does the homepage feel on day one? What signals trust, surfaces the product's value immediately, and drives initial activation?\n2. Returning user, no personalization. The baseline experience for most users. Content led, editorially curated, always fresh through the Coverage Card system.\n3. Returning user, partial personalization. Continue Watching and Recommended for You active. The page begins to recognize you and reflect your history.\n4. Returning user, full personalization. The future state. Homepage fully tailored to followed sports, teams, and players. Built into the architecture today; shipped in a future sprint.\n\nPresenting all four states together did two things. It gave stakeholders a coherent long-term vision: this wasn't a one off visual refresh, it was a platform with room to grow. And it gave every squad a clear picture of how their content would surface across each state, ==substantially reducing the internal competition for the first fold==. The system now had multiple discovery surfaces. There was room for everyone.",
 
     contributionArtifacts: [
-      "Cross-functional research synthesis",
+      "Cross functional research synthesis",
       "Strategy alignment with CEO + leadership",
       "Reusable component system",
       "IA + content strategy",
@@ -1038,12 +1038,12 @@ export const caseStudies: CaseStudy[] = [
 
     resultSection: {
       heading: "What the data showed",
-      intro: "The redesign was validated through a staged A/B rollout, starting with under 5% of users, monitoring engagement and retention metrics week-on-week, then expanding to 10%, and eventually rolling out to 100% of the user base as the numbers held.",
+      intro: "The redesign was validated through a staged A/B rollout, starting with under 5% of users, monitoring engagement and retention metrics week on week, then expanding to 10%, and eventually rolling out to 100% of the user base as the numbers held.",
       metrics: [
         { value: "15–20%", label: "lift in engagement below the first fold" },
         { icon: true, label: "homepage adoption: more users entering multiple app journeys from home" },
       ],
-      body: "The 15–20% improvement in below-the-fold engagement was significant not just as a number, but as a validation of the core hypothesis: that organizing content around user mental models, rather than internal content types, would give users a genuine reason to scroll. It did.",
+      body: "The 15–20% improvement in below the fold engagement was significant not just as a number, but as a validation of the core hypothesis: that organizing content around user mental models, rather than internal content types, would give users a genuine reason to scroll. It did.",
       rollout: [
         { value: "<5%", label: "Initial A/B test" },
         { value: "10%", label: "Expanded rollout" },
@@ -1053,7 +1053,7 @@ export const caseStudies: CaseStudy[] = [
 
     keyDecisions: [
       {
-        title: "Cricket-first, built to expand",
+        title: "Cricket first, built to expand",
         subtitle: "Architecture decision",
         body: "99% cricket audience. New sports slot in as content blocks, no structural rebuild needed.",
         tags: ["Architecture", "Scalability"],
@@ -1081,11 +1081,11 @@ export const caseStudies: CaseStudy[] = [
     outcomes: [
       "Shipped through a staged A/B rollout: starting at sub-5% of users, validating week on week before expanding to 10%, then 25%, then full rollout. At each stage, the hypothesis was validated before proceeding.",
       "15–20% increase in engagement below the 1st fold of the homepage, sustained post-launch across cohorts. Directly tied to the structural changes in the redesign.",
-      "Homepage adoption broadened: the Coverage Cards, Tournaments Explorer, and partial personalization rails created multiple distinct entry points into the app's core experiences. The homepage stopped being a single gateway. It became a multi-lane on-ramp into the product.",
+      "Homepage adoption broadened: the Coverage Cards, Tournaments Explorer, and partial personalization rails created multiple distinct entry points into the app's core experiences. The homepage stopped being a single gateway. It became a multi-lane on ramp into the product.",
     ],
 
     learnings: {
-      northStar: "The hardest design problems are rarely visual — they're structural.",
+      northStar: "The hardest design problems are rarely visual. They're structural.",
       items: [
         "Reorganize around how users think, not what you can produce. The mental model shift was the real design decision; every visual choice followed from it.",
         "Understand your constraints deeply, ship what moves the needle today, and design with tomorrow already in mind.",
@@ -1093,7 +1093,7 @@ export const caseStudies: CaseStudy[] = [
     },
 
     reflection:
-      "The hypothesis was validated. Organizing content around user mental models (tournaments, teams, trending moments) rather than content formats gave users a reason to scroll. The lift was measurable, sustained, and tied directly to the structural changes.\n\nWhat I'd do differently: instrument the team-level signals from day one. The Coverage Cards captured interest at the surface, but I never measured whether Karan-shaped users (the fantasy player who defaulted to Cricbuzz) opened the competitor less after the redesign. That was the metric the brief actually asked for.\n\nFollow-up work the foundation made possible: a personalization engine running on actual behavior, sport-level customisation as cricket-only stops being the constraint, dynamic content ranking rather than static, and ongoing A/B tests on layout patterns to keep the system learning.",
+      "The hypothesis was validated. Organizing content around user mental models (tournaments, teams, trending moments) rather than content formats gave users a reason to scroll. The lift was measurable, sustained, and tied directly to the structural changes.\n\nWhat I'd do differently: instrument the team-level signals from day one. The Coverage Cards captured interest at the surface, but I never measured whether Karan-shaped users (the fantasy player who defaulted to Cricbuzz) opened the competitor less after the redesign. That was the metric the brief actually asked for.\n\nFollow-up work the foundation made possible: a personalization engine running on actual behavior, sport-level customisation as cricket only stops being the constraint, dynamic content ranking rather than static, and ongoing A/B tests on layout patterns to keep the system learning.",
   },
   {
     slug: "zetwerk-dc",
