@@ -1421,7 +1421,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               >
                                 <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
                                 {f.image.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", textAlign: "center" }}>
                                     {f.image.caption}
                                   </p>
                                 )}
@@ -1437,7 +1437,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   >
                                     <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
                                     {img.caption && (
-                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", textAlign: "center" }}>
                                         {img.caption}
                                       </p>
                                     )}
@@ -1749,7 +1749,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                 the full card width (lightbox shows full size). */}
                             <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
                             {d.image.caption && (
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "10px 14px", textAlign: "center" }}>
                                 {d.image.caption}
                               </p>
                             )}
