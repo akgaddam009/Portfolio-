@@ -2111,6 +2111,25 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     transition={{ duration: 0.65, ease: EASE }}
                     style={{ display: "flex", flexDirection: "column", gap: "32px" }}
                   >
+                    {/* Rollout progression — shown first: process before outcome */}
+                    {cs.resultSection.rollout && cs.resultSection.rollout.length > 0 && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>Rollout</p>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1px", background: "var(--border)", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}>
+                          {cs.resultSection.rollout.map((r, i) => (
+                            <div key={i} style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: "6px", background: "var(--bg)" }}>
+                              <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2.2vw, 26px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text)" }}>
+                                {r.value}
+                              </span>
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>
+                                {r.label}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Primary metric tiles */}
                     <div style={{ display: "grid", gridTemplateColumns: `repeat(${cs.resultSection.metrics.length}, 1fr)`, gap: "1px", background: "var(--border)", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}>
                       {cs.resultSection.metrics.map((m, i) => (
@@ -2136,23 +2155,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0, maxWidth: "640px" }}>
                       {cs.resultSection.body}
                     </p>
-
-                    {/* Rollout progression — mono eyebrow + number */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>Rollout</p>
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1px", background: "var(--border)", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}>
-                        {cs.resultSection.rollout?.map((r, i) => (
-                          <div key={i} style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: "6px", background: "var(--bg)" }}>
-                            <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2.2vw, 26px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text)" }}>
-                              {r.value}
-                            </span>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>
-                              {r.label}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </motion.div>
                 )}
 
