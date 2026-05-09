@@ -2537,8 +2537,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 )}
 
 
-                {/* Outcomes — planful-esm-tables, Zetwerk BU, and FanCode have their own custom blocks above */}
-                {cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && cs.slug !== "fancode-homepage" && (() => {
+                {/* Outcomes — planful-esm-tables, Zetwerk BU, FanCode, and apple-business-listings have their own custom blocks above */}
+                {cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && cs.slug !== "fancode-homepage" && cs.slug !== "apple-business-listings" && (() => {
                   /* Single-outcome treatment — promote the stat to a hero
                      stat block instead of an "01" numbered row. Triggers
                      when there's exactly one outcome AND it starts with a
