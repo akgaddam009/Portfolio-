@@ -360,7 +360,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               <motion.div variants={fadeUp} style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
                 {cs.tags.map(tag => (
-                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "8px" }}>
+                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "8px" }}>
                     {tag}
                   </span>
                 ))}
@@ -1322,7 +1322,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             { n: "3", text: "It lacks a sense of separation — it's hard to focus on content pieces on the homepage." },
                           ].map(item => (
                             <div key={item.n} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--muted)", letterSpacing: "0.06em", minWidth: "16px", paddingTop: "1px", lineHeight: 1.5 }}>{item.n}.</span>
+                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--muted)", letterSpacing: "0.08em", minWidth: "16px", paddingTop: "1px", lineHeight: 1.5 }}>{item.n}.</span>
                               <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", color: "var(--muted2)", lineHeight: 1.6, letterSpacing: "-0.01em" }}>{item.text}</p>
                             </div>
                           ))}
@@ -1621,7 +1621,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <div style={{ width: "36px", height: "3px", background: "var(--border)", borderRadius: "2px" }} />
                         </div>
                       </div>
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "195px" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "195px" }}>
                         {cs.coreInsight.beforeAfter.before.footnote}
                       </p>
                     </div>
@@ -1673,7 +1673,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <div style={{ width: "36px", height: "3px", background: "var(--border)", borderRadius: "2px" }} />
                         </div>
                       </div>
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "195px" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "195px" }}>
                         {cs.coreInsight.beforeAfter.after.footnote}
                       </p>
                     </div>
@@ -1917,11 +1917,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(14px, 1.3vw, 15px)", fontWeight: 500, color: "var(--text)", lineHeight: 1.3 }}>{d.title}</span>
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>{d.subtitle}</span>
                         </div>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300, color: "var(--muted2)", lineHeight: 1.65, margin: 0 }}>{d.body}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--muted2)", lineHeight: 1.65, margin: 0 }}>{d.body}</p>
                       </div>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
                         {d.tags.map((tag, ti) => (
-                          <span key={ti} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", borderRadius: "100px", padding: "3px 9px" }}>{tag}</span>
+                          <span key={ti} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", borderRadius: "100px", padding: "3px 9px" }}>{tag}</span>
                         ))}
                       </div>
                     </div>
@@ -1985,7 +1985,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <span style={{
                           fontFamily: "var(--font-mono)",
                           fontSize: "9px",
-                          letterSpacing: "0.06em",
+                          letterSpacing: "0.08em",
                           color: "var(--muted)",
                           background: "var(--bg)",
                           border: "1px solid var(--border)",
@@ -2425,7 +2425,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     <div style={{ paddingTop: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
                       {cs.outcomes.map((outcome, i) => (
                         <div key={i} style={{ display: "grid", gridTemplateColumns: "20px 1fr", gap: "10px", alignItems: "start" }}>
-                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--border)", paddingTop: "3px" }}>
+                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--border)", paddingTop: "3px" }}>
                             {String(i + 1).padStart(2, "0")}
                           </p>
                           <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
@@ -2589,7 +2589,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
                       style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: "12px", alignItems: "start" }}
                     >
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--border)", paddingTop: "3px" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--border)", paddingTop: "3px" }}>
                         {String(i + 1).padStart(2, "0")}
                       </p>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
@@ -2690,7 +2690,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", background: "rgba(16,185,129,0.10)", border: "1px solid rgba(16,185,129,0.25)", borderRadius: "6px", padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: "5px" }}>
                               <Check size={11} strokeWidth={1.75} style={{ color: "rgb(16,185,129)", flexShrink: 0 }} />{optionA}
                             </span>
-                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--muted)" }}>vs</span>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)" }}>vs</span>
                             {/* Rejected option — muted */}
                             <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)", background: "var(--surface2)", borderRadius: "6px", padding: "4px 10px", textDecoration: "line-through", textDecorationColor: "var(--border)" }}>
                               {optionB}
@@ -3433,7 +3433,7 @@ function PersonaPreview({ cs }: { cs: CaseStudy }) {
             <span style={{
               fontFamily: "var(--font-mono)",
               fontSize: "9px",
-              letterSpacing: "0.06em",
+              letterSpacing: "0.08em",
               textTransform: "uppercase",
               color: "var(--muted)",
             }}>{p.role}</span>
@@ -4610,6 +4610,7 @@ const BODY_PARA_STYLE: React.CSSProperties = {
   fontSize: "14px",
   fontWeight: 400,
   lineHeight: 1.65,
+  letterSpacing: "-0.01em",
   color: "var(--muted2)",
   maxWidth: "580px",
 };
@@ -4702,7 +4703,7 @@ function LabeledList({ rows }: { rows: { label: string; value: string }[] }) {
           <span style={{
             fontFamily: "var(--font-mono)",
             fontSize: "10px",
-            letterSpacing: "0.06em",
+            letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: "var(--text)",
             whiteSpace: "nowrap",
