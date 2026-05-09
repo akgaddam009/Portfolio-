@@ -95,6 +95,11 @@ export type CaseStudy = {
   scrappedDirections?: { title: string; reason: string }[];
   reflection?: string;
   lesson?: string;
+  /** Structured learnings block. `northStar` is the headline insight rendered
+      large and featured; `items` are the supporting takeaways shown as a
+      scannable list below it. When present, replaces the plain `lesson` text
+      in the Learnings section for fancode-homepage. */
+  learnings?: { northStar: string; items: string[] };
   contribution?: string;
   contributionArtifacts?: string[];
   references?: { label: string; url: string }[];
@@ -1079,8 +1084,14 @@ export const caseStudies: CaseStudy[] = [
       "Homepage adoption broadened: the Coverage Cards, Tournaments Explorer, and partial personalization rails created multiple distinct entry points into the app's core experiences. The homepage stopped being a single gateway. It became a multi-lane on-ramp into the product.",
     ],
 
-    lesson:
-      "The hardest design problems are rarely visual; they're structural. Reorganizing the homepage around how users think, not what we could produce, was the real decision; everything visual followed. Content strategy, partial personalization, and evidence-based pushback all reinforced the same principle: understand your constraints deeply, ship what moves the needle today, and design with tomorrow already in mind.",
+    learnings: {
+      northStar: "The hardest design problems are rarely visual — they're structural.",
+      items: [
+        "Reorganize around how users think, not what you can produce. The mental model shift was the real design decision; every visual choice followed from it.",
+        "Push back with evidence. Content strategy and partial personalisation only landed because the research gave them credibility.",
+        "Understand your constraints deeply, ship what moves the needle today, and build with tomorrow already in mind.",
+      ],
+    },
 
     reflection:
       "The hypothesis was validated. Organizing content around user mental models (tournaments, teams, trending moments) rather than content formats gave users a reason to scroll. The lift was measurable, sustained, and tied directly to the structural changes.\n\nWhat I'd do differently: instrument the team-level signals from day one. The Coverage Cards captured interest at the surface, but I never measured whether Karan-shaped users (the fantasy player who defaulted to Cricbuzz) opened the competitor less after the redesign. That was the metric the brief actually asked for.\n\nFollow-up work the foundation made possible: a personalization engine running on actual behavior, sport-level customisation as cricket-only stops being the constraint, dynamic content ranking rather than static, and ongoing A/B tests on layout patterns to keep the system learning.",

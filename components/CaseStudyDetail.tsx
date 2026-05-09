@@ -2406,17 +2406,35 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             {/* ── Learnings — closing reflection. Currently scoped to
                 fancode-homepage; other case studies had this section
                 intentionally removed earlier in the design pass. ── */}
-            {cs.slug === "fancode-homepage" && cs.lesson && (
+            {cs.slug === "fancode-homepage" && cs.learnings && (
               <CsSection label="Learnings">
-                <motion.p
+                <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: EASE }}
-                  style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.6vw, 18px)", fontWeight: 300, lineHeight: 1.7, letterSpacing: "-0.015em", color: "var(--text)", margin: 0, maxWidth: "720px" }}
+                  style={{ maxWidth: "720px", display: "flex", flexDirection: "column", gap: "32px" }}
                 >
-                  {parseHighlights(cs.lesson)}
-                </motion.p>
+                  {/* North star — featured headline insight */}
+                  <div style={{ padding: "24px 28px", background: "var(--surface)", borderRadius: "12px", borderLeft: "3px solid var(--accent-warm)" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--accent-warm)", margin: "0 0 12px" }}>North star</p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 1.8vw, 22px)", fontWeight: 300, lineHeight: 1.5, letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
+                      {cs.learnings.northStar}
+                    </p>
+                  </div>
+                  {/* Supporting takeaways — scannable list */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}>
+                    {cs.learnings.items.map((item, i) => (
+                      <div
+                        key={i}
+                        style={{ display: "flex", gap: "16px", alignItems: "flex-start", padding: "16px 20px", borderBottom: i < cs.learnings!.items.length - 1 ? "1px solid var(--border)" : "none" }}
+                      >
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 8px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
               </CsSection>
             )}
 
