@@ -1430,6 +1430,24 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                 )}
                               </div>
                             )}
+                            {f.images && f.images.length > 0 && (
+                              <div style={{ marginTop: "10px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px" }}>
+                                {f.images.map((img, j) => (
+                                  <div
+                                    key={j}
+                                    onClick={() => setLightboxSrc(img.src)}
+                                    style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                  >
+                                    <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
+                                    {img.caption && (
+                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, padding: "8px 14px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                                        {img.caption}
+                                      </p>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>

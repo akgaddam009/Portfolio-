@@ -194,7 +194,7 @@ export type CaseStudy = {
   discoverySection?: {
     intro?: string;
     stats?: { value: string; label: string }[];
-    findings: { title: string; body: string; image?: { src: string; alt: string; caption?: string } }[];
+    findings: { title: string; body: string; image?: { src: string; alt: string; caption?: string }; images?: { src: string; alt: string; caption?: string }[] }[];
   };
   /** Optional Core Insight section rendered after Discovery & Research. */
   coreInsight?: {
@@ -922,6 +922,10 @@ export const caseStudies: CaseStudy[] = [
         {
           title: "The page felt stale",
           body: "Some sections hadn't changed in weeks, a serious trust problem for a platform built on real-time sport.",
+          images: [
+            { src: "/images/fancode/COMPETITIVE%20ANALYSIS.jpg",                                      alt: "Competitive analysis",           caption: "Competitive analysis"         },
+            { src: "/images/fancode/COMPETITIVE%20ANALYSIS%20DEEP%20DIVE%20INTO%20THE%20PROBLEM.jpg", alt: "Competitive analysis deep dive", caption: "Deep dive into the problem"   },
+          ],
         },
       ],
     },
@@ -987,15 +991,7 @@ export const caseStudies: CaseStudy[] = [
       ],
     },
 
-    canvasBoards: [
-      {
-        section: "discovery" as const,
-        images: [
-          { src: "/images/fancode/COMPETITIVE%20ANALYSIS.jpg",                                    alt: "Competitive analysis",           caption: "01 · Competitive analysis"     },
-          { src: "/images/fancode/COMPETITIVE%20ANALYSIS%20DEEP%20DIVE%20INTO%20THE%20PROBLEM.jpg", alt: "Competitive analysis deep dive", caption: "02 · Deep dive into the problem" },
-        ],
-      },
-    ],
+    canvasBoards: [],
 
     homepageLayout: {
       intro: "The first fold remained unchanged. It was performing well and carried strong broadcast-rights value. Everything below it was restructured.",
