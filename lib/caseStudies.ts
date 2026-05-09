@@ -238,7 +238,7 @@ export type CaseStudy = {
     intro: string;
     metrics: { value?: string; icon?: boolean; label: string }[];
     body: string;
-    rollout: { value: string; label: string }[];
+    rollout?: { value: string; label: string }[];
   };
   /** Optional Homepage Layout section with a phone mockup. */
   homepageLayout?: {
