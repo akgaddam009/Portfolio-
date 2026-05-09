@@ -940,6 +940,11 @@ export const caseStudies: CaseStudy[] = [
         {
           title: "The reusable contextual component",
           body: "Built a single Coverage Card that could be populated with any sport, tournament, team, or player story. The structural pattern was fixed; the content logic was configurable. This meant the page could feel fresh every day without requiring a design change.",
+          image: {
+            src: "/images/fancode/The%20reusable%20contextual%20component.jpg",
+            alt: "Reusable Coverage Card component, populated with multiple story types",
+            caption: "Reusable Coverage Card component",
+          },
         },
         {
           title: "Scroll rhythm: pattern, break, pattern",
