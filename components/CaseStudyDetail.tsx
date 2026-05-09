@@ -4190,7 +4190,7 @@ function Shimmer({ height, borderRadius = "12px" }: { height: number | string; b
 function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt: string; caption?: string; width?: string; onOpen?: () => void }) {
   const [loaded, setLoaded] = useState(false);
   return (
-    <div style={{ width: width ?? "100%", margin: width ? "0 auto" : undefined }}>
+    <div style={{ width: "100%" }}>
       <div
         onClick={onOpen}
         style={{
@@ -4203,7 +4203,7 @@ function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt:
         }}
       >
         {!loaded && (
-          <div style={{ position: "absolute", inset: "12px" }}>
+          <div style={{ position: "absolute", inset: "12px", width: width ?? "100%", margin: "0 auto" }}>
             <Shimmer height="100%" borderRadius="8px" />
           </div>
         )}
@@ -4214,10 +4214,11 @@ function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt:
           decoding="async"
           onLoad={() => setLoaded(true)}
           style={{
-            width: "100%",
+            width: width ?? "100%",
             display: "block",
             borderRadius: "8px",
             opacity: loaded ? 1 : 0,
+            margin: "0 auto",
           }}
         />
       </div>
