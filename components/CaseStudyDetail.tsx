@@ -2158,9 +2158,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
 
                     {/* Body paragraph */}
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0, maxWidth: "640px" }}>
-                      {cs.resultSection.body}
-                    </p>
+                    {cs.resultSection.body && (
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0, maxWidth: "640px" }}>
+                        {cs.resultSection.body}
+                      </p>
+                    )}
                   </motion.div>
                 )}
 

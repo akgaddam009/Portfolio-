@@ -1041,7 +1041,7 @@ export const caseStudies: CaseStudy[] = [
         { value: "15–20%", label: "lift in engagement below the first fold" },
         { icon: true, label: "homepage adoption: more users entering multiple app journeys from home" },
       ],
-      body: "The 15–20% improvement in below the fold engagement was significant not just as a number, but as a validation of the core hypothesis: that organizing content around user mental models, rather than internal content types, would give users a genuine reason to scroll. It did.",
+      body: "",
       rollout: [
         { value: "<5%", label: "Initial A/B test" },
         { value: "10%", label: "Expanded rollout" },
