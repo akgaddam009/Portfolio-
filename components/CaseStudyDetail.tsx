@@ -1405,13 +1405,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.65, ease: EASE }}
-                    style={{ border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
+                    style={{ display: "flex", flexDirection: "column", gap: "36px" }}
                   >
                     {cs.discoverySection.findings.map((f, i) => (
-                      <div
-                        key={i}
-                        style={{ padding: "20px 24px", borderBottom: i < cs.discoverySection!.findings.length - 2 ? "1px solid var(--border)" : "none" }}
-                      >
+                      <div key={i}>
                         <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
                           <div style={{ display: "flex", flexDirection: "column", gap: "5px", flex: 1, minWidth: 0 }}>
