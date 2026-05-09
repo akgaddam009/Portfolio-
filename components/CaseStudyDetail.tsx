@@ -255,7 +255,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             overflow: visible !important;
           }
           .cs-phone-pair {
-            gap: 22px !important; /* tighter gap on mobile so scaled pair fits content column */
+            gap: 10px !important; /* tighter gap on mobile so scaled pair fits content column */
             transform: scale(0.54) !important;
             transform-origin: top center !important;
           }
@@ -265,7 +265,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             height: 163px !important; /* 361px * 0.45 */
           }
           .cs-phone-pair {
-            gap: 16px !important;
+            gap: 8px !important;
             transform: scale(0.45) !important;
           }
         }
@@ -1410,7 +1410,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     {cs.discoverySection.findings.map((f, i) => (
                       <div
                         key={i}
-                        style={{ padding: "20px 24px", borderBottom: i < cs.discoverySection!.findings.length - 1 ? "1px solid var(--border)" : "none" }}
+                        style={{ padding: "20px 24px", borderBottom: i < cs.discoverySection!.findings.length - 2 ? "1px solid var(--border)" : "none" }}
                       >
                         <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
@@ -1554,6 +1554,19 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
                 {cs.slug === "zetwerk-dc" && <ZetwerkDualUserBlock />}
 
+                {/* second body para — above phones */}
+                {cs.coreInsight?.body[1] && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: EASE, delay: 0.05 }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "36px 0 0", borderLeft: "2px solid var(--accent-warm)", paddingLeft: "16px", maxWidth: "640px" }}
+                  >
+                    {parseHighlights(cs.coreInsight.body[1])}
+                  </motion.p>
+                )}
+
                 {/* ── Before / After phone mockup — homepageLayout style ──
                     Wrapped in `.cs-phone-pair-wrap` so the inner `.cs-phone-pair`
                     can `transform: scale()` on mobile without leaving an empty
@@ -1566,7 +1579,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.65, ease: EASE, delay: 0.1 }}
                     className="cs-phone-pair"
-                    style={{ display: "flex", gap: "54px", flexWrap: "nowrap", alignItems: "flex-start", padding: "12px 8px 4px", justifyContent: "center" }}
+                    style={{ display: "flex", gap: "16px", flexWrap: "nowrap", alignItems: "flex-start", padding: "12px 8px 4px", justifyContent: "center" }}
                   >
                     {/* BEFORE phone */}
                     <div style={{ display: "flex", flexDirection: "column", gap: "9px", flexShrink: 0 }}>
@@ -1657,19 +1670,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
                   </motion.div>
                   </div>
-                )}
-
-                {/* second body para — below phones */}
-                {cs.coreInsight?.body[1] && (
-                  <motion.p
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, ease: EASE, delay: 0.05 }}
-                    style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "36px 0 0", borderLeft: "2px solid var(--accent-warm)", paddingLeft: "16px", maxWidth: "640px" }}
-                  >
-                    {parseHighlights(cs.coreInsight.body[1])}
-                  </motion.p>
                 )}
 
                 {cs.insightImage && (
