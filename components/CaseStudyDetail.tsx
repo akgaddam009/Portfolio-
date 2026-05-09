@@ -2270,7 +2270,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, ease: EASE }}
                     className="cs-flex-tiles"
-                    style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden" }}
+                    style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
                   >
                     {/* Tile 1: Time on task */}
                     <div style={{ flex: 1, padding: "24px 24px 20px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
@@ -2505,6 +2505,35 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               </div>
             </CsSection>
+
+            {/* ── Lesson — closing reflection for non-FanCode case studies.
+                cs.lesson is a plain string; FanCode uses cs.learnings instead.
+                First paragraph gets the featured callout treatment (matches
+                FanCode's northStar card), additional paragraphs render as
+                standard body prose below it. ── */}
+            {cs.lesson && cs.slug !== "fancode-homepage" && (
+              <CsSection label={cs.sectionLabels?.lesson ?? "What I Learned"}>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ maxWidth: "720px", display: "flex", flexDirection: "column", gap: "20px" }}
+                >
+                  {cs.lesson.split("\n\n").map((para, i) => (
+                    i === 0 ? (
+                      <div key={i} style={{ padding: "24px", background: "var(--surface)", borderRadius: "12px", border: "1px solid var(--border)" }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(15px, 1.5vw, 17px)", fontWeight: 300, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
+                          {para}
+                        </p>
+                      </div>
+                    ) : (
+                      <BodyText key={i}>{para}</BodyText>
+                    )
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
 
             {/* ── Learnings — closing reflection. Currently scoped to
                 fancode-homepage; other case studies had this section
