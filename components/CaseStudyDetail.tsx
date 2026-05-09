@@ -255,16 +255,18 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             overflow: visible !important;
           }
           .cs-phone-pair {
-            transform: scale(0.62) !important;
+            gap: 32px !important; /* tighter gap on mobile so scaled pair fits viewport */
+            transform: scale(0.55) !important;
             transform-origin: top center !important;
           }
         }
         @media (max-width: 380px) {
           .cs-phone-pair-wrap {
-            height: 285px !important; /* 503px * 0.55 */
+            height: 250px !important;
           }
           .cs-phone-pair {
-            transform: scale(0.55) !important;
+            gap: 24px !important;
+            transform: scale(0.48) !important;
           }
         }
       `}</style>
@@ -1533,7 +1535,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.65, ease: EASE, delay: 0.1 }}
                     className="cs-phone-pair"
-                    style={{ display: "flex", gap: "32px", flexWrap: "nowrap", alignItems: "flex-start", padding: "12px 8px 4px", justifyContent: "center" }}
+                    style={{ display: "flex", gap: "72px", flexWrap: "nowrap", alignItems: "flex-start", padding: "12px 8px 4px", justifyContent: "center" }}
                   >
                     {/* BEFORE phone */}
                     <div style={{ display: "flex", flexDirection: "column", gap: "12px", flexShrink: 0 }}>
