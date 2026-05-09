@@ -2876,7 +2876,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      gap: "4px",
+                      gap: "6px",
                       padding: "8px 16px",
                       borderRadius: "8px",
                       background: "var(--text)",
@@ -2889,7 +2889,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       flexShrink: 0,
                     }}
                   >
-                    <span style={{ opacity: 0.6, fontSize: "11px" }}>←</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M19 12H5M11 6l-6 6 6 6" />
+                    </svg>
                     Previous
                   </Link>
                 ) : <div />}
@@ -2901,7 +2903,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      gap: "4px",
+                      gap: "6px",
                       padding: "8px 16px",
                       borderRadius: "8px",
                       background: "var(--text)",
@@ -2915,7 +2917,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     }}
                   >
                     Next
-                    <span style={{ opacity: 0.6, fontSize: "11px" }}>→</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
                   </Link>
                 ) : <div />}
               </motion.div>
