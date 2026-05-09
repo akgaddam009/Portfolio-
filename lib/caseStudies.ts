@@ -935,23 +935,6 @@ export const caseStudies: CaseStudy[] = [
       ],
     },
 
-    designStrategy: {
-      heading: "Three principles that guided every decision",
-      principles: [
-        {
-          title: "Align to the user's mental model",
-          body: "Organize around sports, tournaments, teams, and players, not content formats. The page should feel built for how fans think, not how we operate internally.",
-        },
-        {
-          title: "Design for scalability and daily content freshness",
-          body: "Build a reusable component that can be populated with any story. The structural pattern stays consistent; the content makes it feel new every day.",
-        },
-        {
-          title: "Create multiple journey entry points",
-          body: "Every section below the fold should deep link into specific parts of the app. The homepage becomes a multi-lane launchpad, not a single gateway.",
-        },
-      ],
-    },
 
     designApproach: {
       intro: "The redesign was built on four interconnected structural decisions. Each one addressed a specific failure mode that the discovery work had surfaced.",
