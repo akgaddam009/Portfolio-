@@ -2876,25 +2876,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      gap: "8px",
-                      height: "44px",
-                      padding: "0 16px",
-                      borderRadius: "12px",
-                      background: "var(--surface)",
-                      border: "1px solid var(--border)",
-                      boxShadow: "var(--card-shadow)",
-                      color: "var(--muted)",
+                      gap: "4px",
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      background: "var(--text)",
+                      color: "var(--bg)",
                       textDecoration: "none",
+                      fontFamily: "var(--font-body)",
+                      fontSize: "12px",
+                      fontWeight: 510,
+                      letterSpacing: "-0.01em",
                       flexShrink: 0,
-                      transition: "box-shadow 0.2s cubic-bezier(0.22,1,0.36,1)",
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase" }}>Previous</span>
+                    <span style={{ opacity: 0.6, fontSize: "11px" }}>←</span>
+                    Previous
                   </Link>
                 ) : <div />}
 
@@ -2905,25 +2901,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      gap: "8px",
-                      height: "44px",
-                      padding: "0 16px",
-                      borderRadius: "12px",
-                      background: "var(--surface)",
-                      border: "1px solid var(--border)",
-                      boxShadow: "var(--card-shadow)",
-                      color: "var(--muted)",
+                      gap: "4px",
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      background: "var(--text)",
+                      color: "var(--bg)",
                       textDecoration: "none",
+                      fontFamily: "var(--font-body)",
+                      fontSize: "12px",
+                      fontWeight: 510,
+                      letterSpacing: "-0.01em",
                       flexShrink: 0,
-                      transition: "box-shadow 0.2s cubic-bezier(0.22,1,0.36,1)",
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase" }}>Next</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <polyline points="9 6 15 12 9 18" />
-                    </svg>
+                    Next
+                    <span style={{ opacity: 0.6, fontSize: "11px" }}>→</span>
                   </Link>
                 ) : <div />}
               </motion.div>
