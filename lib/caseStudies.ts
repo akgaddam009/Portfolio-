@@ -904,7 +904,7 @@ export const caseStudies: CaseStudy[] = [
       findings: [
         {
           title: "The first fold turf war",
-          body: "Every squad competed for the same strip of real estate with no one accountable for the page's coherence.",
+          body: "Every team competed for the same strip of real estate with no one accountable for the page's coherence.",
           image: {
             src: "/images/fancode/UX%20REVIEW%20CURRENT%20HOMEPAGE%20FIRST%20FOLD.jpg",
             alt: "UX review of the current first fold",
@@ -1015,7 +1015,7 @@ export const caseStudies: CaseStudy[] = [
     },
 
     contribution:
-      "With multiple squads, product and design leadership, and the CEO all invested in the homepage, alignment was as important as the design work itself. I ran a structured workshop where I presented the redesign across four distinct user states, not just the final happy path:\n\n1. First-time user. How does the homepage feel on day one? What signals trust, surfaces the product's value immediately, and drives initial activation?\n2. Returning user, no personalization. The baseline experience for most users. Content led, editorially curated, always fresh through the Coverage Card system.\n3. Returning user, partial personalization. Continue Watching and Recommended for You active. The page begins to recognize you and reflect your history.\n4. Returning user, full personalization. The future state. Homepage fully tailored to followed sports, teams, and players. Built into the architecture today; shipped in a future sprint.\n\nPresenting all four states together did two things. It gave stakeholders a coherent long-term vision: this wasn't a one off visual refresh, it was a platform with room to grow. And it gave every squad a clear picture of how their content would surface across each state, ==substantially reducing the internal competition for the first fold==. The system now had multiple discovery surfaces. There was room for everyone.",
+      "With multiple teams, product and design leadership, and the CEO all invested in the homepage, alignment was as important as the design work itself. I ran a structured workshop where I presented the redesign across four distinct user states, not just the final happy path:\n\n1. First-time user. How does the homepage feel on day one? What signals trust, surfaces the product's value immediately, and drives initial activation?\n2. Returning user, no personalization. The baseline experience for most users. Content led, editorially curated, always fresh through the Coverage Card system.\n3. Returning user, partial personalization. Continue Watching and Recommended for You active. The page begins to recognize you and reflect your history.\n4. Returning user, full personalization. The future state. Homepage fully tailored to followed sports, teams, and players. Built into the architecture today; shipped in a future sprint.\n\nPresenting all four states together did two things. It gave stakeholders a coherent long-term vision: this wasn't a one off visual refresh, it was a platform with room to grow. And it gave every team a clear picture of how their content would surface across each state, ==substantially reducing the internal competition for the first fold==. The system now had multiple discovery surfaces. There was room for everyone.",
 
     contributionArtifacts: [
       "Cross functional research synthesis",
