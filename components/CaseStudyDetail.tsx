@@ -1163,14 +1163,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         gap: "20px",
                         background: "var(--surface)",
                         boxShadow: "var(--card-shadow)",
-                        position: "relative",
-                        overflow: "hidden",
                       }}
                     >
-                      {/* Aurora blobs */}
-                      <div className="aurora-blob aurora-blob-1" aria-hidden="true" />
-                      <div className="aurora-blob aurora-blob-2" aria-hidden="true" />
-                      <div className="aurora-blob aurora-blob-3" aria-hidden="true" />
                       {/* Lock icon */}
                       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--muted)" }}>
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>

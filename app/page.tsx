@@ -2017,51 +2017,39 @@ function ContactPanel() {
       <PanelHeader label="Contact" />
       <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
 
-        {/* Aurora headline card */}
-        <motion.div
+        {/* Headline. typography per Figma reference:
+            Inter 400 / 18px / line-height 30px / 0 tracking. */}
+        <motion.h2
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.13 }}
+          transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
           style={{
-            position: "relative",
-            overflow: "hidden",
-            borderRadius: "14px",
-            border: "1px solid var(--border)",
-            padding: "24px",
-            marginBottom: "20px",
-            background: "var(--surface)",
-          }}
-        >
-          {/* Aurora blobs */}
-          <div className="aurora-blob aurora-blob-1" aria-hidden="true" />
-          <div className="aurora-blob aurora-blob-2" aria-hidden="true" />
-          <div className="aurora-blob aurora-blob-3" aria-hidden="true" />
-
-          {/* Headline */}
-          <h2 style={{
             fontFamily: "var(--font-body)",
             fontSize: "20px",
             fontWeight: 500,
             letterSpacing: "-0.02em",
             lineHeight: 1.3,
             color: "var(--text)",
-            marginBottom: "10px",
-            position: "relative",
-          }}>
-            Let&apos;s create stories together
-          </h2>
+            marginBottom: "12px",
+          }}
+        >
+          Let&apos;s create stories together
+        </motion.h2>
 
-          {/* Subtext */}
-          <p style={{
+        {/* Subtext */}
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}
+          style={{
             fontFamily: "var(--font-body)", fontSize: "14px",
             lineHeight: 1.65, letterSpacing: "-0.01em",
             color: "var(--muted)", fontWeight: 400,
-            margin: 0,
-            position: "relative",
-          }}>
-            Open to senior IC and lead roles at teams building complex, human centred products. Especially in <InlineChip label="AI" tone="violet" scale="match" />{" "}<InlineChip label="Enterprise" tone="indigo" scale="match" />{" "}<InlineChip label="SaaS" tone="teal" scale="match" />{" "}<InlineChip label="Consumer Products" tone="emerald" scale="match" />
-          </p>
-        </motion.div>
+            marginBottom: "20px",
+          }}
+        >
+          Open to senior IC and lead roles at teams building complex, human centred products. Especially in <InlineChip label="AI" tone="violet" scale="match" />{" "}<InlineChip label="Enterprise" tone="indigo" scale="match" />{" "}<InlineChip label="SaaS" tone="teal" scale="match" />{" "}<InlineChip label="Consumer Products" tone="emerald" scale="match" />
+        </motion.p>
 
         {/* CTAs. always visible. marginBottom:24px gives mobile spacing
             before Skills marquee; on desktop the marquee's marginTop:auto
