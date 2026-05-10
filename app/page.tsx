@@ -329,7 +329,46 @@ function PanelHeader({ label }: { label: string }) {
 }
 
 /* ── Panel 1: About ── */
-/* ── Portrait: illustration by default, real photo on hover ── */
+/* ── Grayscale-to-colour portrait reveal ── */
+function PixelRevealPortrait({ src, alt }: { src: string; alt: string }) {
+  const [colorized, setColorized] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setColorized(true), 600);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "16px", overflow: "hidden" }}>
+      <img
+        src={src}
+        alt={alt}
+        style={{
+          position: "absolute", inset: 0,
+          width: "100%", height: "100%",
+          objectFit: "cover", objectPosition: "center top",
+          display: "block",
+          filter: colorized ? "grayscale(0%)" : "grayscale(100%)",
+          transition: "filter 1.2s cubic-bezier(0.22,1,0.36,1)",
+        }}
+      />
+    </div>
+  );
+}
+
+/* ── Portrait: pixel reveal on entry, parallax tilt on hover ── */
 function PortraitMagnify() {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [leaving, setLeaving] = useState(false);
@@ -339,9 +378,9 @@ function PortraitMagnify() {
     const el = containerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const nx = (e.clientX - rect.left) / rect.width  - 0.5; // -0.5 → 0.5
+    const nx = (e.clientX - rect.left) / rect.width  - 0.5;
     const ny = (e.clientY - rect.top)  / rect.height - 0.5;
-    setTilt({ x: nx * 14, y: -ny * 10 }); // rotateY, rotateX
+    setTilt({ x: nx * 14, y: -ny * 10 });
     setLeaving(false);
   };
 
@@ -360,8 +399,6 @@ function PortraitMagnify() {
         style={{
           position: "relative",
           width: "100%", height: "100%",
-          /* No cursor:pointer — portrait is decorative-interactive (parallax tilt only),
-             not clickable. Misleading affordance per UX guideline. */
           borderRadius: "16px",
           overflow: "hidden",
           transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
@@ -369,17 +406,7 @@ function PortraitMagnify() {
           willChange: "transform",
         }}
       >
-        {/* Portrait. single image, no hover swap */}
-        <img
-          src="/arun-gaddam.png"
-          alt="Arun Gaddam"
-          style={{
-            position: "absolute", inset: 0,
-            width: "100%", height: "100%",
-            objectFit: "cover", objectPosition: "center top",
-            display: "block",
-          }}
-        />
+        <PixelRevealPortrait src="/arun-gaddam.png" alt="Arun Gaddam" />
       </div>
     </div>
   );
@@ -1151,7 +1178,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2025.167, endYear: 2025.583,
     title: "Senior Product Designer", subtitle: "Planful Software", minHeight: 72,
-    dateLabel: "Mar 2025 · Aug 2025", impact: "Fintech", logoDomain: "planful.com",
+    dateLabel: "Mar 2025 — Aug 2025", impact: "Fintech", logoDomain: "planful.com",
     link: "https://planful.com/",
     description: "Led end-to-end design of two finance planning features, reducing training time ~30% and supporting migration of core finance workflows from legacy tools to a modern web interface.",
     highlights: [
@@ -1161,7 +1188,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2024.167, endYear: 2025.083,
     title: "Senior UX Designer", subtitle: "Reputation.com", minHeight: 72,
-    dateLabel: "Mar 2024 · Feb 2025", impact: "Enterprise SaaS", logoDomain: "reputation.com",
+    dateLabel: "Mar 2024 — Feb 2025", impact: "Enterprise SaaS", logoDomain: "reputation.com",
     link: "https://reputation.com/",
     description: "Led design across three core product verticals (Insights, Reporting, Business Listings, and Reviews), directly supporting primary revenue drivers and AI feature initiatives.",
     highlights: [
@@ -1173,7 +1200,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2022.25, endYear: 2023.833,
     title: "Senior Product Designer", subtitle: "Zetwerk",
-    dateLabel: "Apr 2022 · Nov 2023", impact: "Manufacturing startup", logoDomain: "zetwerk.com",
+    dateLabel: "Apr 2022 — Nov 2023", impact: "Manufacturing startup", logoDomain: "zetwerk.com",
     link: "https://www.zetwerk.com/",
     images: ["/images/career/zetwerk-team.jpg"],
     description: "Led product design initiatives for Zetwerk's Order Management System (OMS), improving workflows to support business operations during a ~6× revenue growth phase.",
@@ -1185,7 +1212,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2020.583, endYear: 2022.25,
     title: "Manager UX Designer", subtitle: "FanCode / Dream Sports",
-    dateLabel: "Aug 2020 · Apr 2022", impact: "B2C startup", logoDomain: "fancode.com",
+    dateLabel: "Aug 2020 — Apr 2022", impact: "B2C startup", logoDomain: "fancode.com",
     link: "https://play.google.com/store/apps/details?id=com.dream11sportsguru&hl=en_IN",
     images: ["/images/career/fancode-team.jpg"],
     description: "Owned UX for a core product initiative, designing multiple features that drove adoption, retention, and growth across a ~50M user base.",
@@ -1199,7 +1226,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2016.667, endYear: 2020.5,
     title: "UX Designer (Founder)", subtitle: "Quazire Consulting",
-    dateLabel: "Sep 2016 · Jul 2020", impact: "0→1 founder",
+    dateLabel: "Sep 2016 — Jul 2020", impact: "0→1 founder",
     description: "Founded and ran a boutique UX consultancy, designing 0→1 digital products across healthcare, HRIS, and fintech verticals for early-stage startups and SMEs.",
     highlights: [
       "Designed an award-winning suite of hospital applications, improving operational efficiency, patient management, and clinical decision-making",
@@ -1211,7 +1238,7 @@ const careerItems: CareerItem[] = [
   {
     type: "education", startYear: 2023.833, endYear: 2026.25,
     title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
-    dateLabel: "Nov 2023 · Present", impact: "Top 1% · 3K+ mins",
+    dateLabel: "Nov 2023 — Present", impact: "Top 1% · 3K+ mins",
     link: "https://adplist.org/",
     description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList, mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
     highlights: [
@@ -1223,13 +1250,13 @@ const careerItems: CareerItem[] = [
   {
     type: "education", startYear: 2023.75, endYear: 2025.083,
     title: "Product Management", subtitle: "IIT Guwahati · Accredian",
-    dateLabel: "Oct 2023 · Feb 2025", logoDomain: "accredian.com", minHeight: 72,
+    dateLabel: "Oct 2023 — Feb 2025", logoDomain: "accredian.com", minHeight: 72,
     description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati), focused on applying data, product strategy, and user-centric approaches across the product lifecycle. Covered customer research, analytics, product strategy, and experimentation, translating insights into product roadmaps, metrics, and iterative, data-informed decisions.",
   },
   {
     type: "education", startYear: 2020.917, endYear: 2021.333,
     title: "Program in UX Design", subtitle: "IIT Bombay",
-    dateLabel: "Dec 2020 · May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
+    dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
     description: "Program in User Experience Design from IDC School of Design, IIT Bombay, covering the end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation. Completed a hands-on, project-based curriculum including a field research project using contextual inquiry to uncover real-world user behaviours and translate insights into iterative design solutions.",
     images: ["/images/career/iitb-1.jpg", "/images/career/iitb-2.jpg"],
   },
@@ -1308,7 +1335,11 @@ function CareerPanel() {
 
   const NOW_Y = (CAL_END - 2026.25) * YEAR_PX + TOP_OFFSET; // y-position of the "Now" dot
 
-  const CARD_OVERLAP = 6; // px of overlap between adjacent cards
+  // Per-column overlap. Work column keeps a gentle 6 px overlap; the Other
+  // (education) column stacks essentially flush to match the Figma's tighter
+  // rhythm — see the layout-sync plan for details.
+  const CARD_OVERLAP_WORK = 6;
+  const CARD_OVERLAP_EDU  = 1;
 
   // Pre-compute stacked positions for work cards. slight negative gap
   const stackedWorkPositions = (() => {
@@ -1323,7 +1354,7 @@ function CareerPanel() {
       const prevBottom = computed[i - 1].top + computed[i - 1].height;
       const gap = computed[i].top - prevBottom;
       if (gap < 20) {
-        computed[i].top = prevBottom - CARD_OVERLAP; // overlap adjacent cards
+        computed[i].top = prevBottom - CARD_OVERLAP_WORK; // overlap adjacent cards
       } else if (gap < 0) {
         computed[i].top = prevBottom; // prevent full collision on distant cards
       }
@@ -1340,14 +1371,12 @@ function CareerPanel() {
       return { item, top: Math.max(rawTop, 0), height };
     });
     computed.sort((a, b) => a.top - b.top);
+    // Always pack flush: the Other column is decoupled from the time axis and
+    // mirrors the Figma's tight, uniform stack regardless of date gaps between
+    // cards (e.g. between Product Management and Program in UX Design).
     for (let i = 1; i < computed.length; i++) {
       const prevBottom = computed[i - 1].top + computed[i - 1].height;
-      const gap = computed[i].top - prevBottom;
-      if (gap < 20) {
-        computed[i].top = prevBottom - CARD_OVERLAP;
-      } else if (gap < 0) {
-        computed[i].top = prevBottom;
-      }
+      computed[i].top = prevBottom - CARD_OVERLAP_EDU;
     }
     return computed;
   })();
