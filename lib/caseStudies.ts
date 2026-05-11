@@ -285,7 +285,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "planful-esm-tables",
     number: "08",
-    title: "Moving a critical finance workflow from Excel to the web.",
+    title: "Moving a critical finance workflow from Excel to the web",
     titleHighlights: { "Excel": "amber", "the web": "indigo" },
     subtitle:
       "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",

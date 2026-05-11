@@ -1551,7 +1551,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   transition={{ duration: 0.65, ease: EASE }}
                   style={{ maxWidth: "720px" }}
                 >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "18px" }}>Core Insight</p>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "28px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>Core Insight</p>
                   {cs.coreInsight ? (
                     <>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 30px)", fontWeight: 300, lineHeight: 1.4, letterSpacing: "-0.025em", color: "var(--text)", margin: "0 0 18px" }}>
