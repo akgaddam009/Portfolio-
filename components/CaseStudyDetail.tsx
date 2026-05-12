@@ -2321,10 +2321,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {/* Prototype video / outcomes image — the polished result. */}
-            {(cs.outcomesImage || cs.prototypeVideo) && (
+            {(cs.outcomesImage || cs.prototypeVideo || cs.outcomesVideo) && (
               <CsSection label="Final Design" className="exec-hide">
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                  {/* Video renders first */}
+                  {/* outcomesVideo renders first (Planful) */}
+                  {cs.outcomesVideo && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.65, ease: EASE }}
+                    >
+                      <VideoBlock src={cs.outcomesVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                    </motion.div>
+                  )}
+                  {/* prototypeVideo renders next */}
                   {cs.prototypeVideo && (
                     <motion.div
                       initial={{ opacity: 0, y: 12 }}
@@ -2396,26 +2407,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             <CsSection label={cs.sectionLabels?.outcomes ?? "Result"} id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-
-                {/* ── outcomesVideo — optional video above outcome content ── */}
-                {cs.outcomesVideo && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, ease: EASE }}
-                    style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)" }}
-                  >
-                    <video
-                      src={cs.outcomesVideo}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      style={{ width: "100%", display: "block" }}
-                    />
-                  </motion.div>
-                )}
 
                 {/* ── FanCode Homepage — structured result block ── */}
                 {cs.resultSection && (
