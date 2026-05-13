@@ -8,22 +8,22 @@ const principles = [
   {
     number: "01",
     title: "Problem First, Always",
-    body: "I don't start with screens. I start with the decision a user needs to make and work backwards from there. Every artifact — wireframe, prototype, spec — exists to answer a specific product question, not to demonstrate craft.",
+    body: "I don't start with screens. I start with the decision a user needs to make and work backwards from there. Every artifact (wireframe, prototype, spec) exists to answer a specific product question, not to demonstrate craft.",
   },
   {
     number: "02",
     title: "Systems Thinking at Every Level",
-    body: "Good enterprise design means thinking in systems — information architecture, state machines, edge cases, role-based access, error recovery. I design the whole surface, not just the happy path.",
+    body: "Good enterprise design means thinking in systems: information architecture, state machines, edge cases, role-based access, error recovery. I design the whole surface, not just the happy path.",
   },
   {
     number: "03",
     title: "AI-Augmented, Not AI-Replaced",
-    body: "I use Claude Code, ChatGPT, Cursor, and Replit to accelerate prototyping, research synthesis, and even production code. AI is a multiplier on craft — it doesn't replace judgment. I decide what to build; the tools help me build it faster.",
+    body: "I use Claude Code, ChatGPT, Cursor, and Replit to accelerate prototyping, research synthesis, and even production code. AI is a multiplier on craft, it doesn't replace judgment. I decide what to build; the tools help me build it faster.",
   },
   {
     number: "04",
     title: "Measure, Then Iterate",
-    body: "I define success metrics before design begins. Adoption rate, task completion time, decision accuracy — those are metrics. 'Improved UX' is not. I use Pendo, Mixpanel, and Looker to validate whether the design actually worked.",
+    body: "I define success metrics before design begins. Adoption rate, task completion time, decision accuracy: those are metrics. 'Improved UX' is not. I use Pendo, Mixpanel, and Looker to validate whether the design actually worked.",
   },
 ];
 

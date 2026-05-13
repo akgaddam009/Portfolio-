@@ -371,7 +371,7 @@ export const caseStudies: CaseStudy[] = [
     },
 
     problem:
-      "The tool was [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/) — a custom Excel plug-in. It worked, but it came with real access and usability friction.",
+      "The tool was [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom Excel plug-in. It worked, but it came with real access and usability friction.",
 
     problemCards: [
       {
@@ -383,7 +383,7 @@ export const caseStudies: CaseStudy[] = [
         },
         breakdown: {
           points: [
-            "Windows only — no Mac, no browser",
+            "Windows only. No Mac, no browser",
             "Manual install and frequent updates required",
             "Steep learning curve, high cognitive load for non-experts",
           ],
@@ -400,7 +400,7 @@ export const caseStudies: CaseStudy[] = [
           body: "",
           quote: "Just let me drop the numbers in and go.",
           bullets: [
-            "Quarterly data owner — not a finance person",
+            "Quarterly data owner, not a finance person",
             "No appetite for training or complexity",
             "Done when the numbers look right",
           ],
@@ -413,7 +413,7 @@ export const caseStudies: CaseStudy[] = [
           quote: "I need the same control I have in Excel.",
           bullets: [
             "Owns the model: structure, logic, publish",
-            "Excel fluency is load-bearing — not optional",
+            "Excel fluency is load-bearing, not optional",
             "Any loss of precision is a dealbreaker",
           ],
         },
@@ -750,7 +750,7 @@ export const caseStudies: CaseStudy[] = [
     contextVideo: "/images/reputation/after.mp4",
 
     context:
-      "When someone searches \"coffee shop near me\", the results come from platforms like Google Maps, Apple Maps, or Bing — each surfacing your listing to potential customers.",
+      "When someone searches \"coffee shop near me\", the results come from platforms like Google Maps, Apple Maps, or Bing, each surfacing your listing to potential customers.",
 
     contextSection: {
       title: "Why Apple Business Listings matter",
@@ -763,11 +763,11 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           tag: "What a listing drives",
-          body: "A Business Listing on Apple Maps determines whether a customer calls, gets directions, or visits a website. At enterprise scale — hundreds of locations — even marginal improvements compound across the entire portfolio.",
+          body: "A Business Listing on Apple Maps determines whether a customer calls, gets directions, or visits a website. At enterprise scale (hundreds of locations) even marginal improvements compound across the entire portfolio.",
         },
         {
           tag: "The visibility gap",
-          body: "Reputation partnered with Apple in 2023 to surface Apple Business Connect data. The dashboard hadn't caught up — leaving customers with no way to see how their Apple Maps listings were actually performing.",
+          body: "Reputation partnered with Apple in 2023 to surface Apple Business Connect data. The dashboard hadn't caught up, leaving customers with no way to see how their Apple Maps listings were actually performing.",
         },
       ],
     },
@@ -786,9 +786,9 @@ export const caseStudies: CaseStudy[] = [
         title: "The enterprise challenge",
         vsGrid: {
           leftLabel: "What they manage",
-          leftDesc: "Hundreds or thousands of location listings across Google, Apple, Bing, and Facebook — each needing accurate, consistent information.",
+          leftDesc: "Hundreds or thousands of location listings across Google, Apple, Bing, and Facebook, each needing accurate, consistent information.",
           rightLabel: "What they need to know",
-          rightDesc: "Which platforms actually drive calls, directions, and foot traffic — not just views. That's what the Business Listing Performance dashboard answers.",
+          rightDesc: "Which platforms actually drive calls, directions, and foot traffic, not just views. That's what the Business Listing Performance dashboard answers.",
         },
       },
     ],
@@ -803,11 +803,11 @@ export const caseStudies: CaseStudy[] = [
 
     projectGoals: {
       business:
-        "- Apple partnership since 2023 — the dashboard hadn't caught up\n- Surface Apple Business Connect data inside the dashboard\n- Remove the Apple Maps blind spot for 100M+ daily US users\n- Make Reputation the only platform with unified multi-platform listing analytics",
+        "- Apple partnership since 2023, the dashboard hadn't caught up\n- Surface Apple Business Connect data inside the dashboard\n- Remove the Apple Maps blind spot for 100M+ daily US users\n- Make Reputation the only platform with unified multi-platform listing analytics",
       ux:
-        "- Platform equity — Apple, Bing, and Facebook alongside Google, not as afterthoughts\n- No broken empty states when Apple suppresses data below its privacy threshold\n- Unified cross-platform view; platform-specific depth available on demand",
+        "- Platform equity: Apple, Bing, and Facebook alongside Google, not as afterthoughts\n- No broken empty states when Apple suppresses data below its privacy threshold\n- Unified cross-platform view; platform-specific depth available on demand",
       user:
-        "- Marketing managers and local SEO teams managing hundreds of locations\n- Can customers find us on Apple Maps?\n- Which platform drives more direction requests — Google or Apple?\n- Why is our Austin location underperforming on Apple vs. Dallas?\n- Did updating photos across platforms actually move the needle?",
+        "- Marketing managers and local SEO teams managing hundreds of locations\n- Can customers find us on Apple Maps?\n- Which platform drives more direction requests, Google or Apple?\n- Why is our Austin location underperforming on Apple vs. Dallas?\n- Did updating photos across platforms actually move the needle?",
     },
 
     decisions: [
@@ -889,8 +889,8 @@ export const caseStudies: CaseStudy[] = [
     number: "06",
     title: "Rethinking the Homepage of India's premier sports app",
     titleHighlights: { "Homepage": "indigo" },
-    subtitle: "How a mental model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15–20%.",
-    cardImpact: "15–20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",
+    subtitle: "How a mental model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15 - 20%.",
+    cardImpact: "15 - 20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",
     company: "FanCode",
     type: "Consumer Mobile App · Sports & Streaming",
     role: "UX Manager",
@@ -902,7 +902,7 @@ export const caseStudies: CaseStudy[] = [
 
     metrics: [
       { value: ">90% drop-off", label: "Before", body: "Below the 1st fold of the homepage, over 90% of users dropped off." },
-      { value: "↑ ~15–20%", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15–20% across user cohorts." },
+      { value: "↑ ~15 - 20%", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15 - 20% across user cohorts." },
     ],
 
     summary: "",
@@ -914,8 +914,8 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     appStoreLinks: {
-      android: "https://play.google.com/store/apps/details?id=com.fancode.android",
-      ios:     "https://apps.apple.com/in/app/fancode/id1461575910",
+      android: "https://play.google.com/store/apps/details?id=com.dream11sportsguru&hl=en_IN",
+      ios:     "https://apps.apple.com/in/app/fancode-live-cricket-scores/id1406379831",
     },
 
     contextSection: {
@@ -1049,7 +1049,7 @@ export const caseStudies: CaseStudy[] = [
         },
         {
           title: "Deep linking throughout and personalisation for new and returning users",
-          body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination. The same architecture supports personalised rails (Continue Watching, Recommended For You) that adapt for new versus returning users. The IA and content strategy underpinning this ensured every section had a clear ownership, a content type, and a hierarchy — so the page scaled without becoming chaotic.",
+          body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination. The same architecture supports personalised rails (Continue Watching, Recommended For You) that adapt for new versus returning users. The IA and content strategy underpinning this ensured every section had a clear ownership, a content type, and a hierarchy, so the page scaled without becoming chaotic.",
           image: {
             src: "/images/fancode/new-homepage-first-return-users.jpg",
             alt: "Concept design, personalisation states for first-time and returning users",
@@ -1110,7 +1110,7 @@ export const caseStudies: CaseStudy[] = [
       heading: "What the data showed",
       intro: "The redesign was validated through a staged A/B rollout, starting with under 5% of users, monitoring engagement and retention metrics week on week, then expanding to 10%, and eventually rolling out to 100% of the user base as the numbers held.",
       metrics: [
-        { value: "15–20%", label: "lift in engagement below the first fold" },
+        { value: "15 - 20%", label: "lift in engagement below the first fold" },
         { icon: true, label: "homepage adoption: more users entering multiple app journeys from home" },
       ],
       body: "",
@@ -1150,7 +1150,7 @@ export const caseStudies: CaseStudy[] = [
 
     outcomes: [
       "Shipped through a staged A/B rollout: starting at sub-5% of users, validating week on week before expanding to 10%, then 25%, then full rollout. At each stage, the hypothesis was validated before proceeding.",
-      "15–20% increase in engagement below the 1st fold of the homepage, sustained post launch across cohorts. Directly tied to the structural changes in the redesign.",
+      "15 - 20% increase in engagement below the 1st fold of the homepage, sustained post launch across cohorts. Directly tied to the structural changes in the redesign.",
       "Homepage adoption broadened: the Coverage Cards, Tournaments Explorer, and partial personalisation rails created multiple distinct entry points into the app's core experiences. The homepage stopped being a single gateway. It became a multi lane on ramp into the product.",
     ],
 

@@ -18,11 +18,11 @@ const item = {
 const infoCards = [
   {
     label: "Role",
-    value: "Senior Product Designer. I own the full design process — from discovery and strategy to final pixel.",
+    value: "Senior Product Designer. I own the full design process, from discovery and strategy to final pixel.",
   },
   {
     label: "Focus",
-    value: "Enterprise SaaS, B2B AI tools, and consumer products at scale — with user research as a core part of the process.",
+    value: "Enterprise SaaS, B2B AI tools, and consumer products at scale, with user research as a core part of the process.",
   },
   {
     label: "Experience",
@@ -75,7 +75,7 @@ export default function Hero() {
               maxWidth: "520px",
             }}
           >
-            I&apos;m based in Hyderabad, India with my wife and our son — figuring out the balance between designing products, catching up with AI, and raising a tiny human. I&apos;m learning a lot from both.
+            I&apos;m based in Hyderabad, India with my wife and our son, figuring out the balance between designing products, catching up with AI, and raising a tiny human. I&apos;m learning a lot from both.
           </motion.p>
 
           {/* Info grid — 2×2 + last spans full */}

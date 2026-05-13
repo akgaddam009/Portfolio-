@@ -27,7 +27,7 @@ export default function ContactCTA() {
             Have a hard problem?
           </h2>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "rgba(245,244,240,0.5)", lineHeight: 1.6, marginBottom: "28px", maxWidth: "380px" }}>
-            I&apos;m always happy to talk about product, design, or AI — whether it&apos;s a collaboration, a question, or just a conversation.
+            I&apos;m always happy to talk about product, design, or AI, whether it&apos;s a collaboration, a question, or just a conversation.
           </p>
 
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>

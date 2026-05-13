@@ -149,7 +149,7 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
 /* ── Floating panel menu (mobile only) ──
    Bottom-right FAB. Tap to expand a sheet listing all six panels.
    Auto-hides on scroll-down, reappears on scroll-up. Hidden via CSS
-   on desktop (≥641px) — desktop has its own dot-nav + arrows in HomeNav. */
+   on desktop (≥641px) -desktop has its own dot-nav + arrows in HomeNav. */
 function FloatingPanelMenu({
   activePanel,
   onSelect,
@@ -480,7 +480,7 @@ function AboutPanel() {
           I&apos;m hands on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
         </motion.p>
 
-        {/* Contact links — moved above Focus, no label. Touch-target safe
+        {/* Contact links -moved above Focus, no label. Touch-target safe
             (≥44px tall via 12px×16px padding + 12px text). */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
@@ -599,7 +599,7 @@ function AboutPanel() {
           ))}
         </div>
 
-        {/* Skills — marquee with Contact-panel pill style */}
+        {/* Skills -marquee with Contact-panel pill style */}
         {(() => {
           const skills = [
             "AI UX", "Vibe Coding",
@@ -631,7 +631,7 @@ function AboutPanel() {
                 <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
               </div>
 
-              {/* Marquee — overflow + edge fades + animated track */}
+              {/* Marquee -overflow + edge fades + animated track */}
               <div style={{ overflow: "hidden", position: "relative" }}>
                 <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
                 <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to left, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
@@ -996,7 +996,7 @@ function tagIcon(tag: string) {
   return LayoutGrid; // sensible fallback
 }
 
-/* Shared greyscale chip — icon + label, same mono style as before. */
+/* Shared greyscale chip -icon + label, same mono style as before. */
 function WorkChip({ label }: { label: string }) {
   const Icon = tagIcon(label);
   return (
@@ -1013,7 +1013,7 @@ function WorkChip({ label }: { label: string }) {
   );
 }
 
-/* Accent chip — tonal category badge (theme-aware). Stands out from the
+/* Accent chip -tonal category badge (theme-aware). Stands out from the
    standard greyscale WorkChip (e.g. "AI Experiments", "Coming soon"). */
 function AccentChip({ label, tone = "violet", icon: Icon }: {
   label: string;
@@ -1041,7 +1041,7 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
 function WorkPanel() {
   // Explicit display order. Only 4 cases shown in the public grid.
   // The 2 confidential cases (zetwerk-dc, zetwerk-bu-ecosystem) are
-  // accessible via direct URL only — share with recruiters as needed.
+  // accessible via direct URL only -share with recruiters as needed.
   const CARD_ORDER = [
     "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
   ];
@@ -1179,7 +1179,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2025.167, endYear: 2025.583,
     title: "Senior Product Designer", subtitle: "Planful Software", minHeight: 72,
-    dateLabel: "Mar 2025 — Aug 2025", impact: "Fintech", logoDomain: "planful.com",
+    dateLabel: "Mar 2025 - Aug 2025", impact: "Fintech", logoDomain: "planful.com",
     link: "https://planful.com/",
     description: "Led end-to-end design of two finance planning features, reducing training time ~30% and supporting migration of core finance workflows from legacy tools to a modern web interface.",
     highlights: [
@@ -1189,7 +1189,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2024.167, endYear: 2025.083,
     title: "Senior UX Designer", subtitle: "Reputation.com", minHeight: 72,
-    dateLabel: "Mar 2024 — Feb 2025", impact: "Enterprise SaaS", logoDomain: "reputation.com",
+    dateLabel: "Mar 2024 - Feb 2025", impact: "Enterprise SaaS", logoDomain: "reputation.com",
     link: "https://reputation.com/",
     description: "Led design across three core product verticals (Insights, Reporting, Business Listings, and Reviews), directly supporting primary revenue drivers and AI feature initiatives.",
     highlights: [
@@ -1201,7 +1201,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2022.25, endYear: 2023.833,
     title: "Senior Product Designer", subtitle: "Zetwerk",
-    dateLabel: "Apr 2022 — Nov 2023", impact: "Manufacturing startup", logoDomain: "zetwerk.com",
+    dateLabel: "Apr 2022 - Nov 2023", impact: "Manufacturing startup", logoDomain: "zetwerk.com",
     link: "https://www.zetwerk.com/",
     images: ["/images/career/zetwerk-team.jpg"],
     description: "Led product design initiatives for Zetwerk's Order Management System (OMS), improving workflows to support business operations during a ~6× revenue growth phase.",
@@ -1213,7 +1213,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2020.583, endYear: 2022.25,
     title: "Manager UX Designer", subtitle: "FanCode / Dream Sports",
-    dateLabel: "Aug 2020 — Apr 2022", impact: "B2C startup", logoDomain: "fancode.com",
+    dateLabel: "Aug 2020 - Apr 2022", impact: "B2C startup", logoDomain: "fancode.com",
     link: "https://play.google.com/store/apps/details?id=com.dream11sportsguru&hl=en_IN",
     images: ["/images/career/fancode-team.jpg"],
     description: "Owned UX for a core product initiative, designing multiple features that drove adoption, retention, and growth across a ~50M user base.",
@@ -1227,7 +1227,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2016.667, endYear: 2020.5,
     title: "UX Designer (Founder)", subtitle: "Quazire Consulting",
-    dateLabel: "Sep 2016 — Jul 2020", impact: "0→1 founder",
+    dateLabel: "Sep 2016 - Jul 2020", impact: "0→1 founder",
     description: "Founded and ran a boutique UX consultancy, designing 0→1 digital products across healthcare, HRIS, and fintech verticals for early-stage startups and SMEs.",
     highlights: [
       "Designed an award-winning suite of hospital applications, improving operational efficiency, patient management, and clinical decision-making",
@@ -1239,7 +1239,7 @@ const careerItems: CareerItem[] = [
   {
     type: "education", startYear: 2023.833, endYear: 2026.25,
     title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
-    dateLabel: "Nov 2023 — Present", impact: "Top 1% · 3K+ mins",
+    dateLabel: "Nov 2023 - Present", impact: "Top 1% · 3K+ mins",
     link: "https://adplist.org/",
     description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList, mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
     highlights: [
@@ -1251,13 +1251,13 @@ const careerItems: CareerItem[] = [
   {
     type: "education", startYear: 2023.75, endYear: 2025.083,
     title: "Product Management", subtitle: "IIT Guwahati · Accredian",
-    dateLabel: "Oct 2023 — Feb 2025", logoDomain: "accredian.com", minHeight: 72,
+    dateLabel: "Oct 2023 - Feb 2025", logoDomain: "accredian.com", minHeight: 72,
     description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati), focused on applying data, product strategy, and user-centric approaches across the product lifecycle. Covered customer research, analytics, product strategy, and experimentation, translating insights into product roadmaps, metrics, and iterative, data-informed decisions.",
   },
   {
     type: "education", startYear: 2020.917, endYear: 2021.333,
     title: "Program in UX Design", subtitle: "IIT Bombay",
-    dateLabel: "Dec 2020 — May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
+    dateLabel: "Dec 2020 - May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
     description: "Program in User Experience Design from IDC School of Design, IIT Bombay, covering the end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation. Completed a hands-on, project-based curriculum including a field research project using contextual inquiry to uncover real-world user behaviours and translate insights into iterative design solutions.",
     images: ["/images/career/iitb-1.jpg", "/images/career/iitb-2.jpg"],
   },
@@ -1338,7 +1338,7 @@ function CareerPanel() {
 
   // Per-column overlap. Work column keeps a gentle 6 px overlap; the Other
   // (education) column stacks essentially flush to match the Figma's tighter
-  // rhythm — see the layout-sync plan for details.
+  // rhythm -see the layout-sync plan for details.
   const CARD_OVERLAP_WORK = 6;
   const CARD_OVERLAP_EDU  = 1;
 
@@ -1522,7 +1522,7 @@ function CareerPanel() {
                   </div>
                 )}
 
-                {/* Date label — role cards only */}
+                {/* Date label -role cards only */}
                 {item.dateLabel && !isEdu && (
                   <p style={{
                     fontFamily: "var(--font-body)", fontSize: "11px",
@@ -2220,7 +2220,7 @@ function ContactPanel() {
             color: "var(--muted)", lineHeight: 1.3,
           }}>
             <span style={{ opacity: 0.6 }}>Designed with </span>
-            {/* Flat heart. Single solid red, no gradient/shadow — reads cleanly
+            {/* Flat heart. Single solid red, no gradient/shadow -reads cleanly
                 in both light and dark themes without the muddy halo. */}
             <svg
               width="11"
@@ -2385,7 +2385,7 @@ export default function Home() {
     el.scrollBy({ left: dir * (current.offsetWidth + 8), behavior: "smooth" });
   }, [activePanel]);
 
-  /* Scroll directly to a panel by index — used by the mobile FAB menu.
+  /* Scroll directly to a panel by index -used by the mobile FAB menu.
      On desktop scrolls horizontally inside the panels container; on mobile
      uses scrollIntoView since panels are vertically stacked. */
   const scrollToPanel = useCallback((i: number) => {
@@ -2402,7 +2402,7 @@ export default function Home() {
     }
   }, []);
 
-  /* Mobile-only IntersectionObserver — tracks which panel is most in-view
+  /* Mobile-only IntersectionObserver -tracks which panel is most in-view
      and updates activePanel. The desktop horizontal scroll handler doesn't
      fire on mobile since the panels-container's overflow-y is visible. */
   useEffect(() => {
@@ -2490,7 +2490,7 @@ export default function Home() {
     <>
       <LoadingScreen visible={loading} />
       <HomeNav onPrev={() => scrollByPanel(-1)} onNext={() => scrollByPanel(1)} activePanel={activePanel} />
-      {/* Mobile-only floating panel menu — hidden ≥641px via CSS */}
+      {/* Mobile-only floating panel menu -hidden ≥641px via CSS */}
       <FloatingPanelMenu activePanel={activePanel} onSelect={scrollToPanel} />
 
       {/* Right-edge fade. hides on last panel */}
@@ -2577,7 +2577,7 @@ export default function Home() {
           animation: today-pulse 3.5s ease-out infinite;
         }
 
-        /* Floating panel menu — desktop hidden, mobile shown */
+        /* Floating panel menu -desktop hidden, mobile shown */
         .floating-panel-menu, .floating-panel-menu-backdrop { display: none; }
         @media (max-width: 640px) {
           .floating-panel-menu, .floating-panel-menu-backdrop { display: block; }

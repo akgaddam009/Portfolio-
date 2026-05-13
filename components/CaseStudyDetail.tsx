@@ -707,7 +707,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 <div style={{ display: "flex", gap: "20px", marginTop: "16px", flexWrap: "wrap", alignItems: "center" }}>
                   {cs.appStoreLinks.android && (
                     <a href={cs.appStoreLinks.android} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: "var(--muted)" }}><path d="M3.18 23.76c.3.17.64.24.99.2l12.6-11.55-2.99-2.99L3.18 23.76zm16.14-13.03l-2.96-2.96-2.26 2.06 2.99 2.99 2.23-2.09zM2.1.41C1.75.69 1.5 1.13 1.5 1.7v20.6c0 .57.25 1.01.6 1.29L14.17 12 2.1.41zm20.1 10.02l-2.87-1.64-2.51 2.29 2.52 2.52 2.86-1.64c.82-.47.82-1.99 0-2.53z"/></svg>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: "var(--muted)" }}><path d="M8 5v14l11-7z"/></svg>
                       <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", letterSpacing: "-0.01em" }}>Google Play</span>
                     </a>
                   )}
@@ -1338,7 +1338,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           {[
                             { n: "1", text: "Make it easy to navigate and find things." },
                             { n: "2", text: "Explore if we can reduce the size of the nudge in the first fold." },
-                            { n: "3", text: "It lacks a sense of separation — it's hard to focus on content pieces on the homepage." },
+                            { n: "3", text: "It lacks a sense of separation. It's hard to focus on content pieces on the homepage." },
                           ].map(item => (
                             <div key={item.n} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
                               <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--muted)", letterSpacing: "0.08em", minWidth: "16px", paddingTop: "1px", lineHeight: 1.5 }}>{item.n}.</span>
@@ -1359,7 +1359,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                             {[
                               { can: true,  label: "Hot Right Now (can repackage from breaking news)" },
-                              { can: false, label: "Featured Videos (sponsored — cannot move)" },
+                              { can: false, label: "Featured Videos (sponsored, cannot move)" },
                             ].map(item => (
                               <div key={item.label} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
                                 {item.can
@@ -1386,7 +1386,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted2)", letterSpacing: "-0.01em" }}>more engagement during IPL</span>
                           </div>
                           <p style={{ fontFamily: "var(--font-body)", fontSize: "11.5px", color: "var(--muted2)", lineHeight: 1.6, letterSpacing: "-0.01em" }}>
-                            The model worked below the fold when content earned its place. The fix wasn't teaching users to scroll — it was making every below-fold section earn the way IPL already did.
+                            The model worked below the fold when content earned its place. The fix wasn't teaching users to scroll. It was making every below-fold section earn the way IPL already did.
                           </p>
                         </div>
                       </div>
@@ -1881,7 +1881,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
                     {/* First fold */}
                     <div style={{ margin: "0 16px", padding: "12px 16px", border: "1.5px solid var(--border)", borderRadius: "12px", background: "var(--surface2)" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "block", marginBottom: "6px" }}>First Fold — Unchanged</span>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "block", marginBottom: "6px" }}>First Fold, Unchanged</span>
                       {cs.homepageLayout.firstFold.map((item, i) => (
                         <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: i > 0 ? "5px" : 0 }}>
                           <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />

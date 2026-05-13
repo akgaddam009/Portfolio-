@@ -55,7 +55,7 @@ export default function Nav() {
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <Link
               href="/"
-              aria-label="Home — Arun Gaddam"
+              aria-label="Home, Arun Gaddam"
               style={{
                 fontFamily: "var(--font-logo)",
                 fontSize: "12px",
