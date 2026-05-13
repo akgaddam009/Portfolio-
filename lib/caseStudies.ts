@@ -289,7 +289,7 @@ export const caseStudies: CaseStudy[] = [
     titleHighlights: { "Excel": "amber", "the web": "indigo" },
     subtitle:
       "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
-    cardImpact: "~95% reduction in time on task. 3.5 hrs → 10 to 15 min",
+    cardImpact: "~95% reduction in time on task. 3.5 hrs to 10-15 min",
     company: "Planful",
     type: "Enterprise SaaS · Fintech",
     role: "Senior Product Designer (IC)",
@@ -311,7 +311,7 @@ export const caseStudies: CaseStudy[] = [
 
     metrics: [
       {
-        value: "3.5 hrs → 10 to 15 min",
+        value: "3.5 hrs to 10-15 min",
         label: "Time on task",
         body: "~95% reduction. Simple updates that took half a day now take a coffee break.",
       },

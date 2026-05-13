@@ -50,16 +50,17 @@ const container = {
 
 export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Find the next case study so we can offer a forward CTA at the end of the page.
-  // Wraps to the first study after the last one. If the immediate next is a
-  // coming-soon or hidden study, we suppress the CTA entirely (Option B) rather
-  // than skip ahead, so visitors never click into something that isn't ready.
-  const HIDDEN_NEXT_SLUGS = new Set(["zetwerk-bu-ecosystem", "zetwerk-dc"]);
-  const currentIndex = caseStudies.findIndex(c => c.slug === cs.slug);
-  const nextCandidate = caseStudies[(currentIndex + 1) % caseStudies.length];
-  const next = nextCandidate && !HIDDEN_NEXT_SLUGS.has(nextCandidate.slug) ? nextCandidate : null;
-  const prevIndex = (currentIndex - 1 + caseStudies.length) % caseStudies.length;
-  const prevCandidate = caseStudies[prevIndex];
-  const prev = prevCandidate && !HIDDEN_NEXT_SLUGS.has(prevCandidate.slug) ? prevCandidate : null;
+  // Order MUST match the landing page WorkPanel CARD_ORDER (app/page.tsx) so
+  // Prev/Next sequencing on case study pages mirrors the order visitors see
+  // when browsing the portfolio. Hidden slugs (zetwerk-*) are kept out of the
+  // sequence entirely — never reached via Prev/Next.
+  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra"];
+  const navList = NAV_ORDER
+    .map(slug => caseStudies.find(c => c.slug === slug))
+    .filter((c): c is NonNullable<typeof c> => !!c);
+  const currentIndex = navList.findIndex(c => c.slug === cs.slug);
+  const next = currentIndex >= 0 && currentIndex < navList.length - 1 ? navList[currentIndex + 1] : null;
+  const prev = currentIndex > 0 ? navList[currentIndex - 1] : null;
 
   // Scroll progress bar
   const { scrollYProgress } = useScroll();
@@ -4046,7 +4047,7 @@ function CsSection({ label, children, id, className }: { label: string; children
       transition={{ duration: 0.65, ease: EASE }}
       style={{ padding: "48px 0" }}
     >
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "28px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "28px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>{label}</p>
       {children}
     </motion.section>
   );

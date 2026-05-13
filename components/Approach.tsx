@@ -66,7 +66,7 @@ export default function Approach() {
               {p.number}
             </p>
             <div>
-              <h3 style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 600, color: "var(--text)", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: "8px" }}>
+              <h3 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: "8px" }}>
                 {p.title}
               </h3>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)", fontWeight: 400 }}>

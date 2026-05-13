@@ -494,7 +494,7 @@ function AboutPanel() {
           {[
             { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
             { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
-            { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
+            { label: "CV", href: "/cv.pdf", external: true },
           ].map(({ label, href, external }) => (
             <Link
               key={label}
@@ -1124,9 +1124,10 @@ function WorkPanel() {
                         {cs.title}
                       </h3>
                       <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300,
-                        lineHeight: 1.5, letterSpacing: 0,
-                        color: "var(--muted)", marginBottom: "0",
+                        fontFamily: "var(--font-body)", fontSize: "14px",
+                        letterSpacing: "-0.01em",
+                        color: "var(--muted)", lineHeight: 1.65, fontWeight: 400,
+                        marginBottom: 0,
                       }}>
                         {cs.cardImpact ?? cs.subtitle}
                       </p>
@@ -1444,9 +1445,9 @@ function CareerPanel() {
             </p>
             {item.subtitle && (
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "11px",
-                fontWeight: 510, letterSpacing: "-0.01em",
-                color: "var(--muted)", lineHeight: 1.2, marginTop: "3px",
+                fontFamily: "var(--font-body)", fontSize: "13px",
+                fontWeight: 400, letterSpacing: "-0.01em",
+                color: "var(--muted)", lineHeight: 1.4, marginTop: "2px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               }}>
                 {item.subtitle}
@@ -1454,11 +1455,10 @@ function CareerPanel() {
             )}
             {!isExpanded && !isEdu && (item.dateLabel || item.impact) && (
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "11px",
-                fontWeight: 510, letterSpacing: "-0.01em",
-                color: isHovered && item.impact ? "var(--text)" : "var(--muted)", marginTop: "3px",
+                fontFamily: "var(--font-body)", fontSize: "13px",
+                fontWeight: 400, letterSpacing: "-0.01em",
+                color: isHovered && item.impact ? "var(--text)" : "var(--muted)", marginTop: "2px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                fontVariantNumeric: "tabular-nums",
                 transition: "color 0.2s",
               }}>
                 {isHovered && item.impact ? item.impact : item.dateLabel}
@@ -1525,9 +1525,9 @@ function CareerPanel() {
                 {/* Date label -role cards only */}
                 {item.dateLabel && !isEdu && (
                   <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "11px",
-                    fontWeight: 510, letterSpacing: "-0.01em",
-                    color: "var(--muted)", marginBottom: "12px",
+                    fontFamily: "var(--font-body)", fontSize: "13px",
+                    fontWeight: 400, letterSpacing: "-0.01em",
+                    color: "var(--muted)", lineHeight: 1.4, marginBottom: "12px",
                   }}>
                     {item.dateLabel}
                   </p>
@@ -1766,10 +1766,10 @@ function CareerPanel() {
           <div style={{ width: "52px", flexShrink: 0 }} />
           <div style={{ flex: 1, display: "flex" }}>
             <div style={{ flex: 1, paddingLeft: "24px" }}>
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 510, letterSpacing: "-0.01em", color: "var(--muted)" }}>Work</span>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)" }}>Work</span>
             </div>
             <div style={{ width: "42%", paddingLeft: "8px" }}>
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 510, letterSpacing: "-0.01em", color: "var(--muted)" }}>Other</span>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)" }}>Other</span>
             </div>
           </div>
         </div>
@@ -1896,7 +1896,7 @@ function TestimonialsPanel() {
           style={{
             fontFamily: "var(--font-body)", fontSize: "13px",
             lineHeight: 1.65, letterSpacing: "-0.01em",
-            color: "var(--muted)", marginBottom: "24px", fontWeight: 300,
+            color: "var(--muted)", marginBottom: "24px", fontWeight: 400,
           }}
         >
           From colleagues and managers I&apos;ve worked closely with.
@@ -1926,10 +1926,10 @@ function TestimonialsPanel() {
                 &ldquo;
               </p>
 
-              {/* Quote body. primary content, var(--text) */}
+              {/* Quote body — matches About panel text styling */}
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
-                lineHeight: 1.7, color: "var(--text)", marginBottom: "16px",
+                fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
+                lineHeight: 1.65, color: "var(--muted)", marginBottom: "28px",
                 letterSpacing: "-0.01em",
               }}>
                 {t.quote}
@@ -1969,7 +1969,7 @@ function TestimonialsPanel() {
                     >
                       <span style={{
                         fontFamily: "var(--font-body)", fontSize: "13px",
-                        fontWeight: 590, letterSpacing: "-0.01em",
+                        fontWeight: 600, letterSpacing: "-0.01em",
                         color: `color-mix(in srgb, ${tint} 65%, var(--text))`,
                       }}>
                         {t.initials}
@@ -1979,15 +1979,15 @@ function TestimonialsPanel() {
                 })()}
                 <div>
                   <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
-                    letterSpacing: "-0.01em", color: "var(--muted2)", lineHeight: 1.3,
+                    fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500,
+                    letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.35,
                   }}>
                     {t.name}
                   </p>
                   <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 300,
+                    fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
                     letterSpacing: "-0.01em",
-                    color: "var(--muted)", marginTop: "3px", lineHeight: 1.3,
+                    color: "var(--muted)", marginTop: "2px", lineHeight: 1.4,
                   }}>
                     {t.role} · {t.company}
                   </p>
