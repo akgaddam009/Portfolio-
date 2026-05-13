@@ -54,7 +54,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Prev/Next sequencing on case study pages mirrors the order visitors see
   // when browsing the portfolio. Hidden slugs (zetwerk-*) are kept out of the
   // sequence entirely — never reached via Prev/Next.
-  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra"];
+  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "astra", "fancode-homepage"];
   const navList = NAV_ORDER
     .map(slug => caseStudies.find(c => c.slug === slug))
     .filter((c): c is NonNullable<typeof c> => !!c);
