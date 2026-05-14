@@ -1185,7 +1185,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           This case study is password protected
                         </p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--muted)", lineHeight: 1.65, maxWidth: "320px" }}>
-                          The details here are confidential. Reach out to Arun for access.
+                          Much of my work is confidential. Please reach out for the password.
                         </p>
                       </div>
 
