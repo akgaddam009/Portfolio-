@@ -1153,6 +1153,13 @@ function WorkPanel() {
       setPwInput("");
     }
   };
+  // Esc closes the password modal — matches behaviour of other overlays.
+  useEffect(() => {
+    if (!pwOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setPwOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [pwOpen]);
 
   return (
     <div id="work-panel">
@@ -1267,7 +1274,7 @@ function WorkPanel() {
               },
               {
                 title: "Designed vendor credit/loan approval process",
-                subtitle: "Designed a unified credit underwriting workflow that centralised risk evaluation and approval decisions into a single streamlined experience for enterprise fintech teams.",
+                subtitle: "Designed a unified credit underwriting workflow that centralised risk evaluation and approval decisions into one cohesive experience for enterprise fintech teams.",
                 accent: <AccentChip label="Fintech" tone="indigo" icon={Briefcase} />,
                 tags: ["Enterprise", "Workflow"],
                 href: "https://drive.google.com/file/d/19Q3CF_KYVUfQx6OtYa0oSU2TGutACaW0/view?usp=sharing",
@@ -1367,6 +1374,9 @@ function WorkPanel() {
             }}
           >
             <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="archived-pw-modal-title"
               initial={{ scale: 0.95, y: 8 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 8 }}
@@ -1380,7 +1390,7 @@ function WorkPanel() {
                 maxWidth: "380px", width: "100%",
               }}
             >
-              <h3 style={{
+              <h3 id="archived-pw-modal-title" style={{
                 fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
                 color: "var(--text)", marginBottom: "6px",
               }}>
@@ -1421,7 +1431,7 @@ function WorkPanel() {
                     type="button"
                     onClick={() => setPwOpen(false)}
                     style={{
-                      padding: "8px 14px", fontSize: "13px", fontFamily: "var(--font-body)",
+                      padding: "12px 18px", fontSize: "13px", fontFamily: "var(--font-body)",
                       color: "var(--muted)", background: "transparent",
                       border: "1px solid var(--border)", borderRadius: "8px",
                       cursor: "pointer",
@@ -1430,7 +1440,7 @@ function WorkPanel() {
                   <button
                     type="submit"
                     style={{
-                      padding: "8px 14px", fontSize: "13px", fontFamily: "var(--font-body)",
+                      padding: "12px 18px", fontSize: "13px", fontFamily: "var(--font-body)",
                       fontWeight: 500, color: "var(--surface)", background: "var(--text)",
                       border: "1px solid var(--text)", borderRadius: "8px",
                       cursor: "pointer",
