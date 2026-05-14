@@ -585,19 +585,19 @@ export const caseStudies: CaseStudy[] = [
     number: "00",
     title: "AI Contract Review and Approval Workflow",
     titleHighlights: { "AI": "violet", "Contract Review": "amber", "Approval Workflow": "indigo" },
-    subtitle: "What does 85 to 90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
-    cardImpact: "Full working prototype shipped in a weekend. AI review + approval in 2 flows",
+    subtitle: "What does 85 to 90% AI accuracy look like as a UX? Two flows, built in 6–8 hours with Claude Code.",
+    cardImpact: "Full working prototype shipped in 6–8 hours. AI review + approval in 2 flows",
     company: "AI Exploration",
     type: "AI · B2B SaaS",
     role: "AI UX",
-    timeline: "2026 · Weekend build",
+    timeline: "2026 · 6–8 hour build",
     team: "Solo (designer + Claude Code)",
     tags: ["AI UX", "B2B SaaS", "Built with Claude"],
     heroLabel: "AI Exploration",
     confidential: false,
 
     summary:
-      "==When an AI is right 85 to 90% of the time, what does the remaining 10 to 15% look like in the interface?== Two flows, built in a weekend with Claude Code. Working through that answer.",
+      "==When an AI is right 85 to 90% of the time, what does the remaining 10 to 15% look like in the interface?== Two flows, built in 6–8 hours with Claude Code. Working through that answer.",
 
     context:
       "B2B contract intelligence: AI extracts 30 to 40 fields from a vendor contract, a human reviews and corrects, approval routes through a configured workflow. The design problem isn't the upload or the dashboard. It's the seam between what the model extracted and what the reviewer actually trusts.",
@@ -697,10 +697,10 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     approach:
-      "==6 to 8 hours, problem to live React prototype, with Claude Code.==\n\nClaude was the thought partner throughout, not just for code. Structuring the problem space, pressure testing interaction hypotheses, iterating wireframes fast enough to throw most of them away. The role based handoff insight didn't come from a brief; it surfaced asking whose attention an unresolved indemnity clause actually needs.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
+      "==6–8 hours, problem to live React prototype, with Claude Code.==\n\nClaude was the thought partner throughout, not just for code. Structuring the problem space, pressure testing interaction hypotheses, iterating wireframes fast enough to throw most of them away. The role based handoff insight didn't come from a brief; it surfaced asking whose attention an unresolved indemnity clause actually needs.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
 
     outcomes: [
-      "Validated by a product stage B2B company. the interaction model and role based handoff were reviewed and confirmed as production-ready thinking. Two complete flows shipped in 8 hours.",
+      "Reviewed with Astra's contract intelligence team. The role-based handoff was the takeaway they pushed back on hardest, and what we kept. Two complete flows shipped in 6–8 hours.",
     ],
 
     lesson:
