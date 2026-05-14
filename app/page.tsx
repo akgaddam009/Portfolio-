@@ -1160,6 +1160,14 @@ function WorkPanel() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [pwOpen]);
+  // Lock body scroll while modal is open so the page can't shift behind it
+  // on mobile (especially when the soft keyboard opens).
+  useEffect(() => {
+    if (!pwOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prevOverflow; };
+  }, [pwOpen]);
 
   return (
     <div id="work-panel">
@@ -1366,11 +1374,20 @@ function WorkPanel() {
             exit={{ opacity: 0 }}
             onClick={() => setPwOpen(false)}
             style={{
-              position: "fixed", inset: 0, zIndex: 300,
+              position: "fixed",
+              top: 0, left: 0, right: 0,
+              // 100dvh tracks the visual viewport on iOS Safari so the modal
+              // doesn't get clipped behind the URL bar or the soft keyboard.
+              height: "100dvh",
+              zIndex: 300,
               background: "rgba(0,0,0,0.72)", backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
               display: "flex", alignItems: "center", justifyContent: "center",
               padding: "16px",
+              // If the modal grows taller than the viewport (very small phones
+              // with the keyboard open), let it scroll inside the backdrop.
+              overflowY: "auto",
+              overscrollBehavior: "contain",
             }}
           >
             <motion.div
@@ -1388,6 +1405,13 @@ function WorkPanel() {
                 boxShadow: "0 24px 60px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)",
                 padding: "24px",
                 maxWidth: "380px", width: "100%",
+                // Prevents the panel from getting taller than the visual
+                // viewport once the keyboard opens; content scrolls instead.
+                maxHeight: "calc(100dvh - 32px)",
+                overflowY: "auto",
+                // Keeps the modal clear of iOS notch / Dynamic Island safe area.
+                marginTop: "max(16px, env(safe-area-inset-top))",
+                marginBottom: "max(16px, env(safe-area-inset-bottom))",
               }}
             >
               <h3 id="archived-pw-modal-title" style={{
