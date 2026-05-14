@@ -1360,9 +1360,10 @@ function WorkPanel() {
             onClick={() => setPwOpen(false)}
             style={{
               position: "fixed", inset: 0, zIndex: 300,
-              background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)",
+              background: "rgba(0,0,0,0.72)", backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              padding: "24px",
+              padding: "16px",
             }}
           >
             <motion.div
@@ -1373,8 +1374,10 @@ function WorkPanel() {
               onClick={(e) => e.stopPropagation()}
               style={{
                 background: "var(--surface)", borderRadius: "16px",
-                boxShadow: "var(--card-shadow-hover)", padding: "24px",
-                maxWidth: "360px", width: "100%",
+                border: "1px solid var(--border)",
+                boxShadow: "0 24px 60px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)",
+                padding: "24px",
+                maxWidth: "380px", width: "100%",
               }}
             >
               <h3 style={{
