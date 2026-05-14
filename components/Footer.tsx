@@ -98,7 +98,18 @@ export default function Footer() {
             color: "var(--muted)", lineHeight: 1.3,
             opacity: 0.6,
           }}>
-            Designed with Claude Code
+            Designed with{" "}
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="#D97757"
+              aria-hidden
+              style={{ display: "inline-block", verticalAlign: "-1px", marginRight: "2px" }}
+            >
+              <path d="M12 2c.5 6 2 7.5 10 10-8 2.5-9.5 4-10 10-.5-6-2-7.5-10-10 8-2.5 9.5-4 10-10z" />
+            </svg>
+            Claude Code
           </p>
         </div>
 

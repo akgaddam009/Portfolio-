@@ -617,14 +617,12 @@ function AboutPanel() {
         {/* Skills -marquee with Contact-panel pill style */}
         {(() => {
           const skills = [
-            "AI UX", "Vibe Coding",
-            "Systems Thinking", "Product Strategy", "0→1 Design",
+            "AI UX",
+            "Systems Thinking", "Product Strategy",
             "UX Research", "JTBD", "Service Design", "Research Synthesis",
             "Interaction Design", "Information Architecture", "Prototyping", "Design Systems",
             "Claude", "Agentic AI",
           ];
-          const ticker = [...skills, ...skills];
-
           return (
             <motion.div
               initial={{ opacity: 0, y: 6 }}
@@ -657,8 +655,9 @@ function AboutPanel() {
                     display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
                   }}
                 >
-                  {ticker.map((skill, i) => (
-                    <span key={`${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                  {/* Original pass — visible + accessible to screen readers. */}
+                  {skills.map((skill, i) => (
+                    <span key={`a-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
                       <span style={{
                         fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
                         letterSpacing: "-0.01em", color: "var(--muted2)",
@@ -673,6 +672,27 @@ function AboutPanel() {
                       </span>
                     </span>
                   ))}
+                  {/* Decorative duplicate for seamless marquee loop.
+                      aria-hidden + .marquee-clone so screen readers skip it
+                      and reduced-motion users don't see every skill twice. */}
+                  <span className="marquee-clone" aria-hidden style={{ display: "inline-flex", alignItems: "center" }}>
+                    {skills.map((skill, i) => (
+                      <span key={`b-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                        <span style={{
+                          fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                          letterSpacing: "-0.01em", color: "var(--muted2)",
+                          padding: "4px 10px",
+                          border: "1px solid var(--border)",
+                          borderRadius: "9999px",
+                          background: "var(--surface)",
+                          marginRight: "6px",
+                          whiteSpace: "nowrap",
+                        }}>
+                          {skill}
+                        </span>
+                      </span>
+                    ))}
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -1520,6 +1540,12 @@ type CareerItem = {
 // Jul=0.5, Aug=0.583, Sep=0.667, Oct=0.75, Nov=0.833, Dec=0.917
 const careerItems: CareerItem[] = [
   // Work. newest first
+  {
+    type: "role", startYear: 2025.667, endYear: 2026.25,
+    title: "Personal goal pursuit", subtitle: "Career break", minHeight: 72,
+    dateLabel: "Sep 2025 - Apr 2026 · 8 mos",
+    description: "Took time to focus on family, personal growth, and AI upskilling. Based in Hyderabad, Telangana, India.",
+  },
   {
     type: "role", startYear: 2025.167, endYear: 2025.583,
     title: "Senior Product Designer", subtitle: "Planful Software", minHeight: 72,
@@ -2474,8 +2500,8 @@ function ContactPanel() {
             and the location card to the bottom of the panel. */}
         {(() => {
           const skills = [
-            "AI UX Design", "Vibe Coding",
-            "Systems Thinking", "Product Thinking", "0→1 Design",
+            "AI UX Design",
+            "Systems Thinking", "Product Thinking",
             "Product Strategy", "Claude Code", "Agentic AI", "Service Design",
             "Cross functional Leadership", "UX Strategy", "UX Research",
             "Research Synthesis", "Stakeholder Alignment", "Design Systems",
@@ -2483,7 +2509,6 @@ function ContactPanel() {
             "Usability Testing", "Contextual Inquiry", "Service Blueprints",
             "Jobs-to-be-Done", "Figma", "Framer", "Next.js",
           ];
-          const ticker = [...skills, ...skills];
           return (
             <motion.div
               className="skills-ticker"
@@ -2511,8 +2536,8 @@ function ContactPanel() {
                     display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
                   }}
                 >
-                  {ticker.map((skill, i) => (
-                    <span key={`${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                  {skills.map((skill, i) => (
+                    <span key={`a-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
                       <span style={{
                         fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
                         letterSpacing: "-0.01em", color: "var(--muted2)",
@@ -2527,6 +2552,24 @@ function ContactPanel() {
                       </span>
                     </span>
                   ))}
+                  <span className="marquee-clone" aria-hidden style={{ display: "inline-flex", alignItems: "center" }}>
+                    {skills.map((skill, i) => (
+                      <span key={`b-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                        <span style={{
+                          fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                          letterSpacing: "-0.01em", color: "var(--muted2)",
+                          padding: "4px 10px",
+                          border: "1px solid var(--border)",
+                          borderRadius: "9999px",
+                          background: "var(--surface)",
+                          marginRight: "6px",
+                          whiteSpace: "nowrap",
+                        }}>
+                          {skill}
+                        </span>
+                      </span>
+                    ))}
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -2584,7 +2627,18 @@ function ContactPanel() {
             fontWeight: 400, letterSpacing: "-0.01em",
             color: "var(--muted)", lineHeight: 1.3,
           }}>
-            <span style={{ opacity: 0.6 }}>Designed with Claude Code</span>
+            <span style={{ opacity: 0.6 }}>Designed with </span>
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="#D97757"
+              aria-hidden
+              style={{ display: "inline-block", verticalAlign: "-1px", margin: "0 2px" }}
+            >
+              <path d="M12 2c.5 6 2 7.5 10 10-8 2.5-9.5 4-10 10-.5-6-2-7.5-10-10 8-2.5 9.5-4 10-10z" />
+            </svg>
+            <span style={{ opacity: 0.6 }}>Claude Code</span>
           </p>
         </motion.div>
 

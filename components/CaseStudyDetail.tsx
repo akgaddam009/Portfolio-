@@ -2972,7 +2972,18 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 color: "var(--muted)", lineHeight: 1.3,
                 margin: 0,
               }}>
-                <span style={{ opacity: 0.6 }}>Designed with Claude Code</span>
+                <span style={{ opacity: 0.6 }}>Designed with </span>
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="#D97757"
+                  aria-hidden
+                  style={{ display: "inline-block", verticalAlign: "-2px", margin: "0 2px" }}
+                >
+                  <path d="M12 2c.5 6 2 7.5 10 10-8 2.5-9.5 4-10 10-.5-6-2-7.5-10-10 8-2.5 9.5-4 10-10z" />
+                </svg>
+                <span style={{ opacity: 0.6 }}>Claude Code</span>
               </p>
               <style>{`
                 @media (max-width: 480px) {

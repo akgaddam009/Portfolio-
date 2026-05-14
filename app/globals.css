@@ -335,6 +335,10 @@ a { color: inherit; text-decoration: none; }
     animation: none !important;
     transition: none !important;
   }
+  /* Hide the decorative marquee duplicate. Without animation, the second
+     pass renders right after the first, so users would see every pill
+     twice in a row. */
+  .marquee-clone { display: none !important; }
   /* Shimmer keyframe is declared at the top of this file */
   [style*="shimmer"] {
     animation: none !important;
