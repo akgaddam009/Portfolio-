@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 import LoadingScreen from "@/components/LoadingScreen";
 import { MapLibreMap } from "@/components/ui/MapLibreMap";
@@ -1185,6 +1186,9 @@ function WorkPanel() {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = prevOverflow; };
   }, [pwOpen]);
+  // Portal mount guard — createPortal must only run client-side after mount.
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => { setPortalReady(true); }, []);
 
   return (
     <div id="work-panel">
@@ -1367,7 +1371,10 @@ function WorkPanel() {
 
       </div>
 
-      {/* Password modal for archived case studies */}
+      {/* Password modal for archived case studies — portalled to document.body
+          so it escapes the transformed panel ancestors (which would otherwise
+          break `position: fixed` and trap the modal off-screen on mobile). */}
+      {portalReady && createPortal(
       <AnimatePresence>
         {pwOpen && (
           <motion.div
@@ -1477,7 +1484,9 @@ function WorkPanel() {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+      )}
     </div>
   );
 }
