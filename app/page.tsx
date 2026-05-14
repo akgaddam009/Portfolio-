@@ -1346,21 +1346,6 @@ function WorkPanel() {
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
                         {accent}
                         {tags.map(tag => <WorkChip key={tag} label={tag} />)}
-                        {!archivedUnlocked && (
-                          <span style={{
-                            display: "inline-flex", alignItems: "center", gap: "4px",
-                            fontFamily: "var(--font-mono)", fontSize: "10px",
-                            letterSpacing: "0.08em", textTransform: "uppercase",
-                            color: "var(--muted)", padding: "3px 6px",
-                            border: "1px solid var(--border)", borderRadius: "999px",
-                          }}>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                              <rect x="3" y="11" width="18" height="11" rx="2" />
-                              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                            </svg>
-                            Locked
-                          </span>
-                        )}
                       </div>
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
