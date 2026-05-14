@@ -8,8 +8,8 @@ const BASE_URL = "https://arungaddamux.vercel.app";
 // recruiters get direct URLs as needed.
 const caseStudySlugs = [
   "planful-esm-tables",
-  "astra",
   "apple-business-listings",
+  // TEMP: Astra removed from sitemap while content is reworked.
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

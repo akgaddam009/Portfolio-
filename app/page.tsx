@@ -1130,7 +1130,9 @@ function WorkPanel() {
   // The 2 confidential cases (zetwerk-dc, zetwerk-bu-ecosystem) are
   // accessible via direct URL only -share with recruiters as needed.
   const CARD_ORDER = [
-    "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
+    "planful-esm-tables", "apple-business-listings", "fancode-homepage",
+    // TEMP: Astra hidden while content is reworked. Re-add "astra" here
+    // when ready to relaunch.
   ];
   const COMING_SOON = new Set<string>();
 
