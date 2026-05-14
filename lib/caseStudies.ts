@@ -585,8 +585,8 @@ export const caseStudies: CaseStudy[] = [
     number: "00",
     title: "AI Contract Review and Approval Workflow",
     titleHighlights: { "AI": "violet", "Contract Review": "amber", "Approval Workflow": "indigo" },
-    subtitle: "What does 85 to 90% AI accuracy look like as a UX? Two flows, built in 6–8 hours with Claude Code.",
-    cardImpact: "Full working prototype shipped in 6–8 hours. AI review + approval in 2 flows",
+    subtitle: "When AI is right 85 to 90% of the time, what should the other 10 to 15% look like? Two flows, built in 6–8 hours with Claude Code.",
+    cardImpact: "Working prototype shipped in 6–8 hours. AI review and approval in 2 flows.",
     company: "AI Exploration",
     type: "AI · B2B SaaS",
     role: "AI UX",
@@ -597,10 +597,10 @@ export const caseStudies: CaseStudy[] = [
     confidential: false,
 
     summary:
-      "==When an AI is right 85 to 90% of the time, what does the remaining 10 to 15% look like in the interface?== Two flows, built in 6–8 hours with Claude Code. Working through that answer.",
+      "==When AI is right 85 to 90% of the time, what should the other 10 to 15% look like in the interface?==\n\nTwo flows, built in 6–8 hours with Claude Code. Still working through the answer.",
 
     context:
-      "B2B contract intelligence: AI extracts 30 to 40 fields from a vendor contract, a human reviews and corrects, approval routes through a configured workflow. The design problem isn't the upload or the dashboard. It's the seam between what the model extracted and what the reviewer actually trusts.",
+      "AI scans a contract and pulls out 30 to 40 fields.\n\nA person checks the result, fixes mistakes, and sends it for approval.\n\n==The hard part isn't the upload or the dashboard.== It's the moment a reviewer has to decide whether to trust what the AI pulled out.",
 
 
     users: [
@@ -608,85 +608,85 @@ export const caseStudies: CaseStudy[] = [
         role: "Procurement Professional",
         name: "Contract review · data accuracy",
         bullets: [
-          "Processes 5 to 15 contracts per day",
-          "Reviews AI-extracted fields, corrects mistakes, approves data before it enters the workflow",
-          "Errors that slip through have real financial consequences",
-          "Needs to move fast without sacrificing accuracy",
+          "Handles 5 to 15 contracts a day.",
+          "Checks the AI's work, fixes mistakes, approves the data.",
+          "Mistakes cost the company real money.",
+          "Needs to move fast without losing accuracy.",
         ],
-        coreTension: "Speed vs. accuracy at 85 to 90% AI reliability",
+        coreTension: "Speed vs. accuracy when the AI is right 85 to 90% of the time.",
       },
       {
         role: "Legal Professional",
         name: "Contract review · risk and liability",
         bullets: [
-          "Reviews the same contract as procurement. but for risk, not data accuracy",
-          "Scrutinizes indemnity clauses, SLAs, liability terms",
-          "Errors that slip through have real legal consequences",
-          "Needs a view scoped to what legal actually owns",
+          "Reads the same contract as procurement, but for risk, not data.",
+          "Focuses on indemnity, SLAs, and liability terms.",
+          "Mistakes here become legal problems.",
+          "Needs a view that shows only what legal owns.",
         ],
-        coreTension: "Shared document, completely different job",
+        coreTension: "Same document, completely different job.",
       },
       {
         role: "Procurement Manager",
         name: "Workflow configuration · approval routing",
         bullets: [
-          "Configures 10 to 15 approval chains across the organization",
-          "Rules vary by contract type, dollar threshold, vendor risk, and department",
-          "Currently managed through email. approvals get stuck, skipped, or misrouted",
-          "Needs to build and edit rules without engineering support",
+          "Sets up 10 to 15 approval paths across the company.",
+          "Rules change by contract type, dollar amount, vendor risk, and department.",
+          "Today it runs over email. Approvals get stuck, skipped, or sent to the wrong person.",
+          "Needs to build and edit rules without engineering help.",
         ],
-        coreTension: "Complex logic that must feel like plain language",
+        coreTension: "Complex logic that has to read like plain English.",
       },
     ],
 
     uxGoals: [
       {
-        title: "Make AI uncertainty actionable",
-        body: "At 85 to 90% accuracy, every field needs an explicit state. confident, needs review, or missing. The reviewer shouldn't have to infer confidence from a percentage or a tooltip.",
+        title: "Make AI uncertainty easy to act on",
+        body: "Every field gets a clear state: confident, needs review, or missing.\n\nThe reviewer shouldn't have to guess confidence from a number or a tooltip.",
       },
       {
-        title: "Separate the two review jobs",
-        body: "Procurement and legal read the same contract but own different decisions. One shared surface forces each role to scroll past work that isn't theirs.",
+        title: "Split the two review jobs",
+        body: "Procurement and legal read the same contract but care about different things.\n\nOne shared screen makes each role scroll past work that isn't theirs.",
       },
       {
         title: "Make rule building feel like writing a sentence",
-        body: "A procurement manager building approval paths shouldn't have to think in condition logic. Every rule should compile to plain English they can read back and verify.",
+        body: "A manager building approval paths shouldn't have to think in conditions.\n\nEvery rule should read back in plain English they can check at a glance.",
       },
     ],
 
     productGoals: [
       {
-        title: "Replace email based approval routing",
-        body: "Approvals currently get stuck, skipped, or sent to the wrong person. A configurable workflow layer removes the manual dependency and makes the process auditable.",
+        title: "Replace email-based approvals",
+        body: "Today, approvals get stuck, skipped, or sent to the wrong person.\n\nA configurable workflow removes the manual handoff and makes the process easy to track.",
       },
       {
-        title: "Reduce errors entering the approval chain",
-        body: "Wrong data approved by procurement becomes a legal or financial liability downstream. The review interface is the last line of defense before data is treated as fact.",
+        title: "Catch errors before they enter the approval chain",
+        body: "Bad data approved by procurement becomes a legal or financial problem later.\n\nThe review screen is the last check before that data is treated as a fact.",
       },
       {
-        title: "Ship two flows that work as a system",
-        body: "Contract review feeds the approval workflow. Designing them separately misses the coupling. the intake quality directly affects what routes through the approval chain.",
+        title: "Ship two flows that work together",
+        body: "Contract review feeds the approval workflow.\n\nDesigning them apart misses how they connect: what comes in shapes what gets routed.",
       },
     ],
 
     problem:
-      "Most AI products treat model uncertainty as a footnote: a confidence percentage tucked into a tooltip the reviewer never opens. ==That's not a UX solution. It's a UX abdication.==\n\nAt 85 to 90% accuracy, every extracted field is a micro-decision: trust it, flag it, or fix it. That decision needs to be cheap, visible, and impossible to accidentally skip. Designing that interaction, and the routing layer that governs what happens after, is the actual product.",
+      "Most AI products hide uncertainty in a tooltip the reviewer never opens.\n\n==That's not design. That's ducking the problem.==\n\nAt 85 to 90% accuracy, every field is a small decision: trust it, check it, or fix it.\n\nThe decision has to be fast, easy to see, and impossible to skip.\n\nDesigning that moment, and the rules for what happens next, is the actual product.",
 
     decisions: [
       {
-        title: "Two roles, two tracks: same contract, different emphasis",
+        title: "Two roles, two tracks. Same contract, different focus.",
         body:
-          "Procurement resolves factual gaps; legal scrutinizes indemnity, SLAs, and liability terms. A shared screen forces each role to scroll past noise they don't own. The flow separates them: procurement clears the unresolved queue and hands off. Legal sees only what matters to them, in the order it matters.",
+          "Procurement fixes data gaps. Legal looks at indemnity, SLAs, and liability.\n\nOne shared screen makes each role scroll past work that isn't theirs. So the flow splits them.\n\nProcurement clears the open fields first, then hands off. Legal sees only what matters to legal, in the order that matters.",
       },
       {
-        title: "Three explicit field states, not a confidence score",
+        title: "Three clear field states, not a confidence number",
         body:
-          "Confident, needs review, missing: every extracted field carries one. The reviewer sweeps unresolved fields first. The title bar shows a live count. Approval is gated on zero remaining. ==The queue is the work, not the document.==",
+          "Every field is tagged: confident, needs review, or missing.\n\nThe reviewer handles the open ones first. The top bar shows how many are left. You can't approve until that number hits zero.\n\n==The list of open items is the work, not the contract.==",
       },
       {
-        title: "Every workflow rule compiles to a sentence a human can read",
+        title: "Every rule reads like a sentence",
         body:
-          "An admin building 10 to 15 approval paths shouldn't have to parse condition logic in their head. At every step of the builder, the configured rule renders as plain English: 'Software contracts under $50K go to direct manager only.' That sentence is the verification surface during build, and the artifact they scan on the landing page a month later.",
+          "An admin building 10 to 15 approval paths shouldn't have to think in logic. At every step, the rule shows as plain English.\n\nExample: \"Software contracts under $50K go to direct manager only.\"\n\nThat sentence is how they check the rule while building it, and how they read it back a month later.",
       },
     ],
 
@@ -697,17 +697,18 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     approach:
-      "==6–8 hours, problem to live React prototype, with Claude Code.==\n\nClaude was the thought partner throughout, not just for code. Structuring the problem space, pressure testing interaction hypotheses, iterating wireframes fast enough to throw most of them away. The role based handoff insight didn't come from a brief; it surfaced asking whose attention an unresolved indemnity clause actually needs.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
+      "==6–8 hours, from problem to a working React prototype, using Claude Code.==\n\nClaude was a thinking partner, not just a code tool.\n\nWe worked through the problem together, tested ideas, and threw away most of the wireframes.\n\nThe role-based handoff didn't come from a brief. It came from asking who actually needs to see an open indemnity clause.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
 
     outcomes: [
-      "Reviewed with Astra's contract intelligence team. The role-based handoff was the takeaway they pushed back on hardest, and what we kept. Two complete flows shipped in 6–8 hours.",
+      "Reviewed with Astra's contract intelligence team. The role-based handoff was the part they pushed back on the most, and the part we kept.",
+      "Two complete flows, shipped in 6–8 hours.",
     ],
 
     lesson:
-      "AI UX isn't about making the model look smarter. It's about making the human's correction work feel effortless. ==The interface that earns trust makes uncertainty visible, actionable, and impossible to skip.==",
+      "AI UX isn't about making the model look smart.\n\nIt's about making the person's correction work feel easy.\n\n==The interface earns trust by making uncertainty obvious, fixable, and impossible to skip.==",
 
     reflection:
-      "The role based handoff is a hypothesis, not a finding. The real question (do procurement and legal want separate surfaces or a shared negotiation space?) needs users, not wireframes. Speculative work earns its keep by making the bet explicit enough to disprove.",
+      "The role-based handoff is a hypothesis, not a finding.\n\nThe real question (do procurement and legal want separate screens, or a shared negotiation space?) needs users, not wireframes.\n\nSpeculative work earns its place by making the bet clear enough to disprove.",
   },
   /* ── #07 Bringing Apple into Business Listing Performance (fresh, verbatim) ── */
   {
