@@ -1161,20 +1161,11 @@ function WorkPanel() {
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
-  const handleArchivedClick = (e: React.MouseEvent, href: string) => {
-    // Always re-check localStorage at click time — covers the case where the
-    // global key was set on a different surface (case study page) since mount.
-    const isUnlocked = typeof window !== "undefined"
-      && localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1";
-    if (isUnlocked) {
-      if (!archivedUnlocked) setArchivedUnlocked(true);
-      return; // allow the link to navigate
-    }
-    e.preventDefault();
-    setPendingHref(href);
-    setPwInput("");
-    setPwError(false);
-    setPwOpen(true);
+  const handleArchivedClick = (_e: React.MouseEvent, _href: string) => {
+    // TEMP-GATE-OFF: archived password gate disabled for 30 min review window.
+    // Restore the body of this handler from git history (or revert this commit)
+    // to bring the gate back.
+    return;
   };
   const submitPassword = (e: React.FormEvent) => {
     e.preventDefault();
