@@ -88,7 +88,11 @@ export default function CaseStudyCard({
                 fontFamily: "var(--font-body)", fontSize: "15px",
                 lineHeight: 1.65, color: "var(--muted2)", marginBottom: "28px",
               }}>
-                {cs.summary}
+                {/* Strip ==highlight== markers — these are only meaningful in
+                    long-form case study sections where parseHighlights wraps
+                    them with semantic emphasis. In card summaries they would
+                    leak through as literal "==text==". */}
+                {cs.summary?.replace(/==(.+?)==/g, "$1")}
               </p>
 
               {/* Metrics */}

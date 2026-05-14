@@ -2417,7 +2417,7 @@ function ContactPanel() {
             marginBottom: "20px",
           }}
         >
-          Open to senior IC and lead roles at teams building complex, human centred products. Especially in <InlineChip label="AI" tone="violet" scale="match" />{" "}<InlineChip label="Enterprise" tone="indigo" scale="match" />{" "}<InlineChip label="SaaS" tone="teal" scale="match" />{" "}<InlineChip label="Consumer Products" tone="emerald" scale="match" />
+          Open to senior IC and lead roles at teams building complex, human-centred products. Especially in <InlineChip label="AI" tone="violet" scale="match" />{" "}<InlineChip label="Enterprise" tone="indigo" scale="match" />{" "}<InlineChip label="SaaS" tone="teal" scale="match" />{" "}<InlineChip label="Consumer Products" tone="emerald" scale="match" />
         </motion.p>
 
         {/* CTAs. always visible. marginBottom:24px gives mobile spacing

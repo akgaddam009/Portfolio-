@@ -35,7 +35,9 @@ export async function generateMetadata({
   const cs = getCaseStudy(slug);
   if (!cs) return {};
   const title       = `${cs.title} — Arun Gaddam`;
-  const description = cs.summary;
+  // Strip ==highlight== markers from the meta description so social previews
+  // don't surface "==text==" literally.
+  const description = cs.summary?.replace(/==(.+?)==/g, "$1");
   // Use the first decision image as OG image if available
   const ogImage = cs.decisions?.find(d => d.image?.src)?.image?.src;
   return {

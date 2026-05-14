@@ -583,7 +583,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "astra",
     number: "00",
-    title: "AI Contract Review & Approval Workflow",
+    title: "AI Contract Review and Approval Workflow",
     titleHighlights: { "AI": "violet", "Contract Review": "amber", "Approval Workflow": "indigo" },
     subtitle: "What does 85 to 90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
     cardImpact: "Full working prototype shipped in a weekend. AI review + approval in 2 flows",
