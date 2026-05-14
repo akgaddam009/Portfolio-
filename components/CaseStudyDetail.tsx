@@ -88,9 +88,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // One shared key in localStorage — entering the password on any gated case study
   // unlocks all of them globally and persists across browser sessions.
   const PASSWORD = "Nothing@123$";
-  // TEMP-GATE-OFF: password gate disabled for 30 min review window.
-  // Revert this line to `!!cs.confidential` to restore the gate.
-  const isGated = false;
+  const isGated = !!cs.confidential;
   const GLOBAL_UNLOCK_KEY = "cs-portfolio-unlocked-v2";
   const [unlocked, setUnlocked] = useState(() => {
     if (typeof window === "undefined") return false;
