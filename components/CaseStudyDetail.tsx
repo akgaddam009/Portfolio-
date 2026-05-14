@@ -54,7 +54,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Prev/Next sequencing on case study pages mirrors the order visitors see
   // when browsing the portfolio. Hidden slugs (zetwerk-*) are kept out of the
   // sequence entirely — never reached via Prev/Next.
-  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "astra", "fancode-homepage"];
+  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra"];
   const navList = NAV_ORDER
     .map(slug => caseStudies.find(c => c.slug === slug))
     .filter((c): c is NonNullable<typeof c> => !!c);
@@ -128,33 +128,41 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   }, []);
 
   useEffect(() => {
-    // Filter to sections that actually exist in the rendered DOM, then set up
-    // IntersectionObservers for active-section tracking. Merged into one effect
-    // so the filtered list and the observers are always in sync.
-    const existing = ALL_NAV_SECTIONS.filter(s => !!document.getElementById(s.id));
-    setNavSections(existing);
-
-    const observers: IntersectionObserver[] = [];
-    existing.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
-        { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
+    // Defer the DOM scan by one frame so React has committed the gated sections
+    // before we query getElementById. Without this, unlocking re-runs the effect
+    // before the newly-rendered sections are in the DOM.
+    let raf: number;
+    let observers: IntersectionObserver[] = [];
 
     const onScroll = () => setNavVisible(window.scrollY > 200);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
+    raf = requestAnimationFrame(() => {
+      // Filter to sections that actually exist in the rendered DOM, then set up
+      // IntersectionObservers for active-section tracking. Runs on mount AND
+      // whenever unlocked changes so gated sections are picked up after unlock.
+      const existing = ALL_NAV_SECTIONS.filter(s => !!document.getElementById(s.id));
+      setNavSections(existing);
+
+      existing.forEach(({ id }) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const obs = new IntersectionObserver(
+          ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+          { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
+        );
+        obs.observe(el);
+        observers.push(obs);
+      });
+    });
+
     return () => {
+      cancelAnimationFrame(raf);
       observers.forEach(o => o.disconnect());
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [unlocked]);
 
   return (
     <div style={{ background: "var(--bg)" }}>

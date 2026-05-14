@@ -1095,7 +1095,7 @@ function WorkPanel() {
   // The 2 confidential cases (zetwerk-dc, zetwerk-bu-ecosystem) are
   // accessible via direct URL only -share with recruiters as needed.
   const CARD_ORDER = [
-    "planful-esm-tables", "apple-business-listings", "astra", "fancode-homepage",
+    "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
   ];
   const COMING_SOON = new Set<string>();
 
@@ -1190,8 +1190,8 @@ function WorkPanel() {
             );
           }).reduce<React.ReactNode[]>((acc, el, i) => {
             acc.push(el);
-            // Insert Portfolio Design Language after FanCode (last case study)
-            if (allCards[i]?.slug === "fancode-homepage") acc.push(<SystemFeatureCard key="system" />);
+            // Insert Portfolio Design Language after Astra (last case study)
+            if (allCards[i]?.slug === "astra") acc.push(<SystemFeatureCard key="system" />);
             return acc;
           }, [])}
         </div>
