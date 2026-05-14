@@ -2732,7 +2732,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     i === 0 ? (
                       <div key={i} style={{ padding: "24px", background: "var(--surface)", borderRadius: "12px", border: "1px solid var(--border)" }}>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(15px, 1.5vw, 17px)", fontWeight: 300, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
-                          {para}
+                          {parseHighlights(para)}
                         </p>
                       </div>
                     ) : (
