@@ -1117,6 +1117,43 @@ function WorkPanel() {
     .map(slug => caseStudies.find(cs => cs.slug === slug))
     .filter((cs): cs is NonNullable<typeof cs> => !!cs);
 
+  // Shared password gate — same global key as CaseStudyDetail.
+  // Unlocking here unlocks all gated case studies and vice versa.
+  const GLOBAL_UNLOCK_KEY = "cs-portfolio-unlocked-v2";
+  const PASSWORD = "Nothing@123$";
+  const [archivedUnlocked, setArchivedUnlocked] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setArchivedUnlocked(localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1");
+  }, []);
+  const [pwOpen, setPwOpen] = useState(false);
+  const [pwInput, setPwInput] = useState("");
+  const [pwError, setPwError] = useState(false);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const handleArchivedClick = (e: React.MouseEvent, href: string) => {
+    if (archivedUnlocked) return; // allow the link
+    e.preventDefault();
+    setPendingHref(href);
+    setPwInput("");
+    setPwError(false);
+    setPwOpen(true);
+  };
+  const submitPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pwInput === PASSWORD) {
+      setArchivedUnlocked(true);
+      localStorage.setItem(GLOBAL_UNLOCK_KEY, "1");
+      setPwOpen(false);
+      if (pendingHref) {
+        window.open(pendingHref, "_blank", "noopener,noreferrer");
+        setPendingHref(null);
+      }
+    } else {
+      setPwError(true);
+      setPwInput("");
+    }
+  };
+
   return (
     <div id="work-panel">
       <PanelHeader label="Selected Work" />
@@ -1209,7 +1246,199 @@ function WorkPanel() {
             return acc;
           }, [])}
         </div>
+
+        {/* Archived case studies — PDF links */}
+        <div style={{ padding: "0 0 24px" }}>
+          <p style={{
+            fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 400,
+            letterSpacing: "0.1em", textTransform: "uppercase",
+            color: "var(--muted)", margin: "16px 0 12px 0",
+          }}>
+            Archived case studies
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {([
+              {
+                title: "Designed first time user experience",
+                subtitle: "Led research and concept design validation to solve new-user retention, informing a 12-month product roadmap and increasing retention by ~18% while boosting subscriptions.",
+                accent: <AccentChip label="Consumer Mobile" tone="emerald" icon={LayoutGrid} />,
+                tags: ["UX Research", "Onboarding"],
+                href: "https://drive.google.com/file/d/1w9phRxE7f3G9shoPu7CVFMAG6xMVaqi9/view?usp=sharing",
+              },
+              {
+                title: "Designed vendor credit/loan approval process",
+                subtitle: "Designed a unified credit underwriting workflow that centralised risk evaluation and approval decisions into a single streamlined experience for enterprise fintech teams.",
+                accent: <AccentChip label="Fintech" tone="indigo" icon={Briefcase} />,
+                tags: ["Enterprise", "Workflow"],
+                href: "https://drive.google.com/file/d/19Q3CF_KYVUfQx6OtYa0oSU2TGutACaW0/view?usp=sharing",
+              },
+              {
+                title: "Designed movement of goods workflow in manufacturing",
+                subtitle: "Designed a delivery challan workflow for high-growth manufacturing workspaces, enabling better tracking, coordination, and visibility across supply chain operations.",
+                accent: <AccentChip label="Supply Chain" tone="amber" icon={Path} />,
+                tags: ["B2B", "Enterprise"],
+                href: "https://drive.google.com/file/d/1NcnWyM1oO2VF_YIoLjOvgALeAqPTym1k/view?usp=sharing",
+              },
+            ] as { title: string; subtitle: string; accent: React.ReactNode; tags: string[]; href: string }[]).map(({ title, subtitle, accent, tags, href }, i) => (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -2 }}
+                viewport={{ once: true, margin: "-20px" }}
+                transition={{
+                  opacity: { duration: 0.5, ease: EASE, delay: i * 0.06 },
+                  y: { type: "spring", stiffness: 320, damping: 28 },
+                }}
+              >
+                <Link
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: "none" }}
+                  onClick={(e) => handleArchivedClick(e, href)}
+                >
+                  <div
+                    className="work-card"
+                    style={{
+                      background: "var(--surface)",
+                      borderRadius: "16px",
+                      overflow: "hidden",
+                      boxShadow: "var(--card-shadow)",
+                      transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+                  >
+                    <div style={{ padding: "16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+                        {accent}
+                        {tags.map(tag => <WorkChip key={tag} label={tag} />)}
+                        {!archivedUnlocked && (
+                          <span style={{
+                            display: "inline-flex", alignItems: "center", gap: "4px",
+                            fontFamily: "var(--font-mono)", fontSize: "10px",
+                            letterSpacing: "0.08em", textTransform: "uppercase",
+                            color: "var(--muted)", padding: "3px 6px",
+                            border: "1px solid var(--border)", borderRadius: "999px",
+                          }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                              <rect x="3" y="11" width="18" height="11" rx="2" />
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            Locked
+                          </span>
+                        )}
+                      </div>
+                      <h3 style={{
+                        fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
+                        lineHeight: "22px", letterSpacing: "-0.02em",
+                        color: "var(--text)", marginBottom: "4px",
+                      }}>{title}</h3>
+                      <p style={{
+                        fontFamily: "var(--font-body)", fontSize: "14px",
+                        letterSpacing: "-0.01em", color: "var(--muted)",
+                        lineHeight: 1.65, fontWeight: 400, marginBottom: 0,
+                      }}>{subtitle}</p>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
       </div>
+
+      {/* Password modal for archived case studies */}
+      <AnimatePresence>
+        {pwOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setPwOpen(false)}
+            style={{
+              position: "fixed", inset: 0, zIndex: 300,
+              background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              padding: "24px",
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 8 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 8 }}
+              transition={{ duration: 0.18, ease: EASE }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "var(--surface)", borderRadius: "16px",
+                boxShadow: "var(--card-shadow-hover)", padding: "24px",
+                maxWidth: "360px", width: "100%",
+              }}
+            >
+              <h3 style={{
+                fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
+                color: "var(--text)", marginBottom: "6px",
+              }}>
+                Archived case studies are password protected
+              </h3>
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "13px",
+                color: "var(--muted)", lineHeight: 1.5, marginBottom: "16px",
+              }}>
+                Enter the password to view.
+              </p>
+              <form onSubmit={submitPassword}>
+                <input
+                  autoFocus
+                  type="password"
+                  value={pwInput}
+                  onChange={(e) => { setPwInput(e.target.value); setPwError(false); }}
+                  placeholder="Password"
+                  style={{
+                    width: "100%", padding: "10px 12px", fontSize: "14px",
+                    fontFamily: "var(--font-body)", color: "var(--text)",
+                    background: "var(--surface2)",
+                    border: `1px solid ${pwError ? "#ef4444" : "var(--border)"}`,
+                    borderRadius: "8px", outline: "none",
+                    marginBottom: pwError ? "8px" : "16px",
+                  }}
+                />
+                {pwError && (
+                  <p style={{
+                    fontSize: "12px", color: "#ef4444", marginBottom: "12px",
+                    fontFamily: "var(--font-body)",
+                  }}>
+                    Incorrect password. Try again.
+                  </p>
+                )}
+                <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                  <button
+                    type="button"
+                    onClick={() => setPwOpen(false)}
+                    style={{
+                      padding: "8px 14px", fontSize: "13px", fontFamily: "var(--font-body)",
+                      color: "var(--muted)", background: "transparent",
+                      border: "1px solid var(--border)", borderRadius: "8px",
+                      cursor: "pointer",
+                    }}
+                  >Cancel</button>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: "8px 14px", fontSize: "13px", fontFamily: "var(--font-body)",
+                      fontWeight: 500, color: "var(--surface)", background: "var(--text)",
+                      border: "1px solid var(--text)", borderRadius: "8px",
+                      cursor: "pointer",
+                    }}
+                  >Unlock</button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
