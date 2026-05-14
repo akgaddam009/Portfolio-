@@ -826,51 +826,94 @@ function WorkCardThumb({
   src: string; poster?: string; height?: number; borderRadius?: string;
 }) {
   const [ready, setReady] = useState(false);
+  const [inView, setInView] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const isVideo = isVideoThumb(src);
 
+  /* Only trigger video loading when the card is (nearly) visible.
+     rootMargin of 120px means the video starts buffering one card-height
+     before it scrolls into view — enough lead time for a smooth autoplay,
+     without loading off-screen videos on page load. */
+  useEffect(() => {
+    if (!isVideo) return;
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
+      { rootMargin: "120px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isVideo]);
+
+  const coverStyle: React.CSSProperties = {
+    position: "absolute", inset: 0,
+    width: "100%", height: "100%",
+    objectFit: "cover", objectPosition: "center top",
+    display: "block", borderRadius,
+  };
+
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      {!ready && (
-        <div style={{
-          position: "absolute", inset: 0,
-          borderRadius,
-          background: "linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%)",
-          backgroundSize: "400% 100%",
-          animation: "shimmer 1.4s ease infinite",
-        }} />
-      )}
+    <div ref={containerRef} style={{ position: "relative", width: "100%", height: "100%" }}>
       {isVideo ? (
-        <video
-          className="work-thumb"
-          src={src}
-          poster={poster}
-          autoPlay loop muted playsInline
-          preload="metadata"
-          aria-hidden="true"
-          onCanPlay={() => setReady(true)}
-          style={{
-            width: "100%", height: "100%", objectFit: "cover",
-            objectPosition: "center top", display: "block",
-            borderRadius,
-            opacity: ready ? 1 : 0,
-            transition: "opacity 0.3s ease",
-          }}
-        />
+        <>
+          {/* Poster: visible immediately, fades out once video is playing */}
+          {poster && (
+            <img
+              src={poster}
+              alt="" aria-hidden="true"
+              loading="lazy" decoding="async"
+              style={{
+                ...coverStyle,
+                opacity: ready ? 0 : 1,
+                transition: "opacity 0.4s ease",
+                zIndex: 1,
+              }}
+            />
+          )}
+          {/* Video: src only set once in-view — zero network cost until then */}
+          {inView && (
+            <video
+              className="work-thumb"
+              src={src}
+              autoPlay loop muted playsInline
+              preload="none"
+              aria-hidden="true"
+              onCanPlay={() => setReady(true)}
+              style={{
+                ...coverStyle,
+                opacity: ready ? 1 : 0,
+                transition: "opacity 0.4s ease",
+                zIndex: 2,
+              }}
+            />
+          )}
+        </>
       ) : (
-        <img
-          className="work-thumb"
-          src={src}
-          alt="" aria-hidden="true"
-          loading="lazy" decoding="async"
-          onLoad={() => setReady(true)}
-          style={{
-            width: "100%", height: "100%", objectFit: "cover",
-            objectPosition: "center top", display: "block",
-            borderRadius,
-            opacity: ready ? 1 : 0,
-            transition: "opacity 0.3s ease",
-          }}
-        />
+        <>
+          {/* Shimmer only for static images (videos use the poster instead) */}
+          {!ready && (
+            <div style={{
+              position: "absolute", inset: 0,
+              borderRadius,
+              background: "linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%)",
+              backgroundSize: "400% 100%",
+              animation: "shimmer 1.4s ease infinite",
+            }} />
+          )}
+          <img
+            className="work-thumb"
+            src={src}
+            alt="" aria-hidden="true"
+            loading="lazy" decoding="async"
+            onLoad={() => setReady(true)}
+            style={{
+              ...coverStyle,
+              opacity: ready ? 1 : 0,
+              transition: "opacity 0.3s ease",
+            }}
+          />
+        </>
       )}
     </div>
   );
