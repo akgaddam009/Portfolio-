@@ -429,6 +429,13 @@ const infoRows: { label: string; value: string; valueNode?: React.ReactNode; chi
 
 
 function AboutPanel() {
+  const [copied, setCopied] = useState(false);
+  const copyEmail = () => {
+    navigator.clipboard.writeText("akgaddam02@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div>
       <PanelHeader label="About me" />
@@ -491,9 +498,28 @@ function AboutPanel() {
             flexWrap: "wrap", marginBottom: "20px",
           }}
         >
+          {/* Copy email */}
+          <button
+            onClick={copyEmail}
+            aria-label={copied ? "Email copied" : "Copy email address"}
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: copied ? "var(--accent-success)" : "var(--muted)",
+              padding: "7px 12px", borderRadius: "6px",
+              border: "1px solid var(--border)", background: "var(--surface)",
+              cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s",
+            }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
+          >
+            {copied ? "Copied ✓" : "Copy email"}
+          </button>
+
+          {/* LinkedIn + CV */}
           {[
             { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
-            { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
             { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
           ].map(({ label, href, external }) => (
             <Link
@@ -505,25 +531,13 @@ function AboutPanel() {
                 fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
                 letterSpacing: "0.08em", textTransform: "uppercase",
                 color: "var(--muted)",
-                padding: "7px 12px",
-                borderRadius: "6px",
-                border: "1px solid var(--border)",
-                background: "var(--surface)",
+                padding: "7px 12px", borderRadius: "6px",
+                border: "1px solid var(--border)", background: "var(--surface)",
                 display: "inline-flex", alignItems: "center", gap: "6px",
                 transition: "color 0.18s, border-color 0.18s, background 0.18s",
               }}
-              onMouseEnter={e => {
-                e.currentTarget.style.color = "var(--text-hover)";
-                e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.background = "var(--surface2)";
-                e.currentTarget.style.boxShadow = "var(--card-shadow)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.color = "var(--muted)";
-                e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.background = "var(--surface)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
+              onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
             >
               {label}
               <ArrowUpRight size={10} strokeWidth={1.5} />
@@ -1190,8 +1204,8 @@ function WorkPanel() {
             );
           }).reduce<React.ReactNode[]>((acc, el, i) => {
             acc.push(el);
-            // Insert Portfolio Design Language after Astra (last case study)
-            if (allCards[i]?.slug === "astra") acc.push(<SystemFeatureCard key="system" />);
+            // Portfolio Design Language card hidden for now — /system page still live
+            // if (allCards[i]?.slug === "astra") acc.push(<SystemFeatureCard key="system" />);
             return acc;
           }, [])}
         </div>
@@ -2381,8 +2395,8 @@ function AiExplorationsPanel() {
             </motion.div>
           )}
 
-          {/* Portfolio Design Language. meta artifact */}
-          <SystemFeatureCard />
+          {/* Portfolio Design Language. meta artifact — hidden for now
+          <SystemFeatureCard /> */}
 
         </div>
       </div>
