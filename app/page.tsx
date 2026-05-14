@@ -1387,7 +1387,7 @@ function WorkPanel() {
                 fontFamily: "var(--font-body)", fontSize: "13px",
                 color: "var(--muted)", lineHeight: 1.5, marginBottom: "16px",
               }}>
-                Enter the password to view.
+                Much of my work is confidential. Please reach out for the password.
               </p>
               <form onSubmit={submitPassword}>
                 <input
