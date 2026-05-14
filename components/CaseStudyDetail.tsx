@@ -3012,7 +3012,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
       {/* Section nav — sticky pill container, appears after first fold */}
       <AnimatePresence>
-        {navVisible && NAV_SECTIONS.length > 0 && (
+        {navVisible && NAV_SECTIONS.length > 0 && (!isGated || unlocked) && (
           <motion.nav
             className="cs-section-nav"
             initial={{ opacity: 0, x: 16 }}

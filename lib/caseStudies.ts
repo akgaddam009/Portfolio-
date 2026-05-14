@@ -910,7 +910,7 @@ export const caseStudies: CaseStudy[] = [
     contextVideo: "/images/fancode/fancode-homepage-before.mp4",
 
     contextStats: [
-      { stat: "100M+ users", label: "FanCode is India's premier live sports streaming platform, part of the Dream Sports group." },
+      { stat: "~50M+ users", label: "FanCode is India's premier live sports streaming platform, part of the Dream Sports group." },
     ],
 
     appStoreLinks: {

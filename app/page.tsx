@@ -494,7 +494,7 @@ function AboutPanel() {
           {[
             { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
             { label: "Medium", href: "https://medium.com/@akgaddam", external: true },
-            { label: "CV", href: "/cv.pdf", external: true },
+            { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
           ].map(({ label, href, external }) => (
             <Link
               key={label}
@@ -827,15 +827,24 @@ function WorkCardThumb({
 }) {
   const [ready, setReady] = useState(false);
   const [inView, setInView] = useState(false);
+  /* Touch detection — coarse pointer = mobile/tablet. Videos are skipped on
+     touch devices: autoplay is unreliable, native play-button overlays appear,
+     and poster images are visually identical at thumbnail size. */
+  const [isTouch, setIsTouch] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isVideo = isVideoThumb(src);
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
 
   /* Only trigger video loading when the card is (nearly) visible.
      rootMargin of 120px means the video starts buffering one card-height
      before it scrolls into view — enough lead time for a smooth autoplay,
-     without loading off-screen videos on page load. */
+     without loading off-screen videos on page load.
+     Skipped entirely on touch devices — poster handles the visual. */
   useEffect(() => {
-    if (!isVideo) return;
+    if (!isVideo || isTouch) return;
     const el = containerRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -844,7 +853,7 @@ function WorkCardThumb({
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [isVideo]);
+  }, [isVideo, isTouch]);
 
   const coverStyle: React.CSSProperties = {
     position: "absolute", inset: 0,
@@ -857,7 +866,7 @@ function WorkCardThumb({
     <div ref={containerRef} style={{ position: "relative", width: "100%", height: "100%" }}>
       {isVideo ? (
         <>
-          {/* Poster: visible immediately, fades out once video is playing */}
+          {/* Poster: always visible on touch; fades out on desktop once video plays */}
           {poster && (
             <img
               src={poster}
@@ -871,8 +880,8 @@ function WorkCardThumb({
               }}
             />
           )}
-          {/* Video: src only set once in-view — zero network cost until then */}
-          {inView && (
+          {/* Video: desktop only, src set only once in-view */}
+          {!isTouch && inView && (
             <video
               className="work-thumb"
               src={src}
@@ -1181,8 +1190,8 @@ function WorkPanel() {
             );
           }).reduce<React.ReactNode[]>((acc, el, i) => {
             acc.push(el);
-            // Insert Portfolio Design Language immediately after Astra (index 3)
-            if (allCards[i]?.slug === "astra") acc.push(<SystemFeatureCard key="system" />);
+            // Insert Portfolio Design Language after FanCode (last case study)
+            if (allCards[i]?.slug === "fancode-homepage") acc.push(<SystemFeatureCard key="system" />);
             return acc;
           }, [])}
         </div>
@@ -2143,6 +2152,28 @@ function ContactPanel() {
             onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             LinkedIn
+            <ArrowUpRight size={10} strokeWidth={1.5} />
+          </Link>
+
+          <Link
+            href="https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing"
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+              padding: "7px 12px",
+              borderRadius: "6px",
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s",
+              boxSizing: "border-box",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+          >
+            CV
             <ArrowUpRight size={10} strokeWidth={1.5} />
           </Link>
         </motion.div>

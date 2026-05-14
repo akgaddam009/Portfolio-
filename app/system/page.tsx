@@ -67,6 +67,7 @@ const TYPE_SCALE = [
   { name: "Body",              size: "14px", weight: 400, ls: "0", lh: "26px" },
   { name: "Body small",        size: "13px", weight: 400, ls: "0", lh: "1.55" },
   { name: "Caption",           size: "12px", weight: 400, ls: "-0.01em" },
+  { name: "Section label",      size: "11px", weight: 400, ls: "0.1em",  mono: true, upper: true },
   { name: "Mono micro",        size: "10px", weight: 400, ls: "0.06em", mono: true, upper: true },
   { name: "Mono tiny",         size: "9px",  weight: 400, ls: "0.08em", mono: true, upper: true },
 ];
@@ -463,6 +464,7 @@ export default function SystemPage() {
                   { name: "Live-coded loader",       cat: "Entrance",  where: "Home. first frame" },
                   { name: "Marquee + hover pause",   cat: "Motion",    where: "Contact panel skills ticker" },
                   { name: "Live IST clock",          cat: "Live data", where: "Contact panel map card" },
+                  { name: "Lazy video thumbnail",    cat: "Perf",      where: "Work card video thumbnails" },
                 ].map((p, i, arr) => (
                   <div key={p.name} style={{
                     display: "grid", gridTemplateColumns: "1fr 90px 1fr",
@@ -542,6 +544,22 @@ export default function SystemPage() {
               >
                 <ClockDemo />
               </PatternBlock>
+
+              <PatternBlock
+                name="Lazy video thumbnail"
+                category="Perf"
+                usedIn={["Work card video thumbnails. Planful, Apple, Astra, FanCode"]}
+                tokens={["IntersectionObserver rootMargin 120px", "preload=none until in-view", "poster img shown immediately", "crossfade poster → video on canplay", "touch devices: poster only, no video element"]}
+              >
+                <div style={{ padding: "16px 20px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--muted2)", margin: "0 0 8px", lineHeight: 1.6 }}>
+                    Video <code style={codeChip}>src</code> is withheld until the card enters the viewport. Poster image loads immediately as placeholder. ~37 MB deferred on every page load.
+                  </p>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
+                    Flow: poster visible → card in view → video src set → canplay → crossfade
+                  </p>
+                </div>
+              </PatternBlock>
             </CsSection>
 
             {/* ── Process ── */}
@@ -580,7 +598,7 @@ export default function SystemPage() {
                   },
                   {
                     label: "The Wins",
-                    items: ["Count-up metric on work cards", "Live IST clock in contact", "20-unit dark scale. Both themes legible", "Video posters. No load flash"],
+                    items: ["Count-up metric on work cards", "Live IST clock in contact", "20-unit dark scale. Both themes legible", "Video posters. No load flash", "Lazy video loading. 37 MB deferred on page load"],
                   },
                 ].map(card => (
                   <div key={card.label} style={{ padding: "16px 18px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
@@ -689,9 +707,10 @@ function CsSection({ id, label, children }: { id: string; label: string; childre
       style={{ padding: "48px 0" }}
     >
       <p style={{
-        fontFamily: "var(--font-mono)", fontSize: "9px",
-        letterSpacing: "0.08em", textTransform: "uppercase",
-        color: "var(--muted)", marginBottom: "20px",
+        fontFamily: "var(--font-mono)", fontSize: "11px",
+        letterSpacing: "0.1em", textTransform: "uppercase",
+        color: "var(--muted)", marginBottom: "28px",
+        borderTop: "1px solid var(--border)", paddingTop: "16px",
       }}>{label}</p>
       {children}
     </motion.section>
