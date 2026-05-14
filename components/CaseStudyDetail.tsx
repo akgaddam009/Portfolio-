@@ -93,6 +93,17 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
     if (typeof window === "undefined") return false;
     return localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1";
   });
+  // Re-sync when the user comes back to the tab or another tab unlocks the
+  // key (e.g. they entered the password on a different case study).
+  useEffect(() => {
+    const sync = () => setUnlocked(localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1");
+    window.addEventListener("focus", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("focus", sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState(false);
   const handlePasswordSubmit = (e: React.FormEvent) => {

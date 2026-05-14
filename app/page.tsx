@@ -1124,14 +1124,31 @@ function WorkPanel() {
   const [archivedUnlocked, setArchivedUnlocked] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    setArchivedUnlocked(localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1");
+    const sync = () => setArchivedUnlocked(localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1");
+    sync();
+    // Re-sync when the user returns to this tab or another tab updates the key.
+    // Without this, unlocking on a case study page would still show "Locked"
+    // on the landing page until a hard refresh.
+    window.addEventListener("focus", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("focus", sync);
+      window.removeEventListener("storage", sync);
+    };
   }, []);
   const [pwOpen, setPwOpen] = useState(false);
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const handleArchivedClick = (e: React.MouseEvent, href: string) => {
-    if (archivedUnlocked) return; // allow the link
+    // Always re-check localStorage at click time — covers the case where the
+    // global key was set on a different surface (case study page) since mount.
+    const isUnlocked = typeof window !== "undefined"
+      && localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1";
+    if (isUnlocked) {
+      if (!archivedUnlocked) setArchivedUnlocked(true);
+      return; // allow the link to navigate
+    }
     e.preventDefault();
     setPendingHref(href);
     setPwInput("");
