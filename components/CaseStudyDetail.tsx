@@ -5342,6 +5342,7 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
   const isVideo = /\.(mov|mp4|webm)$/i.test(src);
   return (
     <motion.div
+      className="cs-lightbox"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -5357,9 +5358,18 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
         justifyContent: "center",
         padding: "24px",
         backdropFilter: "blur(8px)",
-        cursor: "pointer",
+        cursor: "zoom-out",
       }}
     >
+      {/* Force-override any cached cursor:none that may still be served
+          from CDN / browser cache. Local rule wins for everything inside
+          the lightbox regardless of upstream. */}
+      <style>{`
+        .cs-lightbox, .cs-lightbox * { cursor: revert !important; }
+        .cs-lightbox { cursor: zoom-out !important; }
+        .cs-lightbox img, .cs-lightbox video { cursor: default !important; }
+        .cs-lightbox button { cursor: pointer !important; }
+      `}</style>
       {isVideo ? (
         <motion.video
           src={src}
