@@ -232,6 +232,29 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           border-radius: 4px;
         }
 
+        /* Non-intrusive label reveal — only the active section's label
+           is visible at rest so the rail reads as a single anchor + a
+           hairline spine. Hovering anywhere on the rail (or tabbing
+           into it via keyboard) fades in every label. Pattern adapted
+           from Vercel / Linear docs sidebars. */
+        .cs-rail-label {
+          display: inline-block;
+          opacity: 0;
+          transform: translateX(-6px);
+          transition:
+            opacity 0.25s cubic-bezier(0.22,1,0.36,1),
+            transform 0.25s cubic-bezier(0.22,1,0.36,1);
+        }
+        .cs-rail-item.is-active .cs-rail-label,
+        .cs-rail:hover .cs-rail-label,
+        .cs-rail:focus-within .cs-rail-label {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .cs-rail-label { transition: opacity 0.15s ease; transform: none; }
+        }
+
         /* Back button — must meet 44px touch target */
         .cs-back-link {
           min-height: 44px;
@@ -723,7 +746,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                 }}
                               />
                             )}
-                            {label}
+                            <span className="cs-rail-label">{label}</span>
                           </a>
                         );
                       })}
