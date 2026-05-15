@@ -735,7 +735,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               display: "flex",
                               alignItems: "center",
                               gap: "12px",
-                              padding: "8px 12px 8px 18px",
+                              padding: "5px 12px 5px 18px",
                               fontFamily: "var(--font-body)",
                               fontSize: "13px",
                               fontWeight: 400,
