@@ -2747,6 +2747,16 @@ export default function Home() {
   const [revealed, setRevealed]       = useState(false);
   const [isDark, setIsDark]           = useState(false);
 
+  /* Focus dim. Every panel fades to 0.6 unless it's the active one
+     (scrolled to) or being hovered. dimReady waits until the load reveal
+     animation finishes so we don't fight framer-motion's opacity stagger. */
+  const [dimReady, setDimReady] = useState(false);
+  useEffect(() => {
+    if (!revealed) return;
+    const t = setTimeout(() => setDimReady(true), 1500);
+    return () => clearTimeout(t);
+  }, [revealed]);
+
   useEffect(() => {
     const check = () => setIsDark(document.documentElement.dataset.theme === "dark");
     check();
@@ -2913,6 +2923,7 @@ export default function Home() {
         <div
           ref={containerRef}
           className="panels-container"
+          data-dim-ready={dimReady ? "true" : "false"}
           style={{
             display: "flex",
             height: "calc(100dvh - 72px)",
@@ -2924,8 +2935,14 @@ export default function Home() {
                keeping spacing rhythm consistent across the layout. */
             padding: "8px 0 16px 24px",
             boxSizing: "border-box",
-            scrollSnapType: "x proximity",
+            /* Scroll-snap removed -the `proximity` mode was tugging the
+               scroll mid-gesture and made horizontal scrolling feel
+               jerky. Free scrolling now; nav arrows + keyboard still
+               jump cleanly via behavior: "smooth". */
             scrollPaddingLeft: "24px",
+            /* Stop browser back-swipe from stealing horizontal scroll. */
+            overscrollBehaviorX: "contain",
+            scrollBehavior: "smooth",
           }}
         >
           {PANEL_CONFIGS.map(({ width, minWidth, Component }, i) => {
@@ -2933,10 +2950,11 @@ export default function Home() {
             const shadow = isDark
               ? (isActive ? PANEL_SHADOW_ACTIVE_DARK  : PANEL_SHADOW_DARK)
               : (isActive ? PANEL_SHADOW_ACTIVE_LIGHT : PANEL_SHADOW_LIGHT);
+            const panelClass = `panel${isActive ? " is-active" : ""}`;
             return (
               <motion.div
                 key={i}
-                className="panel"
+                className={panelClass}
                 initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
                 animate={revealed
                   ? { opacity: 1, y: 0,  filter: "blur(0px)" }
@@ -2970,6 +2988,28 @@ export default function Home() {
         .panels-container { -ms-overflow-style: none; scrollbar-width: none; }
         .panel::-webkit-scrollbar { width: 0px; }
         .panel { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ── Focus dim (desktop only). Every panel fades to 0.6 unless
+           it's the active panel (scrolled to) or being hovered. Both
+           cursor and scroll position wake a panel. Gated behind
+           [data-dim-ready="true"] so the load-time reveal animation
+           runs uninhibited. Mobile keeps full contrast (panels are
+           stacked vertically anyway). */
+        @media (min-width: 641px) {
+          .panels-container[data-dim-ready="true"] .panel {
+            transition:
+              opacity 0.45s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.35s cubic-bezier(0.22,1,0.36,1) !important;
+          }
+          .panels-container[data-dim-ready="true"] .panel:not(.is-active):not(:hover) {
+            opacity: 0.6 !important;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .panels-container[data-dim-ready="true"] .panel {
+            transition: none !important;
+          }
+        }
 
         @keyframes today-pulse {
           0%   { box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent-warm) 40%, transparent); }
