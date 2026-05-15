@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
-import PortfolioChat from "@/components/PortfolioChat";
 import LoadingScreen from "@/components/LoadingScreen";
 import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
@@ -77,7 +76,6 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
           Arun Gaddam
         </Link>
         <ThemeToggle />
-        <PortfolioChat />
       </div>
 
       {/* Panel dots + arrows */}
@@ -547,29 +545,6 @@ function AboutPanel() {
             </Link>
           ))}
 
-          {/* Chat CTA — "Ask me anything →". Opens the chat panel via
-              a custom event so this component stays decoupled from
-              PortfolioChat (no prop drilling, no shared state). */}
-          <button
-            onClick={() => window.dispatchEvent(new CustomEvent("portfolio-chat:open"))}
-            aria-label="Open chat — ask me anything"
-            style={{
-              fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
-              letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
-              padding: "7px 12px", borderRadius: "6px",
-              border: "1px solid var(--border)", background: "var(--surface)",
-              cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
-          >
-            Ask me anything
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M5 12h14M13 5l7 7-7 7" />
-            </svg>
-          </button>
         </motion.div>
 
         {/* Info rows */}
@@ -1156,7 +1131,9 @@ function WorkPanel() {
   // The 2 confidential cases (zetwerk-dc, zetwerk-bu-ecosystem) are
   // accessible via direct URL only -share with recruiters as needed.
   const CARD_ORDER = [
-    "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
+    "planful-esm-tables", "apple-business-listings", "fancode-homepage",
+    // TEMP: Astra hidden while content is reworked. Re-add "astra" here
+    // when ready to relaunch.
   ];
   const COMING_SOON = new Set<string>();
 
