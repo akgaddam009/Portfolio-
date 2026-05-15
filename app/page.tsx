@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; PortfolioChat is hidden from the nav for now
+import PortfolioChat from "@/components/PortfolioChat";
 import LoadingScreen from "@/components/LoadingScreen";
 import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
@@ -28,7 +30,82 @@ const haptic = (pattern: number | number[]) => {
    React component body (HomeNav, FloatingPanelMenu), which executes after
    all module-level `const` initialization completes. */
 
-function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: () => void; activePanel: number }) {
+/* ── View-mode toggle. Workspace (current dense layout) vs Story.
+   Story is a Ben-Roach-style stripped-down single-column resume page:
+   bio paragraph, 3 stats, work list, contact. No cards, chips, or panels.
+   Uses --bg/--text tokens so it respects the user's theme. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; toggle is hidden from the nav for now
+function ViewModeToggle({
+  viewMode,
+  onChange,
+}: {
+  viewMode: "workspace" | "story";
+  onChange: (m: "workspace" | "story") => void;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label="View mode"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        height: "44px",
+        padding: "4px",
+        borderRadius: "12px",
+        background: "var(--surface)",
+        boxShadow: "var(--card-shadow)",
+        gap: "2px",
+      }}
+    >
+      {(["workspace", "story"] as const).map((m) => {
+        const active = viewMode === m;
+        return (
+          <button
+            key={m}
+            role="tab"
+            aria-selected={active}
+            onClick={() => { haptic(8); onChange(m); }}
+            style={{
+              height: "36px",
+              padding: "0 12px",
+              borderRadius: "8px",
+              border: "none",
+              background: active ? "var(--bg)" : "transparent",
+              color: "var(--text)",
+              fontFamily: "var(--font-logo)",
+              fontSize: "11px",
+              fontWeight: 500,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              cursor: active ? "default" : "pointer",
+              opacity: active ? 1 : 0.55,
+              transition: "background 0.25s cubic-bezier(0.22,1,0.36,1), opacity 0.25s",
+            }}
+            onMouseEnter={e => { if (!active) e.currentTarget.style.opacity = "0.85"; }}
+            onMouseLeave={e => { if (!active) e.currentTarget.style.opacity = "0.55"; }}
+          >
+            {m === "workspace" ? "Workspace" : "Story"}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function HomeNav({
+  onPrev,
+  onNext,
+  activePanel,
+  viewMode,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; ViewModeToggle is hidden from the nav for now
+  onViewModeChange,
+}: {
+  onPrev: () => void;
+  onNext: () => void;
+  activePanel: number;
+  viewMode: "workspace" | "story";
+  onViewModeChange: (m: "workspace" | "story") => void;
+}) {
   return (
     <header
       className="home-nav"
@@ -76,10 +153,21 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
           Arun Gaddam
         </Link>
         <ThemeToggle />
+        {/* Quick guide + view-mode toggle hidden -focus is on Workspace
+            polish for now. Underlying components stay in code so they can
+            be restored later. */}
       </div>
 
-      {/* Panel dots + arrows */}
-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+      {/* Panel dots + arrows -hidden in Story mode (no panels to navigate). */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "16px",
+          visibility: viewMode === "story" ? "hidden" : "visible",
+        }}
+        aria-hidden={viewMode === "story"}
+      >
         {/* Panel position dots */}
         <div className="panel-dots" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           {PANEL_LABELS.map((label, i) => (
@@ -130,7 +218,7 @@ function HomeNav({ onPrev, onNext, activePanel }: { onPrev: () => void; onNext: 
                   justifyContent: "center",
                   transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), opacity 0.2s",
                   opacity: disabled ? 0.3 : 1,
-                  cursor: disabled ? "default" : "none",
+                  cursor: disabled ? "default" : "pointer",
                 }}
                 onMouseEnter={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                 onMouseLeave={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
@@ -544,7 +632,6 @@ function AboutPanel() {
               <ArrowUpRight size={10} strokeWidth={1.5} />
             </Link>
           ))}
-
         </motion.div>
 
         {/* Info rows */}
@@ -1131,9 +1218,7 @@ function WorkPanel() {
   // The 2 confidential cases (zetwerk-dc, zetwerk-bu-ecosystem) are
   // accessible via direct URL only -share with recruiters as needed.
   const CARD_ORDER = [
-    "planful-esm-tables", "apple-business-listings", "fancode-homepage",
-    // TEMP: Astra hidden while content is reworked. Re-add "astra" here
-    // when ready to relaunch.
+    "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
   ];
   const COMING_SOON = new Set<string>();
 
@@ -2727,6 +2812,306 @@ const PANEL_SHADOW_ACTIVE_LIGHT = "0 2px 4px rgba(0,0,0,0.06), 0 12px 40px rgba(
 const PANEL_SHADOW_DARK  = "0 1px 2px rgba(0,0,0,0.40), 0 6px 24px rgba(0,0,0,0.35)";
 const PANEL_SHADOW_ACTIVE_DARK = "0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(0,0,0,0.45)";
 
+/* ── Story View. Stripped-down single-column resume page. ──
+   Bio · 3 stats · work list · tenure line · contact.
+   Replaces the entire <main> in Story mode -no panels, no chrome,
+   no animations beyond the standard load fade. Uses theme tokens
+   so it adapts to dark/light. */
+const STORY_WORK: { title: string; slug: string | null }[] = [
+  { title: "Planful · Senior Product Designer · 2025", slug: "planful-esm-tables" },
+  { title: "Reputation.com · Senior UX Designer · 2024–2025", slug: "apple-business-listings" },
+  { title: "Zetwerk · Senior Product Designer · 2022–2023", slug: null },
+  { title: "FanCode · Manager UX Designer · 2020–2022", slug: "fancode-homepage" },
+  { title: "Astra · Solo build · 2025", slug: "astra" },
+];
+
+/* Two testimonials, picked for the "simplify complexity" thesis -one
+   from a Reputation manager, one from a FanCode VP. Two different
+   companies, two seniority levels. Source array is `testimonials`
+   (defined further down in this file); kept inline here so Story's
+   content stays scannable. */
+const STORY_TESTIMONIALS: { quote: string; name: string; role: string; company: string }[] = [
+  {
+    quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.",
+    name: "Jeff Orshalick",
+    role: "UX Design Manager",
+    company: "Reputation",
+  },
+  {
+    quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.",
+    name: "Vikas Kotian",
+    role: "VP Product Design",
+    company: "FanCode",
+  },
+];
+
+function StoryView() {
+  /* Inline styles only -Story is small enough that a separate stylesheet
+     would be over-engineering. Every value uses tokens so the page
+     respects the theme toggle. */
+  const divider: React.CSSProperties = {
+    border: "none",
+    borderTop: "1px solid var(--border)",
+    margin: "48px 0",
+  };
+  const sectionLabel: React.CSSProperties = {
+    fontFamily: "var(--font-logo)",
+    fontSize: "11px",
+    fontWeight: 500,
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+    color: "var(--muted)",
+    margin: "0 0 24px",
+  };
+  const workLink: React.CSSProperties = {
+    fontFamily: "var(--font-body)",
+    fontSize: "16px",
+    fontWeight: 500,
+    color: "var(--text)",
+    textDecoration: "none",
+    lineHeight: 1.4,
+    display: "inline-block",
+  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; StoryView's contact section uses pill buttons instead
+  const inlineLink: React.CSSProperties = {
+    color: "var(--text)",
+    textDecoration: "underline",
+    textUnderlineOffset: "3px",
+    textDecorationColor: "var(--border)",
+  };
+
+  return (
+    <main
+      id="main-content"
+      data-view-mode="story"
+      style={{
+        paddingTop: "72px",
+        minHeight: "100dvh",
+        background: "var(--bg)",
+        color: "var(--text)",
+      }}
+    >
+      <article
+        style={{
+          maxWidth: "720px",
+          margin: "0 auto",
+          padding: "64px 24px 96px",
+          fontFamily: "var(--font-body)",
+        }}
+      >
+        {/* Headshot -small, sits above the bio paragraph. */}
+        <img
+          src="/arun-gaddam.png"
+          alt="Arun Gaddam"
+          width={64}
+          height={64}
+          style={{
+            width: "64px",
+            height: "64px",
+            borderRadius: "50%",
+            objectFit: "cover",
+            display: "block",
+            marginBottom: "32px",
+          }}
+        />
+
+        {/* Heading + bio -mirrors the workspace About panel (page.tsx:541).
+            Same copy, same 24px/14px hierarchy, same InlineChip treatment. */}
+        <h1
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "24px",
+            fontWeight: 400,
+            lineHeight: 1.6,
+            letterSpacing: "-0.03em",
+            color: "var(--text)",
+            margin: 0,
+          }}
+        >
+          Helping businesses design products by aligning user needs, business strategy, and the messy reality in between.
+        </h1>
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "14px",
+            lineHeight: 1.65,
+            letterSpacing: "-0.01em",
+            color: "var(--muted)",
+            margin: "20px 0 0",
+          }}
+        >
+          I&apos;m hands on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
+        </p>
+
+        <hr style={divider} />
+
+        {/* Stats -loud. Display-size mono numerals carry the page proof.
+            3-col on desktop, stacks on mobile via grid-auto. */}
+        <dl
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            columnGap: "32px",
+            rowGap: "32px",
+            margin: 0,
+          }}
+        >
+          {[
+            { num: "8+", label: "years senior product and UX design" },
+            { num: "30%", label: "drop in analyst training time after the Planful redesign" },
+            { num: "Apr 26", label: "next available" },
+          ].map((s) => (
+            <div key={s.num}>
+              <dt
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  color: "var(--text)",
+                  lineHeight: 1.3,
+                  marginBottom: "4px",
+                }}
+              >
+                {s.num}
+              </dt>
+              <dd
+                style={{
+                  fontSize: "13px",
+                  lineHeight: 1.5,
+                  color: "var(--muted)",
+                  margin: 0,
+                  maxWidth: "22ch",
+                }}
+              >
+                {s.label}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <hr style={divider} />
+
+        {/* Work list -titles only, no descriptions. Clicking opens the
+            case study page (where the full story lives). */}
+        <h2 style={sectionLabel}>Recent work</h2>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          {STORY_WORK.map((w, i) => (
+            <li
+              key={w.title}
+              style={{
+                marginBottom: i === STORY_WORK.length - 1 ? 0 : "16px",
+              }}
+            >
+              {w.slug ? (
+                <Link
+                  href={`/work/${w.slug}`}
+                  style={workLink}
+                  onMouseEnter={(e) => { e.currentTarget.style.textDecoration = "underline"; e.currentTarget.style.textUnderlineOffset = "3px"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.textDecoration = "none"; }}
+                >
+                  {w.title}
+                </Link>
+              ) : (
+                <span style={workLink}>{w.title}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {/* Tenure line */}
+        <p
+          style={{
+            fontSize: "15px",
+            color: "var(--muted)",
+            lineHeight: 1.6,
+            margin: "32px 0 0",
+            fontStyle: "italic",
+          }}
+        >
+          The two short stints at Reputation and Planful book-end a planned
+          break. Four steady years at Zetwerk and FanCode before that.
+        </p>
+
+        <hr style={divider} />
+
+        {/* Testimonials -two quotes, blockquote-styled. No avatars; the
+            quote and attribution carry the weight. */}
+        <h2 style={sectionLabel}>What people say</h2>
+        <div>
+          {STORY_TESTIMONIALS.map((t, i) => (
+            <blockquote
+              key={t.name}
+              style={{
+                margin: 0,
+                paddingLeft: "20px",
+                borderLeft: "2px solid var(--border)",
+                marginBottom: i === STORY_TESTIMONIALS.length - 1 ? 0 : "28px",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "16px",
+                  lineHeight: 1.6,
+                  color: "var(--text)",
+                  margin: 0,
+                }}
+              >
+                &ldquo;{t.quote}&rdquo;
+              </p>
+              <footer
+                style={{
+                  fontSize: "13px",
+                  color: "var(--muted)",
+                  marginTop: "10px",
+                  fontFamily: "var(--font-body)",
+                }}
+              >
+                {t.name}, {t.role} at {t.company}
+              </footer>
+            </blockquote>
+          ))}
+        </div>
+
+        <hr style={divider} />
+
+        {/* Contact -three identical pill links matching the workspace About
+            panel's CTA pattern (page.tsx:587-630). Same chip style across
+            all CTAs so nothing pops harder than anything else. */}
+        <h2 style={sectionLabel}>Get in touch</h2>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+          {[
+            { label: "Email", href: "mailto:akgaddam02@gmail.com?subject=Senior%20IC%20role" },
+            { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/" },
+            { label: "CV", href: "/cv.pdf" },
+          ].map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              target={href.startsWith("http") || href.endsWith(".pdf") ? "_blank" : undefined}
+              rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+              style={{
+                fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+                letterSpacing: "0.08em", textTransform: "uppercase",
+                color: "var(--muted)",
+                padding: "7px 12px", borderRadius: "6px",
+                border: "1px solid var(--border)", background: "var(--surface)",
+                textDecoration: "none",
+                display: "inline-flex", alignItems: "center", gap: "6px",
+                transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+            >
+              {label}
+              <ArrowUpRight size={10} strokeWidth={1.5} />
+            </a>
+          ))}
+        </div>
+      </article>
+    </main>
+  );
+}
+
 const PANEL_CONFIGS = [
   { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
   { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
@@ -2746,6 +3131,20 @@ export default function Home() {
   const [loading, setLoading]         = useState(true);
   const [revealed, setRevealed]       = useState(false);
   const [isDark, setIsDark]           = useState(false);
+  /* viewMode persists across sessions. Default "workspace" so SSR matches
+     first paint; saved value hydrates on mount. */
+  const [viewMode, setViewMode] = useState<"workspace" | "story">("workspace");
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("portfolio-view-mode");
+      if (saved === "workspace" || saved === "story") setViewMode(saved);
+    } catch { /* localStorage unavailable -keep default */ }
+  }, []);
+
+  useEffect(() => {
+    try { localStorage.setItem("portfolio-view-mode", viewMode); } catch {}
+  }, [viewMode]);
 
   /* Focus dim. Every panel fades to 0.6 unless it's the active one
      (scrolled to) or being hovered. dimReady waits until the load reveal
@@ -2816,8 +3215,8 @@ export default function Home() {
   }, []);
 
   /* Mobile-only IntersectionObserver -tracks which panel is most in-view
-     and updates activePanel. The desktop horizontal scroll handler doesn't
-     fire on mobile since the panels-container's overflow-y is visible. */
+     and updates activePanel. Desktop Workspace uses its own horizontal
+     scroll handler below. Story mode renders no panels, so this is a no-op there. */
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -2902,7 +3301,19 @@ export default function Home() {
   return (
     <>
       <LoadingScreen visible={loading} />
-      <HomeNav onPrev={() => scrollByPanel(-1)} onNext={() => scrollByPanel(1)} activePanel={activePanel} />
+      <HomeNav
+        onPrev={() => scrollByPanel(-1)}
+        onNext={() => scrollByPanel(1)}
+        activePanel={activePanel}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+      />
+      {/* Story view temporarily hidden -toggle is removed from nav, so we
+          force Workspace regardless of any persisted viewMode value. */}
+      {false ? (
+        <StoryView />
+      ) : (
+      <>
       {/* Mobile-only floating panel menu -hidden ≥641px via CSS */}
       <FloatingPanelMenu activePanel={activePanel} onSelect={scrollToPanel} />
 
@@ -3049,6 +3460,8 @@ export default function Home() {
           }
         }
       `}</style>
+      </>
+      )}
     </>
   );
 }

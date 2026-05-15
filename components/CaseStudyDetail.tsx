@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import PortfolioChat from "@/components/PortfolioChat";
 import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from "framer-motion";
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
@@ -54,8 +55,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Prev/Next sequencing on case study pages mirrors the order visitors see
   // when browsing the portfolio. Hidden slugs (zetwerk-*) are kept out of the
   // sequence entirely — never reached via Prev/Next.
-  // TEMP: "astra" removed from NAV_ORDER while case study is hidden.
-  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage"];
+  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra"];
   const navList = NAV_ORDER
     .map(slug => caseStudies.find(c => c.slug === slug))
     .filter((c): c is NonNullable<typeof c> => !!c);
@@ -350,6 +350,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             Arun Gaddam
           </Link>
           <ThemeToggle />
+          <PortfolioChat />
         </div>
 
         {/* Right cluster — Copy email + LinkedIn, matching the

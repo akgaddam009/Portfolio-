@@ -531,6 +531,8 @@ a { color: inherit; text-decoration: none; }
 
 /* ─── Mobile responsive layout ───────────────────────── */
 @media (max-width: 640px) {
+  .chat-trigger-label { display: none !important; }
+
   .home-main {
     height: auto !important;
     overflow: visible !important;

@@ -12,10 +12,6 @@ import CaseStudyDetail from "@/components/CaseStudyDetail";
 const HIDDEN_SLUGS = new Set<string>([
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",
-  // TEMP: Astra hidden while content is reworked. Restore by removing
-  // this line + restoring "astra" in CARD_ORDER (app/page.tsx) and
-  // NAV_ORDER (components/CaseStudyDetail.tsx).
-  "astra",
 ]);
 
 // Slugs not emitted by generateStaticParams (including HIDDEN_SLUGS)
