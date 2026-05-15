@@ -224,7 +224,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         }
         .cs-rail-item:not(.is-active):hover {
           color: color-mix(in srgb, var(--muted) 50%, var(--text)) !important;
-          transform: translateX(2px) !important;
         }
         .cs-rail-item:focus-visible {
           outline: 2px solid var(--text);
@@ -232,11 +231,38 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           border-radius: 4px;
         }
 
-        /* Non-intrusive label reveal — only the active section's label
-           is visible at rest so the rail reads as a single anchor + a
-           hairline spine. Hovering anywhere on the rail (or tabbing
-           into it via keyboard) fades in every label. Pattern adapted
-           from Vercel / Linear docs sidebars. */
+        /* Ruler-scale rail. Idle: thin horizontal ticks (one per section).
+           Active tick is longer and var(--text); inactive ticks are short
+           and muted. Labels are hidden at rest.
+           On hover or keyboard focus: ticks fade back, labels slide in.
+           Pattern adapted from collectui.com nav inspiration. */
+        .cs-rail-tick {
+          display: block;
+          width: 14px;
+          height: 1.5px;
+          background: var(--muted);
+          opacity: 0.45;
+          border-radius: 1px;
+          flex-shrink: 0;
+          transition:
+            width 0.3s cubic-bezier(0.22,1,0.36,1),
+            background 0.3s cubic-bezier(0.22,1,0.36,1),
+            opacity 0.3s cubic-bezier(0.22,1,0.36,1);
+        }
+        .cs-rail-item.is-active .cs-rail-tick {
+          width: 22px;
+          background: var(--text);
+          opacity: 1;
+        }
+        .cs-rail:hover .cs-rail-tick {
+          width: 8px;
+          opacity: 0.3;
+        }
+        .cs-rail:hover .cs-rail-item.is-active .cs-rail-tick {
+          width: 12px;
+          opacity: 0.7;
+        }
+
         .cs-rail-label {
           display: inline-block;
           opacity: 0;
@@ -245,14 +271,16 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             opacity 0.25s cubic-bezier(0.22,1,0.36,1),
             transform 0.25s cubic-bezier(0.22,1,0.36,1);
         }
-        .cs-rail-item.is-active .cs-rail-label,
         .cs-rail:hover .cs-rail-label,
         .cs-rail:focus-within .cs-rail-label {
           opacity: 1;
           transform: translateX(0);
         }
         @media (prefers-reduced-motion: reduce) {
-          .cs-rail-label { transition: opacity 0.15s ease; transform: none; }
+          .cs-rail-tick, .cs-rail-label {
+            transition: opacity 0.15s ease;
+            transform: none;
+          }
         }
 
         /* Back button — must meet 44px touch target */
@@ -691,19 +719,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         paddingTop: "8px",
                       }}
                     >
-                      {/* Vertical hairline spine — quiet anchor running
-                          behind the indicator bar. */}
-                      <div
-                        aria-hidden="true"
-                        style={{
-                          position: "absolute",
-                          left: "10px",
-                          top: "12px",
-                          bottom: "12px",
-                          width: "1px",
-                          background: "var(--border)",
-                        }}
-                      />
                       {NAV_SECTIONS.map(({ id, label }) => {
                         const active = activeSection === id;
                         return (
@@ -717,8 +732,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             className={active ? "cs-rail-item is-active" : "cs-rail-item"}
                             style={{
                               position: "relative",
-                              display: "block",
-                              padding: "10px 12px 10px 24px",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "12px",
+                              padding: "8px 12px 8px 18px",
                               fontFamily: "var(--font-body)",
                               fontSize: "13px",
                               fontWeight: 400,
@@ -727,25 +744,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               color: active ? "var(--text)" : "var(--muted)",
                               textDecoration: "none",
                               transition:
-                                "color 0.3s cubic-bezier(0.22,1,0.36,1), transform 0.3s cubic-bezier(0.22,1,0.36,1)",
+                                "color 0.3s cubic-bezier(0.22,1,0.36,1)",
                             }}
                           >
-                            {active && (
-                              <motion.span
-                                layoutId="cs-rail-indicator"
-                                transition={{ type: "spring", stiffness: 420, damping: 36 }}
-                                aria-hidden="true"
-                                style={{
-                                  position: "absolute",
-                                  left: "9px",
-                                  top: "8px",
-                                  bottom: "8px",
-                                  width: "3px",
-                                  background: "var(--text)",
-                                  borderRadius: "2px",
-                                }}
-                              />
-                            )}
+                            {/* Tick — ruler-scale marker visible at rest.
+                                Active item gets a longer var(--text) tick;
+                                inactive items get a short var(--muted) tick. */}
+                            <span className="cs-rail-tick" aria-hidden="true" />
                             <span className="cs-rail-label">{label}</span>
                           </a>
                         );
