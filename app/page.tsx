@@ -1549,14 +1549,14 @@ function WorkPanel() {
                     width: "100%", padding: "10px 12px", fontSize: "14px",
                     fontFamily: "var(--font-body)", color: "var(--text)",
                     background: "var(--surface2)",
-                    border: `1px solid ${pwError ? "#ef4444" : "var(--border)"}`,
+                    border: `1px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
                     borderRadius: "8px", outline: "none",
                     marginBottom: pwError ? "8px" : "16px",
                   }}
                 />
                 {pwError && (
                   <p style={{
-                    fontSize: "12px", color: "#ef4444", marginBottom: "12px",
+                    fontSize: "12px", color: "var(--accent-error)", marginBottom: "12px",
                     fontFamily: "var(--font-body)",
                   }}>
                     Incorrect password. Try again.

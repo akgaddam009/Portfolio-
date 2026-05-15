@@ -3195,11 +3195,11 @@ function ZoomBadge() {
         width: "26px",
         height: "26px",
         borderRadius: "8px",
-        background: "rgba(0,0,0,0.65)",
+        background: "rgba(10,10,10,0.65)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: "#fff",
+        color: "rgba(255,255,255,0.95)",
         pointerEvents: "none",
         opacity: 0.85,
       }}
@@ -4414,7 +4414,7 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
             playsInline
             preload="none"
             onCanPlay={() => setReady(true)}
-            style={{ maxHeight: "640px", maxWidth: "100%", display: ready ? "block" : "none", borderRadius: "12px", background: "#000" }}
+            style={{ maxHeight: "640px", maxWidth: "100%", display: ready ? "block" : "none", borderRadius: "12px", background: "#0a0a0a" }}
           />
         </div>
       </div>
@@ -5388,7 +5388,7 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
             borderRadius: "16px",
             boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
             cursor: "default",
-            background: "#000",
+            background: "#0a0a0a",
           }}
         />
       ) : (
