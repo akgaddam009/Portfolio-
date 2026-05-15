@@ -234,31 +234,6 @@ body {
    (filled, --text bg, --bg color, 44px) with a one-per-page rule.
    Until then, none exists by intent. */
 
-/* ─── Scroll-linked media scale ─────────────────────────
-   Featured media blocks (videos, decision images, outcome
-   pairs) gently scale up as they cross the viewport and
-   ease back as they exit. ~4% range total — registers as
-   weight, not motion. Pure CSS view-timeline; browsers
-   without support see the static layout (no fallback JS
-   needed). Reduced motion strips the animation entirely. */
-@supports (animation-timeline: view()) {
-  .scroll-scale-media {
-    animation: scroll-scale linear both;
-    animation-timeline: view();
-    animation-range: cover 0% cover 100%;
-    transform-origin: center center;
-    will-change: transform;
-  }
-  @keyframes scroll-scale {
-    0%   { transform: scale(0.96); }
-    50%  { transform: scale(1); }
-    100% { transform: scale(0.97); }
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .scroll-scale-media { animation: none !important; transform: none !important; }
-}
-
 /* ─── Selection ─────────────────────────────────────── */
 ::selection { background: var(--text); color: var(--bg); }
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 import PortfolioChat from "@/components/PortfolioChat";
-import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from "framer-motion";
+import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
@@ -1961,8 +1961,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <DecisionBodyText>{d.body}</DecisionBodyText>
                         {d.image && (
                           <figure style={{ margin: 0, marginTop: "6px" }}>
-                            <div
-                              className="scroll-scale-media"
+                            <ScrollScaleMedia
                               onClick={() => setLightboxSrc(d.image!.src)}
                               style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                             >
@@ -1972,7 +1971,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   max height and centered so they don't stretch to fill
                                   the full card width (lightbox shows full size). */}
                               <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
-                            </div>
+                            </ScrollScaleMedia>
                             {d.image.caption && (
                               <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                 {d.image.caption}
@@ -2337,8 +2336,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {/* Single image */}
                         {d.image && (
                           <figure style={{ margin: 0, marginTop: "6px" }}>
-                            <div
-                              className="scroll-scale-media"
+                            <ScrollScaleMedia
                               onClick={() => setLightboxSrc(d.image!.src)}
                               style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                             >
@@ -2347,7 +2345,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                 alt={d.image.alt}
                                 style={{ width: "100%", display: "block" }}
                               />
-                            </div>
+                            </ScrollScaleMedia>
                             {d.image.caption && (
                               <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
                                 {d.image.caption}
@@ -2524,9 +2522,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   ] as const).map(({ label, src }) => (
                     <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
-                      <div className="scroll-scale-media" style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                      <ScrollScaleMedia style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
                         <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
-                      </div>
+                      </ScrollScaleMedia>
                     </div>
                   ))}
                 </motion.div>
@@ -2540,25 +2538,27 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   {/* outcomesVideo renders first (Planful) */}
                   {cs.outcomesVideo && (
                     <motion.div
-                      className="scroll-scale-media"
                       initial={{ opacity: 0, y: 12 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.65, ease: EASE }}
                     >
-                      <VideoBlock src={cs.outcomesVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                      <ScrollScaleMedia>
+                        <VideoBlock src={cs.outcomesVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                      </ScrollScaleMedia>
                     </motion.div>
                   )}
                   {/* prototypeVideo renders next */}
                   {cs.prototypeVideo && (
                     <motion.div
-                      className="scroll-scale-media"
                       initial={{ opacity: 0, y: 12 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.65, ease: EASE }}
                     >
-                      <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                      <ScrollScaleMedia>
+                        <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                      </ScrollScaleMedia>
                     </motion.div>
                   )}
                   {/* Optional intro text above the image */}
@@ -4153,6 +4153,51 @@ function CaseStudyContactCluster() {
         }
       `}</style>
     </div>
+  );
+}
+
+/* Scroll-linked scale wrapper for featured media (videos, decision
+   images). Uses Framer Motion's useScroll/useTransform with a per-
+   element target ref so the effect runs in every browser (not just
+   ones that support CSS animation-timeline). Spring smoothing on the
+   raw scrollYProgress keeps the scale feeling like weight, not
+   choppy step changes. */
+function ScrollScaleMedia({
+  children,
+  className,
+  style,
+  onClick,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  onClick?: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const smooth = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const scale = useTransform(smooth, [0, 0.5, 1], [0.92, 1.02, 0.95]);
+  /* prefers-reduced-motion: render the static layout, no transform. */
+  if (reduced) {
+    return (
+      <div ref={ref} className={className} onClick={onClick} style={style}>
+        {children}
+      </div>
+    );
+  }
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      onClick={onClick}
+      style={{ ...style, scale, willChange: "transform" }}
+    >
+      {children}
+    </motion.div>
   );
 }
 
