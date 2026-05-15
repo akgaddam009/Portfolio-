@@ -71,7 +71,7 @@ export type CaseStudy = {
   insightImage?: CaseStudyImage;
   decisionsIntro?: string;
   decisions?: { title: string; body: string; image?: CaseStudyImage; images?: CaseStudyImage[]; imageStack?: boolean; videos?: { src: string; label?: string; caption?: string }[]; persona?: { name: string; role: string; goal: string; pain: string; quote: string }; /** Optional icon glyph name shown beside the decision title. Names map to Icon.tsx exports (e.g. "Scissors", "ChartActivity", "LayoutGrid", "Info"). */ icon?: string }[];
-  taskFlow?: { heading?: string; stages: TaskFlowStage[] };
+  taskFlow?: { heading?: string; subheading?: string; stages: TaskFlowStage[] };
   prototypeVideo?: string;
   /** One or more interactive prototypes embedded as iframes. Each block
       renders inline in the Prototype section, with its label as a sub-heading.
@@ -436,7 +436,8 @@ export const caseStudies: CaseStudy[] = [
       "I led design end to end as Senior Product Designer, from problem framing and scoping through research, UX, interaction details, prototyping, and design QA.\n\nValidated weekly with the PM, leadership, and engineering. Brought in customer implementation consultants to make sure the workflow matched real forecasting rhythms, not what the team imagined them to be. During development, I ran design QA to ensure shipped interactions matched intent.",
 
     taskFlow: {
-      heading: "A clear four-step journey",
+      heading: "Task Flow",
+      subheading: "A clear four-step journey",
       stages: [
         { number: "01", label: "Add",       description: "Upload a file or paste in data" },
         { number: "02", label: "Transform", description: "Apply calculations and shape the data" },

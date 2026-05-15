@@ -2125,6 +2125,26 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </section>
             ) : cs.taskFlow && (
               <CsSection label={cs.taskFlow.heading ?? "The workflow"} id="cs-workflow">
+                {cs.taskFlow.subheading && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "clamp(20px, 2vw, 24px)",
+                      fontWeight: 400,
+                      lineHeight: 1.35,
+                      letterSpacing: "-0.02em",
+                      color: "var(--text)",
+                      margin: "0 0 32px",
+                      maxWidth: "560px",
+                    }}
+                  >
+                    {cs.taskFlow.subheading}
+                  </motion.p>
+                )}
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
