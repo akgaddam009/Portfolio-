@@ -39,7 +39,7 @@ export default function Footer() {
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
-              fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
               letterSpacing: "-0.01em",
               color: copied ? "var(--accent-success)" : "var(--muted)",
               minHeight: "var(--space-8)",
@@ -62,7 +62,7 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
               letterSpacing: "-0.01em",
               color: "var(--muted)",
               minHeight: "var(--space-8)",
@@ -77,7 +77,7 @@ export default function Footer() {
             onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
           >
-            <span style={{ fontSize: "11px" }}>↗</span>
+            <span style={{ fontSize: "var(--text-mono-lg)" }}>↗</span>
             LinkedIn
           </Link>
         </div>
@@ -88,7 +88,7 @@ export default function Footer() {
             text glyph, so it inherits muted colour like the rest of the line. */}
         <div style={{ paddingTop: "var(--space-5)", borderTop: "1px solid var(--border)" }}>
           <p style={{
-            fontFamily: "var(--font-body)", fontSize: "11px",
+            fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
             fontWeight: 400, letterSpacing: "-0.01em",
             color: "var(--muted)", lineHeight: 1.3,
             marginBottom: "var(--space-1)",
@@ -96,7 +96,7 @@ export default function Footer() {
             © 2026 · Arun Gaddam ツ
           </p>
           <p style={{
-            fontFamily: "var(--font-body)", fontSize: "11px",
+            fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
             fontWeight: 400, letterSpacing: "-0.01em",
             color: "var(--muted)", lineHeight: 1.3,
             opacity: 0.6,

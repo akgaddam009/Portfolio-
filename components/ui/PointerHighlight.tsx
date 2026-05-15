@@ -70,7 +70,7 @@ export function PointerHighlight({
               pointerEvents: "none",
               rotate: "-90deg",
               color: pointerColor,
-              fontSize: "18px",
+              fontSize: "var(--text-title)",
               lineHeight: 1,
             }}
             initial={{ opacity: 0 }}

@@ -167,7 +167,7 @@ export default function LoadingScreen({ visible }: { visible: boolean }) {
                 transition={{ duration: 0.4, ease: EASE, delay: 0.05 }}
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "9px",
+                  fontSize: "var(--text-eyebrow)",
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
                   color: "var(--muted)",
@@ -189,7 +189,7 @@ export default function LoadingScreen({ visible }: { visible: boolean }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}
-              style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}
+              style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}
             >
               Portfolio · 2026
             </motion.span>
@@ -197,7 +197,7 @@ export default function LoadingScreen({ visible }: { visible: boolean }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, ease: EASE, delay: 0.4 }}
-              style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}
+              style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}
             >
               Hyderabad, India
             </motion.span>

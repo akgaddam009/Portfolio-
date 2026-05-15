@@ -58,7 +58,7 @@ export default function Nav() {
               aria-label="Home, Arun Gaddam"
               style={{
                 fontFamily: "var(--font-logo)",
-                fontSize: "12px",
+                fontSize: "var(--text-caption)",
                 fontWeight: 500,
                 color: "var(--text)",
                 letterSpacing: "0.06em",
@@ -117,7 +117,7 @@ export default function Nav() {
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontFamily: "var(--font-mono)", fontSize: "10px",
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
                 letterSpacing: "0.06em", textTransform: "uppercase",
                 color: "var(--muted)", transition: "color 0.15s",
                 display: "inline-flex", alignItems: "center", gap: "5px",
@@ -141,7 +141,7 @@ export default function Nav() {
                 alignItems: "center",
                 gap: "6px",
                 fontFamily: "var(--font-body)",
-                fontSize: "13px",
+                fontSize: "var(--text-body)",
                 fontWeight: 400,
                 color: copied ? "var(--accent-success)" : "var(--muted)",
                 background: "none",
@@ -153,7 +153,7 @@ export default function Nav() {
               onMouseEnter={e => { if (!copied) e.currentTarget.style.color = "var(--text)"; }}
               onMouseLeave={e => { if (!copied) e.currentTarget.style.color = "var(--muted)"; }}
             >
-              <span style={{ fontSize: "11px" }}>{copied ? "✓" : "✉"}</span>
+              <span style={{ fontSize: "var(--text-mono-lg)" }}>{copied ? "✓" : "✉"}</span>
               {copied ? "Copied!" : "Copy email"}
             </button>
           </nav>

@@ -39,7 +39,7 @@ export default function Approach() {
           transition={{ duration: 0.6, ease: EASE }}
           style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "0" }}
         >
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>
             Process
           </p>
           <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
@@ -62,14 +62,14 @@ export default function Approach() {
               alignItems: "start",
             }}
           >
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", letterSpacing: "0.04em", color: "var(--muted)", paddingTop: "3px" }}>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", letterSpacing: "0.04em", color: "var(--muted)", paddingTop: "3px" }}>
               {p.number}
             </p>
             <div>
-              <h3 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: "8px" }}>
+              <h3 style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: "8px" }}>
                 {p.title}
               </h3>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)", fontWeight: 400 }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, color: "var(--muted2)", fontWeight: 400 }}>
                 {p.body}
               </p>
             </div>

@@ -195,7 +195,7 @@ function ProcStepIndicator({ screen, setScreen }: { screen: ProcScreen; setScree
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: "8px",
-      fontFamily: "var(--astra-font-mono)", fontSize: "10px",
+      fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       color: "var(--astra-text-3)",
       flexWrap: "wrap",
@@ -235,7 +235,7 @@ function ProcLanding({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
           display: "flex", alignItems: "center", gap: "10px",
           background: "var(--astra-red-bg)", border: "1px solid var(--astra-red-border)",
           padding: "10px 14px", borderRadius: "5px", marginBottom: "12px",
-          fontSize: "12px", color: "var(--astra-red)",
+          fontSize: "var(--text-caption)", color: "var(--astra-red)",
         }}>
           <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--astra-red-dot)", flexShrink: 0 }} />
           <span style={{ flex: 1 }}>
@@ -254,13 +254,13 @@ function ProcLanding({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
             width: "32px", height: "32px", borderRadius: "50%",
             background: "var(--astra-yellow)", color: "#fff",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontWeight: 600, fontSize: "13px",
+            fontWeight: 600, fontSize: "var(--text-body)",
           }}>4</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--astra-text-1)" }}>
+            <div style={{ fontSize: "var(--text-body)", fontWeight: 500, color: "var(--astra-text-1)" }}>
               4 contracts awaiting your review
             </div>
-            <div style={{ fontSize: "11px", color: "var(--astra-text-2)", marginTop: "2px" }}>
+            <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)", marginTop: "2px" }}>
               Oldest: Infosys MSA · started 2h ago · 2 unresolved fields
             </div>
           </div>
@@ -273,8 +273,8 @@ function ProcLanding({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-          <div style={{ fontSize: "13px", fontWeight: 600 }}>All Contracts</div>
-          <div style={{ fontSize: "10px", color: "var(--astra-text-3)", fontFamily: "var(--astra-font-mono)" }}>
+          <div style={{ fontSize: "var(--text-body)", fontWeight: 600 }}>All Contracts</div>
+          <div style={{ fontSize: "var(--text-mono)", color: "var(--astra-text-3)", fontFamily: "var(--astra-font-mono)" }}>
             {CONTRACTS.length} contracts
           </div>
         </div>
@@ -290,7 +290,7 @@ function ProcLanding({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
             padding: "10px 14px",
             background: "var(--astra-surface-2)",
             borderBottom: "1px solid var(--astra-border-light)",
-            fontSize: "10px",
+            fontSize: "var(--text-mono)",
             fontFamily: "var(--astra-font-mono)",
             letterSpacing: "0.06em",
             textTransform: "uppercase",
@@ -308,7 +308,7 @@ function ProcLanding({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
                 gap: "12px",
                 padding: "12px 14px",
                 borderBottom: i < CONTRACTS.length - 1 ? "1px solid var(--astra-border-light)" : "none",
-                fontSize: "12px",
+                fontSize: "var(--text-caption)",
                 background: c.status === "returned" ? "var(--astra-red-bg)" : "transparent",
                 cursor: c.id === "infosys-msa" ? "pointer" : "default",
                 transition: "background 0.12s",
@@ -319,19 +319,19 @@ function ProcLanding({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
             >
               <div>
                 <div style={{ fontWeight: 500, color: "var(--astra-text-1)" }}>{c.name}</div>
-                <div style={{ fontSize: "11px", color: c.status === "returned" ? "var(--astra-red)" : "var(--astra-text-3)", marginTop: "2px" }}>
+                <div style={{ fontSize: "var(--text-mono-lg)", color: c.status === "returned" ? "var(--astra-red)" : "var(--astra-text-3)", marginTop: "2px" }}>
                   {c.subText}
                 </div>
               </div>
-              <span style={{ fontSize: "11px", color: "var(--astra-text-3)" }}>{c.type}</span>
+              <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-3)" }}>{c.type}</span>
               <span>{c.value}</span>
               <div><StatusChip status={c.status} /></div>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "var(--text-mono-lg)" }}>
                 <div style={{
                   width: "20px", height: "20px", borderRadius: "50%",
                   background: "var(--astra-text-1)", color: "#fff",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "9px", fontWeight: 500,
+                  fontSize: "var(--text-eyebrow)", fontWeight: 500,
                 }}>{c.owner.initials}</div>
                 {c.owner.name}
               </div>
@@ -363,9 +363,9 @@ function ProcUpload({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
       <div className="astra-card" style={{ marginBottom: "12px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
           <StepBadge state="done" n={1} />
-          <span style={{ fontSize: "13px", fontWeight: 500 }}>Step 1 — Contract type</span>
+          <span style={{ fontSize: "var(--text-body)", fontWeight: 500 }}>Step 1 — Contract type</span>
         </div>
-        <div style={{ fontSize: "11px", color: "var(--astra-text-2)", marginBottom: "10px", lineHeight: 1.5 }}>
+        <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)", marginBottom: "10px", lineHeight: 1.5 }}>
           Select contract type to configure the correct approval routing before uploading.
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "12px" }}>
@@ -377,7 +377,7 @@ function ProcUpload({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
           background: "var(--astra-blue-bg)", border: "1px solid var(--astra-blue-border)",
           padding: "10px 12px", borderRadius: "4px",
           display: "flex", alignItems: "flex-start", gap: "8px",
-          fontSize: "11px", lineHeight: 1.5, color: "var(--astra-blue)",
+          fontSize: "var(--text-mono-lg)", lineHeight: 1.5, color: "var(--astra-blue)",
         }}>
           <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--astra-blue-dot)", marginTop: "5px", flexShrink: 0 }} />
           <span><strong>{type} routing:</strong> Under ₹50L → Direct manager. Over ₹50L → Legal review → VP Procurement → CFO. AI will detect value and apply the correct chain.</span>
@@ -388,7 +388,7 @@ function ProcUpload({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
       <div className="astra-card">
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
           <StepBadge state="active" n={2} />
-          <span style={{ fontSize: "13px", fontWeight: 500 }}>Step 2 — Upload PDF</span>
+          <span style={{ fontSize: "var(--text-body)", fontWeight: 500 }}>Step 2 — Upload PDF</span>
         </div>
         <div
           onClick={() => setScreen("processing")}
@@ -403,9 +403,9 @@ function ProcUpload({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
           onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--astra-text-2)"; e.currentTarget.style.background = "var(--astra-bg)"; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--astra-border)"; e.currentTarget.style.background = "transparent"; }}
         >
-          <div style={{ fontSize: "13px", fontWeight: 500, marginBottom: "4px" }}>Upload contract PDF</div>
-          <div style={{ fontSize: "11px", color: "var(--astra-text-2)", marginBottom: "8px" }}>Drag & drop or click to browse</div>
-          <div style={{ fontSize: "10px", color: "var(--astra-text-3)", fontFamily: "var(--astra-font-mono)", marginBottom: "12px" }}>
+          <div style={{ fontSize: "var(--text-body)", fontWeight: 500, marginBottom: "4px" }}>Upload contract PDF</div>
+          <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)", marginBottom: "8px" }}>Drag & drop or click to browse</div>
+          <div style={{ fontSize: "var(--text-mono)", color: "var(--astra-text-3)", fontFamily: "var(--astra-font-mono)", marginBottom: "12px" }}>
             PDF only · max 50 MB · text-based preferred (not scanned)
           </div>
           <button className="astra-btn astra-btn-primary astra-btn-sm" onClick={e => { e.stopPropagation(); setScreen("processing"); }}>
@@ -426,13 +426,13 @@ function ProcProcessing({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
         <div style={{
           width: "48px", height: "48px", borderRadius: "8px",
           background: "var(--astra-text-1)", color: "#fff",
-          fontFamily: "var(--astra-font-mono)", fontSize: "11px",
+          fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono-lg)",
           display: "flex", alignItems: "center", justifyContent: "center",
           margin: "0 auto 20px",
         }}>PDF</div>
 
-        <div style={{ fontSize: "14px", fontWeight: 500, marginBottom: "6px" }}>Infosys_MSA_2024.pdf</div>
-        <div style={{ fontSize: "11px", color: "var(--astra-text-2)", marginBottom: "20px" }}>32 pages · 4.8 MB</div>
+        <div style={{ fontSize: "var(--text-body-lg)", fontWeight: 500, marginBottom: "6px" }}>Infosys_MSA_2024.pdf</div>
+        <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)", marginBottom: "20px" }}>32 pages · 4.8 MB</div>
 
         <div style={{
           height: "3px", background: "var(--astra-bg)", borderRadius: "2px", overflow: "hidden",
@@ -475,7 +475,7 @@ function ProcStage({ label, done, active }: { label: string; done?: boolean; act
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: "10px",
-      fontSize: "11px", textAlign: "left",
+      fontSize: "var(--text-mono-lg)", textAlign: "left",
       color: done ? "var(--astra-text-2)" : active ? "var(--astra-text-1)" : "var(--astra-text-3)",
       opacity: done || active ? 1 : 0.5,
     }}>
@@ -519,17 +519,17 @@ function ProcReview({
         padding: "16px",
       }}>
         <div style={{
-          fontFamily: "var(--astra-font-mono)", fontSize: "10px",
+          fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)",
           color: "var(--astra-text-3)", letterSpacing: "0.06em",
           textTransform: "uppercase", marginBottom: "10px",
         }}>Source PDF</div>
         <div style={{
           background: "#fff", border: "1px solid var(--astra-border)", borderRadius: "4px",
-          padding: "20px 16px", fontSize: "10px", lineHeight: 1.6,
+          padding: "20px 16px", fontSize: "var(--text-mono)", lineHeight: 1.6,
           color: "var(--astra-text-2)", height: "560px", overflow: "hidden",
           fontFamily: "var(--astra-font-mono)",
         }}>
-          <div style={{ textAlign: "center", marginBottom: "16px", color: "var(--astra-text-1)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.04em" }}>
+          <div style={{ textAlign: "center", marginBottom: "16px", color: "var(--astra-text-1)", fontSize: "var(--text-mono-lg)", fontWeight: 600, letterSpacing: "0.04em" }}>
             MASTER SERVICES AGREEMENT
           </div>
           <div style={{ marginBottom: "8px" }}>This Master Services Agreement (&quot;Agreement&quot;) is made and entered into as of 1 April 2024 by and between Infosys Limited, having its registered office at Electronics City, Bengaluru, and the Customer.</div>
@@ -548,10 +548,10 @@ function ProcReview({
           marginBottom: "20px", flexWrap: "wrap", gap: "10px",
         }}>
           <div>
-            <div style={{ fontSize: "15px", fontWeight: 600, color: "var(--astra-text-1)", marginBottom: "4px" }}>
+            <div style={{ fontSize: "var(--text-lead)", fontWeight: 600, color: "var(--astra-text-1)", marginBottom: "4px" }}>
               Infosys MSA 2024
             </div>
-            <div style={{ fontSize: "11px", color: "var(--astra-text-2)" }}>
+            <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)" }}>
               {isResolved ? `All ${fields.length} fields resolved · ready to send` : `${fields.length - unresolved} of ${fields.length} resolved · ${unresolved} unresolved`}
             </div>
           </div>
@@ -560,7 +560,7 @@ function ProcReview({
               display: "flex", alignItems: "center", gap: "6px",
               background: "var(--astra-yellow-bg)", border: "1px solid var(--astra-yellow-border)",
               padding: "5px 10px", borderRadius: "4px",
-              fontSize: "11px", color: "var(--astra-yellow)", fontWeight: 500,
+              fontSize: "var(--text-mono-lg)", color: "var(--astra-yellow)", fontWeight: 500,
             }}>
               <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--astra-yellow-dot)" }} />
               {unresolved} unresolved
@@ -572,7 +572,7 @@ function ProcReview({
         {groups.map(g => (
           <div key={g.label} style={{ marginBottom: "20px" }}>
             <div style={{
-              fontFamily: "var(--astra-font-mono)", fontSize: "10px",
+              fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)",
               color: "var(--astra-text-3)", letterSpacing: "0.08em",
               textTransform: "uppercase", marginBottom: "6px",
               paddingBottom: "6px", borderBottom: "1px solid var(--astra-border-light)",
@@ -601,7 +601,7 @@ function ProcReview({
             gap: "12px", flexWrap: "wrap",
           }}>
             <div style={{
-              fontSize: "12px", color: "var(--astra-text-2)",
+              fontSize: "var(--text-caption)", color: "var(--astra-text-2)",
             }}>
               All fields confirmed. Ready to route to legal for review.
             </div>
@@ -624,7 +624,7 @@ function ProcReview({
             padding: "12px 14px", borderRadius: "6px", marginTop: "16px",
             display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px",
           }}>
-            <span style={{ fontSize: "12px", color: "var(--astra-green)", fontWeight: 500 }}>
+            <span style={{ fontSize: "var(--text-caption)", color: "var(--astra-green)", fontWeight: 500 }}>
               All fields resolved. Move on?
             </span>
             <button className="astra-btn astra-btn-primary astra-btn-sm" onClick={() => setScreen("review-resolved")}>
@@ -651,7 +651,7 @@ function FieldRow({ field, onResolve, showResolve }: { field: ExtractedField; on
           {field.status === "missing" ? "Not detected — needs confirmation" : field.value}
         </div>
         {field.note && (
-          <div style={{ fontSize: "11px", color: "var(--astra-text-2)", marginTop: "4px", fontStyle: "italic" }}>
+          <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)", marginTop: "4px", fontStyle: "italic" }}>
             {field.note}
           </div>
         )}
@@ -659,7 +659,7 @@ function FieldRow({ field, onResolve, showResolve }: { field: ExtractedField; on
           <button
             onClick={onResolve}
             className="astra-btn astra-btn-ghost astra-btn-sm"
-            style={{ marginTop: "8px", fontSize: "10px" }}
+            style={{ marginTop: "8px", fontSize: "var(--text-mono)" }}
           >
             ✓ Confirm value
           </button>
@@ -727,7 +727,7 @@ function LegalStepIndicator({ screen, setScreen }: { screen: LegalScreen; setScr
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: "8px",
-      fontFamily: "var(--astra-font-mono)", fontSize: "10px",
+      fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       color: "var(--astra-text-3)",
       flexWrap: "wrap",
@@ -761,10 +761,10 @@ function LegalQueue({ setScreen }: { setScreen: (s: LegalScreen) => void }) {
       <LeftNav active="approvals" role="legal" />
       <div className="astra-main">
         <div style={{ marginBottom: "16px" }}>
-          <div style={{ fontSize: "14px", fontWeight: 600, marginBottom: "4px" }}>
+          <div style={{ fontSize: "var(--text-body-lg)", fontWeight: 600, marginBottom: "4px" }}>
             Your queue — Priya M.
           </div>
-          <div style={{ fontSize: "11px", color: "var(--astra-text-2)" }}>
+          <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)" }}>
             3 contracts awaiting your review · personalized by routing
           </div>
         </div>
@@ -794,21 +794,21 @@ function LegalQueue({ setScreen }: { setScreen: (s: LegalScreen) => void }) {
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--astra-border-light)"; }}
               >
                 <div>
-                  <div style={{ fontSize: "13px", fontWeight: 500, marginBottom: "3px" }}>{c.name}</div>
-                  <div style={{ fontSize: "11px", color: "var(--astra-text-2)" }}>
+                  <div style={{ fontSize: "var(--text-body)", fontWeight: 500, marginBottom: "3px" }}>{c.name}</div>
+                  <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)" }}>
                     From {item.receivedFrom} · {item.receivedAt}
                     {item.flagged && <span style={{ color: "var(--astra-yellow)", marginLeft: "8px" }}>⚐ {item.flagged}</span>}
                   </div>
                 </div>
-                <span style={{ fontSize: "11px", color: "var(--astra-text-3)" }}>{c.type}</span>
-                <span style={{ fontSize: "11px" }}>{c.value}</span>
+                <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-3)" }}>{c.type}</span>
+                <span style={{ fontSize: "var(--text-mono-lg)" }}>{c.value}</span>
                 <PriorityChip priority={item.priority} />
               </div>
             );
           })}
         </div>
 
-        <div style={{ fontSize: "11px", color: "var(--astra-text-3)", marginTop: "16px", fontStyle: "italic" }}>
+        <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-3)", marginTop: "16px", fontStyle: "italic" }}>
           Click <strong style={{ color: "var(--astra-text-1)" }}>Infosys MSA 2024</strong> to walk through legal review.
         </div>
       </div>
@@ -829,17 +829,17 @@ function LegalReview({ fields, setScreen }: { fields: ExtractedField[]; setScree
       }}>
         <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--astra-purple-dot)" }} />
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: "12px", color: "var(--astra-purple)", fontWeight: 600, marginBottom: "2px" }}>
+          <div style={{ fontSize: "var(--text-caption)", color: "var(--astra-purple)", fontWeight: 600, marginBottom: "2px" }}>
             Legal-emphasis review
           </div>
-          <div style={{ fontSize: "11px", color: "var(--astra-text-2)" }}>
+          <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)" }}>
             Liability, indemnity, governing law, and renewal terms surfaced first. Procurement-resolved fields are below.
           </div>
         </div>
       </div>
 
       <div style={{
-        fontFamily: "var(--astra-font-mono)", fontSize: "10px",
+        fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)",
         color: "var(--astra-purple)", letterSpacing: "0.08em",
         textTransform: "uppercase", marginBottom: "8px",
       }}>
@@ -851,7 +851,7 @@ function LegalReview({ fields, setScreen }: { fields: ExtractedField[]; setScree
 
       <details style={{ marginTop: "20px" }}>
         <summary style={{
-          fontFamily: "var(--astra-font-mono)", fontSize: "10px",
+          fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)",
           color: "var(--astra-text-3)", letterSpacing: "0.08em",
           textTransform: "uppercase", cursor: "pointer", padding: "8px 0",
           listStyle: "none",
@@ -894,10 +894,10 @@ function LegalApprove({ setScreen }: { setScreen: (s: LegalScreen) => void }) {
         }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
         </div>
-        <div style={{ fontSize: "16px", fontWeight: 600, color: "var(--astra-green)", marginBottom: "8px" }}>
+        <div style={{ fontSize: "var(--text-title-sm)", fontWeight: 600, color: "var(--astra-green)", marginBottom: "8px" }}>
           Approved by Legal
         </div>
-        <div style={{ fontSize: "12px", color: "var(--astra-text-2)", marginBottom: "20px", lineHeight: 1.6 }}>
+        <div style={{ fontSize: "var(--text-caption)", color: "var(--astra-text-2)", marginBottom: "20px", lineHeight: 1.6 }}>
           Forwarding to <strong>VP Procurement</strong> for final approval.
           <br />
           Procurement (Ananya R.) will be notified.
@@ -906,10 +906,10 @@ function LegalApprove({ setScreen }: { setScreen: (s: LegalScreen) => void }) {
         <div style={{
           background: "#fff", border: "1px solid var(--astra-green-border)",
           padding: "12px 14px", borderRadius: "5px", textAlign: "left",
-          fontSize: "11px", lineHeight: 1.6, color: "var(--astra-text-2)",
+          fontSize: "var(--text-mono-lg)", lineHeight: 1.6, color: "var(--astra-text-2)",
           marginBottom: "20px",
         }}>
-          <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--astra-text-3)", marginBottom: "8px" }}>
+          <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--astra-text-3)", marginBottom: "8px" }}>
             Routing path
           </div>
           <div>Procurement (Ananya R.) → <strong style={{ color: "var(--astra-green)" }}>Legal (Priya M.) ✓</strong> → VP Procurement → CFO</div>
@@ -978,7 +978,7 @@ function PriorityChip({ priority }: { priority: string }) {
   const m = map[priority];
   return (
     <span style={{
-      fontFamily: "var(--astra-font-mono)", fontSize: "9px",
+      fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-eyebrow)",
       letterSpacing: "0.04em", textTransform: "uppercase",
       padding: "3px 7px", borderRadius: "3px", fontWeight: 500,
       background: m.bg, color: m.fg, border: `1px solid ${m.border}`,
@@ -998,8 +998,8 @@ function ModeOpt({ icon, label, sub, selected }: { icon: string; label: string; 
     }}>
       <div style={{ fontSize: "20px" }}>{icon}</div>
       <div>
-        <div style={{ fontSize: "12px", fontWeight: 500 }}>{label}</div>
-        <div style={{ fontSize: "10px", color: "var(--astra-text-3)", marginTop: "2px" }}>{sub}</div>
+        <div style={{ fontSize: "var(--text-caption)", fontWeight: 500 }}>{label}</div>
+        <div style={{ fontSize: "var(--text-mono)", color: "var(--astra-text-3)", marginTop: "2px" }}>{sub}</div>
       </div>
     </div>
   );
@@ -1010,7 +1010,7 @@ function StepBadge({ state, n }: { state: "done" | "active" | "pending"; n: numb
     <div style={{
       width: "20px", height: "20px", borderRadius: "50%",
       display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: "10px", fontFamily: "var(--astra-font-mono)", fontWeight: 600,
+      fontSize: "var(--text-mono)", fontFamily: "var(--astra-font-mono)", fontWeight: 600,
       background: state === "done" ? "var(--astra-green-dot)" : state === "active" ? "var(--astra-text-1)" : "var(--astra-bg)",
       color: state === "pending" ? "var(--astra-text-3)" : "#fff",
       border: state === "pending" ? "1px solid var(--astra-border)" : "none",
@@ -1045,8 +1045,8 @@ function TypeOpt({ label, desc, selected, onClick }: { label: string; desc: stri
         flexShrink: 0,
       }} />
       <div>
-        <div style={{ fontSize: "12px", fontWeight: 500 }}>{label}</div>
-        <div style={{ fontSize: "10px", color: "var(--astra-text-3)", marginTop: "2px" }}>{desc}</div>
+        <div style={{ fontSize: "var(--text-caption)", fontWeight: 500 }}>{label}</div>
+        <div style={{ fontSize: "var(--text-mono)", color: "var(--astra-text-3)", marginTop: "2px" }}>{desc}</div>
       </div>
     </button>
   );

@@ -73,7 +73,7 @@ function ViewModeToggle({
               background: active ? "var(--bg)" : "transparent",
               color: "var(--text)",
               fontFamily: "var(--font-logo)",
-              fontSize: "11px",
+              fontSize: "var(--text-mono-lg)",
               fontWeight: 500,
               letterSpacing: "0.06em",
               textTransform: "uppercase",
@@ -130,7 +130,7 @@ function HomeNav({
           aria-label="Home. Arun Gaddam"
           style={{
             fontFamily: "var(--font-logo)",
-            fontSize: "12px",
+            fontSize: "var(--text-caption)",
             fontWeight: 500,
             color: "var(--text)",
             letterSpacing: "0.06em",
@@ -352,7 +352,7 @@ function FloatingPanelMenu({
                     background: i === activePanel ? "var(--surface)" : "transparent",
                     color: i === activePanel ? "var(--text)" : "var(--muted2)",
                     fontFamily: "var(--font-mono)",
-                    fontSize: "10px",
+                    fontSize: "var(--text-mono)",
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
                     fontWeight: 400,
@@ -405,7 +405,7 @@ function PanelHeader({ label }: { label: string }) {
     }}>
       <p style={{
         fontFamily: "var(--font-mono)",
-        fontSize: "10px",
+        fontSize: "var(--text-mono)",
         fontWeight: 400,
         letterSpacing: "0.08em",
         textTransform: "uppercase",
@@ -566,7 +566,7 @@ function AboutPanel() {
           transition={{ duration: 0.5, ease: EASE, delay: 0.1 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "14px",
+            fontSize: "var(--text-body-lg)",
             lineHeight: 1.65,
             letterSpacing: "-0.01em",
             color: "var(--muted)",
@@ -593,7 +593,7 @@ function AboutPanel() {
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--muted)",
               padding: "7px 12px", borderRadius: "8px",
@@ -618,7 +618,7 @@ function AboutPanel() {
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
               style={{
-                fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                 letterSpacing: "0.08em", textTransform: "uppercase",
                 color: "var(--muted)",
                 padding: "7px 12px", borderRadius: "8px",
@@ -662,7 +662,7 @@ function AboutPanel() {
                   <p
                     data-label="true"
                     style={{
-                      fontFamily: "var(--font-mono)", fontSize: "9px",
+                      fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                       letterSpacing: "0.1em", textTransform: "uppercase",
                       color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
                       transition: "color 0.2s",
@@ -674,7 +674,7 @@ function AboutPanel() {
                 </div>
                 {(row.valueNode || row.value) && (
                   <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "14px",
+                    fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                     letterSpacing: "-0.01em",
                     color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
                     marginBottom: row.chips ? "12px" : 0,
@@ -686,7 +686,7 @@ function AboutPanel() {
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                     {row.chips.map(chip => (
                       <span key={chip} style={{
-                        fontFamily: "var(--font-body)", fontSize: "12px",
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                         fontWeight: 400, letterSpacing: "-0.01em",
                         padding: "4px 10px", borderRadius: "9999px",
                         background: "var(--surface)",
@@ -724,7 +724,7 @@ function AboutPanel() {
               {/* Section header */}
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
                 <p style={{
-                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                   letterSpacing: "0.1em", textTransform: "uppercase",
                   color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
                 }}>
@@ -748,7 +748,7 @@ function AboutPanel() {
                   {skills.map((skill, i) => (
                     <span key={`a-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
                       <span style={{
-                        fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                         letterSpacing: "-0.01em", color: "var(--muted2)",
                         padding: "4px 10px",
                         border: "1px solid var(--border)",
@@ -768,7 +768,7 @@ function AboutPanel() {
                     {skills.map((skill, i) => (
                       <span key={`b-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
                         <span style={{
-                          fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                          fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                           letterSpacing: "-0.01em", color: "var(--muted2)",
                           padding: "4px 10px",
                           border: "1px solid var(--border)",
@@ -910,7 +910,7 @@ function MeshThumbnail({ index, type, confidential }: {
           position: "absolute", top: "10px", right: "10px",
           background: badgeBg,
           borderRadius: "6px", padding: "3px 8px",
-          fontFamily: "var(--font-body)", fontSize: "11px",
+          fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
           fontWeight: 510, letterSpacing: "-0.01em",
           color: badgeColor,
           transition: "background 0.3s, color 0.3s",
@@ -1131,7 +1131,7 @@ function SystemFeatureCard() {
             </div>
 
             <h3 style={{
-              fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
               lineHeight: "22px", letterSpacing: 0,
               color: "var(--text)", marginBottom: "4px",
             }}>
@@ -1139,7 +1139,7 @@ function SystemFeatureCard() {
             </h3>
 
             <p style={{
-              fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
               lineHeight: 1.5, letterSpacing: 0,
               color: "var(--muted)", marginBottom: "12px",
             }}>
@@ -1171,7 +1171,7 @@ function WorkChip({ label }: { label: string }) {
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: "3px",
-      fontFamily: "var(--font-mono)", fontSize: "9px",
+      fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       padding: "3px 8px 3px 6px", background: "var(--surface2)",
       color: "var(--muted)", borderRadius: "6px",
@@ -1192,7 +1192,7 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: Icon ? "4px" : "0",
-      fontFamily: "var(--font-mono)", fontSize: "9px",
+      fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       padding: Icon ? "3px 8px 3px 6px" : "3px 8px",
       background: `var(--chip-${tone}-bg)`,
@@ -1359,14 +1359,14 @@ function WorkPanel() {
                         {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
                       </div>
                       <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
                         lineHeight: "22px", letterSpacing: "-0.02em",
                         color: "var(--text)", marginBottom: "4px",
                       }}>
                         {cs.title}
                       </h3>
                       <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "14px",
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                         letterSpacing: "-0.01em",
                         color: "var(--muted)", lineHeight: 1.65, fontWeight: 400,
                         marginBottom: 0,
@@ -1389,7 +1389,7 @@ function WorkPanel() {
         {/* Archived case studies — PDF links */}
         <div style={{ padding: "0 0 24px" }}>
           <p style={{
-            fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 400,
+            fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 400,
             letterSpacing: "0.1em", textTransform: "uppercase",
             color: "var(--muted)", margin: "16px 0 12px 0",
           }}>
@@ -1455,12 +1455,12 @@ function WorkPanel() {
                         {tags.map(tag => <WorkChip key={tag} label={tag} />)}
                       </div>
                       <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
                         lineHeight: "22px", letterSpacing: "-0.02em",
                         color: "var(--text)", marginBottom: "4px",
                       }}>{title}</h3>
                       <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "14px",
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                         letterSpacing: "-0.01em", color: "var(--muted)",
                         lineHeight: 1.65, fontWeight: 400, marginBottom: 0,
                       }}>{subtitle}</p>
@@ -1527,13 +1527,13 @@ function WorkPanel() {
               }}
             >
               <h3 id="archived-pw-modal-title" style={{
-                fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500,
+                fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
                 color: "var(--text)", marginBottom: "6px",
               }}>
                 Archived case studies are password protected
               </h3>
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "13px",
+                fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                 color: "var(--muted)", lineHeight: 1.5, marginBottom: "16px",
               }}>
                 Much of my work is confidential. Please reach out for the password.
@@ -1546,7 +1546,7 @@ function WorkPanel() {
                   onChange={(e) => { setPwInput(e.target.value); setPwError(false); }}
                   placeholder="Password"
                   style={{
-                    width: "100%", padding: "10px 12px", fontSize: "14px",
+                    width: "100%", padding: "10px 12px", fontSize: "var(--text-body-lg)",
                     fontFamily: "var(--font-body)", color: "var(--text)",
                     background: "var(--surface2)",
                     border: `1px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
@@ -1556,7 +1556,7 @@ function WorkPanel() {
                 />
                 {pwError && (
                   <p style={{
-                    fontSize: "12px", color: "var(--accent-error)", marginBottom: "12px",
+                    fontSize: "var(--text-caption)", color: "var(--accent-error)", marginBottom: "12px",
                     fontFamily: "var(--font-body)",
                   }}>
                     Incorrect password. Try again.
@@ -1567,7 +1567,7 @@ function WorkPanel() {
                     type="button"
                     onClick={() => setPwOpen(false)}
                     style={{
-                      padding: "12px 18px", fontSize: "13px", fontFamily: "var(--font-body)",
+                      padding: "12px 18px", fontSize: "var(--text-body)", fontFamily: "var(--font-body)",
                       color: "var(--muted)", background: "transparent",
                       border: "1px solid var(--border)", borderRadius: "8px",
                       cursor: "pointer",
@@ -1576,7 +1576,7 @@ function WorkPanel() {
                   <button
                     type="submit"
                     style={{
-                      padding: "12px 18px", fontSize: "13px", fontFamily: "var(--font-body)",
+                      padding: "12px 18px", fontSize: "var(--text-body)", fontFamily: "var(--font-body)",
                       fontWeight: 500, color: "var(--surface)", background: "var(--text)",
                       border: "1px solid var(--text)", borderRadius: "8px",
                       cursor: "pointer",
@@ -1888,7 +1888,7 @@ function CareerPanel() {
         }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
-              fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500,
               color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1.25,
               overflow: "hidden", display: "-webkit-box",
               WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
@@ -1897,7 +1897,7 @@ function CareerPanel() {
             </p>
             {item.subtitle && (
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "13px",
+                fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                 fontWeight: 400, letterSpacing: "-0.01em",
                 color: "var(--muted)", lineHeight: 1.4, marginTop: "2px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
@@ -1907,7 +1907,7 @@ function CareerPanel() {
             )}
             {!isExpanded && !isEdu && (item.dateLabel || item.impact) && (
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "13px",
+                fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                 fontWeight: 400, letterSpacing: "-0.01em",
                 color: isHovered && item.impact ? "var(--text)" : "var(--muted)", marginTop: "2px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
@@ -1961,7 +1961,7 @@ function CareerPanel() {
                       onClick={e => e.stopPropagation()}
                       style={{
                         display: "inline-flex", alignItems: "center", gap: "4px",
-                        fontFamily: "var(--font-body)", fontSize: "12px",
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                         fontWeight: 510, letterSpacing: "-0.01em",
                         color: "var(--muted)", textDecoration: "none",
                         transition: "color 0.15s",
@@ -1977,7 +1977,7 @@ function CareerPanel() {
                 {/* Date label -role cards only */}
                 {item.dateLabel && !isEdu && (
                   <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "13px",
+                    fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                     fontWeight: 400, letterSpacing: "-0.01em",
                     color: "var(--muted)", lineHeight: 1.4, marginBottom: "12px",
                   }}>
@@ -2002,7 +2002,7 @@ function CareerPanel() {
                 {/* Description */}
                 {item.description && (
                   <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                    fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                     letterSpacing: "-0.01em", lineHeight: 1.65,
                     color: "var(--muted2)", marginBottom: "16px",
                   }}>
@@ -2014,7 +2014,7 @@ function CareerPanel() {
                 {item.highlights && item.highlights.length > 0 && (
                   <div style={{ marginBottom: "16px" }}>
                     <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "11px",
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                       fontWeight: 510, letterSpacing: "-0.01em",
                       color: "var(--muted)", marginBottom: "8px",
                     }}>
@@ -2023,9 +2023,9 @@ function CareerPanel() {
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       {item.highlights.map((h, i) => (
                         <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
-                          <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, flexShrink: 0 }}>·</span>
+                          <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.5, flexShrink: 0 }}>·</span>
                           <p style={{
-                            fontFamily: "var(--font-body)", fontSize: "12px",
+                            fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                             letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--text)",
                           }}>{h}</p>
                         </div>
@@ -2041,7 +2041,7 @@ function CareerPanel() {
                         style={{
                           display: "inline-flex", alignItems: "center", gap: "4px",
                           marginTop: "8px",
-                          fontFamily: "var(--font-body)", fontSize: "12px",
+                          fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                           fontWeight: 510, letterSpacing: "-0.01em",
                           color: "var(--muted)", textDecoration: "none",
                           transition: "color 0.15s",
@@ -2059,7 +2059,7 @@ function CareerPanel() {
                 {item.learnings && item.learnings.length > 0 && (
                   <div style={{ marginBottom: "12px" }}>
                     <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "11px",
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                       fontWeight: 510, letterSpacing: "-0.01em",
                       color: "var(--muted)", marginBottom: "8px",
                     }}>
@@ -2068,9 +2068,9 @@ function CareerPanel() {
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       {item.learnings.map((l, i) => (
                         <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
-                          <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.5, flexShrink: 0 }}>·</span>
+                          <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.5, flexShrink: 0 }}>·</span>
                           <p style={{
-                            fontFamily: "var(--font-body)", fontSize: "12px",
+                            fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                             letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--text)",
                           }}>{l}</p>
                         </div>
@@ -2083,7 +2083,7 @@ function CareerPanel() {
                 {item.subtitle === "ADPList" && (
                   <div style={{ marginBottom: "12px" }}>
                     <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "11px",
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                       fontWeight: 510, letterSpacing: "-0.01em",
                       color: "var(--muted)", marginBottom: "10px",
                     }}>
@@ -2113,7 +2113,7 @@ function CareerPanel() {
                           padding: "10px 12px", border: "1px solid var(--border)",
                         }}>
                           <p style={{
-                            fontFamily: "var(--font-body)", fontSize: "12px",
+                            fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                             color: "var(--muted2)", lineHeight: 1.6,
                             letterSpacing: "-0.01em", marginBottom: "8px",
                           }}>
@@ -2128,26 +2128,26 @@ function CareerPanel() {
                                 flexShrink: 0,
                               }}>
                                 <span style={{
-                                  fontFamily: "var(--font-body)", fontSize: "10px",
+                                  fontFamily: "var(--font-body)", fontSize: "var(--text-mono)",
                                   fontWeight: 510, letterSpacing: "-0.01em",
                                   color: "var(--muted)",
                                 }}>{r.initials}</span>
                               </div>
                               <div>
                                 <span style={{
-                                  fontFamily: "var(--font-body)", fontSize: "11px",
+                                  fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                                   fontWeight: 400, letterSpacing: "-0.01em",
                                   color: "var(--muted)", display: "block",
                                 }}>{r.role}</span>
                                 <span style={{
-                                  fontFamily: "var(--font-body)", fontSize: "11px",
+                                  fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                                   fontWeight: 510, letterSpacing: "-0.01em",
                                   color: "var(--text)", display: "block", marginTop: "1px",
                                 }}>{r.company}</span>
                               </div>
                             </div>
                             <span style={{
-                              fontFamily: "var(--font-body)", fontSize: "11px",
+                              fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                               fontWeight: 400, letterSpacing: "-0.01em",
                               color: "var(--muted)", flexShrink: 0,
                             }}>{r.date}</span>
@@ -2171,7 +2171,7 @@ function CareerPanel() {
                       flex: 1, height: "36px",
                       borderRadius: "8px", border: "1px solid var(--border)",
                       background: "var(--surface)", color: "var(--text)",
-                      fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 510,
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 510,
                       letterSpacing: "-0.01em",
                       cursor: selectedIdx > 0 ? "pointer" : "default",
                       opacity: selectedIdx > 0 ? 1 : 0.3,
@@ -2188,7 +2188,7 @@ function CareerPanel() {
                       flex: 1, height: "36px",
                       borderRadius: "8px", border: "1px solid var(--border)",
                       background: "var(--surface)", color: "var(--text)",
-                      fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 510,
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 510,
                       letterSpacing: "-0.01em",
                       cursor: selectedIdx < workItems.length - 1 ? "pointer" : "default",
                       opacity: selectedIdx < workItems.length - 1 ? 1 : 0.3,
@@ -2218,10 +2218,10 @@ function CareerPanel() {
           <div style={{ width: "52px", flexShrink: 0 }} />
           <div style={{ flex: 1, display: "flex" }}>
             <div style={{ flex: 1, paddingLeft: "24px" }}>
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)" }}>Work</span>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)" }}>Work</span>
             </div>
             <div style={{ width: "42%", paddingLeft: "8px" }}>
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)" }}>Other</span>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)" }}>Other</span>
             </div>
           </div>
         </div>
@@ -2235,7 +2235,7 @@ function CareerPanel() {
                 width: "100%", textAlign: "right", paddingRight: "10px",
               }}>
                 <span style={{
-                  fontFamily: "var(--font-body)", fontSize: "11px",
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                   letterSpacing: "-0.01em",
                   color: isYearActive(yr) ? "var(--text)" : yr === 2026 ? "var(--text)" : "var(--muted)",
                   fontWeight: 400,
@@ -2287,7 +2287,7 @@ function CareerPanel() {
                 background: "var(--accent-warm)", flexShrink: 0,
               }} />
               <span style={{
-                fontFamily: "var(--font-body)", fontSize: "11px",
+                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                 fontWeight: 510, letterSpacing: "-0.01em",
                 color: "var(--accent-warm)", opacity: 0.85,
               }}>Now</span>
@@ -2346,7 +2346,7 @@ function TestimonialsPanel() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: EASE }}
           style={{
-            fontFamily: "var(--font-body)", fontSize: "13px",
+            fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
             lineHeight: 1.65, letterSpacing: "-0.01em",
             color: "var(--muted)", marginBottom: "24px", fontWeight: 400,
           }}
@@ -2380,7 +2380,7 @@ function TestimonialsPanel() {
 
               {/* Quote body — matches About panel text styling */}
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
+                fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 400,
                 lineHeight: 1.65, color: "var(--muted)", marginBottom: "28px",
                 letterSpacing: "-0.01em",
               }}>
@@ -2420,7 +2420,7 @@ function TestimonialsPanel() {
                       }}
                     >
                       <span style={{
-                        fontFamily: "var(--font-body)", fontSize: "13px",
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                         fontWeight: 600, letterSpacing: "-0.01em",
                         color: `color-mix(in srgb, ${tint} 65%, var(--text))`,
                       }}>
@@ -2431,13 +2431,13 @@ function TestimonialsPanel() {
                 })()}
                 <div>
                   <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500,
+                    fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 500,
                     letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.35,
                   }}>
                     {t.name}
                   </p>
                   <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+                    fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
                     letterSpacing: "-0.01em",
                     color: "var(--muted)", marginTop: "2px", lineHeight: 1.4,
                   }}>
@@ -2494,7 +2494,7 @@ function ContactPanel() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}
           style={{
-            fontFamily: "var(--font-body)", fontSize: "14px",
+            fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
             lineHeight: 1.65, letterSpacing: "-0.01em",
             color: "var(--muted)", fontWeight: 400,
             marginBottom: "20px",
@@ -2519,7 +2519,7 @@ function ContactPanel() {
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--muted)",
               padding: "7px 12px", borderRadius: "8px",
@@ -2538,7 +2538,7 @@ function ContactPanel() {
             href="https://www.linkedin.com/in/akgaddam/"
             target="_blank" rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--muted)",
               padding: "7px 12px", borderRadius: "8px",
@@ -2557,7 +2557,7 @@ function ContactPanel() {
             href="https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing"
             target="_blank" rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--muted)",
               padding: "7px 12px", borderRadius: "8px",
@@ -2597,7 +2597,7 @@ function ContactPanel() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
                 <p style={{
-                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                   letterSpacing: "0.1em", textTransform: "uppercase",
                   color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
                 }}>
@@ -2617,7 +2617,7 @@ function ContactPanel() {
                   {skills.map((skill, i) => (
                     <span key={`a-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
                       <span style={{
-                        fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                         letterSpacing: "-0.01em", color: "var(--muted2)",
                         padding: "4px 10px",
                         border: "1px solid var(--border)",
@@ -2634,7 +2634,7 @@ function ContactPanel() {
                     {skills.map((skill, i) => (
                       <span key={`b-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
                         <span style={{
-                          fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                          fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                           letterSpacing: "-0.01em", color: "var(--muted2)",
                           padding: "4px 10px",
                           border: "1px solid var(--border)",
@@ -2674,9 +2674,9 @@ function ContactPanel() {
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "var(--muted)", flexShrink: 0 }}>
                 <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
               </svg>
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)" }}>Hyderabad, India</span>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)" }}>Hyderabad, India</span>
             </div>
-            <ISTClock style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.05em", color: "var(--muted)", textTransform: "uppercase" }} />
+            <ISTClock style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.05em", color: "var(--muted)", textTransform: "uppercase" }} />
           </div>
         </motion.div>
 
@@ -2688,7 +2688,7 @@ function ContactPanel() {
           style={{ paddingTop: "16px", borderTop: "1px solid var(--border)", marginTop: "20px" }}
         >
           <p style={{
-            fontFamily: "var(--font-body)", fontSize: "11px",
+            fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
             fontWeight: 400, letterSpacing: "-0.01em",
             color: "var(--muted)", lineHeight: 1.3,
             marginBottom: "4px",
@@ -2701,7 +2701,7 @@ function ContactPanel() {
             }}>ツ</span>
           </p>
           <p style={{
-            fontFamily: "var(--font-body)", fontSize: "11px",
+            fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
             fontWeight: 400, letterSpacing: "-0.01em",
             color: "var(--muted)", lineHeight: 1.3,
           }}>
@@ -2773,10 +2773,10 @@ function AiExplorationsPanel() {
                         <WorkChip key={tag} label={tag} />
                       ))}
                     </div>
-                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "16px", fontWeight: 500, lineHeight: "22px", letterSpacing: 0, color: "var(--text)", marginBottom: "4px" }}>
+                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500, lineHeight: "22px", letterSpacing: 0, color: "var(--text)", marginBottom: "4px" }}>
                       {astra.title}
                     </h3>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300, lineHeight: 1.5, letterSpacing: 0, color: "var(--muted)" }}>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 300, lineHeight: 1.5, letterSpacing: 0, color: "var(--muted)" }}>
                       {astra.subtitle}
                     </p>
                   </div>
@@ -2846,7 +2846,7 @@ function StoryView() {
   };
   const sectionLabel: React.CSSProperties = {
     fontFamily: "var(--font-logo)",
-    fontSize: "11px",
+    fontSize: "var(--text-mono-lg)",
     fontWeight: 500,
     letterSpacing: "0.12em",
     textTransform: "uppercase",
@@ -2855,7 +2855,7 @@ function StoryView() {
   };
   const workLink: React.CSSProperties = {
     fontFamily: "var(--font-body)",
-    fontSize: "16px",
+    fontSize: "var(--text-title-sm)",
     fontWeight: 500,
     color: "var(--text)",
     textDecoration: "none",
@@ -2923,7 +2923,7 @@ function StoryView() {
         <p
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "14px",
+            fontSize: "var(--text-body-lg)",
             lineHeight: 1.65,
             letterSpacing: "-0.01em",
             color: "var(--muted)",
@@ -2955,7 +2955,7 @@ function StoryView() {
               <dt
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "16px",
+                  fontSize: "var(--text-title-sm)",
                   fontWeight: 500,
                   color: "var(--text)",
                   lineHeight: 1.3,
@@ -2966,7 +2966,7 @@ function StoryView() {
               </dt>
               <dd
                 style={{
-                  fontSize: "13px",
+                  fontSize: "var(--text-body)",
                   lineHeight: 1.5,
                   color: "var(--muted)",
                   margin: 0,
@@ -3011,7 +3011,7 @@ function StoryView() {
         {/* Tenure line */}
         <p
           style={{
-            fontSize: "15px",
+            fontSize: "var(--text-lead)",
             color: "var(--muted)",
             lineHeight: 1.6,
             margin: "32px 0 0",
@@ -3040,7 +3040,7 @@ function StoryView() {
             >
               <p
                 style={{
-                  fontSize: "16px",
+                  fontSize: "var(--text-title-sm)",
                   lineHeight: 1.6,
                   color: "var(--text)",
                   margin: 0,
@@ -3050,7 +3050,7 @@ function StoryView() {
               </p>
               <footer
                 style={{
-                  fontSize: "13px",
+                  fontSize: "var(--text-body)",
                   color: "var(--muted)",
                   marginTop: "10px",
                   fontFamily: "var(--font-body)",
@@ -3080,7 +3080,7 @@ function StoryView() {
               target={href.startsWith("http") || href.endsWith(".pdf") ? "_blank" : undefined}
               rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
               style={{
-                fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                 letterSpacing: "0.08em", textTransform: "uppercase",
                 color: "var(--muted)",
                 padding: "7px 12px", borderRadius: "8px",

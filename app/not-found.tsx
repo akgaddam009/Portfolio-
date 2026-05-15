@@ -21,7 +21,7 @@ export default function NotFound() {
       <p
         style={{
           fontFamily: "var(--font-mono)",
-          fontSize: "10px",
+          fontSize: "var(--text-mono)",
           letterSpacing: "0.12em",
           textTransform: "uppercase",
           color: "var(--muted)",
@@ -40,7 +40,7 @@ export default function NotFound() {
       >
         This page doesn't exist.
       </h1>
-      <p style={{ color: "var(--muted)", fontSize: "14px", margin: 0, maxWidth: "380px" }}>
+      <p style={{ color: "var(--muted)", fontSize: "var(--text-body-lg)", margin: 0, maxWidth: "380px" }}>
         The link might be broken, or the page may have moved.
       </p>
       <Link
@@ -52,7 +52,7 @@ export default function NotFound() {
           border: "1px solid var(--border)",
           borderRadius: "8px",
           color: "var(--text)",
-          fontSize: "13px",
+          fontSize: "var(--text-body)",
           textDecoration: "none",
         }}
       >

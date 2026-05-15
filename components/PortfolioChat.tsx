@@ -63,7 +63,7 @@ const linkBtnStyle: React.CSSProperties = {
   borderRadius: "999px",
   background: "var(--text)",
   color: "var(--surface)",
-  fontFamily: "var(--font-body)", fontSize: "11px",
+  fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
   fontWeight: 600, letterSpacing: "0.02em",
   textDecoration: "none",
 };
@@ -163,7 +163,7 @@ export default function PortfolioChat() {
           background: "var(--surface)",
           boxShadow: "var(--card-shadow)",
           display: "inline-flex", alignItems: "center", gap: "var(--space-2)",
-          fontFamily: "var(--font-logo)", fontSize: "12px", fontWeight: 500,
+          fontFamily: "var(--font-logo)", fontSize: "var(--text-caption)", fontWeight: 500,
           color: "var(--text)", letterSpacing: "0.06em", textTransform: "uppercase",
           cursor: "pointer", userSelect: "none",
           transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -235,16 +235,16 @@ export default function PortfolioChat() {
                       background: "var(--accent-warm)",
                       color: "#fff",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      fontFamily: "var(--font-logo)", fontSize: "11px", fontWeight: 700,
+                      fontFamily: "var(--font-logo)", fontSize: "var(--text-mono-lg)", fontWeight: 700,
                       letterSpacing: "0.08em", flexShrink: 0,
                     }}>AG</div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
                       <div id="guide-title" style={{
-                        fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 600,
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 600,
                         color: "var(--text)", lineHeight: "16px",
                       }}>Arun&rsquo;s portfolio</div>
                       <div style={{
-                        fontFamily: "var(--font-body)", fontSize: "10px",
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-mono)",
                         color: "var(--muted)", lineHeight: "12px",
                       }}>{DISCLOSURE}</div>
                     </div>
@@ -295,7 +295,7 @@ export default function PortfolioChat() {
                         display: "inline-flex", alignItems: "center", gap: "4px",
                         background: "none", border: "none",
                         color: "var(--muted)", cursor: "pointer", padding: "2px 0",
-                        fontFamily: "var(--font-body)", fontSize: "11px",
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                         transition: "color 0.15s",
                       }}
                       onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
@@ -307,7 +307,7 @@ export default function PortfolioChat() {
                       Back
                     </button>
                     <div style={{
-                      fontFamily: "var(--font-body)", fontSize: "10px",
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-mono)",
                       color: "var(--muted)", textTransform: "uppercase",
                       letterSpacing: "0.08em", textAlign: "right",
                       overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
@@ -360,7 +360,7 @@ function HomeView({ onPick }: { onPick: (id: string) => void }) {
       transition={{ duration: 0.2, ease: EASE }}
     >
       <div style={{
-        fontFamily: "var(--font-body)", fontSize: "10px",
+        fontFamily: "var(--font-body)", fontSize: "var(--text-mono)",
         color: "var(--muted)", textTransform: "uppercase",
         letterSpacing: "0.08em", marginBottom: "var(--space-3)",
       }}>Pick a topic</div>
@@ -393,7 +393,7 @@ function HomeView({ onPick }: { onPick: (id: string) => void }) {
             }}
           >
             <span style={{
-              fontFamily: "var(--font-body)", fontSize: "13px",
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
               fontWeight: 500, color: "var(--text)",
             }}>{chipFor(id)}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ color: "var(--muted)", flexShrink: 0 }}>
@@ -424,7 +424,7 @@ function NodeView({
     >
       {/* Heading */}
       <h2 style={{
-        fontFamily: "var(--font-body)", fontSize: "18px", fontWeight: 600,
+        fontFamily: "var(--font-body)", fontSize: "var(--text-title)", fontWeight: 600,
         color: "var(--text)", lineHeight: "24px",
         margin: 0, marginBottom: "var(--space-3)",
         letterSpacing: "-0.01em",
@@ -432,7 +432,7 @@ function NodeView({
 
       {/* Body text */}
       <div style={{
-        fontFamily: "var(--font-body)", fontSize: "14px",
+        fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
         color: "var(--muted2, var(--text))", lineHeight: "22px",
         whiteSpace: "pre-wrap",
       }}>{node.answer}</div>
@@ -469,7 +469,7 @@ function NodeView({
       {node.followups && node.followups.length > 0 && (
         <div style={{ marginTop: "var(--space-5)" }}>
           <div style={{
-            fontFamily: "var(--font-body)", fontSize: "10px",
+            fontFamily: "var(--font-body)", fontSize: "var(--text-mono)",
             color: "var(--muted)", textTransform: "uppercase",
             letterSpacing: "0.08em", marginBottom: "var(--space-2)",
           }}>Go deeper</div>
@@ -501,7 +501,7 @@ function NodeView({
                 }}
               >
                 <span style={{
-                  fontFamily: "var(--font-body)", fontSize: "12px",
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                   fontWeight: 500, color: "var(--text)",
                 }}>{chipFor(id)}</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ color: "var(--muted)", flexShrink: 0 }}>
@@ -530,8 +530,8 @@ function FactGrid({ facts }: { facts: { label: string; value: string }[] }) {
     }}>
       {facts.map(({ label, value }) => (
         <React.Fragment key={label}>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "var(--muted)", whiteSpace: "nowrap", lineHeight: "18px" }}>{label}</span>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "var(--text)", fontWeight: 500, lineHeight: "18px" }}>{value}</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", color: "var(--muted)", whiteSpace: "nowrap", lineHeight: "18px" }}>{label}</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", color: "var(--text)", fontWeight: 500, lineHeight: "18px" }}>{value}</span>
         </React.Fragment>
       ))}
     </div>
@@ -558,8 +558,8 @@ function WorkCards({ cards, onClose }: { cards: { label: string; meta: string; h
           onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--text)"; e.currentTarget.style.background = "var(--bg)"; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; }}
         >
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 600, color: "var(--text)", lineHeight: "16px" }}>{card.label}</span>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "var(--muted)", lineHeight: "14px" }}>{card.meta}</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 600, color: "var(--text)", lineHeight: "16px" }}>{card.label}</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono)", color: "var(--muted)", lineHeight: "14px" }}>{card.meta}</span>
         </Link>
       ))}
     </div>
@@ -571,7 +571,7 @@ function TagCloud({ tags }: { tags: string[] }) {
     <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-1)" }}>
       {tags.map(tag => (
         <span key={tag} style={{
-          fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 500,
+          fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 500,
           color: "var(--text)",
           padding: "3px var(--space-3)",
           borderRadius: "999px",
@@ -601,10 +601,10 @@ function MiniTimeline({ milestones }: { milestones: { period: string; role: stri
           borderBottom: i < milestones.length - 1 ? "1px solid var(--border)" : "none",
           background: "var(--surface2)",
         }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--muted)", lineHeight: "18px", whiteSpace: "nowrap" }}>{m.period}</span>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", color: "var(--muted)", lineHeight: "18px", whiteSpace: "nowrap" }}>{m.period}</span>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 600, color: "var(--text)", lineHeight: "16px" }}>{m.role}</div>
-            <div style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "var(--muted)", lineHeight: "14px" }}>{m.company}</div>
+            <div style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 600, color: "var(--text)", lineHeight: "16px" }}>{m.role}</div>
+            <div style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono)", color: "var(--muted)", lineHeight: "14px" }}>{m.company}</div>
           </div>
         </div>
       ))}
@@ -622,11 +622,11 @@ function QuoteCards({ quotes }: { quotes: { quote: string; name: string; role: s
           background: "var(--surface2)",
           border: "1px solid var(--border)",
         }}>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontStyle: "italic", color: "var(--text)", lineHeight: "18px", margin: 0, marginBottom: "var(--space-2)" }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontStyle: "italic", color: "var(--text)", lineHeight: "18px", margin: 0, marginBottom: "var(--space-2)" }}>
             &ldquo;{q.quote}&rdquo;
           </p>
-          <div style={{ fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 600, color: "var(--text)", lineHeight: "14px" }}>{q.name}</div>
-          <div style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "var(--muted)", lineHeight: "14px", marginTop: "1px" }}>{q.role} · {q.company}</div>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 600, color: "var(--text)", lineHeight: "14px" }}>{q.name}</div>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono)", color: "var(--muted)", lineHeight: "14px", marginTop: "1px" }}>{q.role} · {q.company}</div>
         </div>
       ))}
     </div>

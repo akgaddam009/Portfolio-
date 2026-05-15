@@ -55,20 +55,23 @@ const ACCENTS = [
   { name: "--accent-warm",    value: "#d17b53", role: "Burnt terracotta. punctuation accent; used on the 'Now' dot, highlight sweeps, and inline emphasis marks" },
 ];
 
-/* Type scale. rebuilt against the Figma reference design
-   (lTdRlX8PGw0ncWuAT8fElw). Inter Regular at every size; weight 500
-   only for emphasised inline phrases (==text==). 0 letter-spacing
-   throughout. the previous negative tracking was drift. */
+/* Type scale. Twelve semantic tokens defined in globals.css.
+   Inter Regular at every size; weight 500 only for emphasised
+   phrases (==text==). Mono tier uses var(--font-mono) + uppercase
+   + tracked letter-spacing. */
 const TYPE_SCALE = [
-  { name: "Case study hero",   size: "clamp(26px, 4vw, 44px)", weight: 300, ls: "-0.03em" },
-  { name: "Panel hero",        size: "18px", weight: 400, ls: "0", lh: "30px" },
-  { name: "Card title",        size: "16px", weight: 400, ls: "0", lh: "22px" },
-  { name: "Body",              size: "14px", weight: 400, ls: "0", lh: "26px" },
-  { name: "Body small",        size: "13px", weight: 400, ls: "0", lh: "1.55" },
-  { name: "Caption",           size: "12px", weight: 400, ls: "-0.01em" },
-  { name: "Section label",      size: "11px", weight: 400, ls: "0.1em",  mono: true, upper: true },
-  { name: "Mono micro",        size: "10px", weight: 400, ls: "0.06em", mono: true, upper: true },
-  { name: "Mono tiny",         size: "9px",  weight: 400, ls: "0.08em", mono: true, upper: true },
+  { name: "Display",     token: "--text-display",  size: "clamp(26px, 4vw, 44px)", weight: 300, ls: "-0.03em" },
+  { name: "Title (lg)",  token: "--text-title-lg", size: "clamp(20px, 2.2vw, 24px)", weight: 400, ls: "-0.02em" },
+  { name: "Title",       token: "--text-title",    size: "18px", weight: 400, ls: "0", lh: "30px" },
+  { name: "Title (sm)",  token: "--text-title-sm", size: "16px", weight: 400, ls: "0", lh: "22px" },
+  { name: "Lead",        token: "--text-lead",     size: "15px", weight: 400, ls: "0", lh: "1.65" },
+  { name: "Body (lg)",   token: "--text-body-lg",  size: "14px", weight: 400, ls: "0", lh: "26px" },
+  { name: "Body",        token: "--text-body",     size: "13px", weight: 400, ls: "0", lh: "1.55" },
+  { name: "Caption",     token: "--text-caption",  size: "12px", weight: 400, ls: "-0.01em" },
+  { name: "Mono (lg)",   token: "--text-mono-lg",  size: "11px", weight: 400, ls: "0.1em",  mono: true, upper: true },
+  { name: "Mono",        token: "--text-mono",     size: "10px", weight: 400, ls: "0.06em", mono: true, upper: true },
+  { name: "Eyebrow",     token: "--text-eyebrow",  size: "9px",  weight: 400, ls: "0.08em", mono: true, upper: true },
+  { name: "Micro",       token: "--text-micro",    size: "8px",  weight: 400, ls: "0.08em", mono: true, upper: true },
 ];
 
 export default function SystemPage() {
@@ -157,7 +160,7 @@ export default function SystemPage() {
             href="/"
             style={{
               fontFamily: "var(--font-logo)",
-              fontSize: "12px",
+              fontSize: "var(--text-caption)",
               fontWeight: 500,
               color: "var(--text)",
               letterSpacing: "0.06em",
@@ -197,7 +200,7 @@ export default function SystemPage() {
                 <Link
                   href="/#work"
                   className="case-study-back-link"
-                  style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", transition: "color 0.2s cubic-bezier(0.22, 1, 0.36, 1)" }}
+                  style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", transition: "color 0.2s cubic-bezier(0.22, 1, 0.36, 1)" }}
                   onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
                   onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
                 >
@@ -223,7 +226,7 @@ export default function SystemPage() {
 
               <motion.p
                 variants={fadeUp}
-                style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.65, color: "var(--muted)", maxWidth: "520px", marginBottom: "32px" }}
+                style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 400, lineHeight: 1.65, color: "var(--muted)", maxWidth: "520px", marginBottom: "32px" }}
               >
                 Built in Claude Code. No Figma. Tokens, components, and patterns from the live site.
               </motion.p>
@@ -400,7 +403,7 @@ export default function SystemPage() {
                 usedIn={["About H1: design / user needs / business strategy / AI", "Contact subtext: AI / Enterprise / SaaS / Consumer Products"]}
                 tokens={["--chip-{tone}-text", "--chip-{tone}-bg", "@phosphor-icons/react Regular", "scale: default | match"]}
                 states={[
-                  { label: "Default tones", node: <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", fontSize: "12px" }}>
+                  { label: "Default tones", node: <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", fontSize: "var(--text-caption)" }}>
                     <InlineChipDemo tone="indigo" label="design" />
                     <InlineChipDemo tone="teal" label="user needs" />
                     <InlineChipDemo tone="amber" label="business strategy" />
@@ -434,7 +437,7 @@ export default function SystemPage() {
                 states={[
                   { label: "Filled",       node: <Pill>Enterprise SaaS</Pill> },
                   { label: "Set",          node: <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}><Pill>AI UX</Pill><Pill>Workflow</Pill><Pill>Confidential</Pill></div> },
-                  { label: "Coming soon",  node: <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", borderRadius: "8px", background: "transparent", border: "1px solid rgba(245,158,11,0.55)", color: "#f59e0b" }}>Coming soon</span> },
+                  { label: "Coming soon",  node: <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", borderRadius: "8px", background: "transparent", border: "1px solid rgba(245,158,11,0.55)", color: "#f59e0b" }}>Coming soon</span> },
                 ]}
               />
 
@@ -472,9 +475,9 @@ export default function SystemPage() {
                     background: "var(--surface)",
                     borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none",
                   }}>
-                    <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, color: "var(--text)", letterSpacing: "-0.01em" }}>{p.name}</span>
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400, color: "var(--text)", letterSpacing: "-0.01em" }}>{p.name}</span>
                     <span style={{ ...categoryPill, justifySelf: "start" }}>{p.cat}</span>
-                    <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", letterSpacing: "-0.01em" }}>{p.where}</span>
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted)", letterSpacing: "-0.01em" }}>{p.where}</span>
                   </div>
                 ))}
               </div>
@@ -551,10 +554,10 @@ export default function SystemPage() {
                 tokens={["IntersectionObserver rootMargin 120px", "preload=none until in-view", "poster img shown immediately", "crossfade poster → video on canplay", "touch devices: poster only, no video element"]}
               >
                 <div style={{ padding: "16px 20px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--muted2)", margin: "0 0 8px", lineHeight: 1.6 }}>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", color: "var(--muted2)", margin: "0 0 8px", lineHeight: 1.6 }}>
                     Video <code style={codeChip}>src</code> is withheld until the card enters the viewport. Poster image loads immediately as placeholder. ~37 MB deferred on every page load.
                   </p>
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
                     Flow: poster visible → card in view → video src set → canplay → crossfade
                   </p>
                 </div>
@@ -574,10 +577,10 @@ export default function SystemPage() {
                     display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
                     boxShadow: "var(--card-shadow)",
                   }}>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)" }}>
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em" }}>
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em" }}>
                       {step}
                     </span>
                   </div>
@@ -601,12 +604,12 @@ export default function SystemPage() {
                   },
                 ].map(card => (
                   <div key={card.label} style={{ padding: "16px 18px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 12px 0" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 12px 0" }}>
                       {card.label}
                     </p>
                     <ul style={{ margin: 0, paddingLeft: "14px" }}>
                       {card.items.map(item => (
-                        <li key={item} style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted2)", lineHeight: 1.65, marginBottom: "6px" }}>{item}</li>
+                        <li key={item} style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.65, marginBottom: "6px" }}>{item}</li>
                       ))}
                     </ul>
                   </div>
@@ -615,7 +618,7 @@ export default function SystemPage() {
 
               {/* Key insight callout */}
               <div style={{ padding: "18px 22px", background: "var(--surface)", borderRadius: "12px", borderLeft: "3px solid var(--border)", boxShadow: "var(--card-shadow)" }}>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "var(--text)", lineHeight: 1.65, margin: 0, letterSpacing: "-0.01em" }}>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", color: "var(--text)", lineHeight: 1.65, margin: 0, letterSpacing: "-0.01em" }}>
                   Bottleneck shifts from <em>&quot;can I build it&quot;</em> to <em>&quot;do I know what I want.&quot;</em> Every revert is a taste call.
                 </p>
               </div>
@@ -668,7 +671,7 @@ export default function SystemPage() {
                 >
                   <span style={{
                     fontFamily: "var(--font-mono)",
-                    fontSize: "8px",
+                    fontSize: "var(--text-micro)",
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
                     color: isActive ? "var(--text)" : "var(--muted)",
@@ -706,7 +709,7 @@ function CsSection({ id, label, children }: { id: string; label: string; childre
       style={{ padding: "48px 0" }}
     >
       <p style={{
-        fontFamily: "var(--font-mono)", fontSize: "11px",
+        fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)",
         letterSpacing: "0.1em", textTransform: "uppercase",
         color: "var(--muted)", marginBottom: "28px",
         borderTop: "1px solid var(--border)", paddingTop: "16px",
@@ -719,7 +722,7 @@ function CsSection({ id, label, children }: { id: string; label: string; childre
 function BodyText({ children }: { children: React.ReactNode }) {
   return (
     <p style={{
-      fontFamily: "var(--font-body)", fontSize: "15px",
+      fontFamily: "var(--font-body)", fontSize: "var(--text-lead)",
       fontWeight: 400, lineHeight: 1.7, letterSpacing: "-0.01em",
       color: "var(--muted2)", maxWidth: "640px",
       marginBottom: "20px",
@@ -730,7 +733,7 @@ function BodyText({ children }: { children: React.ReactNode }) {
 function SubHeading({ children }: { children: React.ReactNode }) {
   return (
     <h3 style={{
-      fontFamily: "var(--font-mono)", fontSize: "10px",
+      fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
       fontWeight: 400, letterSpacing: "0.08em",
       textTransform: "uppercase", color: "var(--muted)",
       marginTop: "40px", marginBottom: "16px",
@@ -749,7 +752,7 @@ function SpecRow({ label, children, last }: { label: string; children: React.Rea
       alignItems: "start",
     }}>
       <p style={{
-        fontFamily: "var(--font-mono)", fontSize: "10px",
+        fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
         letterSpacing: "0.08em", textTransform: "uppercase",
         color: "var(--muted)", margin: 0, paddingTop: "3px",
       }}>{label}</p>
@@ -848,8 +851,8 @@ function DemoCard({ interactive, label, desc }: { interactive: boolean; label: s
     onMouseEnter={interactive ? (e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }) : undefined}
     onMouseLeave={interactive ? (e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }) : undefined}
     >
-      <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 590, color: "var(--text)", margin: "0 0 4px 0" }}>{label}</p>
-      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.5 }}>{desc}</p>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 590, color: "var(--text)", margin: "0 0 4px 0" }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted)", margin: 0, lineHeight: 1.5 }}>{desc}</p>
     </div>
   );
 }
@@ -858,7 +861,7 @@ function DemoButton({ variant, children }: { variant: "outlined" | "filled"; chi
   if (variant === "filled") {
     return (
       <button style={{
-        fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+        fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
         letterSpacing: "-0.01em", color: "var(--bg)",
         padding: "9px 20px", borderRadius: "10px", border: "none",
         background: "var(--text)", cursor: "pointer", transition: "opacity 0.18s",
@@ -870,7 +873,7 @@ function DemoButton({ variant, children }: { variant: "outlined" | "filled"; chi
   }
   return (
     <button style={{
-      fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400,
+      fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
       letterSpacing: "-0.01em", color: "var(--muted)",
       padding: "9px 20px", borderRadius: "10px",
       border: "1px solid var(--border)", background: "transparent",
@@ -885,7 +888,7 @@ function DemoButton({ variant, children }: { variant: "outlined" | "filled"; chi
 function Pill({ children }: { children: React.ReactNode }) {
   return (
     <span style={{
-      fontFamily: "var(--font-mono)", fontSize: "9px",
+      fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       padding: "3px 8px", background: "var(--surface2)",
       color: "var(--muted)", borderRadius: "8px",
@@ -902,7 +905,7 @@ function InlineChipDemo({ tone, label }: { tone: "indigo" | "teal" | "amber" | "
       padding: "0 10px", borderRadius: "8px",
       background: `var(--chip-${tone}-bg)`,
       color: `var(--chip-${tone}-text)`,
-      fontFamily: "var(--font-body)", fontSize: "13px",
+      fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
       fontWeight: 400, letterSpacing: "-0.01em", lineHeight: 1.6,
     }}>{label}</span>
   );
@@ -913,7 +916,7 @@ function AccentChipDemo({ tone, label }: { tone: "indigo" | "teal" | "amber" | "
   return (
     <span style={{
       display: "inline-flex", alignItems: "center",
-      fontFamily: "var(--font-mono)", fontSize: "9px",
+      fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       padding: "3px 8px", borderRadius: "8px",
       background: `var(--chip-${tone}-bg)`,
@@ -926,7 +929,7 @@ function AccentChipDemo({ tone, label }: { tone: "indigo" | "teal" | "amber" | "
 function DemoWordmark({ interactive }: { interactive: boolean }) {
   return (
     <span style={{
-      fontFamily: "var(--font-logo)", fontSize: "12px", fontWeight: 500,
+      fontFamily: "var(--font-logo)", fontSize: "var(--text-caption)", fontWeight: 500,
       color: "var(--text)", letterSpacing: "0.06em", textTransform: "uppercase",
       height: "44px", padding: "0 14px", borderRadius: "12px",
       background: "var(--surface)", boxShadow: "var(--card-shadow)",
@@ -952,7 +955,7 @@ function ScrollRevealDemo() {
         transition={{ duration: 0.8, ease: EASE }}
         style={{ marginTop: "12px", padding: "20px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}
       >
-        <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "var(--text)", margin: 0 }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", color: "var(--text)", margin: 0 }}>
           Element fades up + de-blurs into focus.
         </p>
       </motion.div>
@@ -976,7 +979,7 @@ function CascadeDemo() {
               flex: 1, height: "70px", borderRadius: "10px",
               background: "var(--surface)", boxShadow: "var(--card-shadow)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "var(--font-mono)", fontSize: "11px",
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)",
               color: "var(--muted)", letterSpacing: "0.04em",
             }}
           >P{i + 1}</motion.div>
@@ -1009,7 +1012,7 @@ function CountUpDemo() {
       <button onClick={() => setKey(k => k + 1)} style={replayBtn}>Replay</button>
       <div style={{ marginTop: "12px", padding: "20px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
         <p style={{ fontFamily: "var(--font-body)", fontSize: "32px", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1, margin: "0 0 4px 0" }}>{display}</p>
-        <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>Reduction in time on task</p>
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>Reduction in time on task</p>
       </div>
     </div>
   );
@@ -1034,7 +1037,7 @@ function LoaderDemo() {
         boxShadow: "var(--card-shadow)", textAlign: "center",
         minHeight: "80px", display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        <p style={{ fontFamily: "var(--font-mono)", fontSize: "14px", color: "var(--text)", margin: 0 }}>
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-body-lg)", color: "var(--text)", margin: 0 }}>
           {FULL.slice(0, chars)}
           <span style={{
             display: "inline-block", width: "1px", height: "1em",
@@ -1050,7 +1053,7 @@ function LoaderDemo() {
 function MarqueeDemo() {
   return (
     <div style={{ width: "100%" }}>
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "10px" }}>
         Hover to pause.
       </p>
       <div className="skills-ticker" style={{
@@ -1064,7 +1067,7 @@ function MarqueeDemo() {
             <span key={n} style={{ display: "inline-flex", alignItems: "center" }}>
               {["Inter", "DM Mono", "warm-neutral grey scale", "shadow + ring elevation", "ease-out-quint", "100dvh"].map(s => (
                 <span key={`${n}-${s}`} style={{
-                  fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                   letterSpacing: "-0.01em", color: "var(--muted2)",
                   padding: "4px 10px", border: "1px solid var(--border)",
                   borderRadius: "9999px", background: "var(--surface2)",
@@ -1094,7 +1097,7 @@ function ClockDemo() {
       <p style={{ fontFamily: "var(--font-mono)", fontSize: "20px", fontWeight: 400, letterSpacing: "0.04em", color: "var(--text)", margin: "0 0 4px 0", fontVariantNumeric: "tabular-nums" }}>
         {time ?? "--:-- --"}
       </p>
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
         IST · Hyderabad
       </p>
     </div>
@@ -1110,7 +1113,7 @@ const fadeUp = {
 /* ─── Shared styles ─── */
 
 const tagStyle: React.CSSProperties = {
-  fontFamily: "var(--font-mono)", fontSize: "9px",
+  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
   letterSpacing: "0.06em", textTransform: "uppercase",
   padding: "3px 8px", background: "var(--surface2)",
   color: "var(--muted)", borderRadius: "8px",
@@ -1123,27 +1126,27 @@ const blockTitle: React.CSSProperties = {
 };
 
 const blockPara: React.CSSProperties = {
-  fontFamily: "var(--font-body)", fontSize: "14px",
+  fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
   fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em",
   color: "var(--muted2)", maxWidth: "640px",
   marginBottom: "20px",
 };
 
 const categoryPill: React.CSSProperties = {
-  fontFamily: "var(--font-mono)", fontSize: "9px",
+  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
   letterSpacing: "0.06em", textTransform: "uppercase",
   padding: "3px 8px", borderRadius: "8px",
   background: "var(--surface2)", color: "var(--muted)",
 };
 
 const stateLabel: React.CSSProperties = {
-  fontFamily: "var(--font-mono)", fontSize: "10px",
+  fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
   letterSpacing: "0.08em", textTransform: "uppercase",
   color: "var(--muted)",
 };
 
 const chipStyle: React.CSSProperties = {
-  fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+  fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
   letterSpacing: "-0.01em",
   padding: "3px 9px",
   background: "var(--surface2)", color: "var(--muted2)",
@@ -1151,7 +1154,7 @@ const chipStyle: React.CSSProperties = {
 };
 
 const codeChip: React.CSSProperties = {
-  fontFamily: "var(--font-mono)", fontSize: "11px",
+  fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)",
   padding: "3px 8px", borderRadius: "6px",
   background: "var(--surface2)", color: "var(--muted2)",
 };
@@ -1177,19 +1180,19 @@ const swatchSquare: React.CSSProperties = {
 };
 
 const tokenName: React.CSSProperties = {
-  fontFamily: "var(--font-mono)", fontSize: "11px",
+  fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)",
   fontWeight: 510, letterSpacing: "-0.01em",
   color: "var(--text)", margin: 0,
 };
 
 const tokenRole: React.CSSProperties = {
-  fontFamily: "var(--font-body)", fontSize: "11px",
+  fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
   fontWeight: 400, lineHeight: 1.4, letterSpacing: "-0.01em",
   color: "var(--muted)", margin: "3px 0 0 0",
 };
 
 const tokenValue: React.CSSProperties = {
-  fontFamily: "var(--font-mono)", fontSize: "10px",
+  fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
   fontWeight: 400, color: "var(--muted2)",
   margin: "3px 0 0 0",
 };
@@ -1213,7 +1216,7 @@ const specBlock: React.CSSProperties = {
 };
 
 const replayBtn: React.CSSProperties = {
-  fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 400,
+  fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
   letterSpacing: "-0.01em",
   color: "var(--muted)", padding: "6px 12px",
   borderRadius: "8px", border: "1px solid var(--border)",
@@ -1223,7 +1226,7 @@ const replayBtn: React.CSSProperties = {
 };
 
 const listStyle: React.CSSProperties = {
-  fontFamily: "var(--font-body)", fontSize: "15px",
+  fontFamily: "var(--font-body)", fontSize: "var(--text-lead)",
   fontWeight: 400, lineHeight: 1.7, letterSpacing: "-0.01em",
   color: "var(--muted2)", maxWidth: "640px",
   paddingLeft: "20px",

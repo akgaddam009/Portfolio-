@@ -23,10 +23,10 @@ export default function Marquee() {
           <span key={i} style={{ display: "inline-flex", alignItems: "center" }}>
             <span style={{
               fontFamily: "var(--font-mono)",
-              fontSize: "11px", letterSpacing: "0.04em",
+              fontSize: "var(--text-mono-lg)", letterSpacing: "0.04em",
               color: "var(--muted)", whiteSpace: "nowrap", padding: "0 24px",
             }}>{item}</span>
-            <span style={{ color: "var(--border)", fontSize: "8px" }}>·</span>
+            <span style={{ color: "var(--border)", fontSize: "var(--text-micro)" }}>·</span>
           </span>
         ))}
       </div>

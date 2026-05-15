@@ -99,7 +99,7 @@ export default function AIArticlePage() {
             href="/"
             style={{
               fontFamily: "var(--font-logo)",
-              fontSize: "13px",
+              fontSize: "var(--text-body)",
               fontWeight: 500,
               color: "var(--text)",
               letterSpacing: "-0.03em",
@@ -131,7 +131,7 @@ export default function AIArticlePage() {
                   href="/"
                   style={{
                     fontFamily: "var(--font-mono)",
-                    fontSize: "10px",
+                    fontSize: "var(--text-mono)",
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
                     color: "var(--muted)",
@@ -152,7 +152,7 @@ export default function AIArticlePage() {
               <motion.div variants={fadeUp} style={{ marginBottom: "12px" }}>
                 <span style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "9px",
+                  fontSize: "var(--text-eyebrow)",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
                   color: "#7c3aed",
@@ -190,10 +190,10 @@ export default function AIArticlePage() {
                   { label: "Duration", value: "Ongoing" },
                 ].map(item => (
                   <div key={item.label} style={{ borderTop: "1px solid var(--border)", paddingTop: "10px", minWidth: "120px" }}>
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "4px" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "4px" }}>
                       {item.label}
                     </p>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--text)", lineHeight: 1.4 }}>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", color: "var(--text)", lineHeight: 1.4 }}>
                       {item.value}
                     </p>
                   </div>
@@ -219,7 +219,7 @@ export default function AIArticlePage() {
                 >
                   <p style={{
                     fontFamily: "var(--font-mono)",
-                    fontSize: "9px",
+                    fontSize: "var(--text-eyebrow)",
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
                     color: "var(--muted)",
@@ -233,7 +233,7 @@ export default function AIArticlePage() {
                         key={j}
                         style={{
                           fontFamily: "var(--font-body)",
-                          fontSize: "15px",
+                          fontSize: "var(--text-lead)",
                           lineHeight: 1.7,
                           letterSpacing: "-0.01em",
                           color: j === 0 ? "var(--text)" : "var(--muted2)",

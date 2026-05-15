@@ -81,7 +81,7 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
       background: `var(--chip-${tone}-bg)`,
       color: `var(--chip-${tone}-text)`,
       fontFamily: "var(--font-body)",
-      fontSize: "12px",
+      fontSize: "var(--text-caption)",
       fontWeight: 400, letterSpacing: "-0.01em",
       lineHeight: 1.6,
       verticalAlign: "middle",

@@ -68,7 +68,7 @@ export default function Hero() {
             variants={item}
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "15px",
+              fontSize: "var(--text-lead)",
               lineHeight: 1.65,
               color: "var(--muted)",
               marginBottom: "48px",
@@ -107,14 +107,14 @@ export default function Hero() {
                     }}
                   >
                     <p style={{
-                      fontFamily: "var(--font-mono)", fontSize: "10px",
+                      fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
                       letterSpacing: "0.08em", textTransform: "uppercase",
                       color: "var(--muted)", marginBottom: "6px",
                     }}>
                       {card.label}
                     </p>
                     <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "14px",
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                       color: "var(--text)", lineHeight: 1.55,
                       letterSpacing: "-0.01em",
                     }}>
@@ -134,7 +134,7 @@ export default function Hero() {
             <Link
               href="/#work"
               style={{
-                fontFamily: "var(--font-mono)", fontSize: "11px",
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)",
                 letterSpacing: "0.05em", textTransform: "uppercase",
                 color: "var(--text)", transition: "opacity 0.15s",
               }}

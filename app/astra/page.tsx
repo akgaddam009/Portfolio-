@@ -18,7 +18,7 @@ export default function AstraIndex() {
         <div style={{ maxWidth: "640px", margin: "0 auto", textAlign: "center", padding: "32px 0" }}>
           <p style={{
             fontFamily: "var(--astra-font-mono)",
-            fontSize: "11px",
+            fontSize: "var(--text-mono-lg)",
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: "var(--astra-text-3)",
@@ -39,7 +39,7 @@ export default function AstraIndex() {
           </h1>
           <p style={{
             fontFamily: "var(--astra-font-body)",
-            fontSize: "15px",
+            fontSize: "var(--text-lead)",
             lineHeight: 1.6,
             color: "var(--astra-text-2)",
             marginBottom: "32px",
@@ -89,7 +89,7 @@ const cardStyle: React.CSSProperties = {
 const cardTagStyle: React.CSSProperties = {
   display: "inline-block",
   fontFamily: "var(--astra-font-mono)",
-  fontSize: "9px",
+  fontSize: "var(--text-eyebrow)",
   letterSpacing: "0.08em",
   textTransform: "uppercase",
   color: "var(--astra-text-3)",
@@ -98,7 +98,7 @@ const cardTagStyle: React.CSSProperties = {
 
 const cardTitleStyle: React.CSSProperties = {
   fontFamily: "var(--astra-font-body)",
-  fontSize: "18px",
+  fontSize: "var(--text-title)",
   fontWeight: 600,
   color: "var(--astra-text-1)",
   marginBottom: "6px",
@@ -106,7 +106,7 @@ const cardTitleStyle: React.CSSProperties = {
 
 const cardDescStyle: React.CSSProperties = {
   fontFamily: "var(--astra-font-body)",
-  fontSize: "13px",
+  fontSize: "var(--text-body)",
   lineHeight: 1.55,
   color: "var(--astra-text-2)",
   marginBottom: "10px",
@@ -114,7 +114,7 @@ const cardDescStyle: React.CSSProperties = {
 
 const cardMetaStyle: React.CSSProperties = {
   fontFamily: "var(--astra-font-mono)",
-  fontSize: "10px",
+  fontSize: "var(--text-mono)",
   letterSpacing: "0.04em",
   color: "var(--astra-text-3)",
 };

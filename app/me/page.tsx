@@ -32,7 +32,7 @@ export default function MePage() {
         alignItems: "center",
         justifyContent: "center",
         fontFamily: "var(--font-mono)",
-        fontSize: "11px",
+        fontSize: "var(--text-mono-lg)",
         letterSpacing: "0.1em",
         textTransform: "uppercase",
         color: "var(--muted)",
