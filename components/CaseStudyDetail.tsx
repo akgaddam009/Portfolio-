@@ -737,7 +737,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               centered on the viewport just like the hero. */}
           <div className="page-pad">
 
-            <CsSection label={cs.sectionLabels?.overview ?? "Overview"} id="cs-overview" className="exec-hide">
+            <CsSection label={cs.sectionLabels?.overview ?? "Overview"} navLabel={cs.navLabels?.overview} id="cs-overview" className="exec-hide">
               {/* Three-layer Overview rendering:
                     1. context prose (plain, no card chrome)
                     2. ESM vs OLAP visual diagram (slug-gated)
@@ -935,7 +935,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} id="cs-problem">
+            <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} navLabel={cs.navLabels?.problem} id="cs-problem">
               {/* Problem stat — number stacked above short label */}
               {cs.problemStat && (
                 <motion.div
@@ -2260,7 +2260,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 FanCode uses cs.designApproach.decisions instead and is excluded
                 via the !cs.designApproach guard. ── */}
             {cs.decisions && cs.decisions.length > 0 && !cs.designApproach && (
-              <CsSection label={cs.sectionLabels?.decisions ?? "Key design decisions"} id="decisions">
+              <CsSection label={cs.sectionLabels?.decisions ?? "Key design decisions"} navLabel={cs.navLabels?.decisions} id="decisions">
                 {cs.decisionsIntro && (
                   <motion.p
                     initial={{ opacity: 0, y: 10 }}
@@ -2568,7 +2568,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            <CsSection label={cs.sectionLabels?.outcomes ?? "Result"} id="outcomes">
+            <CsSection label={cs.sectionLabels?.outcomes ?? "Result"} navLabel={cs.navLabels?.outcomes} id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
 
                 {/* ── FanCode Homepage — structured result block ── */}
@@ -2976,7 +2976,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {cs.references && cs.references.length > 0 && (
-              <CsSection label={cs.sectionLabels?.references ?? "References"} className="exec-hide">
+              <CsSection label={cs.sectionLabels?.references ?? "References"} className="exec-hide" hideFromNav>
                 <ul style={{ display: "flex", flexDirection: "column", gap: "10px", listStyle: "none", padding: 0, margin: 0, maxWidth: "640px" }}>
                   {cs.references.map((ref, i) => (
                     <li key={i}>
@@ -4104,19 +4104,22 @@ function CaseStudyContactCluster() {
   );
 }
 
-function CsSection({ label, children, id, className, hideFromNav }: { label: string; children: React.ReactNode; id?: string; className?: string; hideFromNav?: boolean }) {
+function CsSection({ label, navLabel, children, id, className, hideFromNav }: { label: string; navLabel?: string; children: React.ReactNode; id?: string; className?: string; hideFromNav?: boolean }) {
   // Auto-generate an id from the label when none is passed so every
   // section becomes anchorable and shows up in the left rail. Explicit
   // ids still win (preserves existing anchor URLs like #cs-overview).
   // Sections with hideFromNav skip the data-nav-label tag so the DOM
   // scan doesn't pick them up for the rail — used for sections that
   // don't aid scanning (e.g. layout / decisions / rollout in FanCode).
+  // navLabel overrides what shows in the rail without changing the
+  // section's visible heading (e.g. Apple's narrative heading "What's
+  // a Business Listing?" reads as "Context" in the rail).
   const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   const finalId = id ?? (slug ? `cs-${slug}` : undefined);
   return (
     <motion.section
       id={finalId}
-      data-nav-label={hideFromNav ? undefined : label}
+      data-nav-label={hideFromNav ? undefined : (navLabel ?? label)}
       className={className}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}

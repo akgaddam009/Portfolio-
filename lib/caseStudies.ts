@@ -202,6 +202,17 @@ export type CaseStudy = {
     lesson?: string;
     references?: string;
   };
+  /** Optional rail-only label overrides. When set, the side-rail uses
+      these shorter / scannable labels even though the actual section
+      heading still renders the full sectionLabels text. Useful when the
+      section title is narrative (e.g. "What's a Business Listing?") but
+      a scanner needs a quick category word in the rail ("Context"). */
+  navLabels?: {
+    overview?: string;
+    problem?: string;
+    decisions?: string;
+    outcomes?: string;
+  };
   /** Optional visual stat blocks for the Overview. */
   contextStats?: { stat: string; label: string }[];
   /** Optional app store links rendered in the Overview. */
@@ -697,6 +708,13 @@ export const caseStudies: CaseStudy[] = [
       decisions: "Key design decisions",
       outcomes: "Result",
       lesson: "Learnings",
+    },
+    /* Rail-only labels: the narrative section headings ("What's a
+       Business Listing?", "The Challenge") read well in place but
+       don't scan well in a 200px rail. Use category words there. */
+    navLabels: {
+      overview: "Context",
+      problem: "Problem",
     },
 
     chromeUrl: "app.reputation.com",
