@@ -468,7 +468,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Helping businesses <InlineChip label="design" tone="indigo" scale="match" /> products by aligning <InlineChip label="user needs" tone="teal" scale="match" /> <InlineChip label="business strategy" tone="amber" scale="match" /> <InlineChip label="the messy reality in between" tone="violet" scale="match" />        </motion.h1>
+          Helping businesses <InlineChip label="design" tone="indigo" scale="match" /> products by aligning <InlineChip label="user needs" tone="teal" scale="match" /> <InlineChip label="business strategy" tone="amber" scale="match" /> and the messy reality in between</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
@@ -544,6 +544,7 @@ function AboutPanel() {
               <ArrowUpRight size={10} strokeWidth={1.5} />
             </Link>
           ))}
+
         </motion.div>
 
         {/* Info rows */}

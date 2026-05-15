@@ -981,7 +981,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       </p>
                       {/* Core tension sits right below the name — before bullets */}
                       <div style={{ background: "var(--surface2)", borderRadius: "6px", padding: "8px 12px" }}>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 3px" }}>Core tension</p>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 3px" }}>Core tension</p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{u.coreTension}</p>
                       </div>
                       <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -4052,7 +4052,7 @@ function CsSection({ label, children, id, className }: { label: string; children
       transition={{ duration: 0.65, ease: EASE }}
       style={{ padding: "48px 0" }}
     >
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "28px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "28px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>{label}</p>
       {children}
     </motion.section>
   );

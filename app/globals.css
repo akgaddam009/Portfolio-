@@ -37,6 +37,23 @@
   --dur-base: 320ms;
   --dur-slow: 650ms;
 
+  /* ── Spacing scale — 4pt soft grid ──
+     4pt accommodates the chip / icon granularity that strict 8pt forces awkward.
+     Use these for padding / margin / gap. Don't use for fontSize, borderRadius,
+     or positioning offsets — those have their own visual semantics. */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;   /* tight section gap */
+  --space-6:  24px;
+  --space-7:  32px;
+  --space-8:  44px;   /* touch target floor (WCAG 2.5.5) */
+  --space-9:  48px;
+  --space-10: 64px;
+  --space-11: 96px;   /* hero / section break */
+
   /* ── Semantic accent tokens — Apple system colors ── */
   --accent-success: #16a34a;  /* green-700 — copy-success, "In use", "After". 7.1:1 on white (AAA) */
   --accent-error:   #ff3b30;  /* Apple systemRed — error states only */
@@ -185,6 +202,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   cursor: none;
+  /* Remove iOS default blue flash on tap — we supply our own press feedback */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ─── Selection ─────────────────────────────────────── */
@@ -465,6 +484,25 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
   animation: availability-pulse 4s ease-out infinite;
   animation-delay: 2s;
+}
+
+/* ─── Mobile touch press feedback ───────────────────────
+   On touch devices (pointer:coarse) interactive elements show a
+   gentle scale-down + opacity dip on :active to confirm the tap.
+   Only fires on coarse pointer so desktop hover states are
+   unaffected. Duration matches the fastest micro-interaction
+   budget (~60ms enter, snaps back to resting state on release).
+   Reduced-motion: transform/opacity still animate at 0.01ms
+   (the global prefers-reduced-motion rule clamps duration),
+   so the visual change still happens — just instantly. */
+@media (pointer: coarse) {
+  button:active,
+  a:active,
+  [role="button"]:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+    transition: transform 60ms ease-out, opacity 60ms ease-out;
+  }
 }
 
 /* ─── Skip nav — visible on keyboard focus only ──────── */
