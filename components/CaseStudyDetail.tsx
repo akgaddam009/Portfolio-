@@ -391,7 +391,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
                     letterSpacing: "0.08em", textTransform: "uppercase",
                     color: "var(--muted)",
-                    padding: "7px 12px", borderRadius: "6px",
+                    padding: "7px 12px", borderRadius: "8px",
                     border: "1px solid var(--border)", background: "var(--surface)",
                     display: "inline-flex", alignItems: "center", gap: "6px",
                     transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
@@ -408,7 +408,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               <motion.div variants={fadeUp} style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
                 {cs.tags.map(tag => (
-                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "8px" }}>
+                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "6px" }}>
                     {tag}
                   </span>
                 ))}
@@ -1430,7 +1430,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       {/* Signal 1 — Two named users: split persona cards */}
                       <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "4px" }}>Signal 01</span>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "6px" }}>Signal 01</span>
                           <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[0].title}</p>
                         </div>
                         <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
@@ -1494,7 +1494,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       {/* Signal 2 — CEO feedback: 3 numbered bullets */}
                       <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "4px" }}>Signal 02</span>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "6px" }}>Signal 02</span>
                           <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[1].title}</p>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -1516,7 +1516,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {/* Signal 3 — Content constraints */}
                         <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "4px" }}>Signal 03</span>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "6px" }}>Signal 03</span>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[2].title}</p>
                           </div>
                           <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
@@ -1541,7 +1541,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {/* Signal 4 — IPL exception: standout callout */}
                         <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)", position: "relative", overflow: "hidden" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "4px" }}>Signal 04</span>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "6px" }}>Signal 04</span>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[3].title}</p>
                           </div>
                           <div style={{ display: "flex", alignItems: "baseline", gap: "6px", marginBottom: "8px" }}>

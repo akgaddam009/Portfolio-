@@ -214,18 +214,21 @@ body {
    is opt-in; contact / LinkedIn / CV read as a triplet without a "hero
    button" pulling attention away from the work.
 
+   Radius scale follows the size hierarchy: 12 / 8 / 6. Smaller pill
+   = smaller radius, so the visual weight reads top-down.
+
    Tier 1 — Page chrome (44px pill · --surface · --card-shadow ·
             no border · 12px radius). Persistent nav, theme toggle,
             panel-position arrows. Floats above content.
 
    Tier 2 — Inline action (~32px pill · --surface · 1px border ·
-            no shadow at rest · --card-shadow on hover · 6px radius
+            no shadow at rest · --card-shadow on hover · 8px radius
             · 10px mono caps). Email / LinkedIn / CV / case study
-            back / AccentChips. Sits inside content.
+            back. Sits inside content.
 
-   Tier 3 — Metadata tag (small pill · --surface2 · no border ·
-            no shadow · 9px mono caps). Hero tags, work-card tags.
-            Silent label, not interactive.
+   Tier 3 — Metadata tag (small pill · --surface2 or chip-bg · no
+            shadow · 6px radius · 9px mono caps). Hero tags,
+            work-card tags (WorkChip), AccentChip. Silent label.
 
    If a future surface needs a true primary CTA, introduce a Tier 0
    (filled, --text bg, --bg color, 44px) with a one-per-page rule.
