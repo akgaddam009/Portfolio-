@@ -1068,7 +1068,7 @@ export const caseStudies: CaseStudy[] = [
 
     beforeAfterImages: {
       before: { src: "/images/fancode/earlier-homepage.jpg", label: "Earlier homepage" },
-      after:  { src: "/images/fancode/new-homepage.jpg",     label: "Redesigned homepage"  },
+      after:  { src: "/images/fancode/overall-homepage.jpg", label: "Redesigned homepage"  },
     },
 
     resultSection: {

@@ -25,22 +25,11 @@ const DECISION_ICONS: Record<string, React.FC<{ size?: number; strokeWidth?: num
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// All possible nav sections — filtered at runtime after DOM commit.
-// Labels can be tailored per case study via cs.sectionLabels so the rail
-// matches the narrative the page actually tells (e.g. Planful uses
-// "Context" instead of the default "Overview").
+// Rail entries are built at runtime by scanning the rendered DOM for
+// every element with a `data-nav-label` attribute. CsSection auto-tags
+// itself so every rendered section becomes an anchor target in the rail
+// — no hardcoded section list, no manual maintenance per case study.
 type NavSection = { id: string; label: string };
-function buildNavSections(cs: CaseStudy): NavSection[] {
-  return [
-    { id: "cs-overview",  label: cs.sectionLabels?.overview  ?? "Overview"  },
-    { id: "cs-problem",   label: cs.sectionLabels?.problem   ?? "Problem"   },
-    { id: "cs-insight",   label: "Insight" },
-    { id: "cs-workflow",  label: cs.taskFlow?.heading ?? "Workflow" },
-    { id: "decisions",    label: cs.sectionLabels?.decisions ?? "Decisions" },
-    { id: "outcomes",     label: cs.sectionLabels?.outcomes  ?? "Result"    },
-    { id: "ownership",    label: "Ownership" },
-  ];
-}
 
 const fadeUp = {
   // Cinematic entry: subtle blur resolves with the position so the element
@@ -158,10 +147,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
     onScroll();
 
     raf = requestAnimationFrame(() => {
-      // Filter to sections that actually exist in the rendered DOM, then set up
-      // IntersectionObservers for active-section tracking. Runs on mount AND
-      // whenever unlocked changes so gated sections are picked up after unlock.
-      const existing = buildNavSections(cs).filter(s => !!document.getElementById(s.id));
+      // Scan the rendered DOM for every section tagged with data-nav-label.
+      // Every CsSection gets one automatically (with an auto-generated id
+      // when none is passed) so the rail lists every section the case
+      // study renders — no hardcoded whitelist. Runs on mount AND
+      // whenever unlocked changes so gated sections appear after unlock.
+      const tagged = Array.from(document.querySelectorAll<HTMLElement>("[data-nav-label]"));
+      const existing: NavSection[] = tagged
+        .filter(el => el.id)
+        .map(el => ({ id: el.id, label: el.dataset.navLabel ?? el.id }));
       setNavSections(existing);
 
       existing.forEach(({ id }) => {
@@ -702,11 +696,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               position: "relative",
                               display: "block",
                               padding: "10px 12px 10px 24px",
-                              fontFamily: "var(--font-mono)",
-                              fontSize: "10px",
-                              fontWeight: 500,
-                              letterSpacing: "0.08em",
-                              textTransform: "uppercase",
+                              fontFamily: "var(--font-body)",
+                              fontSize: "13px",
+                              fontWeight: 400,
+                              lineHeight: 1.4,
+                              letterSpacing: "-0.01em",
                               color: active ? "var(--text)" : "var(--muted)",
                               textDecoration: "none",
                               transition:
@@ -1711,7 +1705,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* ── Core Insight — after Discovery & Research ── */}
             {cs.insight && (
-              <section id="cs-insight" style={{ padding: "80px 0" }}>
+              <section id="cs-insight" data-nav-label="Core insight" style={{ padding: "80px 0" }}>
                 {/* heading block */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
@@ -2020,7 +2014,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* ── Homepage Layout ── */}
             {cs.homepageLayout && (
-              <CsSection label="Homepage Layout">
+              <CsSection label="Homepage Layout" hideFromNav>
                 {cs.homepageLayout.intro && (
                   <motion.p
                     initial={{ opacity: 0, y: 10 }}
@@ -2084,7 +2078,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* ── Key Design Decisions (side-by-side cards) ── */}
             {cs.keyDecisions && cs.keyDecisions.length > 0 && (
-              <CsSection label="Key Design Decisions">
+              <CsSection label="Key Design Decisions" hideFromNav>
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -2552,7 +2546,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* ── Rollout — standalone section ── */}
             {cs.resultSection?.rollout && cs.resultSection.rollout.length > 0 && (
-              <CsSection label="Rollout plan">
+              <CsSection label="Rollout plan" hideFromNav>
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -4110,10 +4104,19 @@ function CaseStudyContactCluster() {
   );
 }
 
-function CsSection({ label, children, id, className }: { label: string; children: React.ReactNode; id?: string; className?: string }) {
+function CsSection({ label, children, id, className, hideFromNav }: { label: string; children: React.ReactNode; id?: string; className?: string; hideFromNav?: boolean }) {
+  // Auto-generate an id from the label when none is passed so every
+  // section becomes anchorable and shows up in the left rail. Explicit
+  // ids still win (preserves existing anchor URLs like #cs-overview).
+  // Sections with hideFromNav skip the data-nav-label tag so the DOM
+  // scan doesn't pick them up for the rail — used for sections that
+  // don't aid scanning (e.g. layout / decisions / rollout in FanCode).
+  const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const finalId = id ?? (slug ? `cs-${slug}` : undefined);
   return (
     <motion.section
-      id={id}
+      id={finalId}
+      data-nav-label={hideFromNav ? undefined : label}
       className={className}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -5307,8 +5310,12 @@ function LensLightbox({ src, onClose }: { src: string | null; onClose: () => voi
 }
 
 function Lightbox({ src, onClose }: { src: string | null; onClose: () => void }) {
+  // Naturalize the displayed size: if the source image is smaller than
+  // 90vw/90vh, cap the display width to its natural width so the lightbox
+  // doesn't visually upscale it. Without this a 125px-wide phone mockup
+  // would stretch to the full lightbox area and look severely blurred.
+  const [naturalWidth, setNaturalWidth] = useState<number | null>(null);
   if (!src) return null;
-  // Detect video sources so the lightbox can play them at full size, not just images.
   const isVideo = /\.(mov|mp4|webm)$/i.test(src);
   return (
     <motion.div
@@ -5358,13 +5365,15 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         onClick={(e) => e.stopPropagation()}
+        onLoad={(e) => setNaturalWidth(e.currentTarget.naturalWidth)}
         style={{
-          maxWidth: "90vw",
+          maxWidth: naturalWidth ? `min(90vw, ${naturalWidth}px)` : "90vw",
           maxHeight: "90vh",
           objectFit: "contain",
           borderRadius: "16px",
           boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
           cursor: "default",
+          imageRendering: "auto",
         }}
         alt=""
       />

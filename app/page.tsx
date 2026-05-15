@@ -951,24 +951,17 @@ function WorkCardThumb({
 }) {
   const [ready, setReady] = useState(false);
   const [inView, setInView] = useState(false);
-  /* Touch detection — coarse pointer = mobile/tablet. Videos are skipped on
-     touch devices: autoplay is unreliable, native play-button overlays appear,
-     and poster images are visually identical at thumbnail size. */
-  const [isTouch, setIsTouch] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isVideo = isVideoThumb(src);
-
-  useEffect(() => {
-    setIsTouch(window.matchMedia("(pointer: coarse)").matches);
-  }, []);
 
   /* Only trigger video loading when the card is (nearly) visible.
      rootMargin of 120px means the video starts buffering one card-height
      before it scrolls into view — enough lead time for a smooth autoplay,
      without loading off-screen videos on page load.
-     Skipped entirely on touch devices — poster handles the visual. */
+     Mobile: autoplay works with muted + playsInline on iOS 10+ and
+     modern Chrome. Poster fades out once the video signals canplay. */
   useEffect(() => {
-    if (!isVideo || isTouch) return;
+    if (!isVideo) return;
     const el = containerRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -977,7 +970,7 @@ function WorkCardThumb({
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [isVideo, isTouch]);
+  }, [isVideo]);
 
   const coverStyle: React.CSSProperties = {
     position: "absolute", inset: 0,
@@ -990,7 +983,7 @@ function WorkCardThumb({
     <div ref={containerRef} style={{ position: "relative", width: "100%", height: "100%" }}>
       {isVideo ? (
         <>
-          {/* Poster: always visible on touch; fades out on desktop once video plays */}
+          {/* Poster: fades out once the video reports canplay */}
           {poster && (
             <img
               src={poster}
@@ -1004,8 +997,8 @@ function WorkCardThumb({
               }}
             />
           )}
-          {/* Video: desktop only, src set only once in-view */}
-          {!isTouch && inView && (
+          {/* Video: plays on desktop AND mobile (muted + playsInline). */}
+          {inView && (
             <video
               className="work-thumb"
               src={src}
