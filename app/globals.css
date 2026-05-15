@@ -531,6 +531,9 @@ a { color: inherit; text-decoration: none; }
 
 /* ─── Mobile responsive layout ───────────────────────── */
 @media (max-width: 640px) {
+  /* Hide the "Chat" label on small screens — leave just the icon. */
+  .chat-trigger-label { display: none !important; }
+
   .home-main {
     height: auto !important;
     overflow: visible !important;
