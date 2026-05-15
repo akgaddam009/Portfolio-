@@ -25,16 +25,22 @@ const DECISION_ICONS: Record<string, React.FC<{ size?: number; strokeWidth?: num
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// All possible nav sections — filtered at runtime after DOM commit
-const ALL_NAV_SECTIONS = [
-  { id: "cs-overview",  label: "Overview"  },
-  { id: "cs-problem",   label: "Problem"   },
-  { id: "cs-insight",   label: "Insight"   },
-  { id: "cs-workflow",  label: "Workflow"  },
-  { id: "decisions",    label: "Decisions" },
-  { id: "outcomes",     label: "Result"  },
-  { id: "ownership",    label: "Ownership" },
-];
+// All possible nav sections — filtered at runtime after DOM commit.
+// Labels can be tailored per case study via cs.sectionLabels so the rail
+// matches the narrative the page actually tells (e.g. Planful uses
+// "Context" instead of the default "Overview").
+type NavSection = { id: string; label: string };
+function buildNavSections(cs: CaseStudy): NavSection[] {
+  return [
+    { id: "cs-overview",  label: cs.sectionLabels?.overview  ?? "Overview"  },
+    { id: "cs-problem",   label: cs.sectionLabels?.problem   ?? "Problem"   },
+    { id: "cs-insight",   label: "Insight" },
+    { id: "cs-workflow",  label: cs.taskFlow?.heading ?? "Workflow" },
+    { id: "decisions",    label: cs.sectionLabels?.decisions ?? "Decisions" },
+    { id: "outcomes",     label: cs.sectionLabels?.outcomes  ?? "Result"    },
+    { id: "ownership",    label: "Ownership" },
+  ];
+}
 
 const fadeUp = {
   // Cinematic entry: subtle blur resolves with the position so the element
@@ -55,7 +61,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Prev/Next sequencing on case study pages mirrors the order visitors see
   // when browsing the portfolio. Hidden slugs (zetwerk-*) are kept out of the
   // sequence entirely — never reached via Prev/Next.
-  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra"];
+  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage"];
   const navList = NAV_ORDER
     .map(slug => caseStudies.find(c => c.slug === slug))
     .filter((c): c is NonNullable<typeof c> => !!c);
@@ -120,8 +126,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   };
 
   // NAV_SECTIONS must be state — getElementById during render always returns null
-  // because the component's own DOM hasn't been committed yet.
-  const [NAV_SECTIONS, setNavSections] = useState<typeof ALL_NAV_SECTIONS>([]);
+  // because the component's own DOM hasn't been committed yet. Labels are
+  // built from the per-case-study cs.sectionLabels via buildNavSections.
+  const [NAV_SECTIONS, setNavSections] = useState<NavSection[]>([]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -154,7 +161,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       // Filter to sections that actually exist in the rendered DOM, then set up
       // IntersectionObservers for active-section tracking. Runs on mount AND
       // whenever unlocked changes so gated sections are picked up after unlock.
-      const existing = ALL_NAV_SECTIONS.filter(s => !!document.getElementById(s.id));
+      const existing = buildNavSections(cs).filter(s => !!document.getElementById(s.id));
       setNavSections(existing);
 
       existing.forEach(({ id }) => {
@@ -174,7 +181,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       observers.forEach(o => o.disconnect());
       window.removeEventListener("scroll", onScroll);
     };
-  }, [unlocked]);
+  }, [unlocked, cs]);
 
   return (
     <div style={{ background: "var(--bg)" }}>
@@ -214,11 +221,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           All case study page breakages fixed here via class-based CSS
           rather than scattered inline-style changes. Target: ≤ 640px */}
       <style>{`
-        /* Section nav — desktop-only; hidden on mobile to prevent
-           right-edge overlap with scrollable content */
-        .cs-section-nav { display: flex !important; }
-        @media (max-width: 640px) {
-          .cs-section-nav { display: none !important; }
+        /* Left rail is absolute-positioned to the left of the centered
+           .page-pad via calc(50vw - 560px). Below 1180px the calc would
+           push it off-screen, so we hide it entirely. Section IDs in
+           the content still work for direct anchor links. */
+        @media (max-width: 1180px) {
+          .cs-rail { display: none !important; }
+        }
+        .cs-rail-item:not(.is-active):hover {
+          color: color-mix(in srgb, var(--muted) 50%, var(--text)) !important;
+          transform: translateX(2px) !important;
+        }
+        .cs-rail-item:focus-visible {
+          outline: 2px solid var(--text);
+          outline-offset: 2px;
+          border-radius: 4px;
         }
 
         /* Back button — must meet 44px touch target */
@@ -365,15 +382,30 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         <section style={{ padding: "48px 0" }}>
           <div className="page-pad">
             <motion.div variants={container} initial="hidden" animate="show">
-              <motion.div variants={fadeUp} style={{ marginBottom: "32px" }}>
+              {/* Back affordance. Tier 2 canonical pill — same spec as
+                  workspace About contact pills (app/page.tsx:591) and
+                  Contact panel pills. One button language across the
+                  whole site for inline secondary actions.
+                  Arrow sized at 10px to match canonical (ArrowUpRight
+                  external-link icon); the meaning "back" comes from
+                  the label, not the icon size. */}
+              <motion.div variants={fadeUp} style={{ marginBottom: "32px", display: "inline-flex" }}>
                 <Link
                   href="/#work"
                   className="case-study-back-link cs-back-link"
-                  style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", paddingLeft: "2px", paddingRight: "8px", transition: "color 0.2s cubic-bezier(0.22, 1, 0.36, 1)" }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "var(--text-hover)")}
-                  onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+                  style={{
+                    fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
+                    letterSpacing: "0.08em", textTransform: "uppercase",
+                    color: "var(--muted)",
+                    padding: "7px 12px", borderRadius: "6px",
+                    border: "1px solid var(--border)", background: "var(--surface)",
+                    display: "inline-flex", alignItems: "center", gap: "6px",
+                    transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
                   </svg>
                   Back
@@ -402,15 +434,19 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 {cs.subtitle}
               </motion.p>
 
-              <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "16px" }}>
+              {/* Role / Company / Timeline meta. minmax bumped to 200px so
+                  "Senior Product Designer (IC)" doesn't wrap mid-column and
+                  break baseline alignment against the shorter values next
+                  to it. align-items keeps cells locked to the top. */}
+              <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", alignItems: "start" }}>
                 {[
                   { label: "Role", value: cs.role },
                   cs.company  ? { label: "Company",  value: cs.company  } : null,
                   cs.timeline ? { label: "Timeline", value: cs.timeline } : null,
                 ].filter(Boolean).map(item => (
-                  <div key={item!.label}>
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "4px" }}>{item!.label}</p>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, color: "var(--text)", lineHeight: 1.4 }}>{item!.value}</p>
+                  <div key={item!.label} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>{item!.label}</p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, color: "var(--text)", lineHeight: 1.4, margin: 0 }}>{item!.value}</p>
                   </div>
                 ))}
               </motion.div>
@@ -592,8 +628,119 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </motion.section>
         )}
 
-        {/* Body */}
-        <article style={{ padding: "0" }}>
+        {/* Body. Article is position:relative so the floating left rail
+            can absolute-position next to .page-pad without stealing width
+            from the content column. .page-pad keeps content centered on
+            viewport (matching the hero) so the H1 and body content line
+            up at all viewport widths. */}
+        <article style={{ padding: "0", position: "relative" }}>
+          {/* ── Left rail. Floats to the LEFT of the centered .page-pad,
+              anchored at calc(50vw - 560px). At narrower viewports the
+              calc takes it off-screen, so a media query (≤1180px) hides
+              it. Sticky nav inside follows the scroll.
+
+              top: 56px aligns the rail's first item with the first
+              section's label baseline (CsSection padding 48 + label
+              borderTop padding 16 = 64; rail item internal padding 10
+              brings rail item top to 54 ≈ 56 for baseline match).
+
+              Pattern: Stripe Docs / Linear / Vercel sidebar nav with a
+              sliding indicator bar via Framer Motion layoutId. ── */}
+          <aside
+            className="cs-rail"
+            style={{
+              position: "absolute",
+              top: "56px",
+              left: "calc(50vw - 560px)",
+              width: "200px",
+              height: "calc(100% - 56px)",
+              pointerEvents: "none",
+            }}
+          >
+            <div style={{ position: "sticky", top: "80px", pointerEvents: "auto" }}>
+                <AnimatePresence>
+                  {navVisible && NAV_SECTIONS.length > 0 && (
+                    <motion.nav
+                      key="cs-rail-nav"
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -8 }}
+                      transition={{ duration: 0.3, ease: EASE }}
+                      aria-label="Case study sections"
+                      style={{
+                        position: "relative",
+                        display: "flex",
+                        flexDirection: "column",
+                        paddingTop: "8px",
+                      }}
+                    >
+                      {/* Vertical hairline spine — quiet anchor running
+                          behind the indicator bar. */}
+                      <div
+                        aria-hidden="true"
+                        style={{
+                          position: "absolute",
+                          left: "10px",
+                          top: "12px",
+                          bottom: "12px",
+                          width: "1px",
+                          background: "var(--border)",
+                        }}
+                      />
+                      {NAV_SECTIONS.map(({ id, label }) => {
+                        const active = activeSection === id;
+                        return (
+                          <a
+                            key={id}
+                            href={`#${id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }}
+                            className={active ? "cs-rail-item is-active" : "cs-rail-item"}
+                            style={{
+                              position: "relative",
+                              display: "block",
+                              padding: "10px 12px 10px 24px",
+                              fontFamily: "var(--font-mono)",
+                              fontSize: "10px",
+                              fontWeight: 500,
+                              letterSpacing: "0.08em",
+                              textTransform: "uppercase",
+                              color: active ? "var(--text)" : "var(--muted)",
+                              textDecoration: "none",
+                              transition:
+                                "color 0.3s cubic-bezier(0.22,1,0.36,1), transform 0.3s cubic-bezier(0.22,1,0.36,1)",
+                            }}
+                          >
+                            {active && (
+                              <motion.span
+                                layoutId="cs-rail-indicator"
+                                transition={{ type: "spring", stiffness: 420, damping: 36 }}
+                                aria-hidden="true"
+                                style={{
+                                  position: "absolute",
+                                  left: "9px",
+                                  top: "8px",
+                                  bottom: "8px",
+                                  width: "3px",
+                                  background: "var(--text)",
+                                  borderRadius: "2px",
+                                }}
+                              />
+                            )}
+                            {label}
+                          </a>
+                        );
+                      })}
+                    </motion.nav>
+                  )}
+                </AnimatePresence>
+            </div>{/* /.sticky wrapper inside .cs-rail */}
+          </aside>
+
+          {/* Content column. .page-pad keeps content at 680px max,
+              centered on the viewport just like the hero. */}
           <div className="page-pad">
 
             <CsSection label={cs.sectionLabels?.overview ?? "Overview"} id="cs-overview" className="exec-hide">
@@ -2999,7 +3146,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               `}</style>
             </div>
 
-          </div>
+          </div>{/* /.page-pad */}
         </article>
       </main>
       {/* Lightboxes wrapped in AnimatePresence so their `exit` animations actually run.
@@ -3016,88 +3163,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         )}
       </AnimatePresence>
 
-      {/* Section nav — sticky pill container, appears after first fold */}
-      <AnimatePresence>
-        {navVisible && NAV_SECTIONS.length > 0 && (!isGated || unlocked) && (
-          <motion.nav
-            className="cs-section-nav"
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 16 }}
-            transition={{ duration: 0.3, ease: EASE }}
-            style={{
-              position: "fixed",
-              right: "20px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              zIndex: 30,
-              display: "flex",
-              flexDirection: "column",
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: "12px",
-              padding: "6px 0",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
-              minWidth: "110px",
-            }}
-          >
-            {NAV_SECTIONS.map(({ id, label }) => {
-              const isActive = activeSection === id;
-              return (
-                <a
-                  key={id}
-                  href={`#${id}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    textDecoration: "none",
-                    padding: "7px 14px 7px 12px",
-                    position: "relative",
-                    transition: "background 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
-                    background: isActive ? "color-mix(in srgb, var(--text) 5%, transparent)" : "transparent",
-                  }}
-                  onMouseEnter={e => {
-                    if (!isActive) e.currentTarget.style.background = "color-mix(in srgb, var(--text) 4%, transparent)";
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = isActive ? "color-mix(in srgb, var(--text) 5%, transparent)" : "transparent";
-                  }}
-                >
-                  {/* Active indicator — left edge bar */}
-                  <span style={{
-                    position: "absolute",
-                    left: 0,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: "2px",
-                    height: isActive ? "16px" : "0px",
-                    background: "var(--text)",
-                    borderRadius: "0 1px 1px 0",
-                    transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
-                  }} />
-                  <span style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.06em",
-                    textTransform: "uppercase",
-                    color: isActive ? "var(--text)" : "var(--muted)",
-                    fontWeight: isActive ? 500 : 400,
-                    transition: "color 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
-                    whiteSpace: "nowrap",
-                  }}>
-                    {label}
-                  </span>
-                </a>
-              );
-            })}
-          </motion.nav>
-        )}
-      </AnimatePresence>
+      {/* Right-side floating nav removed -section nav now lives in the
+          left rail inside the page grid. The intersection observer and
+          activeSection / navVisible state above are reused verbatim. */}
     </div>
   );
 }

@@ -12,6 +12,7 @@ import CaseStudyDetail from "@/components/CaseStudyDetail";
 const HIDDEN_SLUGS = new Set<string>([
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",
+  "astra",
 ]);
 
 // Slugs not emitted by generateStaticParams (including HIDDEN_SLUGS)

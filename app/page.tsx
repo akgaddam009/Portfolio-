@@ -587,7 +587,8 @@ function AboutPanel() {
             flexWrap: "wrap", marginBottom: "20px",
           }}
         >
-          {/* Copy email */}
+          {/* Copy email -Tier 2 canonical pill (see button system note in
+              CaseStudyDetail.tsx near the back button). */}
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
@@ -598,7 +599,7 @@ function AboutPanel() {
               padding: "7px 12px", borderRadius: "6px",
               border: "1px solid var(--border)", background: "var(--surface)",
               cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
             onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
             onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
@@ -606,7 +607,7 @@ function AboutPanel() {
             {copied ? "Copied ✓" : "Copy email"}
           </button>
 
-          {/* LinkedIn + CV */}
+          {/* LinkedIn + CV -Tier 2 canonical pills */}
           {[
             { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
             { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
@@ -623,7 +624,7 @@ function AboutPanel() {
                 padding: "7px 12px", borderRadius: "6px",
                 border: "1px solid var(--border)", background: "var(--surface)",
                 display: "inline-flex", alignItems: "center", gap: "6px",
-                transition: "color 0.18s, border-color 0.18s, background 0.18s",
+                transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
               }}
               onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
               onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
@@ -936,7 +937,7 @@ const WORK_POSTERS: Record<string, string> = {
   "astra":                "/images/astra/cover.jpg",
   "planful-esm-tables":   "/images/planful/landing-page.jpg",
   "apple-business-listings": "/images/reputation/thumbnail.jpg",
-  "fancode-homepage":     "/images/fancode/new-homepage.jpg",
+  "fancode-homepage":     "/images/fancode/overall-homepage.jpg",
 };
 
 // Video file extensions that should render through <video> instead of <img>.
@@ -1215,10 +1216,11 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
 
 function WorkPanel() {
   // Explicit display order. Only 4 cases shown in the public grid.
-  // The 2 confidential cases (zetwerk-dc, zetwerk-bu-ecosystem) are
+  // Confidential cases (zetwerk-dc, zetwerk-bu-ecosystem, astra) are
   // accessible via direct URL only -share with recruiters as needed.
+  // Astra is hidden from the public surface; the route 404s.
   const CARD_ORDER = [
-    "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
+    "planful-esm-tables", "apple-business-listings", "fancode-homepage",
   ];
   const COMING_SOON = new Set<string>();
 
@@ -2517,6 +2519,9 @@ function ContactPanel() {
           transition={{ duration: 0.45, ease: EASE, delay: 0.16 }}
           style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "48px" }}
         >
+          {/* Contact pills -Tier 2 canonical (snapped to match workspace
+              About pills exactly: var(--text) on hover, no redundant
+              borderColor flip, box-shadow in transition). */}
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
@@ -2524,16 +2529,14 @@ function ContactPanel() {
               fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "7px 12px",
-              borderRadius: "6px",
-              border: "1px solid var(--border)",
-              background: "var(--surface)",
+              padding: "7px 12px", borderRadius: "6px",
+              border: "1px solid var(--border)", background: "var(--surface)",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -2545,16 +2548,13 @@ function ContactPanel() {
               fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--muted)",
-              padding: "7px 12px",
-              borderRadius: "6px",
-              border: "1px solid var(--border)",
-              background: "var(--surface)",
+              padding: "7px 12px", borderRadius: "6px",
+              border: "1px solid var(--border)", background: "var(--surface)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s",
-              boxSizing: "border-box",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             LinkedIn
             <ArrowUpRight size={10} strokeWidth={1.5} />
@@ -2567,16 +2567,13 @@ function ContactPanel() {
               fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--muted)",
-              padding: "7px 12px",
-              borderRadius: "6px",
-              border: "1px solid var(--border)",
-              background: "var(--surface)",
+              padding: "7px 12px", borderRadius: "6px",
+              border: "1px solid var(--border)", background: "var(--surface)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s",
-              boxSizing: "border-box",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             CV
             <ArrowUpRight size={10} strokeWidth={1.5} />
@@ -3097,7 +3094,7 @@ function StoryView() {
                 border: "1px solid var(--border)", background: "var(--surface)",
                 textDecoration: "none",
                 display: "inline-flex", alignItems: "center", gap: "6px",
-                transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
+                transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
               }}
               onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
               onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}

@@ -293,7 +293,7 @@ export const caseStudies: CaseStudy[] = [
     company: "Planful",
     type: "Enterprise SaaS · Fintech",
     role: "Senior Product Designer (IC)",
-    timeline: "~1 month design · 2 to 3 months rollout",
+    timeline: "~1 month design",
     team: "Product, Engineering, Implementation Consultants",
     tags: ["Enterprise software", "Data workflow", "Fintech", "Web Application"],
     heroLabel: "Real Work",
@@ -530,42 +530,6 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     epilogue: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Data Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
-
-    users: [
-      {
-        role: "Finance Analyst",
-        name: "Data preparation · period close",
-        bullets: [
-          "Manages ESM table updates at quarter and period close",
-          "Runs data loads, validates column types, and publishes to the core financial model",
-          "Previously tied to a Windows machine running the Excel plug-in",
-          "Errors in the load corrupt forecast data downstream. zero tolerance",
-        ],
-        coreTension: "Speed at period close vs. zero tolerance for data errors",
-      },
-      {
-        role: "Business Team Owner",
-        name: "Self-service data loading · no mediator",
-        bullets: [
-          "Owns the data but couldn't load it. always routed through Finance",
-          "Updates were delayed by Finance's queue and manual back-and-forth",
-          "Needs to load independently without risking the shared model",
-          "Doesn't think in database terms. needs the tool to think for them",
-        ],
-        coreTension: "Autonomy without the guardrails Finance used to provide",
-      },
-      {
-        role: "Finance Manager",
-        name: "Model integrity · data governance",
-        bullets: [
-          "Accountable for everything that enters the core financial model",
-          "Historically gatekept access to prevent costly load errors",
-          "Goal: let teams self-serve without losing oversight",
-          "A single bad publish can ripple through quarterly forecasts",
-        ],
-        coreTension: "Can't review every load personally. but can't afford not to",
-      },
-    ],
 
     outcomes: [
       "3.5 hrs → 10 to 15 min. A ~95% reduction in time on task. Simple updates that took half a day now take a coffee break.",
