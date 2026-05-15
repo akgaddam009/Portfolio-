@@ -1962,6 +1962,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {d.image && (
                           <figure style={{ margin: 0, marginTop: "6px" }}>
                             <div
+                              className="scroll-scale-media"
                               onClick={() => setLightboxSrc(d.image!.src)}
                               style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                             >
@@ -2337,6 +2338,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {d.image && (
                           <figure style={{ margin: 0, marginTop: "6px" }}>
                             <div
+                              className="scroll-scale-media"
                               onClick={() => setLightboxSrc(d.image!.src)}
                               style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                             >
@@ -2522,7 +2524,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   ] as const).map(({ label, src }) => (
                     <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
-                      <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                      <div className="scroll-scale-media" style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
                         <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
                       </div>
                     </div>
@@ -2538,6 +2540,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   {/* outcomesVideo renders first (Planful) */}
                   {cs.outcomesVideo && (
                     <motion.div
+                      className="scroll-scale-media"
                       initial={{ opacity: 0, y: 12 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
@@ -2549,6 +2552,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   {/* prototypeVideo renders next */}
                   {cs.prototypeVideo && (
                     <motion.div
+                      className="scroll-scale-media"
                       initial={{ opacity: 0, y: 12 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
