@@ -45,7 +45,7 @@ const CHIP_TONES = [
   { name: "indigo",  light: "#4f46e5", dark: "#a8b0d8", role: "Design / neutral primary. About H1 'design'." },
   { name: "teal",    light: "#0d9488", dark: "#88c7be", role: "Users / research. About H1 'user needs'; SaaS." },
   { name: "amber",   light: "#b45309", dark: "#d6c178", role: "Strategy / business. About H1 'business strategy'." },
-  { name: "violet",  light: "#6d28d9", dark: "#b8aed4", role: "AI / experiments. About H1 'AI'; AI Experiments badge." },
+  { name: "violet",  light: "#5b21b6", dark: "#b8aed4", role: "AI / experiments. About H1 'AI'; AI Experiments badge. Retoned away from the Tailwind-default lila." },
   { name: "emerald", light: "#047857", dark: "#9bc9af", role: "Customer-facing. Contact 'Consumer Products'." },
 ];
 
@@ -53,7 +53,6 @@ const ACCENTS = [
   { name: "--accent-success", value: "#34c759", role: "Confirmation green. 'now' indicator on the career timeline, the 'copied' state on the email pill, momentary success feedback" },
   { name: "--accent-error",   value: "#ff3b30", role: "Alert red. error states and destructive actions" },
   { name: "--accent-warm",    value: "#d17b53", role: "Burnt terracotta. punctuation accent; used on the 'Now' dot, highlight sweeps, and inline emphasis marks" },
-  { name: "--accent-violet",  value: "#9b8ff5", role: "Muted violet. AI Experiments chip, icon badges, and section labels in case study goal / persona cards" },
 ];
 
 /* Type scale. rebuilt against the Figma reference design

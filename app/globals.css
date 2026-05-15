@@ -63,11 +63,11 @@
      5.34:1 dark — passes for marks and icons, not for paragraphs). */
   --accent-warm:    #d17b53;
 
-  /* ── Section accent — muted violet. Used for icon badges and labels in
-     case study goal / persona cards. Sits in the purple family but
-     desaturated enough to feel considered rather than defaulted.
-     Candidates: #7c6fe8 (B, current) · #9b8ff5 (lighter) · #6e66d6 (deeper) */
-  --accent-violet:  #9b8ff5;
+  /* `--accent-violet` removed — was defined but never consumed directly.
+     Violet semantic ("AI") survives via the chip-violet-* tokens below,
+     retoned away from the Tailwind-default lavender that reads as AI
+     boilerplate. */
+
 
   /* ── Soft hover overlay — theme-aware via color-mix ──
      Replaces full --surface2 swaps on icon buttons / chrome elements where
@@ -98,8 +98,11 @@
   --chip-teal-bg:       color-mix(in srgb, #0d9488 9%, transparent);
   --chip-amber-text:    #b45309;
   --chip-amber-bg:      color-mix(in srgb, #b45309 9%, transparent);
-  --chip-violet-text:   #7c3aed;
-  --chip-violet-bg:     color-mix(in srgb, #7c3aed 9%, transparent);
+  /* Violet retoned from Tailwind violet-600 (#7c3aed) to violet-800
+     (#5b21b6). Deeper, more grounded, less of the "AI default" lila
+     feeling. Still reads as the purple-family semantic for "AI". */
+  --chip-violet-text:   #5b21b6;
+  --chip-violet-bg:     color-mix(in srgb, #5b21b6 9%, transparent);
   --chip-emerald-text:  #047857;
   --chip-emerald-bg:    color-mix(in srgb, #047857 10%, transparent);
 }
@@ -204,6 +207,29 @@ body {
   /* Remove iOS default blue flash on tap — we supply our own press feedback */
   -webkit-tap-highlight-color: transparent;
 }
+
+/* ─── Button system ─────────────────────────────────────
+   Three tiers, deliberate. No primary (filled, inverted-color) tier
+   exists by design — the portfolio is read, not pitched. Every action
+   is opt-in; contact / LinkedIn / CV read as a triplet without a "hero
+   button" pulling attention away from the work.
+
+   Tier 1 — Page chrome (44px pill · --surface · --card-shadow ·
+            no border · 12px radius). Persistent nav, theme toggle,
+            panel-position arrows. Floats above content.
+
+   Tier 2 — Inline action (~32px pill · --surface · 1px border ·
+            no shadow at rest · --card-shadow on hover · 6px radius
+            · 10px mono caps). Email / LinkedIn / CV / case study
+            back / AccentChips. Sits inside content.
+
+   Tier 3 — Metadata tag (small pill · --surface2 · no border ·
+            no shadow · 9px mono caps). Hero tags, work-card tags.
+            Silent label, not interactive.
+
+   If a future surface needs a true primary CTA, introduce a Tier 0
+   (filled, --text bg, --bg color, 44px) with a one-per-page rule.
+   Until then, none exists by intent. */
 
 /* ─── Selection ─────────────────────────────────────── */
 ::selection { background: var(--text); color: var(--bg); }
