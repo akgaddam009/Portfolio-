@@ -3184,7 +3184,7 @@ export default function Home() {
     const panels = el.querySelectorAll<HTMLElement>(".panel");
     const current = panels[activePanel];
     if (!current) return;
-    el.scrollBy({ left: dir * (current.offsetWidth + 16), behavior: "smooth" });
+    el.scrollBy({ left: dir * (current.offsetWidth + 32), behavior: "smooth" });
   }, [activePanel]);
 
   /* Scroll directly to a panel by index -used by the mobile FAB menu.
@@ -3330,10 +3330,11 @@ export default function Home() {
             height: "calc(100dvh - 72px)",
             overflowX: "auto",
             overflowY: "hidden",
-            gap: "16px",
-            /* Inter-panel gap (16px) reads as breathing room rather than
-               edge-touching tiles. Top padding kept at 8px so the row
-               of panels doesn't push too far down from the nav. */
+            gap: "32px",
+            /* Inter-panel gap (32px) gives each panel real breathing room
+               so the row reads as separate cards rather than a strip.
+               Top padding kept at 8px so the panel row doesn't push too
+               far down from the nav. */
             padding: "8px 0 16px 24px",
             boxSizing: "border-box",
             /* Scroll-snap removed -the `proximity` mode was tugging the
