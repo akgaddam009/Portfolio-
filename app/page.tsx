@@ -1422,7 +1422,7 @@ function WorkPanel() {
                 accent: <AccentChip label="Supply Chain" tone="amber" icon={Path} />,
                 tags: ["B2B", "Enterprise"],
                 href: "https://drive.google.com/file/d/1NcnWyM1oO2VF_YIoLjOvgALeAqPTym1k/view?usp=sharing",
-                thumbnail: "/images/zetwerk/cover.jpg",
+                thumbnail: "/images/zetwerk-dc/thumbnail.png",
                 thumbnailPosition: "center center",
               },
             ] as { title: string; subtitle: string; accent: React.ReactNode; tags: string[]; href: string; thumbnail?: string; thumbnailPosition?: string }[]).map(({ title, subtitle, accent, tags, href, thumbnail, thumbnailPosition }, i) => (
