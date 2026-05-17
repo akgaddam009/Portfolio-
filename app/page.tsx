@@ -7,12 +7,12 @@ import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; PortfolioChat is hidden from the nav for now
 import PortfolioChat from "@/components/PortfolioChat";
-import LoadingScreen from "@/components/LoadingScreen";
 import { MapLibreMap } from "@/components/ui/MapLibreMap";
 import { caseStudies } from "@/lib/caseStudies";
 import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure } from "@/components/ui/Icon";
 import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -562,7 +562,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Helping product teams <InlineChip label="reduce ambiguity" tone="amber" scale="match" /> through <InlineChip label="research" tone="indigo" scale="match" /> <InlineChip label="rapid validation" tone="violet" scale="match" /> <InlineChip label="structured UX thinking" tone="emerald" scale="match" /></motion.h1>
+          Helping product teams <InlineChip label="reduce ambiguity" tone="amber" scale="match" /> through <InlineChip label="research, rapid validation" tone="violet" scale="match" /> <InlineChip label="structured UX thinking" tone="emerald" scale="match" /></motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
@@ -601,7 +601,7 @@ function AboutPanel() {
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "7px 4px",
+              padding: "8px 4px",
               border: "none", background: "transparent",
               cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px",
               transition: "color 0.18s",
@@ -626,7 +626,7 @@ function AboutPanel() {
                 fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                 letterSpacing: "0.08em", textTransform: "uppercase",
                 color: "var(--muted)",
-                padding: "7px 4px",
+                padding: "8px 4px",
                 display: "inline-flex", alignItems: "center", gap: "4px",
                 transition: "color 0.18s",
                 textDecoration: "none",
@@ -900,7 +900,7 @@ function MeshThumbnail({ index, type, confidential }: {
         <div style={{
           position: "absolute", top: "10px", right: "10px",
           background: badgeBg,
-          borderRadius: "6px", padding: "3px 8px",
+          borderRadius: "6px", padding: "4px 8px",
           fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
           fontWeight: 510, letterSpacing: "-0.01em",
           color: badgeColor,
@@ -1163,7 +1163,7 @@ function WorkChip({ label }: { label: string }) {
       display: "inline-flex", alignItems: "center",
       fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
-      padding: "3px 8px", background: "var(--surface2)",
+      padding: "4px 8px", background: "var(--surface2)",
       border: "1px solid var(--border)",
       color: "var(--text)", borderRadius: "6px",
     }}>
@@ -1184,7 +1184,7 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
       display: "inline-flex", alignItems: "center",
       fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
-      padding: "3px 8px",
+      padding: "4px 8px",
       background: `var(--chip-${tone}-bg)`,
       border: `1px solid color-mix(in srgb, var(--chip-${tone}-text) 50%, transparent)`,
       color: `var(--chip-${tone}-text)`,
@@ -2543,7 +2543,7 @@ function ContactPanel() {
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--text)",
-              padding: "7px 14px", borderRadius: "8px",
+              padding: "8px 16px", minHeight: "var(--space-8)", borderRadius: "8px",
               border: "1px solid var(--border)", background: "var(--surface2)",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "6px",
@@ -2562,7 +2562,7 @@ function ContactPanel() {
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--text)",
-              padding: "7px 14px", borderRadius: "8px",
+              padding: "8px 16px", minHeight: "var(--space-8)", borderRadius: "8px",
               border: "1px solid var(--border)", background: "var(--surface2)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
@@ -2581,7 +2581,7 @@ function ContactPanel() {
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--text)",
-              padding: "7px 14px", borderRadius: "8px",
+              padding: "8px 16px", minHeight: "var(--space-8)", borderRadius: "8px",
               border: "1px solid var(--border)", background: "var(--surface2)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
@@ -2716,7 +2716,7 @@ function ContactPanel() {
           }}>
             © 2026 · Arun Gaddam{" "}
             <span style={{
-              color: "#eab308",
+              color: "var(--accent-gold)",
               textShadow: "0 0 6px rgba(234, 179, 8, 0.7)",
               fontWeight: 700,
             }}>ツ</span>
@@ -3104,7 +3104,7 @@ function StoryView() {
                 fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                 letterSpacing: "0.08em", textTransform: "uppercase",
                 color: "var(--muted)",
-                padding: "7px 12px", borderRadius: "8px",
+                padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
                 border: "1px solid var(--border)", background: "var(--surface)",
                 textDecoration: "none",
                 display: "inline-flex", alignItems: "center", gap: "6px",
@@ -3176,26 +3176,24 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Honest timer: loader exits when fonts have actually loaded AND the
-    // typewriter reveal animation has had time to play. Hard-capped at
-    // SAFETY_CAP so a hung font request can't trap the user on the loader.
-    const ANIMATION_MIN = 1300; // typewriter + transform + role-fade total
-    const SAFETY_CAP    = 1500;
+    // Shimmer skeleton exits once fonts are ready, capped at 900ms so a
+    // stalled font fetch can't trap the user behind the skeleton.
+    const SAFETY_CAP = 900;
+    const MIN_TIME   = 350; // brief minimum so it doesn't flash off instantly
 
     let resolved = false;
     const finish = () => {
       if (resolved) return;
       resolved = true;
       setLoading(false);
-      setTimeout(() => setRevealed(true), 60); // slight delay so panels animate after loader exits
+      requestAnimationFrame(() => setRevealed(true));
     };
 
     const fontsReady = document.fonts?.ready ?? Promise.resolve();
-    const minTime    = new Promise<void>(r => setTimeout(r, ANIMATION_MIN));
+    const minTime    = new Promise<void>(r => setTimeout(r, MIN_TIME));
+    const cap        = setTimeout(finish, SAFETY_CAP);
 
-    const cap = setTimeout(finish, SAFETY_CAP);
     Promise.all([fontsReady, minTime]).then(finish);
-
     return () => clearTimeout(cap);
   }, []);
 

@@ -443,7 +443,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                     letterSpacing: "0.08em", textTransform: "uppercase",
                     color: "var(--muted)",
-                    padding: "7px 12px", borderRadius: "8px",
+                    padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
                     border: "1px solid var(--border)", background: "var(--surface)",
                     display: "inline-flex", alignItems: "center", gap: "6px",
                     transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
@@ -460,7 +460,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               <motion.div variants={fadeUp} style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
                 {cs.tags.map(tag => (
-                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "6px" }}>
+                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "6px" }}>
                     {tag}
                   </span>
                 ))}
@@ -736,7 +736,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               display: "flex",
                               alignItems: "center",
                               gap: "12px",
-                              padding: "5px 12px 5px 18px",
+                              padding: "4px 12px 4px 16px",
                               fontFamily: "var(--font-body)",
                               fontSize: "var(--text-body)",
                               fontWeight: 400,
@@ -1279,7 +1279,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         padding: "20px 20px 22px",
                         display: "flex",
                         flexDirection: "column",
-                        gap: "14px",
+                        gap: "16px",
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--muted)" }}>
@@ -1459,14 +1459,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       {/* Signal 1 — Two named users: split persona cards */}
                       <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "6px" }}>Signal 01</span>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "4px 8px", borderRadius: "6px" }}>Signal 01</span>
                           <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[0].title}</p>
                         </div>
                         <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                           {/* Saurabh */}
                           <div style={{ background: "var(--surface2)", borderRadius: "8px", padding: "14px 16px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-                              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "rgba(99,102,241,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "var(--chip-indigo-strip)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                                 <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 500, color: "rgb(99,102,241)", letterSpacing: "0.04em" }}>S</span>
                               </div>
                               <div>
@@ -1474,12 +1474,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                 <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>New user · cricket fan</p>
                               </div>
                             </div>
-                            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "5px" }}>
-                              <li style={{ display: "flex", gap: "7px", alignItems: "flex-start" }}>
+                            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "4px" }}>
+                              <li style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
                                 <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)", marginTop: "2px", flexShrink: 0 }}>→</span>
                                 <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>Downloaded via ad. Exploring what the app offers.</p>
                               </li>
-                              <li style={{ display: "flex", gap: "7px", alignItems: "flex-start" }}>
+                              <li style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
                                 <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)", marginTop: "2px", flexShrink: 0 }}>→</span>
                                 <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>Spends time on the homepage trying to understand the offering.</p>
                               </li>
@@ -1488,7 +1488,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           {/* Karan */}
                           <div style={{ background: "var(--surface2)", borderRadius: "8px", padding: "14px 16px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-                              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "rgba(16,185,129,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "var(--chip-emerald-strip)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                                 <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 500, color: "rgb(16,185,129)", letterSpacing: "0.04em" }}>K</span>
                               </div>
                               <div>
@@ -1496,12 +1496,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                 <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>Existing user · fantasy player</p>
                               </div>
                             </div>
-                            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "5px" }}>
-                              <li style={{ display: "flex", gap: "7px", alignItems: "flex-start" }}>
+                            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "4px" }}>
+                              <li style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
                                 <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)", marginTop: "2px", flexShrink: 0 }}>→</span>
                                 <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>Defaults to Cricbuzz for daily news. Returns to FanCode only for streams.</p>
                               </li>
-                              <li style={{ display: "flex", gap: "7px", alignItems: "flex-start" }}>
+                              <li style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
                                 <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)", marginTop: "2px", flexShrink: 0 }}>→</span>
                                 <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>"FanCode should work like Cricbuzz, with the value add of live streaming."</p>
                               </li>
@@ -1513,7 +1513,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>Shared mental model</p>
                           {["Tournaments", "Matches", "Teams & players", "Updates"].map((step, idx, arr) => (
                             <Fragment key={step}>
-                              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", color: "var(--text)", letterSpacing: "-0.01em", background: "var(--surface)", padding: "3px 8px", borderRadius: "5px", boxShadow: "var(--card-shadow)" }}>{step}</span>
+                              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", color: "var(--text)", letterSpacing: "-0.01em", background: "var(--surface)", padding: "4px 8px", borderRadius: "5px", boxShadow: "var(--card-shadow)" }}>{step}</span>
                               {idx < arr.length - 1 && <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)" }}>→</span>}
                             </Fragment>
                           ))}
@@ -1523,7 +1523,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       {/* Signal 2 — CEO feedback: 3 numbered bullets */}
                       <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "6px" }}>Signal 02</span>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "4px 8px", borderRadius: "6px" }}>Signal 02</span>
                           <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[1].title}</p>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -1545,10 +1545,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {/* Signal 3 — Content constraints */}
                         <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "6px" }}>Signal 03</span>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "4px 8px", borderRadius: "6px" }}>Signal 03</span>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[2].title}</p>
                           </div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                             {[
                               { can: true,  label: "Hot Right Now (can repackage from breaking news)" },
                               { can: false, label: "Featured Videos (sponsored, cannot move)" },
@@ -1570,7 +1570,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {/* Signal 4 — IPL exception: standout callout */}
                         <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)", position: "relative", overflow: "hidden" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "3px 8px", borderRadius: "6px" }}>Signal 04</span>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "4px 8px", borderRadius: "6px" }}>Signal 04</span>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[3].title}</p>
                           </div>
                           <div style={{ display: "flex", alignItems: "baseline", gap: "6px", marginBottom: "8px" }}>
@@ -1629,9 +1629,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   >
                     {cs.discoverySection.findings.map((f, i) => (
                       <div key={i}>
-                        <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                        <div style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "5px", flex: 1, minWidth: 0 }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1, minWidth: 0 }}>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{f.title}</p>
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{f.body}</p>
                             {f.image && (
@@ -1802,7 +1802,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     style={{ display: "flex", gap: "16px", flexWrap: "nowrap", alignItems: "flex-start", padding: "12px 8px 4px", justifyContent: "center" }}
                   >
                     {/* BEFORE phone */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: "9px", flexShrink: 0 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
                       <div style={{
                         width: "195px", height: "345px",
                         border: "1.5px solid var(--border)", borderRadius: "33px",
@@ -1819,7 +1819,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>How it was organized</span>
                         </div>
                         {/* Items — fill entire content area */}
-                        <div style={{ padding: "0 10px", display: "flex", flexDirection: "column", gap: "5px", flex: 1 }}>
+                        <div style={{ padding: "0 10px", display: "flex", flexDirection: "column", gap: "4px", flex: 1 }}>
                           {cs.coreInsight.beforeAfter.before.items.map((item, i) => (
                             <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", background: "var(--surface)", borderRadius: "8px", border: "1px solid var(--border)", flex: 1 }}>
                               <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
@@ -1828,7 +1828,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           ))}
                         </div>
                         {/* Home bar */}
-                        <div style={{ display: "flex", justifyContent: "center", padding: "15px 0 14px", flexShrink: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "center", padding: "16px 0 16px", flexShrink: 0 }}>
                           <div style={{ width: "36px", height: "3px", background: "var(--border)", borderRadius: "2px" }} />
                         </div>
                       </div>
@@ -1845,7 +1845,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
 
                     {/* AFTER phone */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: "9px", flexShrink: 0 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
                       <div style={{
                         width: "195px", height: "345px",
                         border: "1.5px solid var(--border)", borderRadius: "33px",
@@ -1862,7 +1862,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>How users actually think</span>
                         </div>
                         {/* Content — fill entire area */}
-                        <div style={{ padding: "0 10px", display: "flex", flexDirection: "column", gap: "5px", flex: 1 }}>
+                        <div style={{ padding: "0 10px", display: "flex", flexDirection: "column", gap: "4px", flex: 1 }}>
                           {/* Featured block */}
                           <div style={{ padding: "9px 10px", border: "1.5px solid var(--border)", borderRadius: "9px", background: "var(--surface2)", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                             <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "block", marginBottom: "6px" }}>Featured</span>
@@ -1880,7 +1880,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           ))}
                         </div>
                         {/* Home bar */}
-                        <div style={{ display: "flex", justifyContent: "center", padding: "15px 0 14px", flexShrink: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "center", padding: "16px 0 16px", flexShrink: 0 }}>
                           <div style={{ width: "36px", height: "3px", background: "var(--border)", borderRadius: "2px" }} />
                         </div>
                       </div>
@@ -1923,9 +1923,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ display: "flex", flexDirection: "column", gap: "28px" }}
                 >
                   {cs.designStrategy.principles.map((p, i) => (
-                    <div key={i} style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                    <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{p.title}</p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{p.body}</p>
                       </div>
@@ -2090,7 +2090,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     {/* Below fold items */}
                     <div style={{ padding: "0 16px 20px", display: "flex", flexDirection: "column", gap: "6px" }}>
                       {cs.homepageLayout.belowFold.map((item, i) => (
-                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "9px", padding: "9px 12px", background: item.type === "break" ? "var(--surface2)" : "var(--surface)", borderRadius: "9px", border: "1px solid var(--border)" }}>
+                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "9px 12px", background: item.type === "break" ? "var(--surface2)" : "var(--surface)", borderRadius: "9px", border: "1px solid var(--border)" }}>
                           <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0, marginTop: "4px" }} />
                           <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--muted)", lineHeight: 1.5 }}>{item.label}</span>
                         </div>
@@ -2116,7 +2116,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" }}
                 >
                   {cs.keyDecisions.map((d, i) => (
-                    <div key={i} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "24px", padding: "24px 26px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "14px" }}>
+                    <div key={i} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "24px", padding: "24px 24px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "14px" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                         {d.stat && (
                           <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
@@ -2130,7 +2130,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         </div>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--muted2)", lineHeight: 1.65, margin: 0 }}>{d.body}</p>
                       </div>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                         {d.tags.map((tag, ti) => (
                           <span key={ti} style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", borderRadius: "100px", padding: "3px 9px" }}>{tag}</span>
                         ))}
@@ -2197,7 +2197,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               display: "flex",
                               flexDirection: "column",
                               gap: "12px",
-                              padding: "22px 22px 24px",
+                              padding: "24px 24px 24px",
                               background: "var(--surface)",
                               border: "1px solid var(--border)",
                               borderRadius: "14px",
@@ -2431,11 +2431,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   }}
                 >
                   {cs.decisions?.filter(d => d.persona).map((d, i) => {
+                    // Persona accents pulled from the chip-token system so they
+                    // theme-switch automatically and stay consistent with chips
+                    // used elsewhere in the case studies.
                     const accents = [
-                      { bg: "rgba(113,112,255,0.10)", text: "#7170ff", avatarBg: "rgba(113,112,255,0.15)" },
-                      { bg: "rgba(16,185,129,0.10)",  text: "#10b981", avatarBg: "rgba(16,185,129,0.15)"  },
-                      { bg: "rgba(113,112,255,0.07)", text: "#828fff", avatarBg: "rgba(113,112,255,0.12)" },
-                      { bg: "rgba(16,185,129,0.07)",  text: "#34d399", avatarBg: "rgba(16,185,129,0.12)"  },
+                      { bg: "var(--chip-indigo-bg)",  text: "var(--chip-indigo-text)",  avatarBg: "var(--chip-indigo-strip)" },
+                      { bg: "var(--chip-emerald-bg)", text: "var(--chip-emerald-text)", avatarBg: "var(--chip-emerald-strip)" },
+                      { bg: "var(--chip-violet-bg)",  text: "var(--chip-violet-text)",  avatarBg: "var(--chip-violet-strip)" },
+                      { bg: "var(--chip-teal-bg)",    text: "var(--chip-teal-text)",    avatarBg: "var(--chip-teal-strip)" },
                     ];
                     const accent = accents[i % accents.length];
                     const initials = d.persona!.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -2477,7 +2480,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         </div>
                         <div style={{ background: "var(--bg)", borderTop: "1px solid var(--border)", borderRadius: "0 0 16px 16px", padding: "20px 24px", display: "flex", flexDirection: "column", gap: "12px" }}>
                           <div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "5px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "5px" }}>
                               <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ color: accent.text, flexShrink: 0 }}>
                                 <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2"/><circle cx="5" cy="5" r="2" stroke="currentColor" strokeWidth="1.2"/><circle cx="5" cy="5" r="0.8" fill="currentColor"/>
                               </svg>
@@ -2486,7 +2489,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.55, color: "var(--muted2)", margin: 0 }}>{d.persona!.goal}</p>
                           </div>
                           <div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "5px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "5px" }}>
                               <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ color: accent.text, flexShrink: 0 }}>
                                 <path d="M6.5 1.5L2.5 5.5H5L3.5 8.5L7.5 4.5H5L6.5 1.5Z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" strokeLinecap="round"/>
                               </svg>
@@ -2962,7 +2965,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         key={i}
                         style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
                       >
-                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "3px 8px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "999px", padding: "4px 8px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{item}</p>
                       </div>
                     ))}
@@ -2993,7 +2996,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         {hasVs ? (
                           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
                             {/* Chosen option — solid */}
-                            <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", background: "rgba(16,185,129,0.10)", border: "1px solid rgba(16,185,129,0.25)", borderRadius: "6px", padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", background: "rgba(16,185,129,0.10)", border: "1px solid rgba(16,185,129,0.25)", borderRadius: "6px", padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: "4px" }}>
                               <Check size={11} strokeWidth={1.75} style={{ color: "rgb(16,185,129)", flexShrink: 0 }} />{optionA}
                             </span>
                             <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)" }}>vs</span>
@@ -3157,8 +3160,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               }}>
                 © 2026 · Arun Gaddam{" "}
                 <span style={{
-                  color: "#f5b800",
-                  textShadow: "0 0 6px rgba(245, 184, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.15)",
+                  color: "var(--accent-gold)",
+                  textShadow: "0 0 6px rgba(234, 179, 8, 0.45), 0 1px 0 rgba(255, 255, 255, 0.15)",
                   fontWeight: 500,
                 }}>ツ</span>
               </p>
@@ -3444,7 +3447,7 @@ function VideoPlaceholder({ data }: { data: NonNullable<CaseStudy["videoPlacehol
           textTransform: "uppercase",
           color: "rgba(255,255,255,0.4)",
           background: "rgba(0,0,0,0.3)",
-          padding: "3px 8px",
+          padding: "4px 8px",
           borderRadius: "999px",
         }}
       >
@@ -3852,7 +3855,7 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
             )}
             {/* Bullets — tight list replacing prose body */}
             {s.bullets && s.bullets.length > 0 ? (
-              <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "7px" }}>
+              <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "8px" }}>
                 {s.bullets.map((b, j) => (
                   <li key={j} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
                     <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "var(--muted)", marginTop: "7px", flexShrink: 0 }} />
@@ -4094,7 +4097,7 @@ function CaseStudyContactCluster() {
           cursor: "pointer",
           display: "inline-flex",
           alignItems: "center",
-          gap: "5px",
+          gap: "4px",
           transition: "color 0.18s, box-shadow 0.18s",
         }}
         onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
@@ -4119,7 +4122,7 @@ function CaseStudyContactCluster() {
           background: "var(--surface2)",
           display: "inline-flex",
           alignItems: "center",
-          gap: "5px",
+          gap: "4px",
           transition: "color 0.18s, box-shadow 0.18s",
           textDecoration: "none",
         }}
@@ -4256,7 +4259,7 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
           href={p.src}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "5px", padding: "5px 10px", borderRadius: "6px", border: "1px solid var(--border)", transition: "color 0.15s, border-color 0.15s" }}
+          style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 8px", borderRadius: "6px", border: "1px solid var(--border)", transition: "color 0.15s, border-color 0.15s" }}
           onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--text-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
         >
@@ -4278,7 +4281,7 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
           <span style={{
             fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
             letterSpacing: "0.08em", textTransform: "uppercase",
-            color: "var(--muted)", padding: "5px 10px",
+            color: "var(--muted)", padding: "4px 8px",
             alignSelf: "center",
           }}>
             Jump to
@@ -4290,7 +4293,7 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
               style={{
                 fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                 fontWeight: 510, letterSpacing: "-0.01em",
-                padding: "5px 10px", borderRadius: "6px",
+                padding: "4px 8px", borderRadius: "6px",
                 border: "none", cursor: "pointer",
                 background: i === activeIdx ? "var(--text)" : "transparent",
                 color:      i === activeIdx ? "var(--bg)"   : "var(--muted2)",
@@ -4552,7 +4555,7 @@ function ZetwerkSystemBlock() {
   const Tile = ({ label, filled }: { label: string; filled?: boolean }) => (
     <div style={{
       flex: 1,
-      padding: "14px 12px",
+      padding: "16px 12px",
       border: "1px solid var(--border)",
       borderRadius: "6px",
       background: filled ? "var(--surface)" : "transparent",
@@ -5352,7 +5355,7 @@ function LensLightbox({ src, onClose }: { src: string | null; onClose: () => voi
             backdropFilter: "blur(6px)",
             border: "1px solid rgba(255,255,255,0.1)",
             borderRadius: "8px",
-            padding: "5px 12px",
+            padding: "4px 12px",
             fontFamily: "var(--font-mono)",
             fontSize: "var(--text-eyebrow)",
             letterSpacing: "0.08em",

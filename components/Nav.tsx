@@ -120,7 +120,7 @@ export default function Nav() {
                 fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
                 letterSpacing: "0.06em", textTransform: "uppercase",
                 color: "var(--muted)", transition: "color 0.15s",
-                display: "inline-flex", alignItems: "center", gap: "5px",
+                display: "inline-flex", alignItems: "center", gap: "4px",
               }}
               onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
               onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
