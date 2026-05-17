@@ -232,26 +232,19 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
            - Mono caps eyebrow type (same as Experience/Industries labels)
            - --muted → --text color lift on hover/active
            - --accent-warm bar as the indicator (echoes the "Now" dot)
-           - Left hairline anchors the list to the page edge */
+           No hairline spine — pure-type table-of-contents feel rather than
+           a docs-sidebar UI panel. Text-colour shift carries the active
+           state; the bar adds identity, not anchoring. */
 
-        /* Hairline rail edge — gives the list a visual spine */
-        .cs-rail-track {
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          width: 1px;
-          background: var(--border);
-        }
-
-        /* Active indicator — a 2px terracotta bar that slides between
-           items via Framer Motion layoutId. Sits on top of the hairline. */
+        /* Active indicator — 1px terracotta accent that slides between
+           items via Framer Motion layoutId. The only graphic in an
+           otherwise pure-type list; bar carries identity, text colour
+           shift (--muted → --text) carries the active-state meaning. */
         .cs-rail-indicator {
           position: absolute;
-          left: -1px;
-          width: 2px;
+          left: 0;
+          width: 1px;
           background: var(--accent-warm);
-          border-radius: 1px;
         }
 
         .cs-rail-item:focus-visible {
@@ -442,7 +435,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       <main style={{ paddingTop: "80px" }}>
 
         {/* Hero */}
-        <section style={{ padding: "48px 0" }}>
+        <section style={{ padding: "var(--space-9) 0" }}>
           <div className="page-pad">
             <motion.div variants={container} initial="hidden" animate="show">
               {/* Back affordance — plain-text CTA pattern matching the About
@@ -512,15 +505,67 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </div>
         </section>
 
-        {/* Metrics bar — three-layer structure:
-              eyebrow (mono caps, short)
-              value   (big stat, primary text)
-              body    (optional sentence-case descriptive text)
-            When `body` is set, the metric reads as eyebrow → value →
-            descriptive sentence. When absent, falls back to the
-            classic value + caps-label below pattern. */}
+        {/* Hero video slot — leads the case study so the transformation
+            registers before the impact numbers. When outcomesCompare is
+            set, shows both BEFORE and AFTER videos side by side so the
+            transformation is visible immediately. Otherwise falls back
+            to the single contextVideo hero, or a styled placeholder. */}
+        {cs.outcomesCompare ? (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{ padding: "var(--space-9) 0" }}
+          >
+            <div className="page-pad">
+              <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                {([
+                  { label: "Before", src: cs.outcomesCompare.before },
+                  { label: "After",  src: cs.outcomesCompare.after  },
+                ] as const).map(({ label, src }) => (
+                  <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
+                    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                      <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.section>
+        ) : cs.contextVideo ? (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{ padding: "var(--space-9) 0" }}
+          >
+            <div className="page-pad">
+              <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
+            </div>
+          </motion.section>
+        ) : cs.videoPlaceholder ? (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{ padding: "var(--space-9) 0" }}
+          >
+            <div className="page-pad">
+              <VideoPlaceholder data={cs.videoPlaceholder} />
+            </div>
+          </motion.section>
+        ) : null}
+
+        {/* Metrics / impact strip — moved BELOW the hero video so the
+            transformation registers visually before the numbers back it up.
+            Three-layer structure: eyebrow → value → optional descriptive
+            sentence. When body is absent, falls back to value + caps label. */}
         {cs.metrics && cs.metrics.length > 0 && (
-          <div style={{ background: "var(--surface2)", padding: "28px 0" }}>
+          <div style={{ background: "var(--surface2)", padding: "var(--space-7) 0" }}>
             <div className="page-pad">
               <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (
@@ -570,68 +615,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </div>
         )}
 
-        {/* Hero video slot — placed right after the metrics/impact strip.
-            When outcomesCompare is set, shows both BEFORE and AFTER videos
-            side by side so the transformation is visible immediately.
-            Otherwise falls back to the single contextVideo hero.
-            Falls back to a styled placeholder when videoPlaceholder is set. */}
-        {cs.outcomesCompare ? (
-          <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "48px 0" }}
-          >
-            <div className="page-pad">
-              <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                {([
-                  { label: "Before", src: cs.outcomesCompare.before },
-                  { label: "After",  src: cs.outcomesCompare.after  },
-                ] as const).map(({ label, src }) => (
-                  <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
-                    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
-                      <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.section>
-        ) : cs.contextVideo ? (
-          <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "48px 0" }}
-          >
-            <div className="page-pad">
-              <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
-            </div>
-          </motion.section>
-        ) : cs.videoPlaceholder ? (
-          <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "48px 0" }}
-          >
-            <div className="page-pad">
-              <VideoPlaceholder data={cs.videoPlaceholder} />
-            </div>
-          </motion.section>
-        ) : null}
-
         {cs.tldr && (
           <motion.section
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            style={{ padding: "32px 0" }}
+            style={{ padding: "var(--space-7) 0" }}
           >
             <div className="page-pad">
               <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "20px" }}>
@@ -671,7 +661,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "48px 0" }}
+            style={{ padding: "var(--space-9) 0" }}
           >
             <div className="page-pad">
               <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px" }}>Live prototype</p>
@@ -732,9 +722,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         paddingLeft: "16px",
                       }}
                     >
-                      {/* Hairline spine — left edge of the rail */}
-                      <span className="cs-rail-track" aria-hidden="true" />
-
                       {NAV_SECTIONS.map(({ id, label }) => {
                         const active = activeSection === id;
                         return (
@@ -748,13 +735,19 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             className={active ? "cs-rail-item is-active" : "cs-rail-item"}
                             style={{
                               position: "relative",
-                              display: "block",
-                              padding: "10px 0",
+                              display: "flex",
+                              alignItems: "center",
+                              /* 14px top/bottom + 10px line-height hits the
+                                 44px WCAG 2.5.5 touch target floor. */
+                              padding: "14px 0 14px 12px",
+                              minHeight: "44px",
                               fontFamily: "var(--font-mono)",
                               fontSize: "var(--text-mono)",
                               fontWeight: 400,
                               lineHeight: 1.3,
-                              letterSpacing: "0.1em",
+                              /* 0.08em matches the system default for mono
+                                 caps at body scale (CTAs, panel headers). */
+                              letterSpacing: "0.08em",
                               textTransform: "uppercase",
                               color: active ? "var(--text)" : "var(--muted)",
                               textDecoration: "none",
@@ -769,7 +762,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               <motion.span
                                 layoutId="cs-rail-indicator"
                                 className="cs-rail-indicator"
-                                style={{ top: 0, bottom: 0 }}
+                                /* Bar height tracks the text line only,
+                                   not the full touch-target padding. */
+                                style={{ top: "14px", bottom: "14px" }}
                                 transition={{ type: "spring", stiffness: 380, damping: 32 }}
                               />
                             )}
@@ -1348,7 +1343,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               <>
                 {/* Blurred content peek */}
                 <div style={{ position: "relative", overflow: "hidden", maxHeight: "180px", pointerEvents: "none", userSelect: "none" }}>
-                  <div style={{ filter: "blur(6px)", opacity: 0.45, padding: "48px 0" }}>
+                  <div style={{ filter: "blur(6px)", opacity: 0.45, padding: "var(--space-9) 0" }}>
                     <div className="page-pad">
                       <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>My Approach</p>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", lineHeight: 1.7, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "640px" }}>
@@ -2163,7 +2158,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {cs.slug === "zetwerk-dc" ? (
-              <section id="cs-workflow" style={{ padding: "48px 0" }}>
+              <section id="cs-workflow" style={{ padding: "var(--space-9) 0" }}>
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -4230,9 +4225,9 @@ function CsSection({ label, navLabel, children, id, className, hideFromNav }: { 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.65, ease: EASE }}
-      style={{ padding: "48px 0" }}
+      style={{ padding: "var(--space-9) 0" }}
     >
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "28px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "var(--space-7)", borderTop: "1px solid var(--border)", paddingTop: "var(--space-4)" }}>{label}</p>
       {children}
     </motion.section>
   );
