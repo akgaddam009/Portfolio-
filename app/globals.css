@@ -139,11 +139,11 @@
   --chip-amber-strip:   color-mix(in srgb, #b45309 16%, transparent);
   --chip-violet-strip:  color-mix(in srgb, #5b21b6 16%, transparent);
   --chip-emerald-strip: color-mix(in srgb, #047857 16%, transparent);
-  /* Warm — tied to --accent-warm (#d17b53 burnt terracotta), the site's
-     own brand accent. Strip at 26%: visible but not garish at 24px H1. */
-  --chip-warm-text:   #b5622f;
-  --chip-warm-bg:     color-mix(in srgb, #d17b53 9%, transparent);
-  --chip-warm-strip:  color-mix(in srgb, #d17b53 26%, transparent);
+  /* Sage — muted olive-green, desaturated (~30% chroma). Editorial, not eco.
+     Strip at 22% on white gives a soft sage wash visible at 24px H1. */
+  --chip-sage-text:   #3d6b59;
+  --chip-sage-bg:     color-mix(in srgb, #5f8b78 9%, transparent);
+  --chip-sage-strip:  color-mix(in srgb, #5f8b78 22%, transparent);
 }
 
 /* ─── Dark theme — 3-level hierarchy, lifted scale ─
@@ -202,9 +202,9 @@
   --chip-amber-strip:   color-mix(in srgb, #d6c178 16%, transparent);
   --chip-violet-strip:  color-mix(in srgb, #b8aed4 16%, transparent);
   --chip-emerald-strip: color-mix(in srgb, #9bc9af 16%, transparent);
-  --chip-warm-text:   #e8a07a;
-  --chip-warm-bg:     color-mix(in srgb, #e8a07a 10%, transparent);
-  --chip-warm-strip:  color-mix(in srgb, #e8a07a 22%, transparent);
+  --chip-sage-text:   #7bbfa8;
+  --chip-sage-bg:     color-mix(in srgb, #7bbfa8 10%, transparent);
+  --chip-sage-strip:  color-mix(in srgb, #7bbfa8 20%, transparent);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */
