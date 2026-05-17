@@ -23,7 +23,7 @@ export default function Footer() {
           fontWeight: 400,
           letterSpacing: "-0.03em",
           lineHeight: 1.2,
-          color: "var(--text)",
+          color: "var(--text-display)",
           marginBottom: "var(--space-7)",
         }}>
           Let&apos;s create stories together

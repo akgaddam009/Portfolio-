@@ -468,7 +468,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               <motion.h1
                 variants={fadeUp}
-                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.5, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "16px" }}
+                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.5, letterSpacing: "-0.03em", color: "var(--text-display)", marginBottom: "16px" }}
               >
                 {renderTitleWithChips(cs.title, cs.titleHighlights)}
               </motion.h1>
@@ -887,7 +887,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 >
                   {cs.contextStats.map((s, i) => (
                     <div key={i} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.4vw, 28px)", fontWeight: 300, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--text)", margin: 0 }}>{s.stat}</p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.4vw, 28px)", fontWeight: 300, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--text-display)", margin: 0 }}>{s.stat}</p>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{s.label}</p>
                     </div>
                   ))}
@@ -926,7 +926,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     transition={{ duration: 0.55, ease: EASE }}
                     style={{ marginBottom: "28px", display: "flex", flexDirection: "column", gap: "6px" }}
                   >
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text)", margin: 0 }}>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text-display)", margin: 0 }}>
                       {cs.contextSection.stat}
                     </p>
                     {cs.contextSection.statLabel && (
@@ -974,7 +974,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   transition={{ duration: 0.55, ease: EASE }}
                   style={{ marginBottom: "28px", display: "flex", flexDirection: "column", gap: "8px" }}
                 >
-                  <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.4vw, 28px)", fontWeight: 300, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--text)" }}>{cs.problemStat.stat}</span>
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.4vw, 28px)", fontWeight: 300, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--text-display)" }}>{cs.problemStat.stat}</span>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0, maxWidth: "480px" }}>{cs.problemStat.label}</p>
                 </motion.div>
               )}

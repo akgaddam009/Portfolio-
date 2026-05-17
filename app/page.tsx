@@ -570,7 +570,7 @@ function AboutPanel() {
             fontWeight: 400,
             lineHeight: 1.6,
             letterSpacing: "-0.03em",
-            color: "var(--text)",
+            color: "var(--text-display)",
             marginBottom: "20px",
           }}
         >
@@ -2529,7 +2529,7 @@ function ContactPanel() {
             fontWeight: 500,
             letterSpacing: "-0.02em",
             lineHeight: 1.3,
-            color: "var(--text)",
+            color: "var(--text-display)",
             marginBottom: "12px",
           }}
         >
