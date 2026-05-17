@@ -164,6 +164,8 @@ export default function Nav() {
             className="mobile-menu-btn"
             style={{ background: "none", border: "none", padding: "4px", display: "none" }}
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
             <div style={{ width: "20px", display: "flex", flexDirection: "column", gap: "4px" }}>
               {[0, 1].map(i => (
@@ -186,6 +188,7 @@ export default function Nav() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

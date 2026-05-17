@@ -540,6 +540,24 @@ function AboutPanel() {
           <PortraitMagnify />
         </motion.div>
 
+        {/* Seniority eyebrow */}
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE, delay: 0.02 }}
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "var(--text-mono)",
+            fontWeight: 500,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+            marginBottom: "10px",
+          }}
+        >
+          Senior Product Designer · 8+ years
+        </motion.p>
+
         {/* Hero headline. typography per Figma reference:
             Inter 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h1
@@ -587,6 +605,20 @@ function AboutPanel() {
             flexWrap: "wrap", marginBottom: "20px",
           }}
         >
+          {/* Visible email address — readable without JS interaction */}
+          <a
+            href="mailto:akgaddam02@gmail.com"
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+              letterSpacing: "0.06em", color: "var(--muted)",
+              textDecoration: "none", alignSelf: "center",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--text)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--muted)"; }}
+          >
+            akgaddam02@gmail.com
+          </a>
+
           {/* Copy email -Tier 2 canonical pill (see button system note in
               CaseStudyDetail.tsx near the back button). */}
           <button
@@ -1171,12 +1203,13 @@ function WorkChip({ label }: { label: string }) {
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: "3px",
-      fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+      fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       padding: "3px 8px 3px 6px", background: "var(--surface2)",
-      color: "var(--muted)", borderRadius: "6px",
+      border: "1px solid var(--border)",
+      color: "var(--text)", borderRadius: "6px",
     }}>
-      <Icon size={9} strokeWidth={1.5} style={{ flexShrink: 0, opacity: 0.7 }} />
+      <Icon size={10} strokeWidth={1.5} style={{ flexShrink: 0, opacity: 0.6 }} />
       {label}
     </span>
   );
@@ -1192,16 +1225,16 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: Icon ? "4px" : "0",
-      fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+      fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       padding: Icon ? "3px 8px 3px 6px" : "3px 8px",
       background: `var(--chip-${tone}-bg)`,
-      border: `1px solid color-mix(in srgb, var(--chip-${tone}-text) 30%, transparent)`,
+      border: `1px solid color-mix(in srgb, var(--chip-${tone}-text) 50%, transparent)`,
       color: `var(--chip-${tone}-text)`,
       borderRadius: "6px",
       lineHeight: 1.4,
     }}>
-      {Icon && <Icon size={9} strokeWidth={1.5} style={{ flexShrink: 0 }} />}
+      {Icon && <Icon size={10} strokeWidth={1.5} style={{ flexShrink: 0 }} />}
       {label}
     </span>
   );
