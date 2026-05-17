@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-// Gachibowli, Hyderabad
-const HYD_LNG = 78.3489;
-const HYD_LAT = 17.4401;
+// Hyderabad city center (Hussain Sagar / Tank Bund vicinity — the
+// recognizable visual heart of the city, not a suburb).
+const HYD_LNG = 78.4867;
+const HYD_LAT = 17.3850;
 
 const STYLE_LIGHT = "https://tiles.openfreemap.org/styles/positron";
 const STYLE_DARK  = "https://tiles.openfreemap.org/styles/dark";

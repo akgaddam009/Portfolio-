@@ -35,24 +35,23 @@ export default function Footer() {
             to reach out — motion at that moment reads as decoration, not delight.
             minHeight: var(--space-8) (44px) enforces WCAG 2.5.5 touch target floor. */}
         <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", marginBottom: "var(--space-9)" }}>
+          {/* Tier-2 CTAs — matched to case-study back-link + Contact panel for
+              system consistency. Mono caps, surface fill, hover color + shadow. */}
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
-              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500,
-              letterSpacing: "-0.01em",
-              color: copied ? "var(--accent-success)" : "var(--text)",
-              minHeight: "var(--space-8)",
-              padding: "var(--space-3) var(--space-5)",
-              borderRadius: "12px",
-              border: "1px solid var(--border)",
-              background: "var(--surface2)",
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: copied ? "var(--accent-success)" : "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
               cursor: "pointer",
-              display: "inline-flex", alignItems: "center", gap: "var(--space-2)",
-              transition: "color 0.18s, box-shadow 0.18s",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -62,23 +61,20 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500,
-              letterSpacing: "-0.01em",
-              color: "var(--text)",
-              minHeight: "var(--space-8)",
-              padding: "var(--space-3) var(--space-5)",
-              borderRadius: "12px",
-              border: "1px solid var(--border)",
-              background: "var(--surface2)",
-              display: "inline-flex", alignItems: "center", gap: "var(--space-2)",
-              transition: "color 0.18s, box-shadow 0.18s",
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
               textDecoration: "none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
-            <span style={{ fontSize: "var(--text-mono-lg)" }}>↗</span>
             LinkedIn
+            <span style={{ fontSize: "var(--text-mono-lg)" }}>↗</span>
           </Link>
         </div>
 

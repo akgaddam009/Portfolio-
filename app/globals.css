@@ -260,6 +260,7 @@
   box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.3);
 }
 
+
 /* ─── Base ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -439,21 +440,6 @@ a { color: inherit; text-decoration: none; }
   transition: color var(--dur-fast) var(--ease-out);
 }
 .text-hoverable:hover { color: var(--muted2) !important; }
-
-/* ─── CTA pill — Contact panel + reusable ───────────────
-   Modern pill: transparent default, hairline border, subtle hover.
-   Touch-target floor (WCAG 2.5.5) enforced ONLY on coarse pointers
-   so desktop gets the sleek 28px height and mobile gets 44px. */
-.cta-pill {
-  min-height: 28px;
-}
-.cta-pill:hover {
-  background: var(--surface2);
-  border-color: var(--text) !important;
-}
-@media (pointer: coarse) {
-  .cta-pill { min-height: 44px; padding-top: 10px; padding-bottom: 10px; }
-}
 
 /* ─── Marquee ────────────────────────────────────────── */
 @keyframes marquee {

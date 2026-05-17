@@ -416,10 +416,51 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           {/* PortfolioChat (Quick guide) removed from case study top nav. */}
         </div>
 
-        {/* Right cluster — Copy email + LinkedIn, matching the
-            ContactPanel pattern from the homepage so visitors can
-            reach out from any case study page. */}
-        <CaseStudyContactCluster />
+        {/* Next case study CTA — outlined-box pattern matching the homepage
+            Contact panel LinkedIn button. Disabled state drops opacity and
+            removes hover. */}
+        {next ? (
+          <Link
+            href={`/work/${next.slug}`}
+            aria-label={`Next case study: ${next.title}`}
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              textDecoration: "none",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+          >
+            Next case study
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z"/>
+            </svg>
+          </Link>
+        ) : (
+          <span
+            aria-disabled="true"
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              opacity: 0.45,
+              cursor: "not-allowed",
+            }}
+          >
+            Next case study
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z"/>
+            </svg>
+          </span>
+        )}
       </motion.header>
 
       <main style={{ paddingTop: "80px" }}>
@@ -428,13 +469,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         <section style={{ padding: "48px 0" }}>
           <div className="page-pad">
             <motion.div variants={container} initial="hidden" animate="show">
-              {/* Back affordance. Tier 2 canonical pill — same spec as
-                  workspace About contact pills (app/page.tsx:591) and
-                  Contact panel pills. One button language across the
-                  whole site for inline secondary actions.
-                  Arrow sized at 10px to match canonical (ArrowUpRight
-                  external-link icon); the meaning "back" comes from
-                  the label, not the icon size. */}
+              {/* Back affordance — plain-text CTA pattern matching the About
+                  panel + case study top nav. Mono caps, no border, no bg,
+                  arrow + label, hover color lift. */}
               <motion.div variants={fadeUp} style={{ marginBottom: "32px", display: "inline-flex" }}>
                 <Link
                   href="/#work"
@@ -443,15 +480,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                     letterSpacing: "0.08em", textTransform: "uppercase",
                     color: "var(--muted)",
-                    padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
-                    border: "1px solid var(--border)", background: "var(--surface)",
-                    display: "inline-flex", alignItems: "center", gap: "6px",
-                    transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+                    padding: "8px 4px",
+                    display: "inline-flex", alignItems: "center", gap: "4px",
+                    transition: "color 0.18s",
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+                  onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
                 >
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
                   </svg>
                   Back
@@ -4081,27 +4117,28 @@ function CaseStudyContactCluster() {
       className="cs-contact-cluster"
       style={{ display: "flex", alignItems: "center", gap: "8px" }}
     >
+      {/* Plain-text CTA pattern — matches About panel + case study back button. */}
       <button
         onClick={copyEmail}
         aria-label={copied ? "Email copied" : "Copy email address"}
         style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "var(--text-caption)",
-          fontWeight: 500,
-          letterSpacing: "-0.01em",
-          color: copied ? "var(--accent-success)" : "var(--text)",
-          padding: "8px 14px",
-          borderRadius: "8px",
-          border: "1px solid var(--border)",
-          background: "var(--surface2)",
+          fontFamily: "var(--font-mono)",
+          fontSize: "var(--text-mono)",
+          fontWeight: 400,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: copied ? "var(--accent-success)" : "var(--muted)",
+          padding: "8px 4px",
+          border: "none",
+          background: "transparent",
           cursor: "pointer",
           display: "inline-flex",
           alignItems: "center",
           gap: "4px",
-          transition: "color 0.18s, box-shadow 0.18s",
+          transition: "color 0.18s",
         }}
-        onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
-        onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; } }}
+        onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; } }}
+        onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; } }}
       >
         {copied ? "Copied ✓" : "Copy email"}
       </button>
@@ -4111,26 +4148,24 @@ function CaseStudyContactCluster() {
         target="_blank"
         rel="noopener noreferrer"
         style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "var(--text-caption)",
-          fontWeight: 500,
-          letterSpacing: "-0.01em",
-          color: "var(--text)",
-          padding: "8px 14px",
-          borderRadius: "8px",
-          border: "1px solid var(--border)",
-          background: "var(--surface2)",
+          fontFamily: "var(--font-mono)",
+          fontSize: "var(--text-mono)",
+          fontWeight: 400,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "var(--muted)",
+          padding: "8px 4px",
           display: "inline-flex",
           alignItems: "center",
           gap: "4px",
-          transition: "color 0.18s, box-shadow 0.18s",
+          transition: "color 0.18s",
           textDecoration: "none",
         }}
-        onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-        onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
+        onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
+        onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
       >
-        <ArrowUpRight size={11} strokeWidth={1.5} />
         LinkedIn
+        <ArrowUpRight size={11} strokeWidth={1.5} />
       </Link>
 
       {/* Mobile: hide cluster — the homepage Contact panel sits one tap

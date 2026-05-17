@@ -594,7 +594,9 @@ function AboutPanel() {
             flexWrap: "wrap", marginBottom: "20px",
           }}
         >
-          {/* Copy email — tertiary text link, matches LinkedIn/CV treatment */}
+          {/* Plain-text CTA pattern — used across About panel + case study
+              top nav + case study back button. Mono caps, no border, no bg,
+              just text + arrow with hover color lift. */}
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
@@ -613,7 +615,6 @@ function AboutPanel() {
             {copied ? "Copied ✓" : "Copy email"}
           </button>
 
-          {/* LinkedIn + CV — tertiary text links, no border */}
           {[
             { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
             { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
@@ -2534,27 +2535,24 @@ function ContactPanel() {
           transition={{ duration: 0.45, ease: EASE, delay: 0.16 }}
           style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "24px" }}
         >
-          {/* Contact pills — modern pill style: transparent default, hairline
-              border, tight padding, subtle surface fill on hover. Pill radius
-              + smaller height reads cleaner than the prior rectangular 44px
-              boxes. Touch-target floor restored on coarse pointers only
-              (mobile / tablet) via the .cta-pill class in globals.css. */}
+          {/* Contact CTAs — matched to the case study detail page back-link
+              pattern: same padding, height (44px), 8px radius, surface fill,
+              and hover treatment (color lift + surface2 + card-shadow). */}
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
-            className="cta-pill"
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: copied ? "var(--accent-success)" : "var(--text)",
-              padding: "6px 14px",
-              borderRadius: "9999px",
-              border: "1px solid var(--border)",
-              background: "transparent",
+              color: copied ? "var(--accent-success)" : "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, background 0.18s, border-color 0.18s",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -2562,19 +2560,18 @@ function ContactPanel() {
           <Link
             href="https://www.linkedin.com/in/akgaddam/"
             target="_blank" rel="noopener noreferrer"
-            className="cta-pill"
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--text)",
-              padding: "6px 14px",
-              borderRadius: "9999px",
-              border: "1px solid var(--border)",
-              background: "transparent",
+              color: "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, background 0.18s, border-color 0.18s",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
               textDecoration: "none",
             }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             LinkedIn
             <ArrowUpRight size={11} strokeWidth={1.5} />
@@ -2583,19 +2580,18 @@ function ContactPanel() {
           <Link
             href="https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing"
             target="_blank" rel="noopener noreferrer"
-            className="cta-pill"
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--text)",
-              padding: "6px 14px",
-              borderRadius: "9999px",
-              border: "1px solid var(--border)",
-              background: "transparent",
+              color: "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, background 0.18s, border-color 0.18s",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
               textDecoration: "none",
             }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             CV
             <ArrowUpRight size={11} strokeWidth={1.5} />
