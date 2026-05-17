@@ -2571,13 +2571,13 @@ function ContactPanel() {
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--text)",
               padding: "7px 14px", borderRadius: "8px",
-              border: "1px solid var(--text)", background: "var(--surface2)",
+              border: "1px solid var(--border)", background: "var(--surface2)",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; e.currentTarget.style.background = "var(--surface3, var(--surface2))"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "var(--surface2)"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -2586,38 +2586,38 @@ function ContactPanel() {
             href="https://www.linkedin.com/in/akgaddam/"
             target="_blank" rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
-              padding: "7px 12px", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface)",
+              color: "var(--text)",
+              padding: "7px 14px", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface2)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; e.currentTarget.style.background = "var(--surface3, var(--surface2))"; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "var(--surface2)"; }}
           >
             LinkedIn
-            <ArrowUpRight size={10} strokeWidth={1.5} />
+            <ArrowUpRight size={11} strokeWidth={1.5} />
           </Link>
 
           <Link
             href="https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing"
             target="_blank" rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
-              padding: "7px 12px", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface)",
+              color: "var(--text)",
+              padding: "7px 14px", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface2)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; e.currentTarget.style.background = "var(--surface3, var(--surface2))"; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "var(--surface2)"; }}
           >
             CV
-            <ArrowUpRight size={10} strokeWidth={1.5} />
+            <ArrowUpRight size={11} strokeWidth={1.5} />
           </Link>
         </motion.div>
 
