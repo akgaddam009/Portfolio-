@@ -567,6 +567,7 @@ function AboutPanel() {
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
         <motion.p
+          className="text-hoverable"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.1 }}
@@ -577,10 +578,7 @@ function AboutPanel() {
             letterSpacing: "-0.01em",
             color: "var(--muted)",
             marginBottom: "28px",
-            transition: "color 0.2s",
           }}
-          onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; }}
-          onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
         >
           I&apos;m hands on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
         </motion.p>
@@ -643,70 +641,46 @@ function AboutPanel() {
           ))}
         </motion.div>
 
-        {/* Experience row — hover lifts the label to --text-hover and brightens
-            the value text. Matches the original info-row interaction pattern. */}
+        {/* Experience row */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, ease: EASE, delay: 0.18 }}
-          style={{ padding: "16px 0", transition: "opacity 0.2s" }}
-          onMouseEnter={e => {
-            const label = e.currentTarget.querySelector<HTMLElement>("[data-info-label]");
-            const value = e.currentTarget.querySelector<HTMLElement>("[data-info-value]");
-            if (label) label.style.color = "var(--text-hover)";
-            if (value) value.style.color = "var(--text)";
-          }}
-          onMouseLeave={e => {
-            const label = e.currentTarget.querySelector<HTMLElement>("[data-info-label]");
-            const value = e.currentTarget.querySelector<HTMLElement>("[data-info-value]");
-            if (label) label.style.color = "var(--muted)";
-            if (value) value.style.color = "var(--muted2)";
-          }}
+          style={{ padding: "16px 0" }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            <p data-info-label="true" style={{
+            <p style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
               letterSpacing: "0.1em", textTransform: "uppercase",
               color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
-              transition: "color 0.2s",
             }}>
               Experience
             </p>
             <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
           </div>
-          <p data-info-value="true" style={{
+          <p className="text-hoverable" style={{
             fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
             letterSpacing: "-0.01em",
-            color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
-            transition: "color 0.2s",
+            color: "var(--muted)", lineHeight: 1.65, fontWeight: 400,
           }}>
             Designing products for startups and large scale platforms with millions of users.
           </p>
         </motion.div>
 
-        {/* Industries row — same hover pattern as Experience */}
+        {/* Industries row */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, ease: EASE, delay: 0.21 }}
           style={{ padding: "16px 0" }}
-          onMouseEnter={e => {
-            const label = e.currentTarget.querySelector<HTMLElement>("[data-info-label]");
-            if (label) label.style.color = "var(--text-hover)";
-          }}
-          onMouseLeave={e => {
-            const label = e.currentTarget.querySelector<HTMLElement>("[data-info-label]");
-            if (label) label.style.color = "var(--muted)";
-          }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
-            <p data-info-label="true" style={{
+            <p style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
               letterSpacing: "0.1em", textTransform: "uppercase",
               color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
-              transition: "color 0.2s",
             }}>
               Industries
             </p>

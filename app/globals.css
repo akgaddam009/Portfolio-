@@ -431,6 +431,15 @@ a { color: inherit; text-decoration: none; }
 .nav-link:hover { color: var(--text-hover); }
 .nav-link:hover::after { transform: scaleX(1); }
 
+/* About-panel hover-brighten — text-only highlight, no background.
+   Default color is set on the element (--muted / --muted2); hover lifts
+   it toward --text-hover. Override `!important` ensures we win against
+   inline `style={{ color: ... }}` from the JSX. */
+.text-hoverable {
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.text-hoverable:hover { color: var(--muted2) !important; }
+
 /* ─── Marquee ────────────────────────────────────────── */
 @keyframes marquee {
   from { transform: translateX(0); }
