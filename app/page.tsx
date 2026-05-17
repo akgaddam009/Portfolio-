@@ -605,20 +605,6 @@ function AboutPanel() {
             flexWrap: "wrap", marginBottom: "20px",
           }}
         >
-          {/* Visible email address — readable without JS interaction */}
-          <a
-            href="mailto:akgaddam02@gmail.com"
-            style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
-              letterSpacing: "0.06em", color: "var(--muted)",
-              textDecoration: "none", alignSelf: "center",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--text)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--muted)"; }}
-          >
-            akgaddam02@gmail.com
-          </a>
-
           {/* Copy email -Tier 2 canonical pill (see button system note in
               CaseStudyDetail.tsx near the back button). */}
           <button
