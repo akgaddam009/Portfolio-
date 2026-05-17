@@ -1412,9 +1412,8 @@ function WorkPanel() {
                 accent: <AccentChip label="Fintech" tone="indigo" icon={Briefcase} />,
                 tags: ["Enterprise", "Workflow"],
                 href: "https://drive.google.com/file/d/19Q3CF_KYVUfQx6OtYa0oSU2TGutACaW0/view?usp=sharing",
-                /* No thumbnail in repo yet; renders text-only until an
-                   image is added. Drop a slide-1 export at
-                   /public/images/credit-loan/cover.jpg and wire it here. */
+                thumbnail: "/images/zetwerk-cu/zw-creditunderwriting-thumbnail.jpg",
+                thumbnailPosition: "center center",
               },
               {
                 title: "Designed movement of goods workflow in manufacturing",
