@@ -77,7 +77,11 @@ export default function RootLayout({
         {/* Sync theme before first paint — prevents flash behind the loader */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}`,
+            /* Theme priority:
+                 1. User's explicit choice (localStorage 'theme') wins.
+                 2. Otherwise auto-pick by local hour — dark from 18:00 to 05:59,
+                    light from 06:00 to 17:59. Mirrors the natural light cycle. */
+            __html: `try{var t=localStorage.getItem('theme');var h=new Date().getHours();var auto=(h>=18||h<6)?'dark':'light';document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:auto);}catch(e){document.documentElement.setAttribute('data-theme','light');}`,
           }}
         />
         {/* JSON-LD structured data — Person schema for Google rich results */}

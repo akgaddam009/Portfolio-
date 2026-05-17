@@ -548,6 +548,22 @@ export default function SystemPage() {
               </PatternBlock>
 
               <PatternBlock
+                name="Theme colour transitions"
+                category="Motion"
+                usedIn={["Every element using --bg, --surface, --text, --border (i.e., the whole site) when toggling light ↔ dark"]}
+                tokens={["@property registers --bg, --surface, --surface2, --border, --chrome, --text*, --muted*, --accent-warm as <color>", ":root { transition: --bg 420ms ..., --text 320ms ... }", "Backgrounds 420ms · text/borders 320ms · cubic-bezier(0.22, 1, 0.36, 1)", "Time-of-day default: dark 18:00–05:59, light 06:00–17:59. localStorage choice wins."]}
+              >
+                <div style={{ padding: "16px 20px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", color: "var(--muted2)", margin: "0 0 8px", lineHeight: 1.6 }}>
+                    Registering each colour token with <code style={codeChip}>@property</code> lets the browser interpolate values when the variable changes. A transition on <code style={codeChip}>:root</code> propagates through every consumer — including React inline styles — without overlays or specificity battles.
+                  </p>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
+                    Fallback: browsers without @property support get an instant swap (no breakage)
+                  </p>
+                </div>
+              </PatternBlock>
+
+              <PatternBlock
                 name="Lazy video thumbnail"
                 category="Perf"
                 usedIn={["Work card video thumbnails. Planful, Apple, Astra, FanCode"]}

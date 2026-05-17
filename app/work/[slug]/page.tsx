@@ -7,8 +7,19 @@ import CaseStudyDetail from "@/components/CaseStudyDetail";
    generated, no metadata, no route. Anyone visiting these URLs gets a
    404. Used for case studies with confidentiality requirements that go
    beyond a password gate (NDA-only, recruiter-direct-link only, etc.).
-   Listed here rather than in caseStudies.ts because the hide is a
-   routing decision, not a data field. */
+
+   Two-tier confidentiality model:
+   - HIDDEN_SLUGS (this set):   404. NDA-strict. URL is not guessable.
+                                Examples: zetwerk-dc, zetwerk-bu-ecosystem, astra.
+   - confidential: true (data): 200 with password gate. Excluded from
+                                sitemap so search engines don't surface it,
+                                but a direct URL still works for recruiters.
+                                Examples: fancode-homepage, planful-esm-tables.
+
+   `fancode-homepage` deliberately stays OUT of this list — it's
+   password-gated but recruiter-reachable via direct link. Listed here
+   rather than in caseStudies.ts because the hide is a routing decision,
+   not a data field. */
 const HIDDEN_SLUGS = new Set<string>([
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",

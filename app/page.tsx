@@ -1451,7 +1451,7 @@ function WorkPanel() {
                         <div style={{ width: "100%", height: "100%", overflow: "hidden", borderRadius: "8px 8px 0 0", background: "var(--surface2)" }}>
                           <img
                             src={thumbnail}
-                            alt=""
+                            alt={`${title} thumbnail`}
                             loading="lazy"
                             decoding="async"
                             style={{
