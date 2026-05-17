@@ -1403,6 +1403,8 @@ function WorkPanel() {
                 accent: <AccentChip label="Consumer Mobile" tone="emerald" icon={LayoutGrid} />,
                 tags: ["UX Research", "Onboarding"],
                 href: "https://drive.google.com/file/d/1w9phRxE7f3G9shoPu7CVFMAG6xMVaqi9/view?usp=sharing",
+                thumbnail: "/images/fancode/overall-homepage.jpg",
+                thumbnailPosition: "center top",
               },
               {
                 title: "Designed vendor credit/loan approval process",
@@ -1410,6 +1412,9 @@ function WorkPanel() {
                 accent: <AccentChip label="Fintech" tone="indigo" icon={Briefcase} />,
                 tags: ["Enterprise", "Workflow"],
                 href: "https://drive.google.com/file/d/19Q3CF_KYVUfQx6OtYa0oSU2TGutACaW0/view?usp=sharing",
+                /* No thumbnail in repo yet; renders text-only until an
+                   image is added. Drop a slide-1 export at
+                   /public/images/credit-loan/cover.jpg and wire it here. */
               },
               {
                 title: "Designed movement of goods workflow in manufacturing",
@@ -1417,8 +1422,10 @@ function WorkPanel() {
                 accent: <AccentChip label="Supply Chain" tone="amber" icon={Path} />,
                 tags: ["B2B", "Enterprise"],
                 href: "https://drive.google.com/file/d/1NcnWyM1oO2VF_YIoLjOvgALeAqPTym1k/view?usp=sharing",
+                thumbnail: "/images/zetwerk/cover.jpg",
+                thumbnailPosition: "center center",
               },
-            ] as { title: string; subtitle: string; accent: React.ReactNode; tags: string[]; href: string }[]).map(({ title, subtitle, accent, tags, href }, i) => (
+            ] as { title: string; subtitle: string; accent: React.ReactNode; tags: string[]; href: string; thumbnail?: string; thumbnailPosition?: string }[]).map(({ title, subtitle, accent, tags, href, thumbnail, thumbnailPosition }, i) => (
               <motion.div
                 key={title}
                 initial={{ opacity: 0, y: 10 }}
@@ -1449,6 +1456,23 @@ function WorkPanel() {
                     onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
+                    {thumbnail && (
+                      <div style={{ height: "160px", overflow: "hidden", background: "var(--surface2)" }}>
+                        <img
+                          src={thumbnail}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            objectPosition: thumbnailPosition ?? "center top",
+                            display: "block",
+                          }}
+                        />
+                      </div>
+                    )}
                     <div style={{ padding: "16px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
                         {accent}
