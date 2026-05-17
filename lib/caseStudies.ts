@@ -296,8 +296,8 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "planful-esm-tables",
     number: "08",
-    title: "Moving a critical finance workflow from Excel to the web",
-    titleHighlights: { "Excel": "amber", "the web": "indigo" },
+    title: "Financial planning workflow",
+    titleHighlights: { "Financial planning": "amber" },
     subtitle:
       "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
     cardImpact: "~95% reduction in time on task. 3.5 hrs to 10-15 min",
@@ -690,8 +690,8 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "apple-business-listings",
     number: "07",
-    title: "Bringing Apple Maps into Business Listing Performance",
-    titleHighlights: { "Apple Maps": "indigo", "Business Listing": "teal" },
+    title: "Apple Maps Business Insights",
+    titleHighlights: { "Apple Maps": "indigo" },
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
     cardImpact: "~68% weekly adoption from launch. Apple Maps data visible across 100M+ US users",
     company: "Reputation.com",
@@ -871,7 +871,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "fancode-homepage",
     number: "06",
-    title: "Rethinking the Homepage of India's premier sports app",
+    title: "Rethink FanCode Sports app Homepage",
     titleHighlights: { "Homepage": "indigo" },
     subtitle: "How a mental model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15 - 20%.",
     cardImpact: "15 - 20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",

@@ -1399,7 +1399,7 @@ function WorkPanel() {
             {([
               {
                 title: "Designed first time user experience",
-                subtitle: "Led research and concept design validation to solve new-user retention, informing a 12-month product roadmap and increasing retention by ~18% while boosting subscriptions.",
+                subtitle: "Increased user retention by ~18% and subscription growth through UX improvements.",
                 accent: <AccentChip label="Consumer Mobile" tone="emerald" icon={LayoutGrid} />,
                 tags: ["UX Research", "Onboarding"],
                 href: "https://drive.google.com/file/d/1w9phRxE7f3G9shoPu7CVFMAG6xMVaqi9/view?usp=sharing",
@@ -1407,8 +1407,8 @@ function WorkPanel() {
                 thumbnailPosition: "center center",
               },
               {
-                title: "Designed vendor credit/loan approval process",
-                subtitle: "Designed a unified credit underwriting workflow that centralised risk evaluation and approval decisions into one cohesive experience for enterprise fintech teams.",
+                title: "Vendor credit financing workflow",
+                subtitle: "Streamlined faster business decisions with better risk visibility and opportunity assessment.",
                 accent: <AccentChip label="Fintech" tone="indigo" icon={Briefcase} />,
                 tags: ["Enterprise", "Workflow"],
                 href: "https://drive.google.com/file/d/19Q3CF_KYVUfQx6OtYa0oSU2TGutACaW0/view?usp=sharing",
@@ -1416,12 +1416,12 @@ function WorkPanel() {
                 thumbnailPosition: "center center",
               },
               {
-                title: "Designed movement of goods workflow in manufacturing",
-                subtitle: "Designed a delivery challan workflow for high-growth manufacturing workspaces, enabling better tracking, coordination, and visibility across supply chain operations.",
+                title: "Logistics and tax compliance in manufacturing",
+                subtitle: "Achieved 90% adoption within three months while streamlining operations.",
                 accent: <AccentChip label="Supply Chain" tone="amber" icon={Path} />,
                 tags: ["B2B", "Enterprise"],
                 href: "https://drive.google.com/file/d/1NcnWyM1oO2VF_YIoLjOvgALeAqPTym1k/view?usp=sharing",
-                thumbnail: "/images/zetwerk-dc/thumbnail.png",
+                thumbnail: "/images/zetwerk-dc/zw-dc-thumbnail.png",
                 thumbnailPosition: "center center",
               },
             ] as { title: string; subtitle: string; accent: React.ReactNode; tags: string[]; href: string; thumbnail?: string; thumbnailPosition?: string }[]).map(({ title, subtitle, accent, tags, href, thumbnail, thumbnailPosition }, i) => (
