@@ -574,7 +574,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          I help product teams <InlineChip label="reduce ambiguity" tone="indigo" scale="match" /> through research, rapid validation, and <InlineChip label="structured UX thinking" tone="indigo" scale="match" />.</motion.h1>
+          I help product teams <InlineChip label="reduce ambiguity" tone="indigo" scale="match" /> through <InlineChip label="research, rapid validation" tone="indigo" scale="match" />, and <InlineChip label="structured UX thinking" tone="indigo" scale="match" />.</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
