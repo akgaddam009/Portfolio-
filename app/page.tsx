@@ -562,7 +562,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          I help product teams <InlineChip label="reduce ambiguity" tone="amber" scale="match" /> through research, rapid validation and structured UX thinking</motion.h1>
+          Helping product teams <InlineChip label="reduce ambiguity" tone="amber" scale="match" /> through <InlineChip label="research" tone="indigo" scale="match" /> <InlineChip label="rapid validation" tone="violet" scale="match" /> <InlineChip label="structured UX thinking" tone="emerald" scale="match" /></motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
@@ -593,22 +593,21 @@ function AboutPanel() {
             flexWrap: "wrap", marginBottom: "20px",
           }}
         >
-          {/* Copy email -Tier 2 canonical pill (see button system note in
-              CaseStudyDetail.tsx near the back button). */}
+          {/* Copy email — tertiary text link, matches LinkedIn/CV treatment */}
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: copied ? "var(--accent-success)" : "var(--text)",
-              padding: "7px 14px", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "transparent",
-              cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, background 0.18s",
+              color: copied ? "var(--accent-success)" : "var(--muted)",
+              padding: "7px 4px",
+              border: "none", background: "transparent",
+              cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px",
+              transition: "color 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.background = "var(--surface2)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.background = "transparent"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -641,6 +640,145 @@ function AboutPanel() {
           ))}
         </motion.div>
 
+        {/* Experience row */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, ease: EASE, delay: 0.18 }}
+          style={{ padding: "16px 0" }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+            <p style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+              letterSpacing: "0.1em", textTransform: "uppercase",
+              color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+            }}>
+              Experience
+            </p>
+            <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+          </div>
+          <p style={{
+            fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
+            letterSpacing: "-0.01em",
+            color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
+          }}>
+            Designing products for startups and large scale platforms with millions of users.
+          </p>
+        </motion.div>
+
+        {/* Industries row */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, ease: EASE, delay: 0.21 }}
+          style={{ padding: "16px 0" }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+            <p style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+              letterSpacing: "0.1em", textTransform: "uppercase",
+              color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+            }}>
+              Industries
+            </p>
+            <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+            {["B2B", "SaaS", "Fintech", "Manufacturing", "Entertainment", "Customer Experience"].map(chip => (
+              <span key={chip} style={{
+                fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
+                fontWeight: 400, letterSpacing: "-0.01em",
+                padding: "4px 10px", borderRadius: "9999px",
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                color: "var(--muted2)",
+              }}>
+                {chip}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Skills marquee */}
+        {(() => {
+          const skills = [
+            "AI UX",
+            "Systems Thinking", "Product Strategy",
+            "UX Research", "JTBD", "Service Design", "Research Synthesis",
+            "Interaction Design", "Information Architecture", "Prototyping", "Design Systems",
+            "Claude", "Agentic AI",
+          ];
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: EASE, delay: 0.24 }}
+              style={{ padding: "12px 0" }}
+              className="skills-ticker"
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+                <p style={{
+                  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                  letterSpacing: "0.1em", textTransform: "uppercase",
+                  color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+                }}>
+                  Skills
+                </p>
+                <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+              </div>
+
+              <div style={{ overflow: "hidden", position: "relative" }}>
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+                <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to left, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
+                <div
+                  className="marquee-track"
+                  style={{
+                    ["--marquee-duration" as string]: "32s",
+                    display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
+                  }}
+                >
+                  {skills.map((skill, i) => (
+                    <span key={`a-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                      <span style={{
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
+                        letterSpacing: "-0.01em", color: "var(--muted2)",
+                        padding: "4px 10px",
+                        border: "1px solid var(--border)",
+                        borderRadius: "9999px",
+                        background: "var(--surface)",
+                        marginRight: "6px",
+                        whiteSpace: "nowrap",
+                      }}>
+                        {skill}
+                      </span>
+                    </span>
+                  ))}
+                  <span className="marquee-clone" aria-hidden style={{ display: "inline-flex", alignItems: "center" }}>
+                    {skills.map((skill, i) => (
+                      <span key={`b-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
+                        <span style={{
+                          fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
+                          letterSpacing: "-0.01em", color: "var(--muted2)",
+                          padding: "4px 10px",
+                          border: "1px solid var(--border)",
+                          borderRadius: "9999px",
+                          background: "var(--surface)",
+                          marginRight: "6px",
+                          whiteSpace: "nowrap",
+                        }}>
+                          {skill}
+                        </span>
+                      </span>
+                    ))}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })()}
 
       </div>
     </div>
