@@ -139,10 +139,11 @@
   --chip-amber-strip:   color-mix(in srgb, #b45309 16%, transparent);
   --chip-violet-strip:  color-mix(in srgb, #5b21b6 16%, transparent);
   --chip-emerald-strip: color-mix(in srgb, #047857 16%, transparent);
-  /* Sage tone — deep gold (#A67C00) for light mode. Rich, considered. */
-  --chip-sage-text:   #A67C00;
-  --chip-sage-bg:     color-mix(in srgb, #A67C00 10%, transparent);
-  --chip-sage-strip:  color-mix(in srgb, #A67C00 28%, transparent);
+  /* Sage tone — #B8E84D (lime-chartreuse). Light enough to need 38% fill
+     on white to have real presence; high chroma reads well on both themes. */
+  --chip-sage-text:   #4a7000;
+  --chip-sage-bg:     color-mix(in srgb, #B8E84D 14%, transparent);
+  --chip-sage-strip:  color-mix(in srgb, #B8E84D 38%, transparent);
 }
 
 /* ─── Dark theme — 3-level hierarchy, lifted scale ─
@@ -201,10 +202,10 @@
   --chip-amber-strip:   color-mix(in srgb, #d6c178 16%, transparent);
   --chip-violet-strip:  color-mix(in srgb, #b8aed4 16%, transparent);
   --chip-emerald-strip: color-mix(in srgb, #9bc9af 16%, transparent);
-  /* Premium gold (#D4AF37) for dark mode. */
-  --chip-sage-text:   #D4AF37;
-  --chip-sage-bg:     color-mix(in srgb, #D4AF37 10%, transparent);
-  --chip-sage-strip:  color-mix(in srgb, #D4AF37 30%, transparent);
+  /* #B8E84D on dark — glows well at 30% against near-black canvas. */
+  --chip-sage-text:   #B8E84D;
+  --chip-sage-bg:     color-mix(in srgb, #B8E84D 12%, transparent);
+  --chip-sage-strip:  color-mix(in srgb, #B8E84D 30%, transparent);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */
