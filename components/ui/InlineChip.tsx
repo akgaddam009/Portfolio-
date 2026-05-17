@@ -93,7 +93,7 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default", variant
     <span style={{
       display: "inline-flex", alignItems: "center", gap: hasIcon ? "3px" : "0",
       padding: hasIcon ? "0 8px 0 5px" : "0 8px",
-      borderRadius: "5px",
+      borderRadius: "4px",
       background: `var(--chip-${tone}-bg)`,
       color: `var(--chip-${tone}-text)`,
       fontFamily: "var(--font-body)",

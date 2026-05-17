@@ -50,7 +50,7 @@ export default function CaseStudyCard({
                 position: "absolute", top: "12px", right: "12px",
                 background: "rgba(22,163,74,0.9)", backdropFilter: "blur(8px)",
                 borderRadius: "8px", padding: "3px 10px",
-                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 510,
+                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 500,
                 letterSpacing: "-0.01em", color: "#fff",
               }}>
                 Confidential
@@ -68,11 +68,11 @@ export default function CaseStudyCard({
             <div>
               {/* Number + type */}
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-                <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 510, letterSpacing: "-0.01em", color: "var(--muted)" }}>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--muted)" }}>
                   {cs.number}
                 </span>
                 <span style={{ width: "1px", height: "10px", background: "var(--border)" }} />
-                <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 510, letterSpacing: "-0.01em", color: "var(--muted)" }}>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--muted)" }}>
                   {cs.type}
                 </span>
               </div>
@@ -100,11 +100,11 @@ export default function CaseStudyCard({
                 {(cs.metrics ?? []).slice(0, 2).map(m => (
                   <div key={m.label}>
                     <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "var(--text-title)", fontWeight: 510,
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-title)", fontWeight: 500,
                       letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1, marginBottom: "3px",
                     }}>{m.value}</p>
                     <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 510,
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 500,
                       letterSpacing: "-0.01em", color: "var(--muted)",
                     }}>{m.label}</p>
                   </div>
@@ -119,7 +119,7 @@ export default function CaseStudyCard({
               background: cs.confidential ? "var(--surface2)" : "var(--text)",
               color: cs.confidential ? "var(--muted)" : "var(--bg)",
               borderRadius: "8px",
-              fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 510,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500,
               letterSpacing: "-0.01em",
             }}>
               {cs.confidential ? "Request access" : "View case study"}
@@ -164,7 +164,7 @@ export default function CaseStudyCard({
                 position: "absolute", top: "10px", right: "10px",
                 background: "rgba(22,163,74,0.9)", backdropFilter: "blur(8px)",
                 borderRadius: "8px", padding: "3px 10px",
-                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 510,
+                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 500,
                 letterSpacing: "-0.01em", color: "#fff",
               }}>
                 Confidential
@@ -176,12 +176,12 @@ export default function CaseStudyCard({
           <div style={{ padding: "16px 20px 20px" }}>
             {/* Number + tags */}
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 510, letterSpacing: "-0.01em", color: "var(--muted)" }}>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--muted)" }}>
                 {cs.number}
               </span>
               {cs.tags.slice(0, 1).map(tag => (
                 <span key={tag} style={{
-                  fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 510, letterSpacing: "-0.01em",
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 500, letterSpacing: "-0.01em",
                   padding: "2px 7px", background: "var(--surface2)",
                   color: "var(--muted)", borderRadius: "6px",
                 }}>
@@ -192,7 +192,7 @@ export default function CaseStudyCard({
 
             {/* Title */}
             <h3 style={{
-              fontFamily: "var(--font-body)", fontSize: "var(--text-lead)", fontWeight: 510,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-lead)", fontWeight: 500,
               lineHeight: 1.3, letterSpacing: "-0.02em",
               color: "var(--text)", marginBottom: "10px",
             }}>
@@ -225,12 +225,12 @@ export default function CaseStudyCard({
                   <div key={m.label}>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "var(--text-lead)",
-                      fontWeight: 510, letterSpacing: "-0.03em",
+                      fontWeight: 500, letterSpacing: "-0.03em",
                       color: "var(--text)", lineHeight: 1, marginBottom: "2px",
                     }}>{m.value}</p>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
-                      fontWeight: 510, letterSpacing: "-0.01em", color: "var(--muted)",
+                      fontWeight: 500, letterSpacing: "-0.01em", color: "var(--muted)",
                     }}>{m.label}</p>
                   </div>
                 ))}
@@ -242,7 +242,7 @@ export default function CaseStudyCard({
                 background: cs.confidential ? "var(--surface2)" : "var(--text)",
                 color: cs.confidential ? "var(--muted)" : "var(--bg)",
                 borderRadius: "8px",
-                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 510,
+                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", fontWeight: 500,
                 whiteSpace: "nowrap", letterSpacing: "-0.01em",
               }}>
                 {cs.confidential ? "Request access" : "View case study"}

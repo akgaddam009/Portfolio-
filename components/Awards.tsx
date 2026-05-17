@@ -35,7 +35,7 @@ export default function Awards() {
             gap: "20px",
             padding: "20px 24px",
             background: "var(--surface)",
-            borderRadius: "14px",
+            borderRadius: "16px",
           }}
         >
           {/* Badge */}

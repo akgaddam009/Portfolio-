@@ -851,7 +851,7 @@ function DemoCard({ interactive, label, desc }: { interactive: boolean; label: s
     onMouseEnter={interactive ? (e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }) : undefined}
     onMouseLeave={interactive ? (e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }) : undefined}
     >
-      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 590, color: "var(--text)", margin: "0 0 4px 0" }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 600, color: "var(--text)", margin: "0 0 4px 0" }}>{label}</p>
       <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted)", margin: 0, lineHeight: 1.5 }}>{desc}</p>
     </div>
   );
@@ -1121,7 +1121,7 @@ const tagStyle: React.CSSProperties = {
 
 const blockTitle: React.CSSProperties = {
   fontFamily: "var(--font-body)", fontSize: "20px",
-  fontWeight: 590, letterSpacing: "-0.012em",
+  fontWeight: 600, letterSpacing: "-0.012em",
   color: "var(--text)", margin: 0,
 };
 
@@ -1150,7 +1150,7 @@ const chipStyle: React.CSSProperties = {
   letterSpacing: "-0.01em",
   padding: "3px 9px",
   background: "var(--surface2)", color: "var(--muted2)",
-  borderRadius: "999px",
+  borderRadius: "9999px",
 };
 
 const codeChip: React.CSSProperties = {
@@ -1181,7 +1181,7 @@ const swatchSquare: React.CSSProperties = {
 
 const tokenName: React.CSSProperties = {
   fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)",
-  fontWeight: 510, letterSpacing: "-0.01em",
+  fontWeight: 500, letterSpacing: "-0.01em",
   color: "var(--text)", margin: 0,
 };
 

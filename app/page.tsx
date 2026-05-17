@@ -326,7 +326,7 @@ function FloatingPanelMenu({
                 bottom: "56px",
                 minWidth: "180px",
                 padding: "6px",
-                borderRadius: "14px",
+                borderRadius: "16px",
                 background: "color-mix(in srgb, var(--bg) 92%, transparent)",
                 border: "1px solid var(--border)",
                 boxShadow: "var(--card-shadow)",
@@ -577,7 +577,10 @@ function AboutPanel() {
             letterSpacing: "-0.01em",
             color: "var(--muted)",
             marginBottom: "28px",
+            transition: "color 0.2s",
           }}
+          onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; }}
+          onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
         >
           I&apos;m hands on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
         </motion.p>
@@ -640,46 +643,70 @@ function AboutPanel() {
           ))}
         </motion.div>
 
-        {/* Experience row */}
+        {/* Experience row — hover lifts the label to --text-hover and brightens
+            the value text. Matches the original info-row interaction pattern. */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, ease: EASE, delay: 0.18 }}
-          style={{ padding: "16px 0" }}
+          style={{ padding: "16px 0", transition: "opacity 0.2s" }}
+          onMouseEnter={e => {
+            const label = e.currentTarget.querySelector<HTMLElement>("[data-info-label]");
+            const value = e.currentTarget.querySelector<HTMLElement>("[data-info-value]");
+            if (label) label.style.color = "var(--text-hover)";
+            if (value) value.style.color = "var(--text)";
+          }}
+          onMouseLeave={e => {
+            const label = e.currentTarget.querySelector<HTMLElement>("[data-info-label]");
+            const value = e.currentTarget.querySelector<HTMLElement>("[data-info-value]");
+            if (label) label.style.color = "var(--muted)";
+            if (value) value.style.color = "var(--muted2)";
+          }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-            <p style={{
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+            <p data-info-label="true" style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
               letterSpacing: "0.1em", textTransform: "uppercase",
               color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+              transition: "color 0.2s",
             }}>
               Experience
             </p>
             <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
           </div>
-          <p style={{
+          <p data-info-value="true" style={{
             fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
             letterSpacing: "-0.01em",
             color: "var(--muted2)", lineHeight: 1.65, fontWeight: 400,
+            transition: "color 0.2s",
           }}>
             Designing products for startups and large scale platforms with millions of users.
           </p>
         </motion.div>
 
-        {/* Industries row */}
+        {/* Industries row — same hover pattern as Experience */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, ease: EASE, delay: 0.21 }}
           style={{ padding: "16px 0" }}
+          onMouseEnter={e => {
+            const label = e.currentTarget.querySelector<HTMLElement>("[data-info-label]");
+            if (label) label.style.color = "var(--text-hover)";
+          }}
+          onMouseLeave={e => {
+            const label = e.currentTarget.querySelector<HTMLElement>("[data-info-label]");
+            if (label) label.style.color = "var(--muted)";
+          }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-            <p style={{
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+            <p data-info-label="true" style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
               letterSpacing: "0.1em", textTransform: "uppercase",
               color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+              transition: "color 0.2s",
             }}>
               Industries
             </p>
@@ -902,7 +929,7 @@ function MeshThumbnail({ index, type, confidential }: {
           background: badgeBg,
           borderRadius: "6px", padding: "4px 8px",
           fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
-          fontWeight: 510, letterSpacing: "-0.01em",
+          fontWeight: 500, letterSpacing: "-0.01em",
           color: badgeColor,
           transition: "background 0.3s, color 0.3s",
         }}>
@@ -1885,7 +1912,7 @@ function CareerPanel() {
           top: `${top}px`,
           left: isExpanded ? "22px" : isEdu ? "calc(58% + 4px)" : "22px",
           right: isExpanded ? "16px" : isEdu ? "16px" : "calc(42% + 8px)",
-          borderRadius: "14px",
+          borderRadius: "16px",
           background: isExpanded ? "var(--bg)" : "var(--surface)",
           // Expanded state keeps a border because its bg matches the canvas;
           // collapsed cards use shadow-only depth like the Work cards.
@@ -1983,7 +2010,7 @@ function CareerPanel() {
                       style={{
                         display: "inline-flex", alignItems: "center", gap: "4px",
                         fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
-                        fontWeight: 510, letterSpacing: "-0.01em",
+                        fontWeight: 500, letterSpacing: "-0.01em",
                         color: "var(--muted)", textDecoration: "none",
                         transition: "color 0.15s",
                       }}
@@ -2036,7 +2063,7 @@ function CareerPanel() {
                   <div style={{ marginBottom: "16px" }}>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
-                      fontWeight: 510, letterSpacing: "-0.01em",
+                      fontWeight: 500, letterSpacing: "-0.01em",
                       color: "var(--muted)", marginBottom: "8px",
                     }}>
                       {item.subtitle === "ADPList" ? "Achievements" : "Worked on"}
@@ -2063,7 +2090,7 @@ function CareerPanel() {
                           display: "inline-flex", alignItems: "center", gap: "4px",
                           marginTop: "8px",
                           fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
-                          fontWeight: 510, letterSpacing: "-0.01em",
+                          fontWeight: 500, letterSpacing: "-0.01em",
                           color: "var(--muted)", textDecoration: "none",
                           transition: "color 0.15s",
                         }}
@@ -2081,7 +2108,7 @@ function CareerPanel() {
                   <div style={{ marginBottom: "12px" }}>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
-                      fontWeight: 510, letterSpacing: "-0.01em",
+                      fontWeight: 500, letterSpacing: "-0.01em",
                       color: "var(--muted)", marginBottom: "8px",
                     }}>
                       Learned
@@ -2105,7 +2132,7 @@ function CareerPanel() {
                   <div style={{ marginBottom: "12px" }}>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
-                      fontWeight: 510, letterSpacing: "-0.01em",
+                      fontWeight: 500, letterSpacing: "-0.01em",
                       color: "var(--muted)", marginBottom: "10px",
                     }}>
                       Mentee reviews
@@ -2150,7 +2177,7 @@ function CareerPanel() {
                               }}>
                                 <span style={{
                                   fontFamily: "var(--font-body)", fontSize: "var(--text-mono)",
-                                  fontWeight: 510, letterSpacing: "-0.01em",
+                                  fontWeight: 500, letterSpacing: "-0.01em",
                                   color: "var(--muted)",
                                 }}>{r.initials}</span>
                               </div>
@@ -2162,7 +2189,7 @@ function CareerPanel() {
                                 }}>{r.role}</span>
                                 <span style={{
                                   fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
-                                  fontWeight: 510, letterSpacing: "-0.01em",
+                                  fontWeight: 500, letterSpacing: "-0.01em",
                                   color: "var(--text)", display: "block", marginTop: "1px",
                                 }}>{r.company}</span>
                               </div>
@@ -2192,7 +2219,7 @@ function CareerPanel() {
                       flex: 1, height: "36px",
                       borderRadius: "8px", border: "1px solid var(--border)",
                       background: "var(--surface)", color: "var(--text)",
-                      fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 510,
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500,
                       letterSpacing: "-0.01em",
                       cursor: selectedIdx > 0 ? "pointer" : "default",
                       opacity: selectedIdx > 0 ? 1 : 0.3,
@@ -2209,7 +2236,7 @@ function CareerPanel() {
                       flex: 1, height: "36px",
                       borderRadius: "8px", border: "1px solid var(--border)",
                       background: "var(--surface)", color: "var(--text)",
-                      fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 510,
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500,
                       letterSpacing: "-0.01em",
                       cursor: selectedIdx < workItems.length - 1 ? "pointer" : "default",
                       opacity: selectedIdx < workItems.length - 1 ? 1 : 0.3,
@@ -2309,7 +2336,7 @@ function CareerPanel() {
               }} />
               <span style={{
                 fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
-                fontWeight: 510, letterSpacing: "-0.01em",
+                fontWeight: 500, letterSpacing: "-0.01em",
                 color: "var(--accent-warm)", opacity: 0.85,
               }}>Now</span>
             </div>
@@ -3386,7 +3413,7 @@ export default function Home() {
                   flex: "0 0 auto",
                   height: "100%",
                   overflowY: "auto",
-                  borderRadius: "18px",
+                  borderRadius: "16px",
                   background: "var(--bg)",
                   boxShadow: shadow,
                   scrollSnapAlign: "start",

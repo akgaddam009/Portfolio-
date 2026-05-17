@@ -126,7 +126,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               <h2 style={{
                 fontFamily: "var(--font-body)",
                 fontSize: "clamp(18px, 4vw, 24px)",
-                fontWeight: 510,
+                fontWeight: 500,
                 letterSpacing: "-0.025em",
                 color: "var(--text)",
                 lineHeight: 1.2,
@@ -139,7 +139,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               <p style={{
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-mono-lg)",
-                fontWeight: 510,
+                fontWeight: 500,
                 letterSpacing: "-0.01em",
                 color: "var(--muted)",
                 marginBottom: "24px",
@@ -168,7 +168,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                   <p style={{
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-mono-lg)",
-                    fontWeight: 510,
+                    fontWeight: 500,
                     letterSpacing: "-0.01em",
                     color: "var(--muted)",
                     marginBottom: "16px",
@@ -202,7 +202,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                   <p style={{
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-mono-lg)",
-                    fontWeight: 510,
+                    fontWeight: 500,
                     letterSpacing: "-0.01em",
                     color: "var(--muted)",
                     marginBottom: "16px",
@@ -275,7 +275,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                   cursor: "pointer",
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-body)",
-                  fontWeight: 510,
+                  fontWeight: 500,
                   letterSpacing: "-0.01em",
                 }}
               >

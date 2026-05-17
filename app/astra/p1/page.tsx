@@ -234,7 +234,7 @@ function ProcLanding({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
         <div style={{
           display: "flex", alignItems: "center", gap: "10px",
           background: "var(--astra-red-bg)", border: "1px solid var(--astra-red-border)",
-          padding: "10px 14px", borderRadius: "5px", marginBottom: "12px",
+          padding: "10px 14px", borderRadius: "4px", marginBottom: "12px",
           fontSize: "var(--text-caption)", color: "var(--astra-red)",
         }}>
           <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--astra-red-dot)", flexShrink: 0 }} />
@@ -248,7 +248,7 @@ function ProcLanding({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
         <div style={{
           display: "flex", alignItems: "center", gap: "14px",
           background: "var(--astra-yellow-bg)", border: "1px solid var(--astra-yellow-border)",
-          padding: "12px 16px", borderRadius: "5px", marginBottom: "20px",
+          padding: "12px 16px", borderRadius: "4px", marginBottom: "20px",
         }}>
           <div style={{
             width: "32px", height: "32px", borderRadius: "50%",
@@ -281,7 +281,7 @@ function ProcLanding({ setScreen }: { setScreen: (s: ProcScreen) => void }) {
 
         {/* Contracts table */}
         <div style={{
-          background: "var(--astra-surface)", border: "1px solid var(--astra-border-light)", borderRadius: "5px", overflow: "hidden",
+          background: "var(--astra-surface)", border: "1px solid var(--astra-border-light)", borderRadius: "4px", overflow: "hidden",
         }}>
           <div style={{
             display: "grid",
@@ -780,7 +780,7 @@ function LegalQueue({ setScreen }: { setScreen: (s: LegalScreen) => void }) {
                 onClick={() => isActive && setScreen("review")}
                 style={{
                   border: "1px solid var(--astra-border-light)",
-                  borderRadius: "5px",
+                  borderRadius: "4px",
                   padding: "12px 14px",
                   background: "var(--astra-surface)",
                   display: "grid",
@@ -824,7 +824,7 @@ function LegalReview({ fields, setScreen }: { fields: ExtractedField[]; setScree
     <div style={{ padding: "20px 24px" }}>
       <div style={{
         background: "var(--astra-purple-bg)", border: "1px solid var(--astra-purple-border)",
-        padding: "12px 16px", borderRadius: "5px", marginBottom: "20px",
+        padding: "12px 16px", borderRadius: "4px", marginBottom: "20px",
         display: "flex", alignItems: "center", gap: "12px",
       }}>
         <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--astra-purple-dot)" }} />
@@ -905,7 +905,7 @@ function LegalApprove({ setScreen }: { setScreen: (s: LegalScreen) => void }) {
 
         <div style={{
           background: "#fff", border: "1px solid var(--astra-green-border)",
-          padding: "12px 14px", borderRadius: "5px", textAlign: "left",
+          padding: "12px 14px", borderRadius: "4px", textAlign: "left",
           fontSize: "var(--text-mono-lg)", lineHeight: 1.6, color: "var(--astra-text-2)",
           marginBottom: "20px",
         }}>
@@ -991,7 +991,7 @@ function ModeOpt({ icon, label, sub, selected }: { icon: string; label: string; 
     <div style={{
       padding: "12px 14px",
       border: `1px solid ${selected ? "var(--astra-text-2)" : "var(--astra-border-light)"}`,
-      borderRadius: "5px",
+      borderRadius: "4px",
       background: selected ? "var(--astra-bg)" : "var(--astra-surface)",
       display: "flex", alignItems: "center", gap: "10px",
       cursor: "pointer",
@@ -1030,7 +1030,7 @@ function TypeOpt({ label, desc, selected, onClick }: { label: string; desc: stri
         textAlign: "left",
         padding: "10px 12px",
         border: `1px solid ${selected ? "var(--astra-text-1)" : "var(--astra-border-light)"}`,
-        borderRadius: "5px",
+        borderRadius: "4px",
         cursor: "pointer",
         display: "flex", alignItems: "center", gap: "10px",
         fontFamily: "inherit",

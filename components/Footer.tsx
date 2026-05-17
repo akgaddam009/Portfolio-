@@ -102,6 +102,8 @@ export default function Footer() {
             opacity: 0.6,
           }}>
             Designed with{" "}
+            {/* #D97757 is the Claude brand orange — kept as a literal (not a token)
+                because it's an external brand reference, not part of our palette. */}
             <svg
               width="11"
               height="11"

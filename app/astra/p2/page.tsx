@@ -188,7 +188,7 @@ function Landing({ onCreate, onEdit }: { onCreate: () => void; onEdit: (id: stri
       {WORKFLOWS.some(w => w.conflict) && (
         <div style={{
           background: "var(--astra-yellow-bg)", border: "1px solid var(--astra-yellow-border)",
-          padding: "10px 14px", borderRadius: "5px", marginBottom: "16px",
+          padding: "10px 14px", borderRadius: "4px", marginBottom: "16px",
           display: "flex", alignItems: "center", gap: "10px",
           fontSize: "var(--text-mono-lg)", color: "var(--astra-yellow)",
         }}>
@@ -218,7 +218,7 @@ function Landing({ onCreate, onEdit }: { onCreate: () => void; onEdit: (id: stri
                 style={{
                   background: "var(--astra-surface)",
                   border: "1px solid var(--astra-border-light)",
-                  borderRadius: "5px",
+                  borderRadius: "4px",
                   padding: "12px 14px",
                   cursor: "pointer",
                   display: "grid",
@@ -614,7 +614,7 @@ function Edit({ editingId, setScreen }: { editingId: string | null; setScreen: (
       {wf.inFlight && wf.inFlight > 0 && (
         <div style={{
           background: "var(--astra-yellow-bg)", border: "1px solid var(--astra-yellow-border)",
-          padding: "10px 14px", borderRadius: "5px", marginBottom: "16px",
+          padding: "10px 14px", borderRadius: "4px", marginBottom: "16px",
           display: "flex", alignItems: "center", gap: "10px",
           fontSize: "var(--text-mono-lg)", color: "var(--astra-yellow)",
         }}>
@@ -756,7 +756,7 @@ function PlainLanguagePreview({ preview, hint }: { preview: string; hint: string
     <div style={{
       background: "var(--astra-blue-bg)",
       border: "1px solid var(--astra-blue-border)",
-      borderRadius: "5px",
+      borderRadius: "4px",
       padding: "12px 14px",
       marginBottom: "16px",
       display: "flex", alignItems: "flex-start", gap: "10px",
