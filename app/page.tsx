@@ -2533,7 +2533,7 @@ function ContactPanel() {
             marginBottom: "12px",
           }}
         >
-          Let&apos;s create stories together
+          Let&apos;s talk.
         </motion.h2>
 
         {/* Subtext */}
@@ -2558,7 +2558,7 @@ function ContactPanel() {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE, delay: 0.16 }}
-          style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "48px" }}
+          style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "24px" }}
         >
           {/* Contact pills -Tier 2 canonical (snapped to match workspace
               About pills exactly: var(--text) on hover, no redundant
@@ -2567,17 +2567,17 @@ function ContactPanel() {
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "7px 12px", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface)",
+              color: copied ? "var(--accent-success)" : "var(--text)",
+              padding: "7px 14px", borderRadius: "8px",
+              border: "1px solid var(--text)", background: "var(--surface2)",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -2724,7 +2724,7 @@ function ContactPanel() {
               </svg>
               <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)" }}>Hyderabad, India</span>
             </div>
-            <ISTClock style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.05em", color: "var(--muted)", textTransform: "uppercase" }} />
+            <ISTClock style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.05em", color: "var(--muted)", textTransform: "uppercase" }} />
           </div>
         </motion.div>
 
