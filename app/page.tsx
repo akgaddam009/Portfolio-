@@ -1403,8 +1403,8 @@ function WorkPanel() {
                 accent: <AccentChip label="Consumer Mobile" tone="emerald" icon={LayoutGrid} />,
                 tags: ["UX Research", "Onboarding"],
                 href: "https://drive.google.com/file/d/1w9phRxE7f3G9shoPu7CVFMAG6xMVaqi9/view?usp=sharing",
-                thumbnail: "/images/fancode/overall-homepage.jpg",
-                thumbnailPosition: "center top",
+                thumbnail: "/images/fancode-ftux/fc-ftux-thumbnail.jpg",
+                thumbnailPosition: "center center",
               },
               {
                 title: "Designed vendor credit/loan approval process",
