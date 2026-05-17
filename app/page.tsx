@@ -574,7 +574,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          I help product teams reduce ambiguity through research, rapid validation, and structured UX thinking. These days, I lean on AI to move faster and test ideas.</motion.h1>
+          I help product teams <InlineChip label="reduce ambiguity" tone="sage" scale="match" variant="strip" /> through <InlineChip label="research, rapid validation, and structured UX thinking" tone="sage" scale="match" variant="strip" />. These days, I lean on AI to move faster and test ideas.</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
