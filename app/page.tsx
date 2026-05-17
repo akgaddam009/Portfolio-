@@ -2534,24 +2534,27 @@ function ContactPanel() {
           transition={{ duration: 0.45, ease: EASE, delay: 0.16 }}
           style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "24px" }}
         >
-          {/* Contact pills -Tier 2 canonical (snapped to match workspace
-              About pills exactly: var(--text) on hover, no redundant
-              borderColor flip, box-shadow in transition). */}
+          {/* Contact pills — modern pill style: transparent default, hairline
+              border, tight padding, subtle surface fill on hover. Pill radius
+              + smaller height reads cleaner than the prior rectangular 44px
+              boxes. Touch-target floor restored on coarse pointers only
+              (mobile / tablet) via the .cta-pill class in globals.css. */}
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
+            className="cta-pill"
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--text)",
-              padding: "8px 16px", minHeight: "var(--space-8)", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface2)",
+              padding: "6px 14px",
+              borderRadius: "9999px",
+              border: "1px solid var(--border)",
+              background: "transparent",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
+              transition: "color 0.18s, background 0.18s, border-color 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; e.currentTarget.style.background = "var(--surface3, var(--surface2))"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "var(--surface2)"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -2559,17 +2562,19 @@ function ContactPanel() {
           <Link
             href="https://www.linkedin.com/in/akgaddam/"
             target="_blank" rel="noopener noreferrer"
+            className="cta-pill"
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--text)",
-              padding: "8px 16px", minHeight: "var(--space-8)", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface2)",
+              padding: "6px 14px",
+              borderRadius: "9999px",
+              border: "1px solid var(--border)",
+              background: "transparent",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
+              transition: "color 0.18s, background 0.18s, border-color 0.18s",
+              textDecoration: "none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; e.currentTarget.style.background = "var(--surface3, var(--surface2))"; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "var(--surface2)"; }}
           >
             LinkedIn
             <ArrowUpRight size={11} strokeWidth={1.5} />
@@ -2578,17 +2583,19 @@ function ContactPanel() {
           <Link
             href="https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing"
             target="_blank" rel="noopener noreferrer"
+            className="cta-pill"
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--text)",
-              padding: "8px 16px", minHeight: "var(--space-8)", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface2)",
+              padding: "6px 14px",
+              borderRadius: "9999px",
+              border: "1px solid var(--border)",
+              background: "transparent",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
+              transition: "color 0.18s, background 0.18s, border-color 0.18s",
+              textDecoration: "none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; e.currentTarget.style.background = "var(--surface3, var(--surface2))"; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "var(--surface2)"; }}
           >
             CV
             <ArrowUpRight size={11} strokeWidth={1.5} />
