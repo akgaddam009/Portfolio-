@@ -5,7 +5,7 @@
    Tones map to theme-aware CSS variables (--chip-{tone}-text/bg) so chips
    auto-adapt between light and dark themes. */
 
-export type ChipTone = "indigo" | "teal" | "amber" | "violet" | "emerald" | "yellow";
+export type ChipTone = "indigo" | "teal" | "amber" | "violet" | "emerald" | "warm";
 
 export function InlineChip({ icon: Icon, label, tone, scale = "default", variant = "chip" }: {
   icon?: (p: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) => React.ReactElement;

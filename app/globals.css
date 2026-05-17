@@ -139,11 +139,11 @@
   --chip-amber-strip:   color-mix(in srgb, #b45309 16%, transparent);
   --chip-violet-strip:  color-mix(in srgb, #5b21b6 16%, transparent);
   --chip-emerald-strip: color-mix(in srgb, #047857 16%, transparent);
-  /* Yellow — post-it palette. Saturated warm gold at 32% so the strip
-     reads clearly at 24px H1 size without washing out nearby text. */
-  --chip-yellow-text:   #92600A;
-  --chip-yellow-bg:     color-mix(in srgb, #FFCC00 12%, transparent);
-  --chip-yellow-strip:  color-mix(in srgb, #FFCC00 40%, transparent);
+  /* Warm — tied to --accent-warm (#d17b53 burnt terracotta), the site's
+     own brand accent. Strip at 26%: visible but not garish at 24px H1. */
+  --chip-warm-text:   #b5622f;
+  --chip-warm-bg:     color-mix(in srgb, #d17b53 9%, transparent);
+  --chip-warm-strip:  color-mix(in srgb, #d17b53 26%, transparent);
 }
 
 /* ─── Dark theme — 3-level hierarchy, lifted scale ─
@@ -202,9 +202,9 @@
   --chip-amber-strip:   color-mix(in srgb, #d6c178 16%, transparent);
   --chip-violet-strip:  color-mix(in srgb, #b8aed4 16%, transparent);
   --chip-emerald-strip: color-mix(in srgb, #9bc9af 16%, transparent);
-  --chip-yellow-text:   #d6b84a;
-  --chip-yellow-bg:     color-mix(in srgb, #FFD700 10%, transparent);
-  --chip-yellow-strip:  color-mix(in srgb, #FFD700 28%, transparent);
+  --chip-warm-text:   #e8a07a;
+  --chip-warm-bg:     color-mix(in srgb, #e8a07a 10%, transparent);
+  --chip-warm-strip:  color-mix(in srgb, #e8a07a 22%, transparent);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */
