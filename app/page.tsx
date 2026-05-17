@@ -509,7 +509,7 @@ const infoRows: { label: string; value: string; valueNode?: React.ReactNode; chi
   {
     label: "Industries",
     value: "",
-    chips: ["B2B", "SaaS", "Fintech", "Manufacturing", "Healthcare", "HRIS", "Entertainment", "ERP", "Customer Experience"],
+    chips: ["B2B", "SaaS", "Fintech", "Manufacturing", "Entertainment", "Customer Experience"],
   },
 ];
 
@@ -552,7 +552,7 @@ function AboutPanel() {
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: "var(--muted)",
-            marginBottom: "10px",
+            marginBottom: "6px",
           }}
         >
           Senior Product Designer · 8+ years
@@ -574,7 +574,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Helping businesses <InlineChip label="design" tone="indigo" scale="match" /> products by aligning <InlineChip label="user needs" tone="teal" scale="match" /> <InlineChip label="business strategy" tone="amber" scale="match" /> and the messy reality in between</motion.h1>
+          Helping businesses <InlineChip label="design" tone="indigo" scale="match" /> products by aligning user needs, business strategy, and the messy reality in between</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
@@ -588,7 +588,7 @@ function AboutPanel() {
             lineHeight: 1.65,
             letterSpacing: "-0.01em",
             color: "var(--muted)",
-            marginBottom: "20px",
+            marginBottom: "28px",
           }}
         >
           I&apos;m hands on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
@@ -611,16 +611,16 @@ function AboutPanel() {
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--text)",
               padding: "7px 14px", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface2)",
+              border: "1px solid var(--border)", background: "transparent",
               cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
+              transition: "color 0.18s, background 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.background = "var(--surface2)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.background = "transparent"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -636,16 +636,16 @@ function AboutPanel() {
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
               style={{
-                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                 letterSpacing: "0.08em", textTransform: "uppercase",
                 color: "var(--text)",
                 padding: "7px 14px", borderRadius: "8px",
-                border: "1px solid var(--border)", background: "var(--surface2)",
+                border: "1px solid var(--border)", background: "transparent",
                 display: "inline-flex", alignItems: "center", gap: "6px",
-                transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
+                transition: "color 0.18s, background 0.18s",
               }}
-              onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-              onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
+              onMouseEnter={e => { e.currentTarget.style.background = "var(--surface2)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
             >
               {label}
               <ArrowUpRight size={11} strokeWidth={1.5} />
