@@ -223,65 +223,41 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         @media (max-width: 1180px) {
           .cs-rail { display: none !important; }
         }
-        .cs-rail-item:not(.is-active):hover {
-          color: color-mix(in srgb, var(--muted) 50%, var(--text)) !important;
+        .cs-rail-item:hover {
+          color: var(--text) !important;
         }
+
+        /* Section rail — editorial mono caps list, design-system aligned.
+           Echoes the rest of the portfolio:
+           - Mono caps eyebrow type (same as Experience/Industries labels)
+           - --muted → --text color lift on hover/active
+           - --accent-warm bar as the indicator (echoes the "Now" dot)
+           - Left hairline anchors the list to the page edge */
+
+        /* Hairline rail edge — gives the list a visual spine */
+        .cs-rail-track {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 1px;
+          background: var(--border);
+        }
+
+        /* Active indicator — a 2px terracotta bar that slides between
+           items via Framer Motion layoutId. Sits on top of the hairline. */
+        .cs-rail-indicator {
+          position: absolute;
+          left: -1px;
+          width: 2px;
+          background: var(--accent-warm);
+          border-radius: 1px;
+        }
+
         .cs-rail-item:focus-visible {
           outline: 2px solid var(--text);
           outline-offset: 2px;
           border-radius: 4px;
-        }
-
-        /* Ruler-scale rail. Idle: thin horizontal ticks (one per section).
-           Active tick is longer and var(--text); inactive ticks are short
-           and muted. Labels are hidden at rest.
-           On hover or keyboard focus: ticks fade back, labels slide in.
-           Pattern adapted from collectui.com nav inspiration. */
-        .cs-rail-tick {
-          display: block;
-          width: 14px;
-          height: 1.5px;
-          background: var(--muted);
-          opacity: 0.45;
-          border-radius: 1px;
-          flex-shrink: 0;
-          transition:
-            width 0.3s cubic-bezier(0.22,1,0.36,1),
-            background 0.3s cubic-bezier(0.22,1,0.36,1),
-            opacity 0.3s cubic-bezier(0.22,1,0.36,1);
-        }
-        .cs-rail-item.is-active .cs-rail-tick {
-          width: 22px;
-          background: var(--text);
-          opacity: 1;
-        }
-        .cs-rail:hover .cs-rail-tick {
-          width: 8px;
-          opacity: 0.3;
-        }
-        .cs-rail:hover .cs-rail-item.is-active .cs-rail-tick {
-          width: 12px;
-          opacity: 0.7;
-        }
-
-        .cs-rail-label {
-          display: inline-block;
-          opacity: 0;
-          transform: translateX(-6px);
-          transition:
-            opacity 0.25s cubic-bezier(0.22,1,0.36,1),
-            transform 0.25s cubic-bezier(0.22,1,0.36,1);
-        }
-        .cs-rail:hover .cs-rail-label,
-        .cs-rail:focus-within .cs-rail-label {
-          opacity: 1;
-          transform: translateX(0);
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .cs-rail-tick, .cs-rail-label {
-            transition: opacity 0.15s ease;
-            transform: none;
-          }
         }
 
         /* Back button — must meet 44px touch target */
@@ -753,9 +729,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         position: "relative",
                         display: "flex",
                         flexDirection: "column",
-                        paddingTop: "8px",
+                        paddingLeft: "16px",
                       }}
                     >
+                      {/* Hairline spine — left edge of the rail */}
+                      <span className="cs-rail-track" aria-hidden="true" />
+
                       {NAV_SECTIONS.map(({ id, label }) => {
                         const active = activeSection === id;
                         return (
@@ -769,26 +748,32 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             className={active ? "cs-rail-item is-active" : "cs-rail-item"}
                             style={{
                               position: "relative",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "12px",
-                              padding: "4px 12px 4px 16px",
-                              fontFamily: "var(--font-body)",
-                              fontSize: "var(--text-body)",
+                              display: "block",
+                              padding: "10px 0",
+                              fontFamily: "var(--font-mono)",
+                              fontSize: "var(--text-mono)",
                               fontWeight: 400,
-                              lineHeight: 1.4,
-                              letterSpacing: "-0.01em",
+                              lineHeight: 1.3,
+                              letterSpacing: "0.1em",
+                              textTransform: "uppercase",
                               color: active ? "var(--text)" : "var(--muted)",
                               textDecoration: "none",
-                              transition:
-                                "color 0.3s cubic-bezier(0.22,1,0.36,1)",
+                              transition: "color 0.25s cubic-bezier(0.22,1,0.36,1)",
                             }}
                           >
-                            {/* Tick — ruler-scale marker visible at rest.
-                                Active item gets a longer var(--text) tick;
-                                inactive items get a short var(--muted) tick. */}
-                            <span className="cs-rail-tick" aria-hidden="true" />
-                            <span className="cs-rail-label">{label}</span>
+                            {/* Sliding accent bar — only renders on the active
+                                item; layoutId animates it to the new position
+                                when activeSection changes. Echoes the warm
+                                "Now" dot pattern from the career timeline. */}
+                            {active && (
+                              <motion.span
+                                layoutId="cs-rail-indicator"
+                                className="cs-rail-indicator"
+                                style={{ top: 0, bottom: 0 }}
+                                transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                              />
+                            )}
+                            {label}
                           </a>
                         );
                       })}
