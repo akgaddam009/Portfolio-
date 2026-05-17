@@ -1199,17 +1199,15 @@ function tagIcon(tag: string) {
 
 /* Shared greyscale chip -icon + label, same mono style as before. */
 function WorkChip({ label }: { label: string }) {
-  const Icon = tagIcon(label);
   return (
     <span style={{
-      display: "inline-flex", alignItems: "center", gap: "3px",
+      display: "inline-flex", alignItems: "center",
       fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
-      padding: "3px 8px 3px 6px", background: "var(--surface2)",
+      padding: "3px 8px", background: "var(--surface2)",
       border: "1px solid var(--border)",
       color: "var(--text)", borderRadius: "6px",
     }}>
-      <Icon size={10} strokeWidth={1.5} style={{ flexShrink: 0, opacity: 0.6 }} />
       {label}
     </span>
   );
@@ -1224,17 +1222,16 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
 }) {
   return (
     <span style={{
-      display: "inline-flex", alignItems: "center", gap: Icon ? "4px" : "0",
+      display: "inline-flex", alignItems: "center",
       fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
-      padding: Icon ? "3px 8px 3px 6px" : "3px 8px",
+      padding: "3px 8px",
       background: `var(--chip-${tone}-bg)`,
       border: `1px solid color-mix(in srgb, var(--chip-${tone}-text) 50%, transparent)`,
       color: `var(--chip-${tone}-text)`,
       borderRadius: "6px",
       lineHeight: 1.4,
     }}>
-      {Icon && <Icon size={10} strokeWidth={1.5} style={{ flexShrink: 0 }} />}
       {label}
     </span>
   );
