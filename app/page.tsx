@@ -574,7 +574,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Helping businesses <InlineChip label="design" tone="indigo" scale="match" variant="strip" /> products by aligning user needs, business strategy, and the messy reality in between</motion.h1>
+          Helping businesses <InlineChip label="design" tone="indigo" scale="match" variant="strip" /> <InlineChip label="products by aligning user needs, business strategy" tone="yellow" scale="match" variant="strip" />, and the messy reality in between</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}

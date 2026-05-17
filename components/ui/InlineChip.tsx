@@ -5,7 +5,7 @@
    Tones map to theme-aware CSS variables (--chip-{tone}-text/bg) so chips
    auto-adapt between light and dark themes. */
 
-export type ChipTone = "indigo" | "teal" | "amber" | "violet" | "emerald";
+export type ChipTone = "indigo" | "teal" | "amber" | "violet" | "emerald" | "yellow";
 
 export function InlineChip({ icon: Icon, label, tone, scale = "default", variant = "chip" }: {
   icon?: (p: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) => React.ReactElement;
@@ -42,17 +42,25 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default", variant
     const isStrip = variant === "strip";
     return (
       <span style={{
-        display: "inline-block",
+        /* Strip: display "inline" + boxDecorationBreak "clone" lets the
+           background repeat on each wrapped line — right for multi-word
+           phrases like "products by aligning user needs, business strategy".
+           Chip: inline-block keeps the rounded pill as a single non-wrapping unit. */
+        display: isStrip ? "inline" : "inline-block",
+        ...(isStrip ? {
+          WebkitBoxDecorationBreak: "clone" as const,
+          boxDecorationBreak: "clone" as const,
+        } : {}),
         /* Padding tuned for breathing room without overpowering surrounding
            text. Horizontal 14 px so the chip body isn't cramped at small
            sizes; vertical 0.1em (proportional, ≈1.4 px at 14 px Contact,
            2.4 px at 24 px H1) so the bg has a sliver of space above/below
            the cap height.
            Strip: slightly more vertical breathing (0.15em) so the highlight
-           band has presence without enlarging the line box. Radius 2px —
+           band has presence without enlarging the line box. Radius 3px —
            rectangular highlighter, not a pill. */
         padding: isStrip
-          ? (hasIcon ? "0.15em 12px 0.15em 9px" : "0.15em 12px")
+          ? (hasIcon ? "0.15em 10px 0.15em 8px" : "0.15em 10px")
           : (hasIcon ? "0.1em 14px 0.1em 10px" : "0.1em 14px"),
         borderRadius: isStrip ? "3px" : "0.3em",
         background: isStrip ? `var(--chip-${tone}-strip)` : `var(--chip-${tone}-bg)`,
@@ -66,8 +74,8 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default", variant
         fontWeight: "inherit",
         letterSpacing: "inherit",
         lineHeight: 1.25,
-        verticalAlign: "baseline",
-        whiteSpace: "nowrap",
+        verticalAlign: isStrip ? undefined : "baseline",
+        whiteSpace: isStrip ? undefined : "nowrap",
       }}>
         {Icon && (
           <Icon
