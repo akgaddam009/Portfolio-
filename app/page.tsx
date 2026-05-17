@@ -574,7 +574,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Helping businesses <InlineChip label="design" tone="sage" scale="match" variant="strip" /> <InlineChip label="products by aligning user needs, business strategy" tone="sage" scale="match" variant="strip" />, and the messy reality in between</motion.h1>
+          I help product teams reduce ambiguity through research, rapid validation, and structured UX thinking. These days, I lean on AI to move faster and test ideas.</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
@@ -591,7 +591,7 @@ function AboutPanel() {
             marginBottom: "28px",
           }}
         >
-          I&apos;m hands on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
+          I&apos;m hands on throughout the entire process, from strategy to execution.
         </motion.p>
 
         {/* Contact links -moved above Focus, no label. Touch-target safe
