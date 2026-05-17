@@ -131,6 +131,14 @@
   --chip-violet-bg:     color-mix(in srgb, #5b21b6 9%, transparent);
   --chip-emerald-text:  #047857;
   --chip-emerald-bg:    color-mix(in srgb, #047857 10%, transparent);
+
+  /* Strip variant — richer fill (16%) for background-highlight style.
+     Text stays --text (dark), only the background carries the accent colour. */
+  --chip-indigo-strip:  color-mix(in srgb, #4f46e5 16%, transparent);
+  --chip-teal-strip:    color-mix(in srgb, #0d9488 16%, transparent);
+  --chip-amber-strip:   color-mix(in srgb, #b45309 16%, transparent);
+  --chip-violet-strip:  color-mix(in srgb, #5b21b6 16%, transparent);
+  --chip-emerald-strip: color-mix(in srgb, #047857 16%, transparent);
 }
 
 /* ─── Dark theme — 3-level hierarchy, lifted scale ─
@@ -182,6 +190,13 @@
   --chip-violet-bg:     color-mix(in srgb, #b8aed4 10%, transparent);
   --chip-emerald-text:  #9bc9af;
   --chip-emerald-bg:    color-mix(in srgb, #9bc9af 10%, transparent);
+
+  /* Strip variant — dark mode. Lighter tones, same 16% fill. */
+  --chip-indigo-strip:  color-mix(in srgb, #a8b0d8 16%, transparent);
+  --chip-teal-strip:    color-mix(in srgb, #88c7be 16%, transparent);
+  --chip-amber-strip:   color-mix(in srgb, #d6c178 16%, transparent);
+  --chip-violet-strip:  color-mix(in srgb, #b8aed4 16%, transparent);
+  --chip-emerald-strip: color-mix(in srgb, #9bc9af 16%, transparent);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */

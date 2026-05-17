@@ -7,12 +7,14 @@
 
 export type ChipTone = "indigo" | "teal" | "amber" | "violet" | "emerald";
 
-export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
+export function InlineChip({ icon: Icon, label, tone, scale = "default", variant = "chip" }: {
   icon?: (p: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) => React.ReactElement;
   label: string;
   tone: ChipTone;
   /** "default" → 12px chip for body prose; "match" → inherits parent font-size for headings. */
   scale?: "default" | "match";
+  /** "chip" (default) → rounded pill, tinted text; "strip" → rectangular highlight, text stays --text. */
+  variant?: "chip" | "strip";
 }) {
   const isMatch = scale === "match";
   const hasIcon = Boolean(Icon);
@@ -37,6 +39,7 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
      For body prose (default scale), the centered inline-flex layout
      remains because the visual difference is sub-pixel at 12px. */
   if (isMatch) {
+    const isStrip = variant === "strip";
     return (
       <span style={{
         display: "inline-block",
@@ -44,11 +47,16 @@ export function InlineChip({ icon: Icon, label, tone, scale = "default" }: {
            text. Horizontal 14 px so the chip body isn't cramped at small
            sizes; vertical 0.1em (proportional, ≈1.4 px at 14 px Contact,
            2.4 px at 24 px H1) so the bg has a sliver of space above/below
-           the cap height. Radius 0.3em — soft corners, not a pill. */
-        padding: hasIcon ? "0.1em 14px 0.1em 10px" : "0.1em 14px",
-        borderRadius: "0.3em",
-        background: `var(--chip-${tone}-bg)`,
-        color: `var(--chip-${tone}-text)`,
+           the cap height.
+           Strip: slightly more vertical breathing (0.15em) so the highlight
+           band has presence without enlarging the line box. Radius 2px —
+           rectangular highlighter, not a pill. */
+        padding: isStrip
+          ? (hasIcon ? "0.15em 12px 0.15em 9px" : "0.15em 12px")
+          : (hasIcon ? "0.1em 14px 0.1em 10px" : "0.1em 14px"),
+        borderRadius: isStrip ? "3px" : "0.3em",
+        background: isStrip ? `var(--chip-${tone}-strip)` : `var(--chip-${tone}-bg)`,
+        color: isStrip ? "var(--text)" : `var(--chip-${tone}-text)`,
         fontFamily: "var(--font-body)",
         fontSize: "inherit",
         /* fontWeight + letterSpacing inherit so chip text shares the
