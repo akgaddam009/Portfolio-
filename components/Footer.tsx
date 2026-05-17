@@ -39,20 +39,20 @@ export default function Footer() {
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
-              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500,
               letterSpacing: "-0.01em",
-              color: copied ? "var(--accent-success)" : "var(--muted)",
+              color: copied ? "var(--accent-success)" : "var(--text)",
               minHeight: "var(--space-8)",
               padding: "var(--space-3) var(--space-5)",
               borderRadius: "12px",
               border: "1px solid var(--border)",
-              background: "transparent",
+              background: "var(--surface2)",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "var(--space-2)",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s",
+              transition: "color 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -62,20 +62,20 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500,
               letterSpacing: "-0.01em",
-              color: "var(--muted)",
+              color: "var(--text)",
               minHeight: "var(--space-8)",
               padding: "var(--space-3) var(--space-5)",
               borderRadius: "12px",
               border: "1px solid var(--border)",
-              background: "transparent",
+              background: "var(--surface2)",
               display: "inline-flex", alignItems: "center", gap: "var(--space-2)",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s",
+              transition: "color 0.18s, box-shadow 0.18s",
               textDecoration: "none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--text)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
           >
             <span style={{ fontSize: "var(--text-mono-lg)" }}>↗</span>
             LinkedIn

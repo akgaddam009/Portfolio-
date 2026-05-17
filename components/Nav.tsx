@@ -142,16 +142,16 @@ export default function Nav() {
                 gap: "6px",
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-body)",
-                fontWeight: 400,
-                color: copied ? "var(--accent-success)" : "var(--muted)",
+                fontWeight: 500,
+                color: copied ? "var(--accent-success)" : "var(--text)",
                 background: "none",
                 border: "none",
                 padding: "0",
                 transition: "color 0.2s",
                 letterSpacing: "-0.01em",
               }}
-              onMouseEnter={e => { if (!copied) e.currentTarget.style.color = "var(--text)"; }}
-              onMouseLeave={e => { if (!copied) e.currentTarget.style.color = "var(--muted)"; }}
+              onMouseEnter={e => { if (!copied) e.currentTarget.style.opacity = "0.7"; }}
+              onMouseLeave={e => { if (!copied) e.currentTarget.style.opacity = "1"; }}
             >
               <span style={{ fontSize: "var(--text-mono-lg)" }}>{copied ? "✓" : "✉"}</span>
               {copied ? "Copied!" : "Copy email"}

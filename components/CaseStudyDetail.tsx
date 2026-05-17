@@ -4084,31 +4084,21 @@ function CaseStudyContactCluster() {
         style={{
           fontFamily: "var(--font-body)",
           fontSize: "var(--text-caption)",
-          fontWeight: 400,
+          fontWeight: 500,
           letterSpacing: "-0.01em",
-          color: copied ? "var(--accent-success)" : "var(--muted)",
+          color: copied ? "var(--accent-success)" : "var(--text)",
           padding: "8px 14px",
           borderRadius: "8px",
           border: "1px solid var(--border)",
-          background: "transparent",
+          background: "var(--surface2)",
           cursor: "pointer",
           display: "inline-flex",
           alignItems: "center",
           gap: "5px",
-          transition: "color 0.18s, border-color 0.18s, background 0.18s",
+          transition: "color 0.18s, box-shadow 0.18s",
         }}
-        onMouseEnter={e => {
-          if (!copied) {
-            e.currentTarget.style.color = "var(--text)";
-            e.currentTarget.style.borderColor = "var(--text)";
-          }
-        }}
-        onMouseLeave={e => {
-          if (!copied) {
-            e.currentTarget.style.color = "var(--muted)";
-            e.currentTarget.style.borderColor = "var(--border)";
-          }
-        }}
+        onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
+        onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; } }}
       >
         {copied ? "Copied ✓" : "Copy email"}
       </button>
@@ -4120,27 +4110,21 @@ function CaseStudyContactCluster() {
         style={{
           fontFamily: "var(--font-body)",
           fontSize: "var(--text-caption)",
-          fontWeight: 400,
+          fontWeight: 500,
           letterSpacing: "-0.01em",
-          color: "var(--muted)",
+          color: "var(--text)",
           padding: "8px 14px",
           borderRadius: "8px",
           border: "1px solid var(--border)",
-          background: "transparent",
+          background: "var(--surface2)",
           display: "inline-flex",
           alignItems: "center",
           gap: "5px",
-          transition: "color 0.18s, border-color 0.18s, background 0.18s",
+          transition: "color 0.18s, box-shadow 0.18s",
           textDecoration: "none",
         }}
-        onMouseEnter={e => {
-          e.currentTarget.style.color = "var(--text)";
-          e.currentTarget.style.borderColor = "var(--text)";
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.color = "var(--muted)";
-          e.currentTarget.style.borderColor = "var(--border)";
-        }}
+        onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+        onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
       >
         <ArrowUpRight size={11} strokeWidth={1.5} />
         LinkedIn
