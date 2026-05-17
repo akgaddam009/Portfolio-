@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+/* ─── Animatable custom properties ──────────────────────
+   @property registers each colour token as a typed, inheritable CSS
+   variable. Once registered, browsers can interpolate between values
+   when the variable changes — so transitioning on :root causes every
+   element that inherits the variable (including inline-style users) to
+   animate automatically. No overlay, no JS, no specificity fights.
+   initial-value must match the light-theme value in :root below.
+   Graceful degradation: unsupported browsers get instant theme switch. */
+
+@property --bg       { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --surface  { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --surface2 { syntax: "<color>"; inherits: true; initial-value: #f5f5f7; }
+@property --border   { syntax: "<color>"; inherits: true; initial-value: #d2d2d7; }
+@property --chrome   { syntax: "<color>"; inherits: true; initial-value: #f5f5f5; }
+@property --text         { syntax: "<color>"; inherits: true; initial-value: #1d1d1f; }
+@property --text-display { syntax: "<color>"; inherits: true; initial-value: #3a3a3c; }
+@property --text-hover   { syntax: "<color>"; inherits: true; initial-value: #3a3a3c; }
+@property --muted    { syntax: "<color>"; inherits: true; initial-value: #6e6e73; }
+@property --muted2   { syntax: "<color>"; inherits: true; initial-value: #424245; }
+@property --accent-warm  { syntax: "<color>"; inherits: true; initial-value: #d17b53; }
+
 /* ─── Design Tokens — Apple-inspired light system ────
    Apple's light theme: pure white is the ELEVATED layer (cards), not the base.
    The page itself sits on a barely-tinted cool gray. Text is never pure black —
@@ -164,6 +185,27 @@
   --chip-sage-text:   #4a7000;
   --chip-sage-bg:     color-mix(in srgb, #B8E84D 14%, transparent);
   --chip-sage-strip:  color-mix(in srgb, #B8E84D 38%, transparent);
+}
+
+/* ─── Theme colour transitions ───────────────────────────
+   Transitions on :root animate the registered custom properties.
+   Because the variables inherit, every element that consumes them —
+   including React inline styles — interpolates automatically.
+   Backgrounds move at 420ms (larger visual surface, needs more time);
+   text and borders at 320ms (snappier reads as intentional). */
+:root {
+  transition:
+    --bg       420ms cubic-bezier(0.22, 1, 0.36, 1),
+    --chrome   420ms cubic-bezier(0.22, 1, 0.36, 1),
+    --surface  420ms cubic-bezier(0.22, 1, 0.36, 1),
+    --surface2 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    --border   320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --text         320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --text-display 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --text-hover   320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --muted    320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --muted2   320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --accent-warm 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ─── Dark theme — 3-level hierarchy, lifted scale ─

@@ -29,49 +29,11 @@ export default function ThemeToggle() {
 
   const toggle = () => {
     const next = !dark;
-
-    // Instant switch for reduced-motion users
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDark(next);
-      document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
-      localStorage.setItem("theme", next ? "dark" : "light");
-      return;
-    }
-
-    // ── Colour-wash crossfade ────────────────────────────────────────────
-    // 1. A full-screen overlay (new theme's canvas colour) fades in over the
-    //    current page — 260ms ease-out.
-    // 2. Theme tokens swap underneath (invisible behind the overlay).
-    // 3. Overlay fades out — 520ms ease-out — revealing the new theme.
-    // Net: ~780ms, silky. No specificity battles with inline styles.
-    const incomingBg = next ? "#141414" : "#ffffff";
-
-    const overlay = document.createElement("div");
-    overlay.style.cssText = [
-      "position:fixed", "inset:0", "z-index:99998",
-      `background:${incomingBg}`,
-      "opacity:0", "pointer-events:none",
-      "transition:opacity 260ms cubic-bezier(0.22,1,0.36,1)",
-      "will-change:opacity",
-    ].join(";");
-    document.body.appendChild(overlay);
-
-    // Trigger layout so the transition fires on the next paint
-    void overlay.offsetHeight;
-    overlay.style.opacity = "1";
-
-    setTimeout(() => {
-      // Apply new theme while fully covered
-      setDark(next);
-      document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
-      localStorage.setItem("theme", next ? "dark" : "light");
-
-      // Fade out — longer so the new theme "settles in"
-      overlay.style.transition = "opacity 520ms cubic-bezier(0.22,1,0.36,1)";
-      overlay.style.opacity    = "0";
-
-      setTimeout(() => overlay.remove(), 540);
-    }, 270);
+    setDark(next);
+    document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
+    localStorage.setItem("theme", next ? "dark" : "light");
+    // CSS @property transitions handle the smooth animation —
+    // see globals.css ":root { transition: --bg ..., --surface ..., ... }"
   };
 
   // Render a placeholder on SSR so layout doesn't shift
