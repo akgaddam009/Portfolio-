@@ -139,11 +139,11 @@
   --chip-amber-strip:   color-mix(in srgb, #b45309 16%, transparent);
   --chip-violet-strip:  color-mix(in srgb, #5b21b6 16%, transparent);
   --chip-emerald-strip: color-mix(in srgb, #047857 16%, transparent);
-  /* Sage — muted olive-green, desaturated (~30% chroma). Editorial, not eco.
-     Strip at 22% on white gives a soft sage wash visible at 24px H1. */
-  --chip-sage-text:   #3d6b59;
-  --chip-sage-bg:     color-mix(in srgb, #5f8b78 9%, transparent);
-  --chip-sage-strip:  color-mix(in srgb, #5f8b78 22%, transparent);
+  /* Sage tone — currently using FDD017 (marigold gold) per user pick.
+     Yellow-on-white needs ~38% fill to have real presence at 24px H1. */
+  --chip-sage-text:   #7a5c00;
+  --chip-sage-bg:     color-mix(in srgb, #FDD017 12%, transparent);
+  --chip-sage-strip:  color-mix(in srgb, #FDD017 38%, transparent);
 }
 
 /* ─── Dark theme — 3-level hierarchy, lifted scale ─
@@ -202,9 +202,9 @@
   --chip-amber-strip:   color-mix(in srgb, #d6c178 16%, transparent);
   --chip-violet-strip:  color-mix(in srgb, #b8aed4 16%, transparent);
   --chip-emerald-strip: color-mix(in srgb, #9bc9af 16%, transparent);
-  --chip-sage-text:   #7bbfa8;
-  --chip-sage-bg:     color-mix(in srgb, #7bbfa8 10%, transparent);
-  --chip-sage-strip:  color-mix(in srgb, #7bbfa8 20%, transparent);
+  --chip-sage-text:   #c9a200;
+  --chip-sage-bg:     color-mix(in srgb, #FDD017 10%, transparent);
+  --chip-sage-strip:  color-mix(in srgb, #FDD017 32%, transparent);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */
