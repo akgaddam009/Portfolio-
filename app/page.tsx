@@ -611,16 +611,16 @@ function AboutPanel() {
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "7px 12px", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface)",
+              color: copied ? "var(--accent-success)" : "var(--text)",
+              padding: "7px 14px", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface2)",
               cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.boxShadow = "none"; } }}
           >
             {copied ? "Copied ✓" : "Copy email"}
           </button>
@@ -636,19 +636,19 @@ function AboutPanel() {
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
               style={{
-                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 500,
                 letterSpacing: "0.08em", textTransform: "uppercase",
-                color: "var(--muted)",
-                padding: "7px 12px", borderRadius: "8px",
-                border: "1px solid var(--border)", background: "var(--surface)",
+                color: "var(--text)",
+                padding: "7px 14px", borderRadius: "8px",
+                border: "1px solid var(--border)", background: "var(--surface2)",
                 display: "inline-flex", alignItems: "center", gap: "6px",
-                transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+                transition: "color 0.18s, background 0.18s, box-shadow 0.18s",
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
             >
               {label}
-              <ArrowUpRight size={10} strokeWidth={1.5} />
+              <ArrowUpRight size={11} strokeWidth={1.5} />
             </Link>
           ))}
         </motion.div>
