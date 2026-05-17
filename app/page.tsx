@@ -1428,7 +1428,7 @@ function WorkPanel() {
           }}>
             Archived case studies
           </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             {([
               {
                 title: "Designed first time user experience",
@@ -1507,21 +1507,28 @@ function WorkPanel() {
                         </div>
                       </div>
                     )}
-                    <div style={{ padding: "16px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+                    <div style={{ padding: "18px 20px 20px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
                         {accent}
                         {tags.map(tag => <WorkChip key={tag} label={tag} />)}
                       </div>
                       <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 600,
                         lineHeight: "22px", letterSpacing: "-0.02em",
-                        color: "var(--text)", marginBottom: "4px",
+                        color: "var(--text)", marginBottom: "8px",
                       }}>{title}</h3>
-                      <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
-                        letterSpacing: "-0.01em", color: "var(--muted)",
-                        lineHeight: 1.65, fontWeight: 400, marginBottom: 0,
-                      }}>{subtitle}</p>
+                      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "8px" }}>
+                        <p style={{
+                          fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
+                          letterSpacing: "-0.01em", color: "var(--muted)",
+                          lineHeight: 1.65, fontWeight: 400, marginBottom: 0,
+                        }}>{subtitle}</p>
+                        <span style={{
+                          fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                          color: "var(--muted)", flexShrink: 0, opacity: 0.6,
+                          lineHeight: 1,
+                        }}>↗</span>
+                      </div>
                     </div>
                   </div>
                 </Link>
