@@ -1553,39 +1553,79 @@ function WorkPanel() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="archived-pw-modal-title"
-              initial={{ scale: 0.95, y: 8 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 8 }}
-              transition={{ duration: 0.18, ease: EASE }}
+              initial={{ scale: 0.96, y: 10, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.96, y: 10, opacity: 0 }}
+              transition={{ duration: 0.22, ease: EASE }}
               onClick={(e) => e.stopPropagation()}
               style={{
-                background: "var(--surface)", borderRadius: "16px",
+                background: "var(--surface)", borderRadius: "20px",
                 border: "1px solid var(--border)",
-                boxShadow: "0 24px 60px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)",
-                padding: "24px",
-                maxWidth: "380px", width: "100%",
-                // Prevents the panel from getting taller than the visual
-                // viewport once the keyboard opens; content scrolls instead.
+                boxShadow: "0 32px 80px -16px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06)",
+                padding: "36px 32px 28px",
+                position: "relative",
+                maxWidth: "360px", width: "100%",
                 maxHeight: "calc(100dvh - 32px)",
                 overflowY: "auto",
-                // Keeps the modal clear of iOS notch / Dynamic Island safe area.
                 marginTop: "max(16px, env(safe-area-inset-top))",
                 marginBottom: "max(16px, env(safe-area-inset-bottom))",
               }}
             >
+              {/* Close button */}
+              <button
+                type="button"
+                onClick={() => setPwOpen(false)}
+                aria-label="Close"
+                style={{
+                  position: "absolute",
+                  top: "16px", right: "16px",
+                  width: "28px", height: "28px",
+                  borderRadius: "50%",
+                  background: "var(--surface2)",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "var(--muted)",
+                  fontSize: "16px",
+                  lineHeight: 1,
+                }}
+              >×</button>
+
+              {/* Lock icon */}
+              <div
+                style={{
+                  width: "52px", height: "52px",
+                  borderRadius: "50%",
+                  background: "var(--surface2)",
+                  border: "1px solid var(--border)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  marginBottom: "20px",
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+                  style={{ color: "var(--muted2)" }}
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+
               <h3 id="archived-pw-modal-title" style={{
-                fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
-                color: "var(--text)", marginBottom: "6px",
+                fontFamily: "var(--font-body)", fontSize: "var(--text-title)",
+                fontWeight: 500, letterSpacing: "-0.02em",
+                color: "var(--text)", marginBottom: "6px", lineHeight: 1.25,
               }}>
-                Archived case studies are password protected
+                Password protected
               </h3>
               <p style={{
                 fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
-                color: "var(--muted)", lineHeight: 1.5, marginBottom: "16px",
+                color: "var(--muted)", lineHeight: 1.55, marginBottom: "24px",
               }}>
-                Much of my work is confidential. Please reach out for the password.
+                This work is under NDA. Reach out and I&apos;ll share the password.
               </p>
-              <form onSubmit={submitPassword} aria-label="Unlock archived case studies">
+
+              <form onSubmit={submitPassword} aria-label="Unlock archived case studies" style={{ position: "relative" }}>
                 <label htmlFor="archived-pw-input" className="sr-only">
                   Password
                 </label>
@@ -1596,55 +1636,61 @@ function WorkPanel() {
                   name="password"
                   value={pwInput}
                   onChange={(e) => { setPwInput(e.target.value); setPwError(null); }}
-                  placeholder="Password"
+                  placeholder="Enter password"
                   disabled={pwBusy}
                   autoComplete="off"
                   aria-invalid={pwError !== null}
                   aria-describedby={pwError ? "archived-pw-error" : undefined}
                   style={{
-                    width: "100%", padding: "10px 12px", fontSize: "var(--text-body-lg)",
+                    width: "100%", padding: "11px 14px",
+                    fontSize: "var(--text-body-lg)",
                     fontFamily: "var(--font-body)", color: "var(--text)",
-                    background: "var(--surface2)",
-                    border: `1px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
-                    borderRadius: "8px", outline: "none",
-                    marginBottom: pwError ? "8px" : "16px",
+                    background: "var(--bg)",
+                    border: `1.5px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
+                    borderRadius: "10px", outline: "none",
+                    marginBottom: "10px",
+                    boxSizing: "border-box",
+                    transition: "border-color 0.18s",
                   }}
                 />
                 {pwError && (
                   <p id="archived-pw-error" role="alert" aria-live="polite" style={{
-                    fontSize: "var(--text-caption)", color: "var(--accent-error)", marginBottom: "12px",
-                    fontFamily: "var(--font-body)",
+                    fontSize: "var(--text-caption)", color: "var(--accent-error)", marginBottom: "10px",
+                    fontFamily: "var(--font-mono)", letterSpacing: "0.04em",
                   }}>
                     {pwError === "rate-limited"
                       ? `Too many attempts. Try again in ${retryInSec ?? 0}s.`
                       : pwError === "config"
-                      ? "Server not configured. Please contact me directly."
+                      ? "Server not configured. Contact me directly."
                       : "Incorrect password. Try again."}
                   </p>
                 )}
-                <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-                  <button
-                    type="button"
-                    onClick={() => setPwOpen(false)}
-                    disabled={pwBusy}
-                    style={{
-                      padding: "12px 18px", fontSize: "var(--text-body)", fontFamily: "var(--font-body)",
-                      color: "var(--muted)", background: "transparent",
-                      border: "1px solid var(--border)", borderRadius: "8px",
-                      cursor: "pointer",
-                    }}
-                  >Cancel</button>
-                  <button
-                    type="submit"
-                    disabled={pwBusy}
-                    style={{
-                      padding: "12px 18px", fontSize: "var(--text-body)", fontFamily: "var(--font-body)",
-                      fontWeight: 500, color: "var(--surface)", background: "var(--text)",
-                      border: "1px solid var(--text)", borderRadius: "8px",
-                      cursor: pwBusy ? "wait" : "pointer", opacity: pwBusy ? 0.7 : 1,
-                    }}
-                  >{pwBusy ? "..." : "Unlock"}</button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={pwBusy}
+                  style={{
+                    width: "100%",
+                    padding: "12px", fontSize: "var(--text-body-lg)", fontFamily: "var(--font-body)",
+                    fontWeight: 500, letterSpacing: "-0.01em",
+                    color: "var(--bg)", background: "var(--text)",
+                    border: "none", borderRadius: "10px",
+                    cursor: pwBusy ? "wait" : "pointer", opacity: pwBusy ? 0.65 : 1,
+                    transition: "opacity 0.15s",
+                    marginBottom: "10px",
+                  }}
+                >{pwBusy ? "Unlocking…" : "Unlock"}</button>
+                <button
+                  type="button"
+                  onClick={() => setPwOpen(false)}
+                  disabled={pwBusy}
+                  style={{
+                    width: "100%",
+                    padding: "10px", fontSize: "var(--text-body)", fontFamily: "var(--font-body)",
+                    color: "var(--muted)", background: "transparent",
+                    border: "none", borderRadius: "10px",
+                    cursor: "pointer",
+                  }}
+                >Cancel</button>
               </form>
             </motion.div>
           </motion.div>
