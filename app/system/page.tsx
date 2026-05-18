@@ -555,7 +555,7 @@ export default function SystemPage() {
               >
                 <div style={{ padding: "16px 20px", background: "var(--surface)", borderRadius: "12px", boxShadow: "var(--card-shadow)" }}>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", color: "var(--muted2)", margin: "0 0 8px", lineHeight: 1.6 }}>
-                    Registering each colour token with <code style={codeChip}>@property</code> lets the browser interpolate values when the variable changes. A transition on <code style={codeChip}>:root</code> propagates through every consumer — including React inline styles — without overlays or specificity battles.
+                    Registering each colour token with <code style={codeChip}>@property</code> lets the browser interpolate values when the variable changes. A transition on <code style={codeChip}>:root</code> propagates through every consumer, including React inline styles, without overlays or specificity battles.
                   </p>
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
                     Fallback: browsers without @property support get an instant swap (no breakage)
