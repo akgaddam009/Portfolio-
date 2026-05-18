@@ -679,6 +679,21 @@ a { color: inherit; text-decoration: none; }
 }
 .skip-nav:focus { top: 0; }
 
+/* ─── Screen-reader-only utility ─────────────────────────
+   Removes from visual flow but keeps text accessible to AT.
+   Used for visually-hidden form labels and ARIA-only text. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ─── Keyboard focus ring ─────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--text);

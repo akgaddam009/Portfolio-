@@ -70,7 +70,7 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
 
   return (
     <>
-      <main style={{ paddingTop: "52px" }}>
+      <main id="main-content" style={{ paddingTop: "52px" }}>
         {/* Hero band — matches the look of CaseStudyDetail so the page
            feels like a real case study with a gate on top, not a 403. */}
         <section style={{ padding: "var(--space-8) 0", borderBottom: "1px solid var(--border)" }}>
@@ -208,9 +208,14 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
               <form
                 onSubmit={handleSubmit}
                 className="cs-pw-form"
+                aria-label="Unlock this case study"
                 style={{ display: "flex", gap: "8px", width: "100%", maxWidth: "340px" }}
               >
+                <label htmlFor="cs-gate-password" className="sr-only">
+                  Password
+                </label>
                 <input
+                  id="cs-gate-password"
                   type="password"
                   name="password"
                   value={pwInput}
@@ -221,6 +226,8 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
                   placeholder="Password"
                   autoComplete="off"
                   disabled={isPending}
+                  aria-invalid={pwError !== null}
+                  aria-describedby={pwError ? "cs-gate-error" : undefined}
                   style={{
                     flex: 1,
                     fontFamily: "var(--font-body)",
@@ -268,6 +275,9 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
               <AnimatePresence>
                 {pwError && (
                   <motion.p
+                    id="cs-gate-error"
+                    role="alert"
+                    aria-live="polite"
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}

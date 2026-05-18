@@ -81,14 +81,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   })();
 
   /* Gate state was previously enforced here with a client-side
-     localStorage flag and a hardcoded password constant. Both have been
-     removed — the gate is now a server-side check inside
+     localStorage flag and a hardcoded password constant. Both have
+     been removed — the gate is now a server-side check inside
      app/work/[slug]/page.tsx that renders the standalone CaseStudyGate
      component when the visitor isn't unlocked. By the time this
-     component runs, the visitor is authorized; the legacy `unlocked`
-     name is kept (as a constant true) so the useEffect dependency on
-     line ~155 still sees a stable reference. */
-  const unlocked = true;
+     component runs, the visitor is authorized. */
 
   // NAV_SECTIONS must be state — getElementById during render always returns null
   // because the component's own DOM hasn't been committed yet. Labels are
@@ -126,8 +123,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       // Scan the rendered DOM for every section tagged with data-nav-label.
       // Every CsSection gets one automatically (with an auto-generated id
       // when none is passed) so the rail lists every section the case
-      // study renders — no hardcoded whitelist. Runs on mount AND
-      // whenever unlocked changes so gated sections appear after unlock.
+      // study renders — no hardcoded whitelist.
       const tagged = Array.from(document.querySelectorAll<HTMLElement>("[data-nav-label]"));
       const existing: NavSection[] = tagged
         .filter(el => el.id)
@@ -151,7 +147,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       observers.forEach(o => o.disconnect());
       window.removeEventListener("scroll", onScroll);
     };
-  }, [unlocked, cs]);
+  }, [cs]);
 
   return (
     <div style={{ background: "var(--bg)" }}>

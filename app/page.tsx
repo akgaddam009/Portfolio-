@@ -1585,8 +1585,12 @@ function WorkPanel() {
               }}>
                 Much of my work is confidential. Please reach out for the password.
               </p>
-              <form onSubmit={submitPassword}>
+              <form onSubmit={submitPassword} aria-label="Unlock archived case studies">
+                <label htmlFor="archived-pw-input" className="sr-only">
+                  Password
+                </label>
                 <input
+                  id="archived-pw-input"
                   autoFocus
                   type="password"
                   name="password"
@@ -1595,6 +1599,8 @@ function WorkPanel() {
                   placeholder="Password"
                   disabled={pwBusy}
                   autoComplete="off"
+                  aria-invalid={pwError !== null}
+                  aria-describedby={pwError ? "archived-pw-error" : undefined}
                   style={{
                     width: "100%", padding: "10px 12px", fontSize: "var(--text-body-lg)",
                     fontFamily: "var(--font-body)", color: "var(--text)",
@@ -1605,7 +1611,7 @@ function WorkPanel() {
                   }}
                 />
                 {pwError && (
-                  <p style={{
+                  <p id="archived-pw-error" role="alert" aria-live="polite" style={{
                     fontSize: "var(--text-caption)", color: "var(--accent-error)", marginBottom: "12px",
                     fontFamily: "var(--font-body)",
                   }}>
