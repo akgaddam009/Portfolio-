@@ -80,40 +80,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
     return co ? `app.${co}.com` : "app.example.com";
   })();
 
-  // Password gate — any case study with `confidential: true`.
-  // One shared key in localStorage — entering the password on any gated case study
-  // unlocks all of them globally and persists across browser sessions.
-  const PASSWORD = "Nothing@123$";
-  const isGated = !!cs.confidential;
-  const GLOBAL_UNLOCK_KEY = "cs-portfolio-unlocked-v2";
-  const [unlocked, setUnlocked] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1";
-  });
-  // Re-sync when the user comes back to the tab or another tab unlocks the
-  // key (e.g. they entered the password on a different case study).
-  useEffect(() => {
-    const sync = () => setUnlocked(localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1");
-    window.addEventListener("focus", sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener("focus", sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-  const [pwInput, setPwInput] = useState("");
-  const [pwError, setPwError] = useState(false);
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (pwInput === PASSWORD) {
-      setUnlocked(true);
-      localStorage.setItem(GLOBAL_UNLOCK_KEY, "1");
-      setPwError(false);
-    } else {
-      setPwError(true);
-      setPwInput("");
-    }
-  };
+  /* Gate state was previously enforced here with a client-side
+     localStorage flag and a hardcoded password constant. Both have been
+     removed — the gate is now a server-side check inside
+     app/work/[slug]/page.tsx that renders the standalone CaseStudyGate
+     component when the visitor isn't unlocked. By the time this
+     component runs, the visitor is authorized; the legacy `unlocked`
+     name is kept (as a constant true) so the useEffect dependency on
+     line ~155 still sees a stable reference. */
+  const unlocked = true;
 
   // NAV_SECTIONS must be state — getElementById during render always returns null
   // because the component's own DOM hasn't been committed yet. Labels are
@@ -1338,116 +1313,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            {/* ── Password gate (Planful only) ── */}
-            {isGated && !unlocked && (
-              <>
-                {/* Blurred content peek */}
-                <div style={{ position: "relative", overflow: "hidden", maxHeight: "180px", pointerEvents: "none", userSelect: "none" }}>
-                  <div style={{ filter: "blur(6px)", opacity: 0.45, padding: "var(--space-9) 0" }}>
-                    <div className="page-pad">
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>My Approach</p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", lineHeight: 1.7, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "640px" }}>
-                        {cs.approach ?? cs.insight ?? ""}
-                      </p>
-                    </div>
-                  </div>
-                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "100px", background: "linear-gradient(to bottom, transparent, var(--bg))" }} />
-                </div>
-
-                {/* Gate card */}
-                <div style={{ padding: "0 0 120px" }}>
-                  <div className="page-pad">
-                    <motion.div
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.55, ease: EASE }}
-                      style={{
-                        borderRadius: "16px",
-                        padding: "56px 40px 48px",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        textAlign: "center",
-                        gap: "20px",
-                        background: "var(--surface)",
-                        boxShadow: "var(--card-shadow)",
-                      }}
-                    >
-                      {/* Lock icon */}
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--muted)" }}>
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                      </svg>
-
-                      <div>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title)", fontWeight: 400, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3 }}>
-                          This case study is password protected
-                        </p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", color: "var(--muted)", lineHeight: 1.65, maxWidth: "320px" }}>
-                          Much of my work is confidential. Please reach out for the password.
-                        </p>
-                      </div>
-
-                      <form onSubmit={handlePasswordSubmit} className="cs-pw-form" style={{ display: "flex", gap: "8px", width: "100%", maxWidth: "340px" }}>
-                        <input
-                          type="password"
-                          value={pwInput}
-                          onChange={e => { setPwInput(e.target.value); setPwError(false); }}
-                          placeholder="Password"
-                          autoComplete="off"
-                          style={{
-                            flex: 1,
-                            fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
-                            letterSpacing: "-0.01em",
-                            color: "var(--text)",
-                            background: "var(--bg)",
-                            border: `1px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
-                            borderRadius: "10px",
-                            padding: "10px 14px",
-                            outline: "none",
-                            transition: "border-color 0.2s",
-                          }}
-                          onFocus={e => { if (!pwError) e.currentTarget.style.borderColor = "var(--text)"; }}
-                          onBlur={e => { if (!pwError) e.currentTarget.style.borderColor = "var(--border)"; }}
-                        />
-                        <motion.button
-                          type="submit"
-                          whileTap={{ scale: 0.95 }}
-                          transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                          style={{
-                            fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
-                            fontWeight: 400, letterSpacing: "-0.01em",
-                            padding: "10px 20px",
-                            background: "var(--text)", color: "var(--bg)",
-                            border: "none", borderRadius: "10px",
-                            cursor: "pointer", whiteSpace: "nowrap",
-                          }}
-                        >
-                          Unlock
-                        </motion.button>
-                      </form>
-
-                      <AnimatePresence>
-                        {pwError && (
-                          <motion.p
-                            initial={{ opacity: 0, y: -4 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.25, ease: EASE }}
-                            style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", color: "var(--accent-error)", letterSpacing: "0.04em", marginTop: "-8px" }}
-                          >
-                            Incorrect password. Try again.
-                          </motion.p>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* All sections below are gated for Planful until unlocked */}
-            {(!isGated || unlocked) && (
+            {/* Confidential gate moved to the server.
+                See app/work/[slug]/page.tsx + components/CaseStudyGate.tsx —
+                the gate now renders before any case study data is sent
+                to the browser. The unconditional fragment below keeps
+                the rest of this component's render tree visually
+                identical to the unlocked branch as it was before. */}
             <>
 
             {/* My Approach — renders when present (research-led case studies) */}
@@ -3073,8 +2944,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            </> /* end gated content wrapper */
-            )}
+            </> {/* end of former gated-content wrapper — gating now happens server-side */}
 
             {/* Prev / Next navigation — shown whenever at least one neighbour exists.
                 Previous on the left, Next on the right, both aligned to their edge.
