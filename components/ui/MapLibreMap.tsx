@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import "maplibre-gl/dist/maplibre-gl.css";
+// import "maplibre-gl/dist/maplibre-gl.css";
 
 // Hyderabad city center (Hussain Sagar / Tank Bund vicinity — the
 // recognizable visual heart of the city, not a suburb).
