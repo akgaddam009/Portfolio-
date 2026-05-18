@@ -22,6 +22,13 @@ import { UNLOCK_COOKIE_NAME, UNLOCK_TOKEN_VALUE } from "@/lib/auth";
    - /images/apple*          Apple Business Listings confidential
    - /astra/*                Astra NDA-strict prototype HTML
 
+   Public allowlist (always served, even inside gated folders):
+   Certain thumbnail / cover / landing images are referenced by the
+   homepage card grid and must remain visible to logged-out visitors
+   so the home page renders correctly. These are intentional marketing
+   previews — anyone visiting the home page already sees them. Only
+   files explicitly listed in PUBLIC_ASSETS are exempt from gating.
+
    Everything else (favicons, theme assets, public thumbnails, Hyderabad
    map, the CV, etc.) is allowed through.
 
@@ -42,7 +49,29 @@ const GATED_PATH_PATTERNS = [
   /^\/astra(\/|$)/i,
 ];
 
+/* Files inside gated folders that ARE referenced by the public
+   homepage. Without this allowlist the home page card thumbnails
+   would 404 for logged-out visitors. Mirror this list with the
+   actual <img src=...> values in app/page.tsx — anything used in
+   the home-page grid must be here. */
+const PUBLIC_ASSETS = new Set<string>([
+  "/images/astra/cover.jpg",
+  "/images/astra/overview.mp4",
+  "/images/fancode-ftux/fc-ftux-thumbnail.jpg",
+  "/images/fancode/fancode-homepage-after.mp4",
+  "/images/fancode/overall-homepage.jpg",
+  "/images/planful/landing-page.jpg",
+  "/images/planful/planful-product-video.mp4",
+  "/images/reputation/after.mp4",
+  "/images/reputation/thumbnail.jpg",
+  "/images/zetwerk-bu/service-blueprint.png",
+  "/images/zetwerk-cu/zw-creditunderwriting-thumbnail.jpg",
+  "/images/zetwerk-dc/zw-dc-thumbnail.png",
+  "/images/zetwerk/cover.png",
+]);
+
 function isGatedPath(pathname: string): boolean {
+  if (PUBLIC_ASSETS.has(pathname)) return false;
   return GATED_PATH_PATTERNS.some((re) => re.test(pathname));
 }
 
