@@ -40,8 +40,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Large legacy video assets (>100MB) — keep local, deploy uses compressed .mp4
+# Large legacy video assets — keep local, deploy uses compressed .mp4.
+# Every existing .mov already in the repo stays tracked (don't lose data);
+# this rule only prevents NEW .mov files from getting added in future
+# deploys. To untrack the current ones, see SECURITY_AUDIT.md.
 public/images/system/overview.mov
+public/images/**/*.mov
 
 # Untracked giant media that snuck in via wildcard adds — keep local, don't push
 public/images/system/Screen Recording*

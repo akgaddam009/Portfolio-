@@ -5,8 +5,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 // Hyderabad city center (Hussain Sagar / Tank Bund vicinity — the
 // recognizable visual heart of the city, not a suburb).
-const HYD_LNG = 78.4867;
-const HYD_LAT = 17.3850;
+const HYD_LNG = 78.4738;
+const HYD_LAT = 17.4239;
 
 const STYLE_LIGHT = "https://tiles.openfreemap.org/styles/positron";
 const STYLE_DARK  = "https://tiles.openfreemap.org/styles/dark";

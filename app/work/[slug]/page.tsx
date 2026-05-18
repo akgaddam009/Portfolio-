@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCaseStudy, caseStudies } from "@/lib/caseStudies";
 import CaseStudyDetail from "@/components/CaseStudyDetail";
+import CaseStudyGate from "@/components/CaseStudyGate";
+import { isUnlocked } from "@/lib/auth";
 
 /* Slugs that are completely hidden from the public — no static page is
    generated, no metadata, no route. Anyone visiting these URLs gets a
@@ -11,10 +13,12 @@ import CaseStudyDetail from "@/components/CaseStudyDetail";
    Two-tier confidentiality model:
    - HIDDEN_SLUGS (this set):   404. NDA-strict. URL is not guessable.
                                 Examples: zetwerk-dc, zetwerk-bu-ecosystem, astra.
-   - confidential: true (data): 200 with password gate. Excluded from
-                                sitemap so search engines don't surface it,
-                                but a direct URL still works for recruiters.
-                                Examples: fancode-homepage, planful-esm-tables.
+   - confidential: true (data): Renders a gate. Confidential content
+                                ONLY ships to the browser after the
+                                server-side cookie check passes —
+                                unauthenticated browsers receive the
+                                gate component and never see the full
+                                data structure.
 
    `fancode-homepage` deliberately stays OUT of this list — it's
    password-gated but recruiter-reachable via direct link. Listed here
@@ -46,6 +50,45 @@ export async function generateMetadata({
   if (HIDDEN_SLUGS.has(slug)) return {};
   const cs = getCaseStudy(slug);
   if (!cs) return {};
+
+  /* For confidential case studies, return a sanitized metadata block
+     that reveals NOTHING about the project. The page is still
+     reachable via direct URL but search engines, link previews, and
+     social shares will only see a generic "password protected" label.
+     This prevents:
+       - Google indexing the summary text even with noindex (some
+         engines cache metadata before honoring noindex)
+       - Slack/iMessage/LinkedIn previews leaking client names and
+         project details
+       - Browser tab titles revealing which company the case study
+         covers */
+  if (cs.confidential) {
+    const sanitizedTitle = "Protected case study — Arun Gaddam";
+    const sanitizedDescription =
+      "Confidential client work. Reach out for the password.";
+    return {
+      title: sanitizedTitle,
+      description: sanitizedDescription,
+      robots: {
+        index: false,
+        follow: false,
+        nocache: true,
+        googleBot: { index: false, follow: false, noimageindex: true },
+      },
+      openGraph: {
+        title: sanitizedTitle,
+        description: sanitizedDescription,
+        type: "article",
+        url: `https://arungaddamux.vercel.app/work/${slug}`,
+      },
+      twitter: {
+        card: "summary",
+        title: sanitizedTitle,
+        description: sanitizedDescription,
+      },
+    };
+  }
+
   const title       = `${cs.title} — Arun Gaddam`;
   // Strip ==highlight== markers from the meta description so social previews
   // don't surface "==text==" literally.
@@ -80,5 +123,20 @@ export default async function CaseStudyPage({
   if (HIDDEN_SLUGS.has(slug)) notFound();
   const cs = getCaseStudy(slug);
   if (!cs) notFound();
+
+  /* Server-side gate. If the case study is confidential and the visitor
+     doesn't have a valid unlock cookie, render ONLY the gate component
+     with public-safe metadata. The confidential payload (problem,
+     insight, decisions, outcomes) is never sent to the browser. */
+  if (cs.confidential && !(await isUnlocked())) {
+    return (
+      <CaseStudyGate
+        title={cs.title}
+        tags={cs.tags ?? []}
+        heroLabel={cs.heroLabel}
+      />
+    );
+  }
+
   return <CaseStudyDetail cs={cs} />;
 }

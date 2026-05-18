@@ -7,7 +7,7 @@ const baseCsp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval: maplibre WebGL shaders; unsafe-inline: Next.js chunks
   "style-src 'self' 'unsafe-inline'",                // unsafe-inline: Framer Motion inline styles
-  "img-src 'self' data: blob:",                      // blob: for maplibre canvas exports
+  "img-src 'self' data: blob: https://tiles.openfreemap.org", // blob: for maplibre canvas exports; openfreemap for sprite/marker PNGs
   "media-src 'self'",                                // portfolio videos served from /public
   "connect-src 'self' https://tiles.openfreemap.org", // maplibre vector tiles
   "font-src 'self' https://tiles.openfreemap.org",   // next/font Inter + maplibre glyph PBFs
@@ -65,6 +65,17 @@ const nextConfig: NextConfig = {
         // study can embed them.
         source: "/astra/:path*",
         headers: astraEmbedHeaders,
+      },
+      {
+        /* Confidential case studies — disable shared caching so a CDN /
+           reverse proxy can't accidentally serve an unlocked variant of
+           the page to a different visitor. The page itself is fast to
+           render server-side; this only blocks shared cache, not the
+           browser's per-session cache. */
+        source: "/work/:slug(planful-esm-tables|apple-business-listings|fancode-homepage)",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0, must-revalidate" },
+        ],
       },
       {
         // Everything else — strictest clickjacking protection.

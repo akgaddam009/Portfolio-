@@ -1212,57 +1212,81 @@ function WorkPanel() {
     .map(slug => caseStudies.find(cs => cs.slug === slug))
     .filter((cs): cs is NonNullable<typeof cs> => !!cs);
 
-  // Shared password gate — same global key as CaseStudyDetail.
-  // Unlocking here unlocks all gated case studies and vice versa.
-  const GLOBAL_UNLOCK_KEY = "cs-portfolio-unlocked-v2";
-  const PASSWORD = "Nothing@123$";
+  /* Shared password gate. Client-side password comparison has been
+     replaced with a server action (app/actions/unlock.ts) that sets an
+     HttpOnly cookie. The visible behaviour is preserved: clicking an
+     archived case study opens the password modal; submitting the
+     correct password unlocks and opens the case study in a new tab.
+
+     `archivedUnlocked` now reflects a non-sensitive marker cookie
+     (cs-unlock-ui) the server sets alongside the real HttpOnly cookie
+     — the UI cookie is readable from JS only so the page can render
+     "Unlocked" state without an extra round-trip. The real auth cookie
+     remains HttpOnly and is the only one the server trusts. */
+  const UNLOCK_UI_KEY = "cs-unlock-ui";
   const [archivedUnlocked, setArchivedUnlocked] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const sync = () => setArchivedUnlocked(localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1");
-    sync();
-    // Re-sync when the user returns to this tab or another tab updates the key.
-    // Without this, unlocking on a case study page would still show "Locked"
-    // on the landing page until a hard refresh.
-    window.addEventListener("focus", sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener("focus", sync);
-      window.removeEventListener("storage", sync);
+    const sync = () => {
+      const fromCookie = document.cookie
+        .split(";")
+        .some(c => c.trim().startsWith(`${UNLOCK_UI_KEY}=1`));
+      setArchivedUnlocked(fromCookie);
     };
+    sync();
+    window.addEventListener("focus", sync);
+    return () => window.removeEventListener("focus", sync);
   }, []);
   const [pwOpen, setPwOpen] = useState(false);
   const [pwInput, setPwInput] = useState("");
-  const [pwError, setPwError] = useState(false);
+  const [pwError, setPwError] = useState<null | "wrong" | "rate-limited" | "config">(null);
+  const [retryInSec, setRetryInSec] = useState<number | null>(null);
+  const [pwBusy, setPwBusy] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const handleArchivedClick = (e: React.MouseEvent, href: string) => {
-    // Always re-check localStorage at click time — covers the case where the
-    // global key was set on a different surface (case study page) since mount.
-    const isUnlocked = typeof window !== "undefined"
-      && localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1";
-    if (isUnlocked) {
+    const fromCookie = typeof document !== "undefined"
+      && document.cookie.split(";").some(c => c.trim().startsWith(`${UNLOCK_UI_KEY}=1`));
+    if (fromCookie) {
       if (!archivedUnlocked) setArchivedUnlocked(true);
       return; // allow the link to navigate
     }
     e.preventDefault();
     setPendingHref(href);
     setPwInput("");
-    setPwError(false);
+    setPwError(null);
+    setRetryInSec(null);
     setPwOpen(true);
   };
-  const submitPassword = (e: React.FormEvent) => {
+  const submitPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pwInput === PASSWORD) {
-      setArchivedUnlocked(true);
-      localStorage.setItem(GLOBAL_UNLOCK_KEY, "1");
-      setPwOpen(false);
-      if (pendingHref) {
-        window.open(pendingHref, "_blank", "noopener,noreferrer");
-        setPendingHref(null);
+    setPwError(null);
+    setRetryInSec(null);
+    setPwBusy(true);
+    try {
+      const { unlock } = await import("@/app/actions/unlock");
+      const fd = new FormData();
+      fd.set("password", pwInput);
+      const result = await unlock(fd);
+      if (result.ok) {
+        // Set the JS-readable marker so the UI reflects unlock state
+        // without round-tripping. The real auth cookie was already set
+        // by the server action and is HttpOnly.
+        document.cookie = `${UNLOCK_UI_KEY}=1; Path=/; Max-Age=${60 * 60 * 24 * 30}; SameSite=Lax`;
+        setArchivedUnlocked(true);
+        setPwOpen(false);
+        if (pendingHref) {
+          window.open(pendingHref, "_blank", "noopener,noreferrer");
+          setPendingHref(null);
+        }
+      } else {
+        setPwError(result.error);
+        if (result.error === "rate-limited" && result.retryInSec) {
+          setRetryInSec(result.retryInSec);
+        }
+        setPwInput("");
       }
-    } else {
-      setPwError(true);
-      setPwInput("");
+    } finally {
+      setPwBusy(false);
     }
   };
   // Esc closes the password modal — matches behaviour of other overlays.
@@ -1561,13 +1585,22 @@ function WorkPanel() {
               }}>
                 Much of my work is confidential. Please reach out for the password.
               </p>
-              <form onSubmit={submitPassword}>
+              <form onSubmit={submitPassword} aria-label="Unlock archived case studies">
+                <label htmlFor="archived-pw-input" className="sr-only">
+                  Password
+                </label>
                 <input
+                  id="archived-pw-input"
                   autoFocus
                   type="password"
+                  name="password"
                   value={pwInput}
-                  onChange={(e) => { setPwInput(e.target.value); setPwError(false); }}
+                  onChange={(e) => { setPwInput(e.target.value); setPwError(null); }}
                   placeholder="Password"
+                  disabled={pwBusy}
+                  autoComplete="off"
+                  aria-invalid={pwError !== null}
+                  aria-describedby={pwError ? "archived-pw-error" : undefined}
                   style={{
                     width: "100%", padding: "10px 12px", fontSize: "var(--text-body-lg)",
                     fontFamily: "var(--font-body)", color: "var(--text)",
@@ -1578,17 +1611,22 @@ function WorkPanel() {
                   }}
                 />
                 {pwError && (
-                  <p style={{
+                  <p id="archived-pw-error" role="alert" aria-live="polite" style={{
                     fontSize: "var(--text-caption)", color: "var(--accent-error)", marginBottom: "12px",
                     fontFamily: "var(--font-body)",
                   }}>
-                    Incorrect password. Try again.
+                    {pwError === "rate-limited"
+                      ? `Too many attempts. Try again in ${retryInSec ?? 0}s.`
+                      : pwError === "config"
+                      ? "Server not configured. Please contact me directly."
+                      : "Incorrect password. Try again."}
                   </p>
                 )}
                 <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
                   <button
                     type="button"
                     onClick={() => setPwOpen(false)}
+                    disabled={pwBusy}
                     style={{
                       padding: "12px 18px", fontSize: "var(--text-body)", fontFamily: "var(--font-body)",
                       color: "var(--muted)", background: "transparent",
@@ -1598,13 +1636,14 @@ function WorkPanel() {
                   >Cancel</button>
                   <button
                     type="submit"
+                    disabled={pwBusy}
                     style={{
                       padding: "12px 18px", fontSize: "var(--text-body)", fontFamily: "var(--font-body)",
                       fontWeight: 500, color: "var(--surface)", background: "var(--text)",
                       border: "1px solid var(--text)", borderRadius: "8px",
-                      cursor: "pointer",
+                      cursor: pwBusy ? "wait" : "pointer", opacity: pwBusy ? 0.7 : 1,
                     }}
-                  >Unlock</button>
+                  >{pwBusy ? "..." : "Unlock"}</button>
                 </div>
               </form>
             </motion.div>

@@ -1,23 +1,30 @@
 import type { MetadataRoute } from "next";
+import { caseStudies } from "@/lib/caseStudies";
 
 const BASE_URL = "https://arungaddamux.vercel.app";
 
-// Only public case studies are indexed. Confidential cases
-// (zetwerk-dc, zetwerk-bu-ecosystem, fancode-homepage, astra) are
-// intentionally omitted so search engines don't surface them —
-// recruiters get direct URLs as needed.
-const caseStudySlugs = [
-  "planful-esm-tables",
-  "apple-business-listings",
-];
+/* HIDDEN_SLUGS kept in sync with app/work/[slug]/page.tsx. */
+const HIDDEN_SLUGS = new Set<string>([
+  "zetwerk-dc",
+  "zetwerk-bu-ecosystem",
+  "astra",
+]);
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const caseStudyEntries = caseStudySlugs.map((slug) => ({
-    url: `${BASE_URL}/work/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.8,
-  }));
+  /* Only emit case studies that are both publicly routable AND
+     non-confidential. Confidential case studies are reachable via
+     direct URL for recruiters but are intentionally absent from the
+     sitemap so search engines don't surface them and crawl the gate
+     page (which would index the gate text, not the content). */
+  const caseStudyEntries = caseStudies
+    .filter(cs => !HIDDEN_SLUGS.has(cs.slug))
+    .filter(cs => !cs.confidential)
+    .map(cs => ({
+      url: `${BASE_URL}/work/${cs.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    }));
 
   return [
     {
