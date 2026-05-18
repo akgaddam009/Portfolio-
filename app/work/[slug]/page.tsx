@@ -51,20 +51,43 @@ export async function generateMetadata({
   const cs = getCaseStudy(slug);
   if (!cs) return {};
 
-  /* Confidential case studies tell search engines and link previewers
-     to stay away. The page is still reachable via direct URL for
-     recruiters, but it won't surface in Google, won't be crawled
-     further, and won't be archived. */
-  const confidentialRobots = cs.confidential
-    ? {
-        robots: {
-          index: false,
-          follow: false,
-          nocache: true,
-          googleBot: { index: false, follow: false, noimageindex: true },
-        },
-      }
-    : {};
+  /* For confidential case studies, return a sanitized metadata block
+     that reveals NOTHING about the project. The page is still
+     reachable via direct URL but search engines, link previews, and
+     social shares will only see a generic "password protected" label.
+     This prevents:
+       - Google indexing the summary text even with noindex (some
+         engines cache metadata before honoring noindex)
+       - Slack/iMessage/LinkedIn previews leaking client names and
+         project details
+       - Browser tab titles revealing which company the case study
+         covers */
+  if (cs.confidential) {
+    const sanitizedTitle = "Protected case study — Arun Gaddam";
+    const sanitizedDescription =
+      "Confidential client work. Reach out for the password.";
+    return {
+      title: sanitizedTitle,
+      description: sanitizedDescription,
+      robots: {
+        index: false,
+        follow: false,
+        nocache: true,
+        googleBot: { index: false, follow: false, noimageindex: true },
+      },
+      openGraph: {
+        title: sanitizedTitle,
+        description: sanitizedDescription,
+        type: "article",
+        url: `https://arungaddamux.vercel.app/work/${slug}`,
+      },
+      twitter: {
+        card: "summary",
+        title: sanitizedTitle,
+        description: sanitizedDescription,
+      },
+    };
+  }
 
   const title       = `${cs.title} — Arun Gaddam`;
   // Strip ==highlight== markers from the meta description so social previews
@@ -75,7 +98,6 @@ export async function generateMetadata({
   return {
     title,
     description,
-    ...confidentialRobots,
     openGraph: {
       title,
       description,

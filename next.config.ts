@@ -67,6 +67,17 @@ const nextConfig: NextConfig = {
         headers: astraEmbedHeaders,
       },
       {
+        /* Confidential case studies — disable shared caching so a CDN /
+           reverse proxy can't accidentally serve an unlocked variant of
+           the page to a different visitor. The page itself is fast to
+           render server-side; this only blocks shared cache, not the
+           browser's per-session cache. */
+        source: "/work/:slug(planful-esm-tables|apple-business-listings|fancode-homepage)",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0, must-revalidate" },
+        ],
+      },
+      {
         // Everything else — strictest clickjacking protection.
         // Negative lookahead excludes /astra/* so the route-specific rule
         // above isn't overridden by this catch-all (Next.js applies headers
