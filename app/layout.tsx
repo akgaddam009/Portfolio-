@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, DM_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/Cursor";
+import AnalyticsClient from "@/components/AnalyticsClient";
+import RouteProgress from "@/components/RouteProgress";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,16 +40,16 @@ export const metadata: Metadata = {
   title: "Arun Gaddam — Senior Product Designer",
   description:
     "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",
-  metadataBase: new URL("https://arungaddam.com"),
+  metadataBase: new URL("https://arungaddamux.vercel.app"),
   alternates: {
-    canonical: "https://arungaddam.com",
+    canonical: "https://arungaddamux.vercel.app",
   },
   openGraph: {
     title: "Arun Gaddam — Senior Product Designer",
     description:
       "I design the systems that enterprise teams depend on — turning complex workflows, ambiguous data, and organizational chaos into products people actually trust.",
     type: "website",
-    url: "https://arungaddam.com",
+    url: "https://arungaddamux.vercel.app",
     siteName: "Arun Gaddam",
     locale: "en_US",
   },
@@ -75,7 +77,11 @@ export default function RootLayout({
         {/* Sync theme before first paint — prevents flash behind the loader */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');}catch(e){}`,
+            /* Theme priority:
+                 1. User's explicit choice (localStorage 'theme') wins.
+                 2. Otherwise auto-pick by local hour — dark from 18:00 to 05:59,
+                    light from 06:00 to 17:59. Mirrors the natural light cycle. */
+            __html: `try{var t=localStorage.getItem('theme');var h=new Date().getHours();var auto=(h>=18||h<6)?'dark':'light';document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:auto);}catch(e){document.documentElement.setAttribute('data-theme','light');}`,
           }}
         />
         {/* JSON-LD structured data — Person schema for Google rich results */}
@@ -86,7 +92,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Person",
               name: "Arun Gaddam",
-              url: "https://arungaddam.com",
+              url: "https://arungaddamux.vercel.app",
               jobTitle: "Senior Product Designer",
               description:
                 "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",
@@ -105,7 +111,9 @@ export default function RootLayout({
         {/* Skip to main content — for keyboard/screen-reader users (CSS-only, no JS needed) */}
         <a href="#main-content" className="skip-nav">Skip to content</a>
         <Cursor />
+        <RouteProgress />
         {children}
+        <AnalyticsClient />
       </body>
     </html>
   );

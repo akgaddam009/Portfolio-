@@ -18,7 +18,7 @@ export default function Awards() {
           transition={{ duration: 0.6, ease: EASE }}
           style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}
         >
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>
             Recognition · ADPList
           </p>
           <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
@@ -35,7 +35,7 @@ export default function Awards() {
             gap: "20px",
             padding: "20px 24px",
             background: "var(--surface)",
-            borderRadius: "14px",
+            borderRadius: "16px",
           }}
         >
           {/* Badge */}
@@ -43,7 +43,7 @@ export default function Awards() {
             width: "40px", height: "40px", borderRadius: "50%",
             background: "var(--text)", flexShrink: 0,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "16px", lineHeight: 1,
+            fontSize: "var(--text-title-sm)", lineHeight: 1,
           }}>
             ★
           </div>
@@ -51,13 +51,13 @@ export default function Awards() {
           {/* Text */}
           <div style={{ flex: 1 }}>
             <p style={{
-              fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 600,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 600,
               color: "var(--text)", marginBottom: "3px", letterSpacing: "-0.01em",
             }}>
               ADPList Super Mentor
             </p>
             <p style={{
-              fontFamily: "var(--font-mono)", fontSize: "10px",
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
               color: "var(--muted)", letterSpacing: "0.04em",
             }}>
               Top 1% Mentor Recognition · 3× awarded
@@ -69,7 +69,7 @@ export default function Awards() {
             <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: "flex-end" }}>
               {months.map(m => (
                 <span key={m} style={{
-                  fontFamily: "var(--font-mono)", fontSize: "10px",
+                  fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
                   color: "var(--muted2)", letterSpacing: "0.04em",
                   padding: "4px 10px", background: "var(--surface2)", borderRadius: "6px",
                 }}>
@@ -81,7 +81,7 @@ export default function Awards() {
               href="https://adplist.org/mentors/arun-gaddam"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", textDecoration: "underline", textDecorationColor: "var(--border)", transition: "color 0.15s" }}
+              style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.04em", color: "var(--muted)", textDecoration: "underline", textDecorationColor: "var(--border)", transition: "color 0.15s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
               onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
             >

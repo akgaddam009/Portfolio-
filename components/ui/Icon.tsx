@@ -1,15 +1,56 @@
 /* ─── Icon component ─────────────────────────────────────────────
-   Single source for line icons used across the portfolio. Lucide-style
-   geometry: 24px viewBox, 1.5px stroke, round caps and joins. Inherits
-   currentColor by default and accepts a size prop. Replaces Unicode
-   arrows (↗ → ←) which never matched the type weight properly.
+   Single source for line icons used across the portfolio.
+
+   Mixed-source strategy:
+   - Chip / category icons (Briefcase, LayoutGrid, Users, Compass, Search,
+     Sparkles) come from @phosphor-icons/react — Phosphor's Regular weight
+     has more refined endpoints, better optical compensation, and a more
+     editorial feel than hand-drawn Lucide-style paths. These are the icons
+     a viewer reads most often (hero chips, work card tags), so the upgrade
+     is concentrated where it matters most.
+   - Structural icons (arrows, menu, info, etc.) stay as hand-drawn SVGs to
+     keep type-weight consistency with custom illustrations elsewhere.
+
+   The Phosphor wrappers preserve the same prop API (size, strokeWidth, style,
+   className) so no call site changes are required. strokeWidth is mapped to
+   Phosphor's `weight` token for visual parity.
 */
+import {
+  SquaresFour as PhSquaresFour,
+  Users as PhUsers,
+  Compass as PhCompass,
+  Sparkle as PhSparkle,
+  Briefcase as PhBriefcase,
+  MagnifyingGlass as PhMagnifyingGlass,
+  Path as PhPath,
+  TreeStructure as PhTreeStructure,
+  Check as PhCheck,
+  X as PhX,
+} from "@phosphor-icons/react";
+
 type IconProps = {
   size?: number;
   strokeWidth?: number;
   className?: string;
   style?: React.CSSProperties;
 };
+
+/* Bridge Lucide-style strokeWidth (numeric) to Phosphor weight (semantic).
+   Default 1.5 → "regular"; thinner values → "light"/"thin". */
+const phWeight = (sw?: number): "thin" | "light" | "regular" | "bold" => {
+  if (sw === undefined) return "regular";
+  if (sw <= 1) return "thin";
+  if (sw <= 1.5) return "light";
+  if (sw <= 2) return "regular";
+  return "bold";
+};
+
+const phStyle = (style?: React.CSSProperties): React.CSSProperties => ({
+  display: "inline-block",
+  verticalAlign: "-0.15em",
+  flexShrink: 0,
+  ...style,
+});
 
 const Svg = ({
   size = 14,
@@ -69,29 +110,15 @@ export const ArrowDown = (p: IconProps) => (
    the page reads as one icon family. */
 
 export const Briefcase = (p: IconProps) => (
-  <Svg {...p}>
-    <rect x="3" y="7" width="18" height="13" rx="2" />
-    <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-    <path d="M3 13h18" />
-  </Svg>
+  <PhBriefcase size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
 );
 
 export const LayoutGrid = (p: IconProps) => (
-  <Svg {...p}>
-    <rect x="3" y="3" width="7" height="7" rx="1" />
-    <rect x="14" y="3" width="7" height="7" rx="1" />
-    <rect x="3" y="14" width="7" height="7" rx="1" />
-    <rect x="14" y="14" width="7" height="7" rx="1" />
-  </Svg>
+  <PhSquaresFour size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
 );
 
 export const Users = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </Svg>
+  <PhUsers size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
 );
 
 export const Scissors = (p: IconProps) => (
@@ -164,5 +191,60 @@ export const GitBranch = (p: IconProps) => (
     <circle cx="18" cy="6" r="3" />
     <circle cx="6" cy="18" r="3" />
     <path d="M18 9a9 9 0 0 1-9 9" />
+  </Svg>
+);
+
+/** Compass — direction-finding metaphor for Strategy (Phosphor Regular) */
+export const Compass = (p: IconProps) => (
+  <PhCompass size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** Magnifying glass — Research (Phosphor Regular) */
+export const Search = (p: IconProps) => (
+  <PhMagnifyingGlass size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** Path — flowing line, used as Supply Chain category icon on work cards.
+ *  Phosphor Regular so it matches the rest of the chip-icon family
+ *  (Briefcase, Users, Compass, LayoutGrid, Sparkles, MagnifyingGlass). */
+export const Path = (p: IconProps) => (
+  <PhPath size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** Tree structure — branching nodes, used as Service Design category icon
+ *  on work cards. Phosphor Regular for chip-icon family consistency. */
+export const TreeStructure = (p: IconProps) => (
+  <PhTreeStructure size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** Check — affirmative inline marker. Phosphor Regular so it matches the
+ *  rest of the chip-icon family at small sizes. Use this instead of the
+ *  Unicode ✓ character. */
+export const Check = (p: IconProps) => (
+  <PhCheck size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** XMark — negative inline marker (paired with Check). Named XMark to avoid
+ *  clashing with the hand-drawn `X` close icon used in nav. Phosphor Regular. */
+export const XMark = (p: IconProps) => (
+  <PhX size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** Sparkle — AI signal (Phosphor Regular, single sparkle for cleaner read at small sizes) */
+export const Sparkles = (p: IconProps) => (
+  <PhSparkle size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+
+/** Three-line hamburger — mobile floating menu trigger */
+export const Menu = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" />
+  </Svg>
+);
+
+/** X — close icon, paired with Menu */
+export const X = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M18 6 6 18" /><path d="m6 6 12 12" />
   </Svg>
 );

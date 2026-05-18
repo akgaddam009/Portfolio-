@@ -59,7 +59,7 @@ export default function P2Page() {
   return (
     <>
       <nav className="astra-nav">
-        <Link href="/work/astra" className="astra-nav-brand">
+        <Link href="/work/astra" target="_top" className="astra-nav-brand">
           Indemn <span className="astra-nav-brand-v">Workflow</span>
         </Link>
         <div className="astra-nav-role-section">
@@ -70,7 +70,7 @@ export default function P2Page() {
             </button>
           </div>
         </div>
-        <Link href="/work/astra" className="astra-nav-back">← Back to case study</Link>
+        <Link href="/work/astra" target="_top" className="astra-nav-back">← Back to case study</Link>
       </nav>
 
       <div className="astra-screen">
@@ -139,7 +139,7 @@ function StepIndicator({ screen, setScreen }: { screen: Screen; setScreen: (s: S
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: "8px",
-      fontFamily: "var(--astra-font-mono)", fontSize: "10px",
+      fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       color: "var(--astra-text-3)",
       flexWrap: "wrap",
@@ -177,8 +177,8 @@ function Landing({ onCreate, onEdit }: { onCreate: () => void; onEdit: (id: stri
     <div style={{ padding: "20px 24px" }}>
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
         <div>
-          <div style={{ fontSize: "14px", fontWeight: 600, marginBottom: "3px" }}>Workflow rules</div>
-          <div style={{ fontSize: "11px", color: "var(--astra-text-2)" }}>
+          <div style={{ fontSize: "var(--text-body-lg)", fontWeight: 600, marginBottom: "3px" }}>Workflow rules</div>
+          <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)" }}>
             {WORKFLOWS.length} active rules · drag to reorder priority within a group
           </div>
         </div>
@@ -188,9 +188,9 @@ function Landing({ onCreate, onEdit }: { onCreate: () => void; onEdit: (id: stri
       {WORKFLOWS.some(w => w.conflict) && (
         <div style={{
           background: "var(--astra-yellow-bg)", border: "1px solid var(--astra-yellow-border)",
-          padding: "10px 14px", borderRadius: "5px", marginBottom: "16px",
+          padding: "10px 14px", borderRadius: "4px", marginBottom: "16px",
           display: "flex", alignItems: "center", gap: "10px",
-          fontSize: "11px", color: "var(--astra-yellow)",
+          fontSize: "var(--text-mono-lg)", color: "var(--astra-yellow)",
         }}>
           <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--astra-yellow-dot)", flexShrink: 0 }} />
           <span style={{ flex: 1 }}>
@@ -203,7 +203,7 @@ function Landing({ onCreate, onEdit }: { onCreate: () => void; onEdit: (id: stri
       {grouped.map(g => (
         <div key={g.category} style={{ marginBottom: "20px" }}>
           <div style={{
-            fontFamily: "var(--astra-font-mono)", fontSize: "10px",
+            fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)",
             color: "var(--astra-text-3)", letterSpacing: "0.08em",
             textTransform: "uppercase", marginBottom: "8px",
             paddingBottom: "6px", borderBottom: "1px solid var(--astra-border-light)",
@@ -218,7 +218,7 @@ function Landing({ onCreate, onEdit }: { onCreate: () => void; onEdit: (id: stri
                 style={{
                   background: "var(--astra-surface)",
                   border: "1px solid var(--astra-border-light)",
-                  borderRadius: "5px",
+                  borderRadius: "4px",
                   padding: "12px 14px",
                   cursor: "pointer",
                   display: "grid",
@@ -230,14 +230,14 @@ function Landing({ onCreate, onEdit }: { onCreate: () => void; onEdit: (id: stri
                 onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--astra-text-2)"; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--astra-border-light)"; }}
               >
-                <div style={{ fontSize: "12px", color: "var(--astra-text-3)", fontFamily: "var(--astra-font-mono)" }}>⋮⋮</div>
+                <div style={{ fontSize: "var(--text-caption)", color: "var(--astra-text-3)", fontFamily: "var(--astra-font-mono)" }}>⋮⋮</div>
                 <div>
-                  <div style={{ fontSize: "13px", fontWeight: 500, marginBottom: "2px" }}>{w.name}</div>
-                  <div style={{ fontSize: "11px", color: "var(--astra-text-2)" }}>{w.preview}</div>
+                  <div style={{ fontSize: "var(--text-body)", fontWeight: 500, marginBottom: "2px" }}>{w.name}</div>
+                  <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)" }}>{w.preview}</div>
                 </div>
                 {w.inFlight && w.inFlight > 0 ? (
                   <span style={{
-                    fontSize: "10px", fontFamily: "var(--astra-font-mono)",
+                    fontSize: "var(--text-mono)", fontFamily: "var(--astra-font-mono)",
                     padding: "2px 6px", borderRadius: "3px",
                     background: "var(--astra-bg)", color: "var(--astra-text-2)",
                     letterSpacing: "0.04em",
@@ -249,7 +249,7 @@ function Landing({ onCreate, onEdit }: { onCreate: () => void; onEdit: (id: stri
                 </span>
                 <button
                   className="astra-btn astra-btn-ghost astra-btn-sm"
-                  style={{ fontSize: "10px" }}
+                  style={{ fontSize: "var(--text-mono)" }}
                   onClick={e => { e.stopPropagation(); onEdit(w.id); }}
                 >Edit</button>
               </div>
@@ -260,7 +260,7 @@ function Landing({ onCreate, onEdit }: { onCreate: () => void; onEdit: (id: stri
 
       <div style={{
         marginTop: "16px",
-        fontSize: "11px", color: "var(--astra-text-3)",
+        fontSize: "var(--text-mono-lg)", color: "var(--astra-text-3)",
         textAlign: "center", fontStyle: "italic",
       }}>
         Click <strong style={{ color: "var(--astra-text-1)" }}>+ New workflow</strong> above to walk through the builder, or click any rule to edit.
@@ -306,8 +306,8 @@ function Build1({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
           textAlign: "center",
           marginBottom: "16px",
         }}>
-          <div style={{ fontSize: "13px", fontWeight: 500, marginBottom: "6px" }}>No conditions yet</div>
-          <div style={{ fontSize: "11px", color: "var(--astra-text-2)", marginBottom: "16px" }}>
+          <div style={{ fontSize: "var(--text-body)", fontWeight: 500, marginBottom: "6px" }}>No conditions yet</div>
+          <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)", marginBottom: "16px" }}>
             Start with the contract type. Add more conditions to narrow the rule (amount, vendor risk, department).
           </div>
           <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
@@ -338,19 +338,19 @@ function Build1({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
               padding: "10px 0",
               borderTop: i > 0 ? "1px solid var(--astra-border-light)" : "none",
             }}>
-              <span style={{ fontFamily: "var(--astra-font-mono)", fontSize: "10px", color: "var(--astra-text-3)" }}>
+              <span style={{ fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)", color: "var(--astra-text-3)" }}>
                 {i === 0 ? "WHEN" : "AND"}
               </span>
-              <span style={{ fontSize: "12px", fontWeight: 500 }}>{condTypeLabel(c.type)}</span>
-              <span style={{ fontSize: "11px", color: "var(--astra-text-2)", textAlign: "center" }}>
+              <span style={{ fontSize: "var(--text-caption)", fontWeight: 500 }}>{condTypeLabel(c.type)}</span>
+              <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)", textAlign: "center" }}>
                 {c.operator}
               </span>
-              <span style={{ fontSize: "12px", color: "var(--astra-text-1)" }}>{c.value || "—"}</span>
+              <span style={{ fontSize: "var(--text-caption)", color: "var(--astra-text-1)" }}>{c.value || "—"}</span>
               <button
                 onClick={() => removeCondition(c.id)}
                 style={{
                   background: "transparent", border: "none", cursor: "pointer",
-                  fontSize: "11px", color: "var(--astra-text-3)", padding: "3px 6px",
+                  fontSize: "var(--text-mono-lg)", color: "var(--astra-text-3)", padding: "3px 6px",
                 }}
               >×</button>
             </div>
@@ -360,7 +360,7 @@ function Build1({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
             <button
               className="astra-btn astra-btn-ghost astra-btn-sm"
               onClick={() => addCondition({ type: "amount", operator: "<", value: "50,00,000" })}
-              style={{ fontSize: "11px" }}
+              style={{ fontSize: "var(--text-mono-lg)" }}
             >
               + Add condition
             </button>
@@ -423,8 +423,8 @@ function Build2({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
           textAlign: "center",
           marginBottom: "16px",
         }}>
-          <div style={{ fontSize: "13px", fontWeight: 500, marginBottom: "6px" }}>No approvers yet</div>
-          <div style={{ fontSize: "11px", color: "var(--astra-text-2)", marginBottom: "16px" }}>
+          <div style={{ fontSize: "var(--text-body)", fontWeight: 500, marginBottom: "6px" }}>No approvers yet</div>
+          <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)", marginBottom: "16px" }}>
             Add the first approver. Multiple steps run sequentially — each waits for the previous to complete.
           </div>
           <button className="astra-btn astra-btn-primary astra-btn-sm" onClick={addStep}>
@@ -440,7 +440,7 @@ function Build2({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
               width: "24px", height: "24px", borderRadius: "50%",
               background: "var(--astra-text-1)", color: "#fff",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "11px", fontWeight: 600, fontFamily: "var(--astra-font-mono)",
+              fontSize: "var(--text-mono-lg)", fontWeight: 600, fontFamily: "var(--astra-font-mono)",
             }}>{i + 1}</div>
             <input
               type="text"
@@ -453,11 +453,11 @@ function Build2({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
               onClick={() => removeStep(s.id)}
               style={{
                 background: "transparent", border: "none", cursor: "pointer",
-                fontSize: "13px", color: "var(--astra-text-3)", padding: "3px 6px",
+                fontSize: "var(--text-body)", color: "var(--astra-text-3)", padding: "3px 6px",
               }}
             >×</button>
           </div>
-          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center", marginLeft: "36px", fontSize: "11px" }}>
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center", marginLeft: "36px", fontSize: "var(--text-mono-lg)" }}>
             <label style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--astra-text-2)" }}>
               <input
                 type="checkbox"
@@ -523,12 +523,12 @@ function Build3({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
         textAlign: "center",
       }}>
         <div style={{
-          fontFamily: "var(--astra-font-mono)", fontSize: "10px",
+          fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)",
           color: "var(--astra-blue)", letterSpacing: "0.08em",
           textTransform: "uppercase", marginBottom: "10px",
         }}>The rule, in plain language</div>
         <div style={{
-          fontSize: "16px", fontWeight: 500, lineHeight: 1.5,
+          fontSize: "var(--text-title-sm)", fontWeight: 500, lineHeight: 1.5,
           color: "var(--astra-text-1)",
         }}>
           {preview}
@@ -537,11 +537,11 @@ function Build3({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
 
       {/* Conditions summary */}
       <div className="astra-card" style={{ marginBottom: "10px" }}>
-        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "10px", color: "var(--astra-text-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "10px" }}>
+        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)", color: "var(--astra-text-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "10px" }}>
           Conditions ({draft.conditions.length})
         </div>
         {draft.conditions.map((c, i) => (
-          <div key={c.id} style={{ fontSize: "12px", color: "var(--astra-text-2)", marginBottom: i < draft.conditions.length - 1 ? "4px" : 0 }}>
+          <div key={c.id} style={{ fontSize: "var(--text-caption)", color: "var(--astra-text-2)", marginBottom: i < draft.conditions.length - 1 ? "4px" : 0 }}>
             <strong style={{ color: "var(--astra-text-1)" }}>{condTypeLabel(c.type)}</strong> {c.operator} {c.value}
           </div>
         ))}
@@ -549,7 +549,7 @@ function Build3({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
 
       {/* Chain summary */}
       <div className="astra-card" style={{ marginBottom: "16px" }}>
-        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "10px", color: "var(--astra-text-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "10px" }}>
+        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)", color: "var(--astra-text-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "10px" }}>
           Approval chain ({draft.steps.length} steps)
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
@@ -560,11 +560,11 @@ function Build3({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
                 background: "var(--astra-surface-2)",
                 border: "1px solid var(--astra-border-light)",
                 borderRadius: "4px",
-                fontSize: "12px",
+                fontSize: "var(--text-caption)",
                 fontWeight: 500,
               }}>
                 {s.approver}
-                {s.optional && <span style={{ marginLeft: "6px", fontSize: "10px", color: "var(--astra-text-3)" }}>(optional)</span>}
+                {s.optional && <span style={{ marginLeft: "6px", fontSize: "var(--text-mono)", color: "var(--astra-text-3)" }}>(optional)</span>}
               </div>
               {i < draft.steps.length - 1 && <span style={{ color: "var(--astra-text-3)" }}>→</span>}
             </div>
@@ -574,7 +574,7 @@ function Build3({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
 
       {/* Name input */}
       <div style={{ marginBottom: "16px" }}>
-        <label style={{ display: "block", fontSize: "11px", fontFamily: "var(--astra-font-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--astra-text-3)", marginBottom: "6px" }}>
+        <label style={{ display: "block", fontSize: "var(--text-mono-lg)", fontFamily: "var(--astra-font-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--astra-text-3)", marginBottom: "6px" }}>
           Workflow name
         </label>
         <input
@@ -582,7 +582,7 @@ function Build3({ draft, setDraft, setScreen }: { draft: Draft; setDraft: (d: Dr
           value={draft.name}
           onChange={e => setDraft({ ...draft, name: e.target.value })}
           placeholder="e.g. Software contracts under ₹50L"
-          style={{ ...inputStyle, fontSize: "14px", padding: "10px 12px" }}
+          style={{ ...inputStyle, fontSize: "var(--text-body-lg)", padding: "10px 12px" }}
         />
       </div>
 
@@ -614,9 +614,9 @@ function Edit({ editingId, setScreen }: { editingId: string | null; setScreen: (
       {wf.inFlight && wf.inFlight > 0 && (
         <div style={{
           background: "var(--astra-yellow-bg)", border: "1px solid var(--astra-yellow-border)",
-          padding: "10px 14px", borderRadius: "5px", marginBottom: "16px",
+          padding: "10px 14px", borderRadius: "4px", marginBottom: "16px",
           display: "flex", alignItems: "center", gap: "10px",
-          fontSize: "11px", color: "var(--astra-yellow)",
+          fontSize: "var(--text-mono-lg)", color: "var(--astra-yellow)",
         }}>
           <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--astra-yellow-dot)", flexShrink: 0 }} />
           <span><strong>{wf.inFlight} contracts</strong> are mid-approval using this workflow. Changes apply only to new contracts entering the system after save.</span>
@@ -624,7 +624,7 @@ function Edit({ editingId, setScreen }: { editingId: string | null; setScreen: (
       )}
 
       <div className="astra-card" style={{ marginBottom: "10px" }}>
-        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "10px", color: "var(--astra-text-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "10px" }}>
+        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)", color: "var(--astra-text-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "10px" }}>
           Conditions
         </div>
         {wf.conditions.map((c, i) => (
@@ -634,24 +634,24 @@ function Edit({ editingId, setScreen }: { editingId: string | null; setScreen: (
             padding: "10px 0",
             borderTop: i > 0 ? "1px solid var(--astra-border-light)" : "none",
           }}>
-            <span style={{ fontFamily: "var(--astra-font-mono)", fontSize: "10px", color: "var(--astra-text-3)" }}>
+            <span style={{ fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)", color: "var(--astra-text-3)" }}>
               {i === 0 ? "WHEN" : "AND"}
             </span>
-            <span style={{ fontSize: "12px", fontWeight: 500 }}>{condTypeLabel(c.type)}</span>
-            <span style={{ fontSize: "11px", color: "var(--astra-text-2)", textAlign: "center" }}>{c.operator}</span>
+            <span style={{ fontSize: "var(--text-caption)", fontWeight: 500 }}>{condTypeLabel(c.type)}</span>
+            <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)", textAlign: "center" }}>{c.operator}</span>
             <input
               type="text"
               defaultValue={c.value}
               onChange={() => setDirty(true)}
               style={inputStyle}
             />
-            <button style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: "11px", color: "var(--astra-text-3)" }}>×</button>
+            <button style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: "var(--text-mono-lg)", color: "var(--astra-text-3)" }}>×</button>
           </div>
         ))}
       </div>
 
       <div className="astra-card" style={{ marginBottom: "16px" }}>
-        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "10px", color: "var(--astra-text-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "10px" }}>
+        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)", color: "var(--astra-text-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "10px" }}>
           Approval chain
         </div>
         {wf.steps.map((s, i) => (
@@ -660,10 +660,10 @@ function Edit({ editingId, setScreen }: { editingId: string | null; setScreen: (
               width: "20px", height: "20px", borderRadius: "50%",
               background: "var(--astra-text-1)", color: "#fff",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "10px", fontWeight: 600,
+              fontSize: "var(--text-mono)", fontWeight: 600,
             }}>{i + 1}</div>
             <input type="text" defaultValue={s.approver} onChange={() => setDirty(true)} style={inputStyle} />
-            <button style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: "11px", color: "var(--astra-text-3)" }}>×</button>
+            <button style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: "var(--text-mono-lg)", color: "var(--astra-text-3)" }}>×</button>
           </div>
         ))}
       </div>
@@ -685,7 +685,7 @@ function Edit({ editingId, setScreen }: { editingId: string | null; setScreen: (
           display: "flex", justifyContent: "space-between", alignItems: "center",
           gap: "12px", flexWrap: "wrap",
         }}>
-          <div style={{ fontSize: "11px", color: "var(--astra-text-2)" }}>You have unsaved changes</div>
+          <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)" }}>You have unsaved changes</div>
           <div style={{ display: "flex", gap: "8px" }}>
             <button className="astra-btn astra-btn-ghost astra-btn-sm" onClick={() => { setDirty(false); setScreen("landing"); }}>Discard</button>
             <button className="astra-btn astra-btn-primary astra-btn-sm" onClick={() => { setDirty(false); setScreen("landing"); }}>Save changes</button>
@@ -704,12 +704,12 @@ function BuilderStepHeader({ step, total, title, subtitle }: { step: number | nu
   return (
     <div style={{ marginBottom: "20px" }}>
       {step != null && total != null && (
-        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--astra-text-3)", marginBottom: "6px" }}>
+        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--astra-text-3)", marginBottom: "6px" }}>
           Step {step} of {total}
         </div>
       )}
-      <div style={{ fontSize: "18px", fontWeight: 600, marginBottom: "3px" }}>{title}</div>
-      <div style={{ fontSize: "12px", color: "var(--astra-text-2)" }}>{subtitle}</div>
+      <div style={{ fontSize: "var(--text-title)", fontWeight: 600, marginBottom: "3px" }}>{title}</div>
+      <div style={{ fontSize: "var(--text-caption)", color: "var(--astra-text-2)" }}>{subtitle}</div>
     </div>
   );
 }
@@ -756,20 +756,20 @@ function PlainLanguagePreview({ preview, hint }: { preview: string; hint: string
     <div style={{
       background: "var(--astra-blue-bg)",
       border: "1px solid var(--astra-blue-border)",
-      borderRadius: "5px",
+      borderRadius: "4px",
       padding: "12px 14px",
       marginBottom: "16px",
       display: "flex", alignItems: "flex-start", gap: "10px",
     }}>
       <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--astra-blue-dot)", marginTop: "6px", flexShrink: 0 }} />
       <div>
-        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "10px", color: "var(--astra-blue)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "4px", fontWeight: 600 }}>
+        <div style={{ fontFamily: "var(--astra-font-mono)", fontSize: "var(--text-mono)", color: "var(--astra-blue)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "4px", fontWeight: 600 }}>
           Plain-language preview
         </div>
-        <div style={{ fontSize: "13px", color: "var(--astra-text-1)", marginBottom: "4px", fontWeight: 500 }}>
+        <div style={{ fontSize: "var(--text-body)", color: "var(--astra-text-1)", marginBottom: "4px", fontWeight: 500 }}>
           {preview}
         </div>
-        <div style={{ fontSize: "11px", color: "var(--astra-text-2)" }}>{hint}</div>
+        <div style={{ fontSize: "var(--text-mono-lg)", color: "var(--astra-text-2)" }}>{hint}</div>
       </div>
     </div>
   );
@@ -814,7 +814,7 @@ function groupByCategory(workflows: Workflow[]) {
 const inputStyle: React.CSSProperties = {
   width: "100%",
   fontFamily: "var(--astra-font-body)",
-  fontSize: "12px",
+  fontSize: "var(--text-caption)",
   padding: "6px 10px",
   border: "1px solid var(--astra-border)",
   borderRadius: "4px",
@@ -825,7 +825,7 @@ const inputStyle: React.CSSProperties = {
 
 const selectStyle: React.CSSProperties = {
   fontFamily: "var(--astra-font-body)",
-  fontSize: "11px",
+  fontSize: "var(--text-mono-lg)",
   padding: "3px 6px",
   border: "1px solid var(--astra-border)",
   borderRadius: "3px",

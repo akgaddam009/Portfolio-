@@ -1,32 +1,31 @@
 import type { MetadataRoute } from "next";
-import { caseStudies } from "@/lib/caseStudies";
 
-const BASE = "https://arungaddam.com";
+const BASE_URL = "https://arungaddamux.vercel.app";
+
+// Only public case studies are indexed. Confidential cases
+// (zetwerk-dc, zetwerk-bu-ecosystem, fancode-homepage, astra) are
+// intentionally omitted so search engines don't surface them —
+// recruiters get direct URLs as needed.
+const caseStudySlugs = [
+  "planful-esm-tables",
+  "apple-business-listings",
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: BASE,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 1.0,
-    },
-    {
-      url: `${BASE}/system`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-  ];
-
-  const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((cs) => ({
-    url: `${BASE}/work/${cs.slug}`,
-    lastModified: now,
+  const caseStudyEntries = caseStudySlugs.map((slug) => ({
+    url: `${BASE_URL}/work/${slug}`,
+    lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...caseStudyRoutes];
+  return [
+    {
+      url: BASE_URL,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 1.0,
+    },
+    ...caseStudyEntries,
+  ];
 }

@@ -18,11 +18,11 @@ const item = {
 const infoCards = [
   {
     label: "Role",
-    value: "Senior Product Designer. I own the full design process — from discovery and strategy to final pixel.",
+    value: "Senior Product Designer. I own the full design process, from discovery and strategy to final pixel.",
   },
   {
     label: "Focus",
-    value: "Enterprise SaaS, B2B AI tools, and consumer products at scale — with user research as a core part of the process.",
+    value: "Enterprise SaaS, B2B AI tools, and consumer products at scale, with user research as a core part of the process.",
   },
   {
     label: "Experience",
@@ -68,14 +68,14 @@ export default function Hero() {
             variants={item}
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "15px",
+              fontSize: "var(--text-lead)",
               lineHeight: 1.65,
               color: "var(--muted)",
               marginBottom: "48px",
               maxWidth: "520px",
             }}
           >
-            I&apos;m based in Hyderabad, India with my wife and our son — figuring out the balance between designing products, catching up with AI, and raising a tiny human. I&apos;m learning a lot from both.
+            I&apos;m based in Hyderabad, India with my wife and our son, figuring out the balance between designing products, catching up with AI, and raising a tiny human. I&apos;m learning a lot from both.
           </motion.p>
 
           {/* Info grid — 2×2 + last spans full */}
@@ -107,14 +107,14 @@ export default function Hero() {
                     }}
                   >
                     <p style={{
-                      fontFamily: "var(--font-mono)", fontSize: "10px",
+                      fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
                       letterSpacing: "0.08em", textTransform: "uppercase",
                       color: "var(--muted)", marginBottom: "6px",
                     }}>
                       {card.label}
                     </p>
                     <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "14px",
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                       color: "var(--text)", lineHeight: 1.55,
                       letterSpacing: "-0.01em",
                     }}>
@@ -134,7 +134,7 @@ export default function Hero() {
             <Link
               href="/#work"
               style={{
-                fontFamily: "var(--font-mono)", fontSize: "11px",
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)",
                 letterSpacing: "0.05em", textTransform: "uppercase",
                 color: "var(--text)", transition: "opacity 0.15s",
               }}

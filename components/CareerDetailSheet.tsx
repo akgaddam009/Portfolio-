@@ -126,7 +126,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               <h2 style={{
                 fontFamily: "var(--font-body)",
                 fontSize: "clamp(18px, 4vw, 24px)",
-                fontWeight: 510,
+                fontWeight: 500,
                 letterSpacing: "-0.025em",
                 color: "var(--text)",
                 lineHeight: 1.2,
@@ -138,8 +138,8 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               {/* Company + date */}
               <p style={{
                 fontFamily: "var(--font-body)",
-                fontSize: "11px",
-                fontWeight: 510,
+                fontSize: "var(--text-mono-lg)",
+                fontWeight: 500,
                 letterSpacing: "-0.01em",
                 color: "var(--muted)",
                 marginBottom: "24px",
@@ -151,7 +151,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               {item.description && (
                 <p style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "15px",
+                  fontSize: "var(--text-lead)",
                   fontWeight: 400,
                   letterSpacing: "-0.01em",
                   lineHeight: 1.65,
@@ -167,8 +167,8 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                 <div style={{ marginBottom: "32px" }}>
                   <p style={{
                     fontFamily: "var(--font-body)",
-                    fontSize: "11px",
-                    fontWeight: 510,
+                    fontSize: "var(--text-mono-lg)",
+                    fontWeight: 500,
                     letterSpacing: "-0.01em",
                     color: "var(--muted)",
                     marginBottom: "16px",
@@ -180,11 +180,11 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                       <div key={i} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
                         <span style={{
                           color: "var(--muted)", flexShrink: 0,
-                          fontFamily: "var(--font-body)", fontSize: "16px", lineHeight: 1.4,
+                          fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", lineHeight: 1.4,
                         }}>·</span>
                         <p style={{
                           fontFamily: "var(--font-body)",
-                          fontSize: "15px", fontWeight: 400,
+                          fontSize: "var(--text-lead)", fontWeight: 400,
                           letterSpacing: "-0.01em", lineHeight: 1.55,
                           color: "var(--text)",
                         }}>
@@ -201,8 +201,8 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                 <div style={{ marginBottom: "48px" }}>
                   <p style={{
                     fontFamily: "var(--font-body)",
-                    fontSize: "11px",
-                    fontWeight: 510,
+                    fontSize: "var(--text-mono-lg)",
+                    fontWeight: 500,
                     letterSpacing: "-0.01em",
                     color: "var(--muted)",
                     marginBottom: "16px",
@@ -214,11 +214,11 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                       <div key={i} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
                         <span style={{
                           color: "var(--muted)", flexShrink: 0,
-                          fontFamily: "var(--font-body)", fontSize: "16px", lineHeight: 1.4,
+                          fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", lineHeight: 1.4,
                         }}>·</span>
                         <p style={{
                           fontFamily: "var(--font-body)",
-                          fontSize: "15px", fontWeight: 400,
+                          fontSize: "var(--text-lead)", fontWeight: 400,
                           letterSpacing: "-0.01em", lineHeight: 1.55,
                           color: "var(--text)",
                         }}>
@@ -255,7 +255,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                   display: "flex", alignItems: "center", justifyContent: "center",
                   cursor: hasPrev ? "pointer" : "default",
                   opacity: hasPrev ? 1 : 0.3,
-                  fontSize: "18px",
+                  fontSize: "var(--text-title)",
                   transition: "opacity 0.15s",
                 }}
               >
@@ -274,8 +274,8 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                   color: "var(--text)",
                   cursor: "pointer",
                   fontFamily: "var(--font-body)",
-                  fontSize: "13px",
-                  fontWeight: 510,
+                  fontSize: "var(--text-body)",
+                  fontWeight: 500,
                   letterSpacing: "-0.01em",
                 }}
               >
@@ -295,7 +295,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                   display: "flex", alignItems: "center", justifyContent: "center",
                   cursor: hasNext ? "pointer" : "default",
                   opacity: hasNext ? 1 : 0.3,
-                  fontSize: "18px",
+                  fontSize: "var(--text-title)",
                   transition: "opacity 0.15s",
                 }}
               >

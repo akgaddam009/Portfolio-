@@ -20,9 +20,13 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    const saved       = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
-    const isDark      = saved !== null ? saved === "dark" : prefersDark;
+    const saved = localStorage.getItem("theme");
+    // Time-of-day default: dark 18:00 → 05:59, light 06:00 → 17:59.
+    // User's explicit toggle (saved in localStorage) always wins.
+    const hour   = new Date().getHours();
+    const auto   = (hour >= 18 || hour < 6) ? "dark" : "light";
+    const theme  = saved === "dark" || saved === "light" ? saved : auto;
+    const isDark = theme === "dark";
     setDark(isDark);
     document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
   }, []);
@@ -32,6 +36,8 @@ export default function ThemeToggle() {
     setDark(next);
     document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
     localStorage.setItem("theme", next ? "dark" : "light");
+    // CSS @property transitions handle the smooth animation —
+    // see globals.css ":root { transition: --bg ..., --surface ..., ... }"
   };
 
   // Render a placeholder on SSR so layout doesn't shift

@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/system/", "/ai/"],
       },
     ],
-    sitemap: "https://arungaddam.com/sitemap.xml",
-    host: "https://arungaddam.com",
+    sitemap: "https://arungaddamux.vercel.app/sitemap.xml",
+    host: "https://arungaddamux.vercel.app",
   };
 }

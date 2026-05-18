@@ -26,14 +26,14 @@ export default function ContactCTA() {
           }}>
             Have a hard problem?
           </h2>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "rgba(245,244,240,0.5)", lineHeight: 1.6, marginBottom: "28px", maxWidth: "380px" }}>
-            I&apos;m always happy to talk about product, design, or AI — whether it&apos;s a collaboration, a question, or just a conversation.
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", color: "rgba(245,244,240,0.5)", lineHeight: 1.6, marginBottom: "28px", maxWidth: "380px" }}>
+            I&apos;m always happy to talk about product, design, or AI, whether it&apos;s a collaboration, a question, or just a conversation.
           </p>
 
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
             <Link href="mailto:akgaddam02@gmail.com" style={{
               display: "inline-flex", alignItems: "center", gap: "6px",
-              fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 400,
               padding: "9px 20px", background: "var(--bg)", color: "var(--text)",
               borderRadius: "10px", letterSpacing: "-0.01em", transition: "opacity 0.15s",
             }}
@@ -44,7 +44,7 @@ export default function ContactCTA() {
             </Link>
             <Link href="https://linkedin.com/in/akgaddam" target="_blank" rel="noopener noreferrer" style={{
               display: "inline-flex", alignItems: "center", gap: "6px",
-              fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400,
+              fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 400,
               padding: "9px 20px", border: "1px solid rgba(245,244,240,0.15)",
               color: "rgba(245,244,240,0.65)", borderRadius: "10px",
               letterSpacing: "-0.01em", transition: "border-color 0.15s, color 0.15s",

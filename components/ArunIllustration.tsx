@@ -55,7 +55,7 @@ export default function ArunIllustration({ className }: { className?: string }) 
 
         {/* Photo — grayscale + high contrast, blended multiply so stripes bleed through highlights */}
         <img
-          src="/arun.png"
+          src="/arun.jpg"
           alt="Arun Gaddam"
           style={{
             position: "absolute",

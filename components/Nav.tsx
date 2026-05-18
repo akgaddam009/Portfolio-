@@ -55,10 +55,10 @@ export default function Nav() {
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <Link
               href="/"
-              aria-label="Home — Arun Gaddam"
+              aria-label="Home, Arun Gaddam"
               style={{
                 fontFamily: "var(--font-logo)",
-                fontSize: "12px",
+                fontSize: "var(--text-caption)",
                 fontWeight: 500,
                 color: "var(--text)",
                 letterSpacing: "0.06em",
@@ -117,10 +117,10 @@ export default function Nav() {
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontFamily: "var(--font-mono)", fontSize: "10px",
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
                 letterSpacing: "0.06em", textTransform: "uppercase",
                 color: "var(--muted)", transition: "color 0.15s",
-                display: "inline-flex", alignItems: "center", gap: "5px",
+                display: "inline-flex", alignItems: "center", gap: "4px",
               }}
               onMouseEnter={e => (e.currentTarget.style.color = "var(--text)")}
               onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
@@ -141,19 +141,19 @@ export default function Nav() {
                 alignItems: "center",
                 gap: "6px",
                 fontFamily: "var(--font-body)",
-                fontSize: "13px",
-                fontWeight: 400,
-                color: copied ? "var(--accent-success)" : "var(--muted)",
+                fontSize: "var(--text-body)",
+                fontWeight: 500,
+                color: copied ? "var(--accent-success)" : "var(--text)",
                 background: "none",
                 border: "none",
                 padding: "0",
                 transition: "color 0.2s",
                 letterSpacing: "-0.01em",
               }}
-              onMouseEnter={e => { if (!copied) e.currentTarget.style.color = "var(--text)"; }}
-              onMouseLeave={e => { if (!copied) e.currentTarget.style.color = "var(--muted)"; }}
+              onMouseEnter={e => { if (!copied) e.currentTarget.style.opacity = "0.7"; }}
+              onMouseLeave={e => { if (!copied) e.currentTarget.style.opacity = "1"; }}
             >
-              <span style={{ fontSize: "11px" }}>{copied ? "✓" : "✉"}</span>
+              <span style={{ fontSize: "var(--text-mono-lg)" }}>{copied ? "✓" : "✉"}</span>
               {copied ? "Copied!" : "Copy email"}
             </button>
           </nav>
@@ -164,6 +164,8 @@ export default function Nav() {
             className="mobile-menu-btn"
             style={{ background: "none", border: "none", padding: "4px", display: "none" }}
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
             <div style={{ width: "20px", display: "flex", flexDirection: "column", gap: "4px" }}>
               {[0, 1].map(i => (
@@ -186,6 +188,7 @@ export default function Nav() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

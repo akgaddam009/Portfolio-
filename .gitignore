@@ -59,3 +59,8 @@ awesome-design-md-main.zip
 .claude/
 skills-lock.json
 writer.md
+
+# Local generated exports + helper scripts (not deployed)
+/portfolio-export.md
+/scripts/
+/public/images/lorenzo-lanfranconi-ex-22-f.jpg

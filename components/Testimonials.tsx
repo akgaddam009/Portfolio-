@@ -21,7 +21,7 @@ export default function Testimonials() {
           transition={{ duration: 0.6, ease: EASE }}
           style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "32px" }}
         >
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>
             In their words
           </p>
           <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
@@ -42,7 +42,7 @@ export default function Testimonials() {
             >
               {/* Quote */}
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 400,
+                fontFamily: "var(--font-body)", fontSize: "var(--text-lead)", fontWeight: 400,
                 lineHeight: 1.7, color: "var(--muted2)", marginBottom: "20px",
                 letterSpacing: "-0.01em",
               }}>
@@ -55,15 +55,15 @@ export default function Testimonials() {
                   background: t.hue, display: "flex", alignItems: "center",
                   justifyContent: "center", flexShrink: 0,
                 }}>
-                  <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 600, color: "var(--text)" }}>
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 600, color: "var(--text)" }}>
                     {t.initials}
                   </span>
                 </div>
                 <div>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 600, color: "var(--text)", lineHeight: 1.3 }}>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 600, color: "var(--text)", lineHeight: 1.3 }}>
                     {t.name}
                   </p>
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.04em", color: "var(--muted)", marginTop: "1px" }}>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.04em", color: "var(--muted)", marginTop: "1px" }}>
                     {t.role} · {t.company}
                   </p>
                 </div>

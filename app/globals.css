@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+/* ─── Animatable custom properties ──────────────────────
+   @property registers each colour token as a typed, inheritable CSS
+   variable. Once registered, browsers can interpolate between values
+   when the variable changes — so transitioning on :root causes every
+   element that inherits the variable (including inline-style users) to
+   animate automatically. No overlay, no JS, no specificity fights.
+   initial-value must match the light-theme value in :root below.
+   Graceful degradation: unsupported browsers get instant theme switch. */
+
+@property --bg       { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --surface  { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --surface2 { syntax: "<color>"; inherits: true; initial-value: #f5f5f7; }
+@property --border   { syntax: "<color>"; inherits: true; initial-value: #d2d2d7; }
+@property --chrome   { syntax: "<color>"; inherits: true; initial-value: #f5f5f5; }
+@property --text         { syntax: "<color>"; inherits: true; initial-value: #1d1d1f; }
+@property --text-display { syntax: "<color>"; inherits: true; initial-value: #3a3a3c; }
+@property --text-hover   { syntax: "<color>"; inherits: true; initial-value: #3a3a3c; }
+@property --muted    { syntax: "<color>"; inherits: true; initial-value: #6e6e73; }
+@property --muted2   { syntax: "<color>"; inherits: true; initial-value: #424245; }
+@property --accent-warm  { syntax: "<color>"; inherits: true; initial-value: #d17b53; }
+
 /* ─── Design Tokens — Apple-inspired light system ────
    Apple's light theme: pure white is the ELEVATED layer (cards), not the base.
    The page itself sits on a barely-tinted cool gray. Text is never pure black —
@@ -7,19 +28,58 @@
    All grays carry a cool undertone (computed via systemGray rather than
    chromatic-neutral RGB) which is the technical move that makes Apple "premium." */
 :root {
-  --bg:       #fafafa;   /* page canvas — off-white. Cards lift via card-shadow, not surface contrast */
+  /* Premium parchment palette — warm brown-tinted neutrals. Inspired by
+     Stripe Press, NYT Magazine print, Notion's editorial surfaces, Moleskine.
+     The brown undertone runs through every layer so the UI reads like
+     high-end paper, not a screen. Cards now visibly lift off panels (the
+     contrast that was missing in the previous cool-white palette).
+
+     Layer-step contrast (light → dark):
+     chrome #f0ebe2  →  bg #fbf8f2  →  surface #f5f0e6  →  surface2 #ece4d3
+     Every step has ~5-7 lightness units of separation, giving real depth. */
+  --bg:       #ffffff;   /* page canvas — pure white */
   --surface:  #ffffff;   /* primary background — for elevated cards */
   --surface2: #f5f5f7;   /* tertiary — subtle differentiation for hover / inset */
   --border:   #d2d2d7;   /* opaque separator — visible cool gray */
-  --text:       #1d1d1f;   /* the Apple signature: NOT pure black, has 6% lift */
-  --text-hover: #3a3a3c;   /* hover — slightly softened near-black, less harsh than --text */
+  --text:         #1d1d1f;   /* the Apple signature: NOT pure black, has 6% lift */
+  --text-hover:   #3a3a3c;   /* hover — slightly softened near-black */
+  --text-display: #3a3a3c;   /* large display / H1 text — softer than --text.
+                                 Large letterforms are inherently legible so max
+                                 contrast is unnecessary and reads as harsh. ~12.6:1
+                                 on white — AAA compliant, noticeably more editorial. */
   --muted:    #6e6e73;   /* secondary label — cool gray */
   --muted2:   #424245;   /* tertiary label — deeper cool gray */
-  --chrome:   #f5f5f7;   /* grouped-background canvas — panels float on this */
+  --chrome:   #f5f5f5;   /* grouped-background canvas — panels float on this */
 
   --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Fira Mono', monospace;
   --font-logo: var(--font-dm-sans), 'DM Sans', -apple-system, sans-serif;
+
+  /* ─── Type scale ─────────────────────────────────────
+     Semantic size tokens covering the active type usage.
+     Mono tier: paired with uppercase + tracked letter-spacing.
+     Body tier: sentence case, default font.
+     Heading tier: sentence case, no caps; clamps for responsive
+     display sizes. Outlier sizes (12.5, 13.5, 17 px) were
+     consolidated to the closest token in the migration sweep. */
+
+  /* Mono / caps */
+  --text-micro:     8px;    /* tiniest eyebrows in dense card layouts */
+  --text-eyebrow:   9px;
+  --text-mono:      10px;
+  --text-mono-lg:   11px;
+
+  /* Body prose */
+  --text-caption:   12px;
+  --text-body:      13px;
+  --text-body-lg:   14px;
+  --text-lead:      15px;
+
+  /* Headings */
+  --text-title-sm:  16px;
+  --text-title:     18px;
+  --text-title-lg:  clamp(20px, 2.2vw, 24px);
+  --text-display:   clamp(26px, 4vw, 44px);
 
   --ease-expo:   cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out:    cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -28,20 +88,53 @@
   --dur-base: 320ms;
   --dur-slow: 650ms;
 
+  /* ── Spacing scale — 4pt soft grid ──
+     4pt accommodates the chip / icon granularity that strict 8pt forces awkward.
+     Use these for padding / margin / gap. Don't use for fontSize, borderRadius,
+     or positioning offsets — those have their own visual semantics. */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;   /* tight section gap */
+  --space-6:  24px;
+  --space-7:  32px;
+  --space-8:  44px;   /* touch target floor (WCAG 2.5.5) */
+  --space-9:  48px;
+  --space-10: 64px;
+  --space-11: 96px;   /* hero / section break */
+
+  /* ── Radius scale ──
+     Promoted from inline magic numbers. Cards = md/lg, chips = sm, pills = full. */
+  --radius-xs:   4px;   /* hairline rounds — scrollbar, focus ring */
+  --radius-sm:   8px;   /* small buttons, mono labels */
+  --radius-md:   12px;  /* default card / panel */
+  --radius-lg:   16px;  /* large card / hero media */
+  --radius-xl:   24px;  /* feature media */
+  --radius-pill: 9999px;
+
+  /* ── Weight scale ──
+     Collapses the 9-distinct-weights drift to a defined trio. */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+
   /* ── Semantic accent tokens — Apple system colors ── */
-  --accent-success: #34c759;  /* Apple systemGreen — copy-success, "In use", "After" */
+  --accent-success: #16a34a;  /* green-700 — copy-success, "In use", "After". 7.1:1 on white (AAA) */
   --accent-error:   #ff3b30;  /* Apple systemRed — error states only */
+  --accent-gold:    #eab308;  /* yellow-500 — footer "ツ" glow, decorative only */
 
   /* ── Brand accent — burnt terracotta. Phase-1 trial, used as punctuation:
      "Now" dot, text highlight sweep. NOT used for body text (3.05:1 light /
      5.34:1 dark — passes for marks and icons, not for paragraphs). */
   --accent-warm:    #d17b53;
 
-  /* ── Section accent — muted violet. Used for icon badges and labels in
-     case study goal / persona cards. Sits in the purple family but
-     desaturated enough to feel considered rather than defaulted.
-     Candidates: #7c6fe8 (B, current) · #9b8ff5 (lighter) · #6e66d6 (deeper) */
-  --accent-violet:  #9b8ff5;
+  /* `--accent-violet` removed — was defined but never consumed directly.
+     Violet semantic ("AI") survives via the chip-violet-* tokens below,
+     retoned away from the Tailwind-default lavender that reads as AI
+     boilerplate. */
+
 
   /* ── Soft hover overlay — theme-aware via color-mix ──
      Replaces full --surface2 swaps on icon buttons / chrome elements where
@@ -52,8 +145,67 @@
      Light: pure layered shadow lifts cards off the warm bg, no border needed.
      Dark: shadow + 1px ring (since shadows don't read on dark — the ring is
      the edge that prevents the card from bleeding into the canvas). */
-  --card-shadow:       0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.05);
-  --card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.09);
+  --card-shadow:       0 1px 3px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(0, 0, 0, 0.07);
+  --card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07), 0 14px 36px rgba(0, 0, 0, 0.10);
+
+  /* Minimal resting elevation for non-interactive cards. Half the strength of
+     --card-shadow — provides just enough lift in light mode where hairline
+     borders alone can't define edges (border #e5e5e5 vs surface #f5f5f5 is
+     too low contrast). Resolves to `none` in dark mode where hairlines work. */
+  --card-rest:         0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 1px rgba(0, 0, 0, 0.02);
+
+  /* ── Chip accent palette — premium, editorial, theme-aware ──
+     Five tonal accents used by InlineChip + AccentChip. Each tone defines
+     `text` (stroke + label color) and `bg` (10% tint background). Light-mode
+     values are deeper for contrast on white; dark-mode values shift lighter
+     and more luminous to glow against #141414 without losing identity. */
+  --chip-indigo-text:   #4f46e5;
+  --chip-indigo-bg:     color-mix(in srgb, #4f46e5 9%, transparent);
+  --chip-teal-text:     #0d9488;
+  --chip-teal-bg:       color-mix(in srgb, #0d9488 9%, transparent);
+  --chip-amber-text:    #b45309;
+  --chip-amber-bg:      color-mix(in srgb, #b45309 9%, transparent);
+  /* Violet retoned from Tailwind violet-600 (#7c3aed) to violet-800
+     (#5b21b6). Deeper, more grounded, less of the "AI default" lila
+     feeling. Still reads as the purple-family semantic for "AI". */
+  --chip-violet-text:   #5b21b6;
+  --chip-violet-bg:     color-mix(in srgb, #5b21b6 9%, transparent);
+  --chip-emerald-text:  #047857;
+  --chip-emerald-bg:    color-mix(in srgb, #047857 10%, transparent);
+
+  /* Strip variant — richer fill (16%) for background-highlight style.
+     Text stays --text (dark), only the background carries the accent colour. */
+  --chip-indigo-strip:  color-mix(in srgb, #4f46e5 16%, transparent);
+  --chip-teal-strip:    color-mix(in srgb, #0d9488 16%, transparent);
+  --chip-amber-strip:   color-mix(in srgb, #b45309 16%, transparent);
+  --chip-violet-strip:  color-mix(in srgb, #5b21b6 16%, transparent);
+  --chip-emerald-strip: color-mix(in srgb, #047857 16%, transparent);
+  /* Sage tone — #B8E84D (lime-chartreuse). Light enough to need 38% fill
+     on white to have real presence; high chroma reads well on both themes. */
+  --chip-sage-text:   #4a7000;
+  --chip-sage-bg:     color-mix(in srgb, #B8E84D 14%, transparent);
+  --chip-sage-strip:  color-mix(in srgb, #B8E84D 38%, transparent);
+}
+
+/* ─── Theme colour transitions ───────────────────────────
+   Transitions on :root animate the registered custom properties.
+   Because the variables inherit, every element that consumes them —
+   including React inline styles — interpolates automatically.
+   Backgrounds move at 420ms (larger visual surface, needs more time);
+   text and borders at 320ms (snappier reads as intentional). */
+:root {
+  transition:
+    --bg       420ms cubic-bezier(0.22, 1, 0.36, 1),
+    --chrome   420ms cubic-bezier(0.22, 1, 0.36, 1),
+    --surface  420ms cubic-bezier(0.22, 1, 0.36, 1),
+    --surface2 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    --border   320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --text         320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --text-display 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --text-hover   320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --muted    320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --muted2   320ms cubic-bezier(0.22, 1, 0.36, 1),
+    --accent-warm 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ─── Dark theme — 3-level hierarchy, lifted scale ─
@@ -72,10 +224,15 @@
   --surface:  #1c1c1c;   /* card fill — lifted from panel */
   --surface2: #242424;   /* hover / inset — one subtle step further */
   --border:   #2a2a2a;   /* hairline — visible against the new bg */
-  --text:       #ffffff;
-  --text-hover: #c8c3bc;   /* hover — warm parchment off-white, softer than pure white */
-  --muted:    #71717b;   /* Figma Storm Gray (grey/46) — secondary label */
+  --text:         #ffffff;
+  --text-hover:   #c8c3bc;   /* hover — warm parchment off-white, softer than pure white */
+  --text-display: #e8e8ed;   /* large display / H1 text — warm off-white, not searing pure
+                                 white. ~13.5:1 on #141414. Editorial dark-mode headlines
+                                 never use #fff — it reads as washed out at display scale. */
+  --muted:    #8a8a93;   /* Bumped from #71717b (was 3.97:1 on --surface — fails AA).
+                            Now ≈5.1:1 on --bg #141414 and ≈4.8:1 on --surface #1c1c1c. */
   --muted2:   #a1a1aa;   /* lifted from --muted for body / value text */
+  --accent-success: #34c759;  /* Apple systemGreen — bright, readable on dark bg */
   --chrome:   #000000;   /* canvas — pure black, panels lift off it */
 
   /* Ring does the edge definition (drop shadows are invisible on dark bg).
@@ -86,6 +243,35 @@
   --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.10),
                        0 2px 6px rgba(0, 0, 0, 0.55),
                        0 12px 28px rgba(0, 0, 0, 0.4);
+
+  /* Dark mode relies on the hairline border for edge definition; no resting
+     shadow needed. Hover/focal states still use --card-shadow-hover. */
+  --card-rest:         none;
+
+  /* Chip palette — dark mode. Desaturated (~30% chroma reduction from
+     vivid Tailwind 300 tones) so labels read as muted accents rather than
+     candy-bright punches on the dark canvas. Backgrounds at 10% tint. */
+  --chip-indigo-text:   #a8b0d8;
+  --chip-indigo-bg:     color-mix(in srgb, #a8b0d8 10%, transparent);
+  --chip-teal-text:     #88c7be;
+  --chip-teal-bg:       color-mix(in srgb, #88c7be 10%, transparent);
+  --chip-amber-text:    #d6c178;
+  --chip-amber-bg:      color-mix(in srgb, #d6c178 10%, transparent);
+  --chip-violet-text:   #b8aed4;
+  --chip-violet-bg:     color-mix(in srgb, #b8aed4 10%, transparent);
+  --chip-emerald-text:  #9bc9af;
+  --chip-emerald-bg:    color-mix(in srgb, #9bc9af 10%, transparent);
+
+  /* Strip variant — dark mode. Lighter tones, same 16% fill. */
+  --chip-indigo-strip:  color-mix(in srgb, #a8b0d8 16%, transparent);
+  --chip-teal-strip:    color-mix(in srgb, #88c7be 16%, transparent);
+  --chip-amber-strip:   color-mix(in srgb, #d6c178 16%, transparent);
+  --chip-violet-strip:  color-mix(in srgb, #b8aed4 16%, transparent);
+  --chip-emerald-strip: color-mix(in srgb, #9bc9af 16%, transparent);
+  /* #B8E84D on dark — glows well at 30% against near-black canvas. */
+  --chip-sage-text:   #B8E84D;
+  --chip-sage-bg:     color-mix(in srgb, #B8E84D 12%, transparent);
+  --chip-sage-strip:  color-mix(in srgb, #B8E84D 30%, transparent);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */
@@ -116,26 +302,57 @@
   box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.3);
 }
 
+
 /* ─── Base ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
-  scroll-behavior: smooth;
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-lead);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  cursor: none;
+  /* Remove iOS default blue flash on tap — we supply our own press feedback */
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* ─── Button system ─────────────────────────────────────
+   Three tiers, deliberate. No primary (filled, inverted-color) tier
+   exists by design — the portfolio is read, not pitched. Every action
+   is opt-in; contact / LinkedIn / CV read as a triplet without a "hero
+   button" pulling attention away from the work.
+
+   Radius scale follows the size hierarchy: 12 / 8 / 6. Smaller pill
+   = smaller radius, so the visual weight reads top-down.
+
+   Tier 1 — Page chrome (44px pill · --surface · --card-shadow ·
+            no border · 12px radius). Persistent nav, theme toggle,
+            panel-position arrows. Floats above content.
+
+   Tier 2 — Inline action (~32px pill · --surface · 1px border ·
+            no shadow at rest · --card-shadow on hover · 8px radius
+            · 10px mono caps). Email / LinkedIn / CV / case study
+            back. Sits inside content.
+
+   Tier 3 — Metadata tag (small pill · --surface2 or chip-bg · no
+            shadow · 6px radius · 9px mono caps). Hero tags,
+            work-card tags (WorkChip), AccentChip. Silent label.
+
+   If a future surface needs a true primary CTA, introduce a Tier 0
+   (filled, --text bg, --bg color, 44px) with a one-per-page rule.
+   Until then, none exists by intent. */
 
 /* ─── Selection ─────────────────────────────────────── */
 ::selection { background: var(--text); color: var(--bg); }
@@ -145,10 +362,10 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-/* ─── Cursor — only suppress native cursor on pointer devices ─── */
-@media (hover: hover) and (pointer: fine) {
-  *, *::before, *::after { cursor: none !important; }
-}
+/* Native cursor restored. The previous rule forced `cursor: none`
+   site-wide on desktop, but no custom cursor component was rendering —
+   resulting in an invisible cursor on every page. Visitors couldn't see
+   where they were aiming to click. */
 
 /* ─── Links ──────────────────────────────────────────── */
 a { color: inherit; text-decoration: none; }
@@ -177,7 +394,7 @@ a { color: inherit; text-decoration: none; }
 /* ─── Label / mono caps ──────────────────────────────── */
 .label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-mono-lg);
   letter-spacing: 0.06em;
   color: var(--muted);
 }
@@ -203,7 +420,7 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   gap: 6px;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--text-body-lg);
   font-weight: 400;
   padding: 8px 18px;
   background: var(--text);
@@ -220,7 +437,7 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   gap: 6px;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--text-body-lg);
   font-weight: 400;
   padding: 8px 18px;
   border: 1px solid var(--border);
@@ -237,7 +454,7 @@ a { color: inherit; text-decoration: none; }
 /* ─── Nav link with underline ────────────────────────── */
 .nav-link {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--text-body-lg);
   font-weight: 400;
   color: var(--muted);
   position: relative;
@@ -257,6 +474,15 @@ a { color: inherit; text-decoration: none; }
 .nav-link:hover { color: var(--text-hover); }
 .nav-link:hover::after { transform: scaleX(1); }
 
+/* About-panel hover-brighten — text-only highlight, no background.
+   Default color is set on the element (--muted / --muted2); hover lifts
+   it toward --text-hover. Override `!important` ensures we win against
+   inline `style={{ color: ... }}` from the JSX. */
+.text-hoverable {
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.text-hoverable:hover { color: var(--muted2) !important; }
+
 /* ─── Marquee ────────────────────────────────────────── */
 @keyframes marquee {
   from { transform: translateX(0); }
@@ -269,6 +495,30 @@ a { color: inherit; text-decoration: none; }
 .marquee-track:hover,
 .skills-ticker:hover .marquee-track {
   animation-play-state: paused;
+}
+
+/* ─── Reduced-motion respect ─────────────────────────────
+   Honor the user's OS-level "reduce motion" preference.
+   - Marquees stop scrolling (text becomes static, still legible)
+   - Floating panel menu transitions become instant
+   - Shimmer loading placeholder stops sweeping
+   - Today-pulse halo stops pulsing
+   Per WCAG 2.3.3 + Apple HIG Reduced Motion guidance. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .floating-panel-menu,
+  .today-dot {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Hide the decorative marquee duplicate. Without animation, the second
+     pass renders right after the first, so users would see every pill
+     twice in a row. */
+  .marquee-clone { display: none !important; }
+  /* Shimmer keyframe is declared at the top of this file */
+  [style*="shimmer"] {
+    animation: none !important;
+  }
 }
 
 /* ─── Work card thumbnail — hover image-change behaviour removed.
@@ -321,6 +571,62 @@ a { color: inherit; text-decoration: none; }
     repeating-linear-gradient(45deg,  rgba(255,255,255,0.04) 0px, transparent 1px, transparent 5px);
 }
 
+/* ─── Aurora drift keyframes ─────────────────────────── */
+/* Warm-palette blobs: amber · violet · rose — tuned for the
+   parchment design system. Three independent drift paths so
+   blobs never move in lockstep. GPU-safe: transform only.   */
+@keyframes aurora-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(10%, 18%) scale(1.12); }
+}
+@keyframes aurora-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(-14%, -10%) scale(1.08); }
+}
+@keyframes aurora-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(10%, -14%) scale(1.06); }
+  66%       { transform: translate(-8%,  12%) scale(0.95); }
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(32px);
+  will-change: transform;
+}
+.aurora-blob-1 {
+  width: 55%; height: 130%;
+  top: -15%; left: -5%;
+  background: radial-gradient(circle, rgba(251,191,36,0.45), transparent 65%);
+  animation: aurora-1 9s ease-in-out infinite;
+}
+.aurora-blob-2 {
+  width: 55%; height: 130%;
+  bottom: -15%; right: -5%;
+  background: radial-gradient(circle, rgba(139,92,246,0.38), transparent 65%);
+  animation: aurora-2 11s ease-in-out infinite;
+}
+.aurora-blob-3 {
+  width: 45%; height: 100%;
+  top: 10%; right: 15%;
+  background: radial-gradient(circle, rgba(251,113,133,0.32), transparent 65%);
+  animation: aurora-3 13s ease-in-out infinite;
+}
+[data-theme="dark"] .aurora-blob-1 {
+  background: radial-gradient(circle, rgba(251,191,36,0.3), transparent 65%);
+}
+[data-theme="dark"] .aurora-blob-2 {
+  background: radial-gradient(circle, rgba(139,92,246,0.28), transparent 65%);
+}
+[data-theme="dark"] .aurora-blob-3 {
+  background: radial-gradient(circle, rgba(251,113,133,0.22), transparent 65%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob { animation: none !important; }
+}
+
 /* ─── Availability pulse dot ─────────────────────────── */
 @keyframes availability-pulse {
   0%, 100% { box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent-success) 35%, transparent); }
@@ -337,6 +643,25 @@ a { color: inherit; text-decoration: none; }
   animation-delay: 2s;
 }
 
+/* ─── Mobile touch press feedback ───────────────────────
+   On touch devices (pointer:coarse) interactive elements show a
+   gentle scale-down + opacity dip on :active to confirm the tap.
+   Only fires on coarse pointer so desktop hover states are
+   unaffected. Duration matches the fastest micro-interaction
+   budget (~60ms enter, snaps back to resting state on release).
+   Reduced-motion: transform/opacity still animate at 0.01ms
+   (the global prefers-reduced-motion rule clamps duration),
+   so the visual change still happens — just instantly. */
+@media (pointer: coarse) {
+  button:active,
+  a:active,
+  [role="button"]:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+    transition: transform 60ms ease-out, opacity 60ms ease-out;
+  }
+}
+
 /* ─── Skip nav — visible on keyboard focus only ──────── */
 .skip-nav {
   position: fixed;
@@ -348,7 +673,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--bg);
   border-radius: 0 0 8px 8px;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--text-body);
   font-weight: 500;
   transition: top 0.2s;
 }
@@ -363,6 +688,8 @@ a { color: inherit; text-decoration: none; }
 
 /* ─── Mobile responsive layout ───────────────────────── */
 @media (max-width: 640px) {
+  .chat-trigger-label { display: none !important; }
+
   .home-main {
     height: auto !important;
     overflow: visible !important;
@@ -461,6 +788,12 @@ a { color: inherit; text-decoration: none; }
   to   { opacity: 1; }
 }
 
+/* ─── Loading shimmer ───────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
 /* ─── Reduced motion ─────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -473,5 +806,18 @@ a { color: inherit; text-decoration: none; }
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
   }
+}
+
+
+/* ─── Executive mode ─────────────────────────────────────
+   Hides non-essential case study content for a ~60 second scan.
+   Activated by data-mode="executive" on <html>. Hero, metrics
+   strip, insight pull-quote, decision titles, and outcomes stay
+   visible. Long prose, research findings, decision images,
+   contribution, lesson, reflection, references collapse out. */
+html[data-mode="executive"] .exec-hide,
+html[data-mode="executive"] .exec-decision-body,
+html[data-mode="executive"] .exec-decision-image {
+  display: none !important;
 }
 

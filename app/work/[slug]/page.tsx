@@ -3,8 +3,38 @@ import type { Metadata } from "next";
 import { getCaseStudy, caseStudies } from "@/lib/caseStudies";
 import CaseStudyDetail from "@/components/CaseStudyDetail";
 
+/* Slugs that are completely hidden from the public — no static page is
+   generated, no metadata, no route. Anyone visiting these URLs gets a
+   404. Used for case studies with confidentiality requirements that go
+   beyond a password gate (NDA-only, recruiter-direct-link only, etc.).
+
+   Two-tier confidentiality model:
+   - HIDDEN_SLUGS (this set):   404. NDA-strict. URL is not guessable.
+                                Examples: zetwerk-dc, zetwerk-bu-ecosystem, astra.
+   - confidential: true (data): 200 with password gate. Excluded from
+                                sitemap so search engines don't surface it,
+                                but a direct URL still works for recruiters.
+                                Examples: fancode-homepage, planful-esm-tables.
+
+   `fancode-homepage` deliberately stays OUT of this list — it's
+   password-gated but recruiter-reachable via direct link. Listed here
+   rather than in caseStudies.ts because the hide is a routing decision,
+   not a data field. */
+const HIDDEN_SLUGS = new Set<string>([
+  "zetwerk-dc",
+  "zetwerk-bu-ecosystem",
+  "astra",
+]);
+
+// Slugs not emitted by generateStaticParams (including HIDDEN_SLUGS)
+// return 404 directly — no server-side render attempt, no leak.
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
-  return caseStudies.map((cs) => ({ slug: cs.slug }));
+  // Only emit static params for slugs that are publicly routable.
+  return caseStudies
+    .filter(cs => !HIDDEN_SLUGS.has(cs.slug))
+    .map(cs => ({ slug: cs.slug }));
 }
 
 export async function generateMetadata({
@@ -13,10 +43,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  if (HIDDEN_SLUGS.has(slug)) return {};
   const cs = getCaseStudy(slug);
   if (!cs) return {};
   const title       = `${cs.title} — Arun Gaddam`;
-  const description = cs.summary;
+  // Strip ==highlight== markers from the meta description so social previews
+  // don't surface "==text==" literally.
+  const description = cs.summary?.replace(/==(.+?)==/g, "$1");
   // Use the first decision image as OG image if available
   const ogImage = cs.decisions?.find(d => d.image?.src)?.image?.src;
   return {
@@ -26,7 +59,7 @@ export async function generateMetadata({
       title,
       description,
       type: "article",
-      url: `https://arungaddam.com/work/${slug}`,
+      url: `https://arungaddamux.vercel.app/work/${slug}`,
       ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630, alt: cs.title }] } : {}),
     },
     twitter: {
@@ -44,6 +77,7 @@ export default async function CaseStudyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  if (HIDDEN_SLUGS.has(slug)) notFound();
   const cs = getCaseStudy(slug);
   if (!cs) notFound();
   return <CaseStudyDetail cs={cs} />;

@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
-import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring } from "framer-motion";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; Quick guide is hidden from case study nav
+import PortfolioChat from "@/components/PortfolioChat";
+import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
-import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle, ClipboardList, Scale, GitBranch } from "@/components/ui/Icon";
+import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle, ClipboardList, Scale, GitBranch, Check, XMark } from "@/components/ui/Icon";
+import { renderTitleWithChips } from "@/components/ui/InlineChip";
 
 /* Decision icons: keyed by the optional `icon` name on each
    decision entry. Single source so icons stay consistent with
@@ -23,16 +26,11 @@ const DECISION_ICONS: Record<string, React.FC<{ size?: number; strokeWidth?: num
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// All possible nav sections — filtered at runtime after DOM commit
-const ALL_NAV_SECTIONS = [
-  { id: "cs-overview",  label: "Overview"  },
-  { id: "cs-problem",   label: "Problem"   },
-  { id: "cs-insight",   label: "Insight"   },
-  { id: "cs-workflow",  label: "Workflow"  },
-  { id: "decisions",    label: "Decisions" },
-  { id: "outcomes",     label: "Impact"  },
-  { id: "ownership",    label: "Ownership" },
-];
+// Rail entries are built at runtime by scanning the rendered DOM for
+// every element with a `data-nav-label` attribute. CsSection auto-tags
+// itself so every rendered section becomes an anchor target in the rail
+// — no hardcoded section list, no manual maintenance per case study.
+type NavSection = { id: string; label: string };
 
 const fadeUp = {
   // Cinematic entry: subtle blur resolves with the position so the element
@@ -49,13 +47,17 @@ const container = {
 
 export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Find the next case study so we can offer a forward CTA at the end of the page.
-  // Wraps to the first study after the last one. If the immediate next is a
-  // coming-soon or hidden study, we suppress the CTA entirely (Option B) rather
-  // than skip ahead, so visitors never click into something that isn't ready.
-  const HIDDEN_NEXT_SLUGS = new Set(["fancode-ftux", "zetwerk-bu-ecosystem", "zetwerk-dc"]);
-  const currentIndex = caseStudies.findIndex(c => c.slug === cs.slug);
-  const nextCandidate = caseStudies[(currentIndex + 1) % caseStudies.length];
-  const next = nextCandidate && !HIDDEN_NEXT_SLUGS.has(nextCandidate.slug) ? nextCandidate : null;
+  // Order MUST match the landing page WorkPanel CARD_ORDER (app/page.tsx) so
+  // Prev/Next sequencing on case study pages mirrors the order visitors see
+  // when browsing the portfolio. Hidden slugs (zetwerk-*) are kept out of the
+  // sequence entirely — never reached via Prev/Next.
+  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage"];
+  const navList = NAV_ORDER
+    .map(slug => caseStudies.find(c => c.slug === slug))
+    .filter((c): c is NonNullable<typeof c> => !!c);
+  const currentIndex = navList.findIndex(c => c.slug === cs.slug);
+  const next = currentIndex >= 0 && currentIndex < navList.length - 1 ? navList[currentIndex + 1] : null;
+  const prev = currentIndex > 0 ? navList[currentIndex - 1] : null;
 
   // Scroll progress bar
   const { scrollYProgress } = useScroll();
@@ -79,22 +81,33 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   })();
 
   // Password gate — any case study with `confidential: true`.
-  // Unlock state is per-slug, keyed in sessionStorage so different gated
-  // case studies don't share an unlock and reload doesn't re-prompt.
-  const PASSWORD = "password";
+  // One shared key in localStorage — entering the password on any gated case study
+  // unlocks all of them globally and persists across browser sessions.
+  const PASSWORD = "Nothing@123$";
   const isGated = !!cs.confidential;
-  const storageKey = `cs-unlocked-${cs.slug}`;
+  const GLOBAL_UNLOCK_KEY = "cs-portfolio-unlocked-v2";
   const [unlocked, setUnlocked] = useState(() => {
     if (typeof window === "undefined") return false;
-    return sessionStorage.getItem(storageKey) === "1";
+    return localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1";
   });
+  // Re-sync when the user comes back to the tab or another tab unlocks the
+  // key (e.g. they entered the password on a different case study).
+  useEffect(() => {
+    const sync = () => setUnlocked(localStorage.getItem(GLOBAL_UNLOCK_KEY) === "1");
+    window.addEventListener("focus", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("focus", sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState(false);
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (pwInput === PASSWORD) {
       setUnlocked(true);
-      sessionStorage.setItem(storageKey, "1");
+      localStorage.setItem(GLOBAL_UNLOCK_KEY, "1");
       setPwError(false);
     } else {
       setPwError(true);
@@ -103,8 +116,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   };
 
   // NAV_SECTIONS must be state — getElementById during render always returns null
-  // because the component's own DOM hasn't been committed yet.
-  const [NAV_SECTIONS, setNavSections] = useState<typeof ALL_NAV_SECTIONS>([]);
+  // because the component's own DOM hasn't been committed yet. Labels are
+  // built from the per-case-study cs.sectionLabels via buildNavSections.
+  const [NAV_SECTIONS, setNavSections] = useState<NavSection[]>([]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -114,34 +128,55 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // The executive/detailed mode toggle has been removed from the nav.
+  // Reset data-mode to "detailed" on every mount so any stale
+  // "executive" value from a previous session doesn't hide sections.
   useEffect(() => {
-    // Filter to sections that actually exist in the rendered DOM, then set up
-    // IntersectionObservers for active-section tracking. Merged into one effect
-    // so the filtered list and the observers are always in sync.
-    const existing = ALL_NAV_SECTIONS.filter(s => !!document.getElementById(s.id));
-    setNavSections(existing);
+    document.documentElement.setAttribute("data-mode", "detailed");
+    localStorage.removeItem("portfolio-mode");
+  }, []);
 
-    const observers: IntersectionObserver[] = [];
-    existing.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
-        { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
+  useEffect(() => {
+    // Defer the DOM scan by one frame so React has committed the gated sections
+    // before we query getElementById. Without this, unlocking re-runs the effect
+    // before the newly-rendered sections are in the DOM.
+    let raf: number;
+    let observers: IntersectionObserver[] = [];
 
     const onScroll = () => setNavVisible(window.scrollY > 200);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
+    raf = requestAnimationFrame(() => {
+      // Scan the rendered DOM for every section tagged with data-nav-label.
+      // Every CsSection gets one automatically (with an auto-generated id
+      // when none is passed) so the rail lists every section the case
+      // study renders — no hardcoded whitelist. Runs on mount AND
+      // whenever unlocked changes so gated sections appear after unlock.
+      const tagged = Array.from(document.querySelectorAll<HTMLElement>("[data-nav-label]"));
+      const existing: NavSection[] = tagged
+        .filter(el => el.id)
+        .map(el => ({ id: el.id, label: el.dataset.navLabel ?? el.id }));
+      setNavSections(existing);
+
+      existing.forEach(({ id }) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const obs = new IntersectionObserver(
+          ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+          { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
+        );
+        obs.observe(el);
+        observers.push(obs);
+      });
+    });
+
     return () => {
+      cancelAnimationFrame(raf);
       observers.forEach(o => o.disconnect());
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [unlocked, cs]);
 
   return (
     <div style={{ background: "var(--bg)" }}>
@@ -177,88 +212,251 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         }
       `}</style>
 
-      {/* Minimal nav — matches HomeNav */}
+      {/* ── Mobile responsive overrides ──────────────────────────────
+          All case study page breakages fixed here via class-based CSS
+          rather than scattered inline-style changes. Target: ≤ 640px */}
+      <style>{`
+        /* Left rail is absolute-positioned to the left of the centered
+           .page-pad via calc(50vw - 560px). Below 1180px the calc would
+           push it off-screen, so we hide it entirely. Section IDs in
+           the content still work for direct anchor links. */
+        @media (max-width: 1180px) {
+          .cs-rail { display: none !important; }
+        }
+        .cs-rail-item:hover {
+          color: var(--text) !important;
+        }
+
+        /* Section rail — editorial mono caps list, design-system aligned.
+           Echoes the rest of the portfolio:
+           - Mono caps eyebrow type (same as Experience/Industries labels)
+           - --muted → --text color lift on hover/active
+           - --accent-warm bar as the indicator (echoes the "Now" dot)
+           No hairline spine — pure-type table-of-contents feel rather than
+           a docs-sidebar UI panel. Text-colour shift carries the active
+           state; the bar adds identity, not anchoring. */
+
+        /* Active indicator — 1px terracotta accent that slides between
+           items via Framer Motion layoutId. The only graphic in an
+           otherwise pure-type list; bar carries identity, text colour
+           shift (--muted → --text) carries the active-state meaning. */
+        .cs-rail-indicator {
+          position: absolute;
+          left: 0;
+          width: 1px;
+          background: var(--accent-warm);
+        }
+
+        .cs-rail-item:focus-visible {
+          outline: 2px solid var(--text);
+          outline-offset: 2px;
+          border-radius: 4px;
+        }
+
+        /* Back button — must meet 44px touch target */
+        .cs-back-link {
+          min-height: 44px;
+          display: inline-flex !important;
+          align-items: center;
+        }
+
+        /* Password gate form — stack vertically on mobile */
+        @media (max-width: 480px) {
+          .cs-pw-form {
+            flex-direction: column !important;
+            align-items: stretch !important;
+          }
+          .cs-pw-form input,
+          .cs-pw-form button {
+            min-height: 44px !important;
+            width: 100% !important;
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+          }
+        }
+
+        /* All 2-column grids → 1 column on mobile */
+        @media (max-width: 640px) {
+          .cs-2col {
+            grid-template-columns: 1fr !important;
+          }
+          /* Planful ESM outcomes side-by-side tiles */
+          .cs-flex-tiles {
+            flex-direction: column !important;
+          }
+          .cs-flex-tiles > * {
+            border-right: none !important;
+            border-bottom: 1px solid var(--border);
+          }
+          .cs-flex-tiles > *:last-child {
+            border-bottom: none !important;
+          }
+          /* Decision video grid — always stack on mobile regardless
+             of video count (repeat(N, 1fr) → 1fr) */
+          .cs-video-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        /* fullBleed images — negative margin causes horizontal overflow.
+           Reset to normal flow on mobile. */
+        @media (max-width: 640px) {
+          .cs-fullbleed-container {
+            margin-left: 0 !important;
+            width: 100% !important;
+          }
+        }
+
+        /* Core-insight phone mockup — the JSX builds two 260px-wide phone
+           frames + arrow, totalling ~604px wide. Below 640px we scale the
+           whole block down so it fits a 375px viewport without overflow.
+           Wrapper height compensates for the scale so following content
+           doesn't shift. */
+        @media (max-width: 640px) {
+          .cs-phone-pair-wrap {
+            height: 195px !important; /* 361px (rendered) * 0.54 */
+            overflow: visible !important;
+          }
+          .cs-phone-pair {
+            gap: 10px !important; /* tighter gap on mobile so scaled pair fits content column */
+            transform: scale(0.54) !important;
+            transform-origin: top center !important;
+          }
+        }
+        @media (max-width: 380px) {
+          .cs-phone-pair-wrap {
+            height: 163px !important; /* 361px * 0.45 */
+          }
+          .cs-phone-pair {
+            gap: 8px !important;
+            transform: scale(0.45) !important;
+          }
+        }
+      `}</style>
+
+      {/* Minimal nav — matches HomeNav: transparent header with floating
+          pill chips (wordmark, theme toggle, contact cluster). No glass bar
+          and no bottom border so case study and home nav read identically. */}
       <motion.header
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EASE }}
-        className="nav-glass"
         style={{
           position: "fixed",
-          top: 0, left: 0, right: 0,
+          top: "8px", left: 0, right: 0,
           zIndex: 200,
           height: "64px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           padding: "0 24px",
-          borderBottom: "1px solid var(--border)",
+          background: "transparent",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Link
             href="/"
+            aria-label="Home. Arun Gaddam"
             style={{
               fontFamily: "var(--font-logo)",
-              fontSize: "12px",
+              fontSize: "var(--text-caption)",
               fontWeight: 500,
               color: "var(--text)",
               letterSpacing: "0.06em",
               textTransform: "uppercase",
               height: "44px",
-              padding: "0 14px 0 6px",
+              padding: "0 14px",
               borderRadius: "12px",
               border: "none",
               background: "var(--surface)",
               boxShadow: "var(--card-shadow)",
               display: "inline-flex",
               alignItems: "center",
-              gap: "10px",
               textDecoration: "none",
+              userSelect: "none",
               transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
             }}
             onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
             onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
           >
-            <img
-              src="/Illustration image .png"
-              alt=""
-              aria-hidden="true"
-              style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "8px",
-                objectFit: "cover",
-                objectPosition: "center top",
-                display: "block",
-              }}
-            />
             Arun Gaddam
           </Link>
           <ThemeToggle />
+          {/* PortfolioChat (Quick guide) removed from case study top nav. */}
         </div>
 
-        {/* Right cluster — Copy email + LinkedIn, matching the
-            ContactPanel pattern from the homepage so visitors can
-            reach out from any case study page. */}
-        <CaseStudyContactCluster />
+        {/* Next case study CTA — outlined-box pattern matching the homepage
+            Contact panel LinkedIn button. Disabled state drops opacity and
+            removes hover. */}
+        {next ? (
+          <Link
+            href={`/work/${next.slug}`}
+            aria-label={`Next case study: ${next.title}`}
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              textDecoration: "none",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+          >
+            Next case study
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z"/>
+            </svg>
+          </Link>
+        ) : (
+          <span
+            aria-disabled="true"
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              opacity: 0.45,
+              cursor: "not-allowed",
+            }}
+          >
+            Next case study
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z"/>
+            </svg>
+          </span>
+        )}
       </motion.header>
 
-      <main style={{ paddingTop: "64px" }}>
+      <main style={{ paddingTop: "80px" }}>
 
         {/* Hero */}
-        <section style={{ padding: "48px 0" }}>
+        <section style={{ padding: "var(--space-9) 0" }}>
           <div className="page-pad">
             <motion.div variants={container} initial="hidden" animate="show">
-              <motion.div variants={fadeUp} style={{ marginBottom: "32px" }}>
+              {/* Back affordance — plain-text CTA pattern matching the About
+                  panel + case study top nav. Mono caps, no border, no bg,
+                  arrow + label, hover color lift. */}
+              <motion.div variants={fadeUp} style={{ marginBottom: "32px", display: "inline-flex" }}>
                 <Link
                   href="/#work"
-                  className="case-study-back-link"
-                  style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: "6px", transition: "color 0.2s cubic-bezier(0.22, 1, 0.36, 1)" }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "var(--text-hover)")}
-                  onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
+                  className="case-study-back-link cs-back-link"
+                  style={{
+                    fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+                    letterSpacing: "0.08em", textTransform: "uppercase",
+                    color: "var(--muted)",
+                    padding: "8px 4px",
+                    display: "inline-flex", alignItems: "center", gap: "4px",
+                    transition: "color 0.18s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
                   </svg>
                   Back
@@ -267,7 +465,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               <motion.div variants={fadeUp} style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
                 {cs.tags.map(tag => (
-                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "8px" }}>
+                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "6px" }}>
                     {tag}
                   </span>
                 ))}
@@ -275,27 +473,31 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               <motion.h1
                 variants={fadeUp}
-                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.15, letterSpacing: "-0.03em", color: "var(--text)", marginBottom: "16px" }}
+                style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 300, lineHeight: 1.5, letterSpacing: "-0.03em", color: "var(--text-display)", marginBottom: "16px" }}
               >
-                {cs.title}
+                {renderTitleWithChips(cs.title, cs.titleHighlights)}
               </motion.h1>
 
               <motion.p
                 variants={fadeUp}
-                style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, lineHeight: 1.65, color: "var(--muted)", maxWidth: "520px", marginBottom: "32px" }}
+                style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 400, lineHeight: 1.65, color: "var(--muted)", maxWidth: "520px", marginBottom: "32px" }}
               >
                 {cs.subtitle}
               </motion.p>
 
-              <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "16px" }}>
+              {/* Role / Company / Timeline meta. minmax bumped to 200px so
+                  "Senior Product Designer (IC)" doesn't wrap mid-column and
+                  break baseline alignment against the shorter values next
+                  to it. align-items keeps cells locked to the top. */}
+              <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", alignItems: "start" }}>
                 {[
                   { label: "Role", value: cs.role },
                   cs.company  ? { label: "Company",  value: cs.company  } : null,
                   cs.timeline ? { label: "Timeline", value: cs.timeline } : null,
                 ].filter(Boolean).map(item => (
-                  <div key={item!.label}>
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "4px" }}>{item!.label}</p>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, color: "var(--text)", lineHeight: 1.4 }}>{item!.value}</p>
+                  <div key={item!.label} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>{item!.label}</p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400, color: "var(--text)", lineHeight: 1.4, margin: 0 }}>{item!.value}</p>
                   </div>
                 ))}
               </motion.div>
@@ -303,22 +505,80 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </div>
         </section>
 
-        {/* Metrics bar — three-layer structure:
-              eyebrow (mono caps, short)
-              value   (big stat, primary text)
-              body    (optional sentence-case descriptive text)
-            When `body` is set, the metric reads as eyebrow → value →
-            descriptive sentence. When absent, falls back to the
-            classic value + caps-label below pattern. */}
+        {/* Hero video slot — leads the case study so the transformation
+            registers before the impact numbers. When outcomesCompare is
+            set, shows both BEFORE and AFTER videos side by side so the
+            transformation is visible immediately. Otherwise falls back
+            to the single contextVideo hero, or a styled placeholder. */}
+        {cs.outcomesCompare ? (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{ padding: "var(--space-9) 0" }}
+          >
+            <div className="page-pad">
+              <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                {([
+                  { label: "Before", src: cs.outcomesCompare.before },
+                  { label: "After",  src: cs.outcomesCompare.after  },
+                ] as const).map(({ label, src }) => (
+                  <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
+                    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                      <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.section>
+        ) : cs.contextVideo ? (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{ padding: "var(--space-9) 0" }}
+          >
+            <div className="page-pad">
+              <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
+            </div>
+          </motion.section>
+        ) : cs.videoPlaceholder ? (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{ padding: "var(--space-9) 0" }}
+          >
+            <div className="page-pad">
+              <VideoPlaceholder data={cs.videoPlaceholder} />
+            </div>
+          </motion.section>
+        ) : null}
+
+        {/* Metrics / impact strip — moved BELOW the hero video so the
+            transformation registers visually before the numbers back it up.
+            Three-layer structure: eyebrow → value → optional descriptive
+            sentence. When body is absent, falls back to value + caps label. */}
         {cs.metrics && cs.metrics.length > 0 && (
-          <div style={{ background: "var(--surface)", padding: "28px 0" }}>
+          <div style={{ background: "var(--surface2)", padding: "var(--space-7) 0" }}>
             <div className="page-pad">
               <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (
-                  <div key={m.label} style={{ maxWidth: m.body ? "320px" : undefined, flex: m.body ? "1 1 280px" : undefined }}>
+                  <div key={m.label} style={{
+                    /* When there's only one metric, let it breathe across the full
+                       row instead of clamping body text into a 320px column that
+                       orphans words like "week." onto their own line. */
+                    maxWidth: m.body ? (cs.metrics!.length === 1 ? "560px" : "320px") : undefined,
+                    flex: m.body ? "1 1 280px" : undefined,
+                  }}>
                     {/* Eyebrow — always rendered as mono caps */}
                     <p style={{
-                      fontFamily: "var(--font-mono)", fontSize: "9px",
+                      fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                       letterSpacing: "0.08em", textTransform: "uppercase",
                       color: "var(--muted)", marginBottom: "8px",
                     }}>
@@ -341,7 +601,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         a punishing block of caps. */}
                     {m.body && (
                       <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "13px",
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                         lineHeight: 1.55, letterSpacing: "-0.005em",
                         color: "var(--muted2)", margin: 0,
                       }}>
@@ -355,61 +615,29 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </div>
         )}
 
-        {/* Hero video — placed before TLDR so a recruiter sees the final UI in
-            motion within the first scroll. Asymmetric vertical padding: heavier on
-            top to clearly separate the panel from the metrics bar above, lighter
-            on bottom to lead the eye into the TLDR. Falls back to a styled
-            placeholder when `videoPlaceholder` is set and `contextVideo` isn't,
-            so the page reserves the slot for a planned video. */}
-        {cs.contextVideo ? (
-          <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "96px 0 64px" }}
-          >
-            <div className="page-pad">
-              <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
-            </div>
-          </motion.section>
-        ) : cs.videoPlaceholder ? (
-          <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "96px 0 64px" }}
-          >
-            <div className="page-pad">
-              <VideoPlaceholder data={cs.videoPlaceholder} />
-            </div>
-          </motion.section>
-        ) : null}
-
         {cs.tldr && (
           <motion.section
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            style={{ padding: "32px 0" }}
+            style={{ padding: "var(--space-7) 0" }}
           >
             <div className="page-pad">
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "20px" }}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "20px" }}>
                 TL;DR
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px" }}>
                 {[
                   { label: "Problem",  value: cs.tldr.problem  },
                   { label: "Approach", value: cs.tldr.approach },
-                  { label: "Impact",  value: cs.tldr.outcome  },
+                  { label: "Result",  value: cs.tldr.outcome  },
                 ].map(item => (
                   <div key={item.label}>
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>
                       {item.label}
                     </p>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--text)" }}>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--text)" }}>
                       {item.value}
                     </p>
                   </div>
@@ -433,10 +661,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65, ease: EASE }}
-            style={{ padding: "48px 0" }}
+            style={{ padding: "var(--space-9) 0" }}
           >
             <div className="page-pad">
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px" }}>Live prototype</p>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px" }}>Live prototype</p>
             </div>
             <div style={{ maxWidth: "1180px", margin: "0 auto", padding: "0 24px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
@@ -448,11 +676,113 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </motion.section>
         )}
 
-        {/* Body */}
-        <article style={{ padding: "0" }}>
+        {/* Body. Article is position:relative so the floating left rail
+            can absolute-position next to .page-pad without stealing width
+            from the content column. .page-pad keeps content centered on
+            viewport (matching the hero) so the H1 and body content line
+            up at all viewport widths. */}
+        <article style={{ padding: "0", position: "relative" }}>
+          {/* ── Left rail. Floats to the LEFT of the centered .page-pad,
+              anchored at calc(50vw - 560px). At narrower viewports the
+              calc takes it off-screen, so a media query (≤1180px) hides
+              it. Sticky nav inside follows the scroll.
+
+              top: 56px aligns the rail's first item with the first
+              section's label baseline (CsSection padding 48 + label
+              borderTop padding 16 = 64; rail item internal padding 10
+              brings rail item top to 54 ≈ 56 for baseline match).
+
+              Pattern: Stripe Docs / Linear / Vercel sidebar nav with a
+              sliding indicator bar via Framer Motion layoutId. ── */}
+          <aside
+            className="cs-rail"
+            style={{
+              position: "absolute",
+              top: "56px",
+              left: "calc(50vw - 560px)",
+              width: "200px",
+              height: "calc(100% - 56px)",
+              pointerEvents: "none",
+            }}
+          >
+            <div style={{ position: "sticky", top: "80px", pointerEvents: "auto" }}>
+                <AnimatePresence>
+                  {navVisible && NAV_SECTIONS.length > 0 && (
+                    <motion.nav
+                      key="cs-rail-nav"
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -8 }}
+                      transition={{ duration: 0.3, ease: EASE }}
+                      aria-label="Case study sections"
+                      style={{
+                        position: "relative",
+                        display: "flex",
+                        flexDirection: "column",
+                        paddingLeft: "16px",
+                      }}
+                    >
+                      {NAV_SECTIONS.map(({ id, label }) => {
+                        const active = activeSection === id;
+                        return (
+                          <a
+                            key={id}
+                            href={`#${id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }}
+                            className={active ? "cs-rail-item is-active" : "cs-rail-item"}
+                            style={{
+                              position: "relative",
+                              display: "flex",
+                              alignItems: "center",
+                              /* 14px top/bottom + 10px line-height hits the
+                                 44px WCAG 2.5.5 touch target floor. */
+                              padding: "14px 0 14px 12px",
+                              minHeight: "44px",
+                              fontFamily: "var(--font-mono)",
+                              fontSize: "var(--text-mono)",
+                              fontWeight: 400,
+                              lineHeight: 1.3,
+                              /* 0.08em matches the system default for mono
+                                 caps at body scale (CTAs, panel headers). */
+                              letterSpacing: "0.08em",
+                              textTransform: "uppercase",
+                              color: active ? "var(--text)" : "var(--muted)",
+                              textDecoration: "none",
+                              transition: "color 0.25s cubic-bezier(0.22,1,0.36,1)",
+                            }}
+                          >
+                            {/* Sliding accent bar — only renders on the active
+                                item; layoutId animates it to the new position
+                                when activeSection changes. Echoes the warm
+                                "Now" dot pattern from the career timeline. */}
+                            {active && (
+                              <motion.span
+                                layoutId="cs-rail-indicator"
+                                className="cs-rail-indicator"
+                                /* Bar height tracks the text line only,
+                                   not the full touch-target padding. */
+                                style={{ top: "14px", bottom: "14px" }}
+                                transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                              />
+                            )}
+                            {label}
+                          </a>
+                        );
+                      })}
+                    </motion.nav>
+                  )}
+                </AnimatePresence>
+            </div>{/* /.sticky wrapper inside .cs-rail */}
+          </aside>
+
+          {/* Content column. .page-pad keeps content at 680px max,
+              centered on the viewport just like the hero. */}
           <div className="page-pad">
 
-            <CsSection label={cs.sectionLabels?.overview ?? "Overview"} id="cs-overview">
+            <CsSection label={cs.sectionLabels?.overview ?? "Overview"} navLabel={cs.navLabels?.overview} id="cs-overview" className="exec-hide">
               {/* Three-layer Overview rendering:
                     1. context prose (plain, no card chrome)
                     2. ESM vs OLAP visual diagram (slug-gated)
@@ -485,13 +815,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   transition={{ duration: 0.65, ease: EASE }}
                   style={{ marginTop: "32px" }}
                 >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
                     ESM vs OLAP data model (two different types of data)
                   </p>
                   <div style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
                     {/* ESM — Tabular */}
                     <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
                         ESM · Tabular
                       </span>
                       <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
@@ -516,14 +846,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <line x1="112" y1="9" x2="130" y2="9" strokeWidth="1.2" />
                         </svg>
                       </div>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
                         Rows × columns. Typed cells. Editable in a sandbox before publish.
                       </p>
                     </div>
 
                     {/* OLAP — Multi-dimensional */}
                     <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
                         OLAP · Multi-dimensional
                       </span>
                       <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
@@ -545,7 +875,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           <line x1="94" y1="28" x2="94" y2="60" strokeOpacity="0.5" />
                         </svg>
                       </div>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
                         Dimensions × members. Aggregated. The shape reports and forecasts read from.
                       </p>
                     </div>
@@ -562,9 +892,114 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 </div>
               )}
 
+              {/* contextStats — large-number stat blocks (e.g. "100M+ users") */}
+              {cs.contextStats && cs.contextStats.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: cs.context || (cs.contextCards && cs.contextCards.length > 0) ? "28px" : "8px" }}
+                >
+                  {cs.contextStats.map((s, i) => (
+                    <div key={i} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.4vw, 28px)", fontWeight: 300, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--text-display)", margin: 0 }}>{s.stat}</p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{s.label}</p>
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+
+              {/* App store links */}
+              {cs.appStoreLinks && (
+                <div style={{ display: "flex", gap: "20px", marginTop: "16px", flexWrap: "wrap", alignItems: "center" }}>
+                  {cs.appStoreLinks.android && (
+                    <a href={cs.appStoreLinks.android} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: "var(--muted)" }}><path d="M8 5v14l11-7z"/></svg>
+                      <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted)", letterSpacing: "-0.01em" }}>Google Play</span>
+                    </a>
+                  )}
+                  {cs.appStoreLinks.ios && (
+                    <a href={cs.appStoreLinks.ios} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: "var(--muted)" }}><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                      <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted)", letterSpacing: "-0.01em" }}>App Store</span>
+                    </a>
+                  )}
+                </div>
+              )}
+
             </CsSection>
 
-            <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} id="cs-problem">
+            {/* ── Context Section (optional named section between Overview and Problem) ── */}
+            {cs.contextSection && (
+              <CsSection label={cs.contextSection.title}>
+                {/* Hero stat — large number above the cards */}
+                {cs.contextSection.stat && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55, ease: EASE }}
+                    style={{ marginBottom: "28px", display: "flex", flexDirection: "column", gap: "6px" }}
+                  >
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text-display)", margin: 0 }}>
+                      {cs.contextSection.stat}
+                    </p>
+                    {cs.contextSection.statLabel && (
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>
+                        {cs.contextSection.statLabel}
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+                {cs.contextSection.intro && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 20px" }}
+                  >
+                    {cs.contextSection.intro}
+                  </motion.p>
+                )}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+                >
+                  {cs.contextSection.cards.map((card, i) => (
+                    <div key={i} style={{ padding: "20px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{card.tag}</span>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{card.body}</p>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
+            <CsSection label={cs.sectionLabels?.problem ?? "The Problem"} navLabel={cs.navLabels?.problem} id="cs-problem">
+              {/* Problem stat — number stacked above short label */}
+              {cs.problemStat && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.55, ease: EASE }}
+                  style={{ marginBottom: "28px", display: "flex", flexDirection: "column", gap: "8px" }}
+                >
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.4vw, 28px)", fontWeight: 300, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--text-display)" }}>{cs.problemStat.stat}</span>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0, maxWidth: "480px" }}>{cs.problemStat.label}</p>
+                </motion.div>
+              )}
+
+              {/* Persona preview — human anchor at the top of the Problem
+                  section. Renders only when this case study has personas
+                  attached to its decisions. */}
+              <PersonaPreview cs={cs} />
+
               {/* Render paths for the Problem section:
                   1. apple-business-listings → custom AppleChallengeBlock
                   2. cs.problemCards is set → optional plain prose, then
@@ -601,7 +1036,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <div key={i}>
                           {c.breakdown.impact.title && (
                             <p style={{
-                              fontFamily: "var(--font-mono)", fontSize: "9px",
+                              fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                               letterSpacing: "0.08em", textTransform: "uppercase",
                               color: "var(--muted)", margin: 0, marginBottom: "8px",
                             }}>
@@ -609,7 +1044,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             </p>
                           )}
                           <p style={{
-                            fontFamily: "var(--font-body)", fontSize: "14px",
+                            fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                             lineHeight: 1.65, letterSpacing: "-0.005em",
                             color: "var(--muted2)", margin: 0,
                           }}>
@@ -621,7 +1056,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   )}
                 </>
               ) : (
-                <BodyText>{cs.problem}</BodyText>
+                cs.problem && <BodyText>{cs.problem}</BodyText>
               )}
 
               {cs.problemBreakdown && (
@@ -632,7 +1067,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   transition={{ duration: 0.65, ease: EASE }}
                   style={{ marginTop: "24px", background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}
                 >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
                     Legacy Spotlight
                   </p>
                   {(() => {
@@ -645,19 +1080,18 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <svg key={5} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 1L1 14h14L8 1z"/><line x1="8" y1="6" x2="8" y2="9"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>,
                     ];
                     return (
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                      <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                         {cs.problemBreakdown!.points.map((point, i) => (
                           <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
                             <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{problemIcons[i]}</div>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{point}</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{point}</p>
                           </div>
                         ))}
                       </div>
                     );
                   })()}
                   <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}>
-                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>Impact</p>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{cs.problemBreakdown.impact}</p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{cs.problemBreakdown.impact}</p>
                   </div>
                 </motion.div>
               )}
@@ -700,6 +1134,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
+                  className="cs-2col"
                   style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
                 >
                   {cs.users.map((u, idx) => {
@@ -724,21 +1159,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <div style={{ width: "28px", height: "28px", borderRadius: "6px", background: "var(--surface2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "var(--muted)" }}>
                           <RoleIcon size={14} strokeWidth={1.6} />
                         </div>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>
                           {u.role}
                         </p>
                       </div>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", margin: 0, lineHeight: 1.4 }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, color: "var(--text)", margin: 0, lineHeight: 1.4 }}>
                         {u.name}
                       </p>
                       {/* Core tension sits right below the name — before bullets */}
                       <div style={{ background: "var(--surface2)", borderRadius: "6px", padding: "8px 12px" }}>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 3px" }}>Core tension</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{u.coreTension}</p>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: "0 0 3px" }}>Core tension</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{u.coreTension}</p>
                       </div>
                       <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "6px" }}>
                         {u.bullets.map((b, i) => (
-                          <li key={i} style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", lineHeight: 1.55, paddingLeft: "14px", position: "relative" }}>
+                          <li key={i} style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted)", lineHeight: 1.55, paddingLeft: "14px", position: "relative" }}>
                             <span style={{ position: "absolute", left: 0, color: "var(--accent)" }}>·</span>
                             {b}
                           </li>
@@ -760,6 +1195,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
+                  className="cs-2col"
                   style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
                 >
                   {[
@@ -772,12 +1208,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     >
                       <div style={{ background: "var(--surface2)", padding: "10px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: "8px" }}>
                         <Icon size={12} strokeWidth={1.6} style={{ color: "var(--muted)", flexShrink: 0 }} />
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>{label}</p>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>{label}</p>
                       </div>
                       {items.map((g, i) => (
                         <div key={i} style={{ padding: "14px 16px", borderBottom: i < items.length - 1 ? "1px solid var(--border)" : "none" }}>
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, color: "var(--text)", margin: "0 0 4px", lineHeight: 1.4 }}>{g.title}</p>
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{g.body}</p>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, color: "var(--text)", margin: "0 0 4px", lineHeight: 1.4 }}>{g.title}</p>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted)", margin: 0, lineHeight: 1.55 }}>{g.body}</p>
                         </div>
                       ))}
                     </div>
@@ -859,7 +1295,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         padding: "20px 20px 22px",
                         display: "flex",
                         flexDirection: "column",
-                        gap: "14px",
+                        gap: "16px",
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--muted)" }}>
@@ -867,7 +1303,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <p
                           style={{
                             fontFamily: "var(--font-mono)",
-                            fontSize: "9px",
+                            fontSize: "var(--text-eyebrow)",
                             letterSpacing: "0.1em",
                             textTransform: "uppercase",
                             color: "var(--muted)",
@@ -907,10 +1343,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               <>
                 {/* Blurred content peek */}
                 <div style={{ position: "relative", overflow: "hidden", maxHeight: "180px", pointerEvents: "none", userSelect: "none" }}>
-                  <div style={{ filter: "blur(6px)", opacity: 0.45, padding: "48px 0" }}>
+                  <div style={{ filter: "blur(6px)", opacity: 0.45, padding: "var(--space-9) 0" }}>
                     <div className="page-pad">
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>My Approach</p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "16px", lineHeight: 1.7, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "640px" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>My Approach</p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", lineHeight: 1.7, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "640px" }}>
                         {cs.approach ?? cs.insight ?? ""}
                       </p>
                     </div>
@@ -944,15 +1380,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       </svg>
 
                       <div>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "17px", fontWeight: 400, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3 }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title)", fontWeight: 400, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3 }}>
                           This case study is password protected
                         </p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--muted)", lineHeight: 1.65, maxWidth: "320px" }}>
-                          The details here are confidential. Reach out to Arun for access.
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", color: "var(--muted)", lineHeight: 1.65, maxWidth: "320px" }}>
+                          Much of my work is confidential. Please reach out for the password.
                         </p>
                       </div>
 
-                      <form onSubmit={handlePasswordSubmit} style={{ display: "flex", gap: "8px", width: "100%", maxWidth: "340px" }}>
+                      <form onSubmit={handlePasswordSubmit} className="cs-pw-form" style={{ display: "flex", gap: "8px", width: "100%", maxWidth: "340px" }}>
                         <input
                           type="password"
                           value={pwInput}
@@ -961,7 +1397,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           autoComplete="off"
                           style={{
                             flex: 1,
-                            fontFamily: "var(--font-body)", fontSize: "14px",
+                            fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                             letterSpacing: "-0.01em",
                             color: "var(--text)",
                             background: "var(--bg)",
@@ -979,7 +1415,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           whileTap={{ scale: 0.95 }}
                           transition={{ type: "spring", stiffness: 400, damping: 20 }}
                           style={{
-                            fontFamily: "var(--font-body)", fontSize: "14px",
+                            fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                             fontWeight: 400, letterSpacing: "-0.01em",
                             padding: "10px 20px",
                             background: "var(--text)", color: "var(--bg)",
@@ -998,7 +1434,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.25, ease: EASE }}
-                            style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--accent-error)", letterSpacing: "0.04em", marginTop: "-8px" }}
+                            style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", color: "var(--accent-error)", letterSpacing: "0.04em", marginTop: "-8px" }}
                           >
                             Incorrect password. Try again.
                           </motion.p>
@@ -1016,27 +1452,240 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* My Approach — renders when present (research-led case studies) */}
             {cs.approach && (
-              <CsSection label={cs.sectionLabels?.approach ?? "My Approach"}>
+              <CsSection label={cs.sectionLabels?.approach ?? "My Approach"} className="exec-hide">
                 <BodyText>{cs.approach}</BodyText>
               </CsSection>
             )}
 
             {/* Research — renders as its own section when approach is present */}
             {cs.approach && cs.researchEvidence && (
-              <CsSection label={cs.sectionLabels?.research ?? "Research"}>
+              <CsSection label={cs.sectionLabels?.research ?? "Research"} className="exec-hide">
                 <BodyText>{cs.researchEvidence}</BodyText>
                 {cs.researchFindings && cs.researchFindings.length > 0 && (
+                  cs.slug === "fancode-homepage" ? (
+                    /* ── FanCode-specific research layout ─────────────────────────
+                       4 signals, each visually distinct based on content type.   */
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.65, ease: EASE }}
+                      style={{ marginTop: "24px", display: "flex", flexDirection: "column", gap: "10px" }}
+                    >
+                      {/* Signal 1 — Two named users: split persona cards */}
+                      <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "4px 8px", borderRadius: "6px" }}>Signal 01</span>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[0].title}</p>
+                        </div>
+                        <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                          {/* Saurabh */}
+                          <div style={{ background: "var(--surface2)", borderRadius: "8px", padding: "14px 16px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+                              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "var(--chip-indigo-strip)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 500, color: "rgb(99,102,241)", letterSpacing: "0.04em" }}>S</span>
+                              </div>
+                              <div>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em" }}>Saurabh</p>
+                                <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>New user · cricket fan</p>
+                              </div>
+                            </div>
+                            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "4px" }}>
+                              <li style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                                <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)", marginTop: "2px", flexShrink: 0 }}>→</span>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>Downloaded via ad. Exploring what the app offers.</p>
+                              </li>
+                              <li style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                                <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)", marginTop: "2px", flexShrink: 0 }}>→</span>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>Spends time on the homepage trying to understand the offering.</p>
+                              </li>
+                            </ul>
+                          </div>
+                          {/* Karan */}
+                          <div style={{ background: "var(--surface2)", borderRadius: "8px", padding: "14px 16px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+                              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "var(--chip-emerald-strip)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 500, color: "rgb(16,185,129)", letterSpacing: "0.04em" }}>K</span>
+                              </div>
+                              <div>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500, color: "var(--text)", letterSpacing: "-0.01em" }}>Karan</p>
+                                <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>Existing user · fantasy player</p>
+                              </div>
+                            </div>
+                            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "4px" }}>
+                              <li style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                                <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)", marginTop: "2px", flexShrink: 0 }}>→</span>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>Defaults to Cricbuzz for daily news. Returns to FanCode only for streams.</p>
+                              </li>
+                              <li style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                                <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)", marginTop: "2px", flexShrink: 0 }}>→</span>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>"FanCode should work like Cricbuzz, with the value add of live streaming."</p>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        {/* Shared mental model */}
+                        <div style={{ marginTop: "10px", padding: "10px 14px", background: "var(--surface2)", borderRadius: "8px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>Shared mental model</p>
+                          {["Tournaments", "Matches", "Teams & players", "Updates"].map((step, idx, arr) => (
+                            <Fragment key={step}>
+                              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", color: "var(--text)", letterSpacing: "-0.01em", background: "var(--surface)", padding: "4px 8px", borderRadius: "4px", boxShadow: "var(--card-shadow)" }}>{step}</span>
+                              {idx < arr.length - 1 && <span style={{ color: "var(--muted)", fontSize: "var(--text-mono)" }}>→</span>}
+                            </Fragment>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Signal 2 — CEO feedback: 3 numbered bullets */}
+                      <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "4px 8px", borderRadius: "6px" }}>Signal 02</span>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[1].title}</p>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                          {[
+                            { n: "1", text: "Make it easy to navigate and find things." },
+                            { n: "2", text: "Explore if we can reduce the size of the nudge in the first fold." },
+                            { n: "3", text: "It lacks a sense of separation. It's hard to focus on content pieces on the homepage." },
+                          ].map(item => (
+                            <div key={item.n} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", color: "var(--muted)", letterSpacing: "0.08em", minWidth: "16px", paddingTop: "1px", lineHeight: 1.5 }}>{item.n}.</span>
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", color: "var(--muted2)", lineHeight: 1.6, letterSpacing: "-0.01em" }}>{item.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Signals 3 + 4 — side by side */}
+                      <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                        {/* Signal 3 — Content constraints */}
+                        <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "4px 8px", borderRadius: "6px" }}>Signal 03</span>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[2].title}</p>
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            {[
+                              { can: true,  label: "Hot Right Now (can repackage from breaking news)" },
+                              { can: false, label: "Featured Videos (sponsored, cannot move)" },
+                            ].map(item => (
+                              <div key={item.label} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                                {item.can
+                                  ? <Check size={12} strokeWidth={1.75} style={{ color: "var(--accent-success)", marginTop: "3px", flexShrink: 0 }} />
+                                  : <XMark  size={12} strokeWidth={1.75} style={{ color: "var(--muted)",          marginTop: "3px", flexShrink: 0 }} />
+                                }
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: item.can ? "var(--text)" : "var(--muted2)", lineHeight: 1.55, letterSpacing: "-0.01em" }}>{item.label}</p>
+                              </div>
+                            ))}
+                          </div>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.6, letterSpacing: "-0.01em", marginTop: "10px" }}>
+                            Knowing what could move meant the new IA fit content reality, not fought it.
+                          </p>
+                        </div>
+
+                        {/* Signal 4 — IPL exception: standout callout */}
+                        <div style={{ background: "var(--surface)", borderRadius: "12px", padding: "20px 20px 16px", boxShadow: "var(--card-shadow)", position: "relative", overflow: "hidden" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", padding: "4px 8px", borderRadius: "6px" }}>Signal 04</span>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3 }}>{cs.researchFindings[3].title}</p>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "baseline", gap: "6px", marginBottom: "8px" }}>
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "36px", fontWeight: 600, letterSpacing: "-0.04em", color: "var(--text)", lineHeight: 1 }}>10×</span>
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", letterSpacing: "-0.01em" }}>more engagement during IPL</span>
+                          </div>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", color: "var(--muted2)", lineHeight: 1.6, letterSpacing: "-0.01em" }}>
+                            The model worked below the fold when content earned its place. The fix wasn't teaching users to scroll. It was making every below-fold section earn the way IPL already did.
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                  /* ── Generic research findings grid ── */
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.65, ease: EASE }}
+                    className="cs-2col"
                     style={{ marginTop: "24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}
                   >
                     {cs.researchFindings.map((f, i) => (
                       <div key={i} style={{ background: "var(--surface)", borderRadius: "10px", padding: "16px 18px", boxShadow: "var(--card-shadow)" }}>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.35 }}>{f.title}</p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{f.body}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.35 }}>{f.title}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{f.body}</p>
+                      </div>
+                    ))}
+                  </motion.div>
+                  )
+                )}
+              </CsSection>
+            )}
+
+            {/* ── Discovery & Research ── */}
+            {cs.discoverySection && (
+              <CsSection label="Discovery & Research">
+                {cs.discoverySection.intro && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55, ease: EASE }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 24px" }}
+                  >
+                    {cs.discoverySection.intro}
+                  </motion.p>
+                )}
+                {cs.discoverySection.findings.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE }}
+                    style={{ display: "flex", flexDirection: "column", gap: "36px" }}
+                  >
+                    {cs.discoverySection.findings.map((f, i) => (
+                      <div key={i}>
+                        <div style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "9999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1, minWidth: 0 }}>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{f.title}</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{f.body}</p>
+                            {f.image && (
+                              <figure style={{ margin: 0, marginTop: "10px" }}>
+                                <div
+                                  onClick={() => setLightboxSrc(f.image!.src)}
+                                  style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                >
+                                  <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
+                                </div>
+                                {f.image.caption && (
+                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                                    {f.image.caption}
+                                  </figcaption>
+                                )}
+                              </figure>
+                            )}
+                            {f.images && f.images.length > 0 && (
+                              <div style={{ marginTop: "10px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px" }}>
+                                {f.images.map((img, j) => (
+                                  <figure key={j} style={{ margin: 0 }}>
+                                    <div
+                                      onClick={() => setLightboxSrc(img.src)}
+                                      style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                    >
+                                      <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
+                                    </div>
+                                    {img.caption && (
+                                      <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                                        {img.caption}
+                                      </figcaption>
+                                    )}
+                                  </figure>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </motion.div>
@@ -1044,46 +1693,472 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
+            {/* ── Canvas board — Discovery & Research ── */}
+            {cs.canvasBoards?.find(b => b.section === "discovery") && (() => {
+              const board = cs.canvasBoards!.find(b => b.section === "discovery")!;
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, ease: EASE }}
+                  style={{
+                    marginBottom: "80px",
+                    borderRadius: "16px",
+                    border: "1px solid var(--border)",
+                    overflow: "hidden",
+                    background: "var(--surface2)",
+                    backgroundImage: "radial-gradient(circle, var(--border) 1px, transparent 1px)",
+                    backgroundSize: "20px 20px",
+                    padding: "28px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "12px",
+                    alignItems: "start",
+                  }}
+                >
+                  {board.images.map((img, i) => (
+                    <motion.div
+                      key={i}
+                      whileHover={{ scale: 1.02, zIndex: 10 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={() => setLightboxSrc(img.src)}
+                      style={{
+                        cursor: "zoom-in",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                        gridColumn: img.span === "wide" ? "span 2" : "span 1",
+                        gridRow: img.span === "tall" ? "span 2" : "span 1",
+                        position: "relative",
+                      }}
+                    >
+                      <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", boxShadow: "0 2px 12px rgba(0,0,0,0.08)", position: "relative" }}>
+                        <CanvasBoardImage src={img.src} alt={img.alt} aspectRatio={img.span === "tall" ? "3/4" : "16/9"} />
+                        <div style={{ position: "absolute", inset: 0, background: "transparent", transition: "background 0.15s" }} className="canvas-hover-overlay" />
+                      </div>
+                      {img.caption && (
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, textAlign: "center" }}>
+                          {img.caption}
+                        </p>
+                      )}
+                    </motion.div>
+                  ))}
+                </motion.div>
+              );
+            })()}
+
+            {/* ── Core Insight — after Discovery & Research ── */}
             {cs.insight && (
-              <section id="cs-insight" style={{ padding: "48px 0" }}>
+              <section id="cs-insight" data-nav-label="Core insight" style={{ padding: "80px 0" }}>
+                {/* heading block */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
-                  style={{ background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}
+                  style={{ maxWidth: "720px" }}
                 >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "12px" }}>Core Insight</p>
-                  {(() => {
-                    const paras = cs.insight.split("\n\n");
-                    return (
-                      <>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)" }}>
-                          {parseHighlights(paras[0])}
-                        </p>
-                        {paras.slice(1).map((para, i) => (
-                          <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", marginTop: "16px", maxWidth: "560px" }}>
-                            {parseHighlights(para)}
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "28px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>Core Insight</p>
+                  {cs.coreInsight ? (
+                    <>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 30px)", fontWeight: 300, lineHeight: 1.4, letterSpacing: "-0.025em", color: "var(--text)", margin: "0 0 18px" }}>
+                        {cs.coreInsight.heading}
+                      </p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>
+                        {parseHighlights(cs.coreInsight.body[0] ?? "")}
+                      </p>
+                    </>
+                  ) : (
+                    (() => {
+                      const paras = cs.insight.split("\n\n");
+                      return (
+                        <>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 30px)", fontWeight: 300, lineHeight: 1.45, letterSpacing: "-0.02em", color: "var(--text)" }}>
+                            {parseHighlights(paras[0])}
                           </p>
-                        ))}
-                      </>
-                    );
-                  })()}
+                          {paras.slice(1).map((para, i) => (
+                            <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", marginTop: "22px" }}>
+                              {parseHighlights(para)}
+                            </p>
+                          ))}
+                        </>
+                      );
+                    })()
+                  )}
                 </motion.div>
+
                 {cs.slug === "zetwerk-dc" && <ZetwerkDualUserBlock />}
+
+                {/* second body para — above phones */}
+                {cs.coreInsight?.body[1] && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: EASE, delay: 0.05 }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "36px 0 0", borderLeft: "2px solid var(--accent-warm)", paddingLeft: "16px", maxWidth: "640px" }}
+                  >
+                    {parseHighlights(cs.coreInsight.body[1])}
+                  </motion.p>
+                )}
+
+                {/* ── Before / After phone mockup — homepageLayout style ──
+                    Wrapped in `.cs-phone-pair-wrap` so the inner `.cs-phone-pair`
+                    can `transform: scale()` on mobile without leaving an empty
+                    layout gap (transforms don't reflow surrounding content). */}
+                {cs.coreInsight?.beforeAfter && (
+                  <div className="cs-phone-pair-wrap" style={{ maxWidth: "720px", marginTop: "40px", marginBottom: "24px" }}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE, delay: 0.1 }}
+                    className="cs-phone-pair"
+                    style={{ display: "flex", gap: "16px", flexWrap: "nowrap", alignItems: "flex-start", padding: "12px 8px 4px", justifyContent: "center" }}
+                  >
+                    {/* BEFORE phone */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
+                      <div style={{
+                        width: "195px", height: "345px",
+                        border: "1.5px solid var(--border)", borderRadius: "32px",
+                        boxShadow: "0 0 0 5px var(--surface2)",
+                        overflow: "hidden", fontFamily: "var(--font-body)",
+                        display: "flex", flexDirection: "column",
+                      }}>
+                        {/* Notch */}
+                        <div style={{ display: "flex", justifyContent: "center", paddingTop: "14px", paddingBottom: "8px", background: "var(--bg)", flexShrink: 0 }}>
+                          <div style={{ width: "54px", height: "17px", background: "var(--surface2)", borderRadius: "8px" }} />
+                        </div>
+                        {/* Section label */}
+                        <div style={{ padding: "6px 15px 10px", background: "var(--bg)", flexShrink: 0 }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>How it was organized</span>
+                        </div>
+                        {/* Items — fill entire content area */}
+                        <div style={{ padding: "0 10px", display: "flex", flexDirection: "column", gap: "4px", flex: 1 }}>
+                          {cs.coreInsight.beforeAfter.before.items.map((item, i) => (
+                            <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", background: "var(--surface)", borderRadius: "8px", border: "1px solid var(--border)", flex: 1 }}>
+                              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
+                              <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--muted2)", lineHeight: 1.4, letterSpacing: "-0.01em" }}>{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Home bar */}
+                        <div style={{ display: "flex", justifyContent: "center", padding: "16px 0 16px", flexShrink: 0 }}>
+                          <div style={{ width: "36px", height: "3px", background: "var(--border)", borderRadius: "2px" }} />
+                        </div>
+                      </div>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "195px" }}>
+                        {cs.coreInsight.beforeAfter.before.footnote}
+                      </p>
+                    </div>
+
+                    {/* Arrow between phones — circle */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "39px", flexShrink: 0, alignSelf: "stretch" }}>
+                      <div style={{ width: "27px", height: "27px", borderRadius: "50%", border: "1.5px solid var(--border)", background: "var(--surface)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", color: "var(--muted2)", lineHeight: 1 }}>&#8594;</span>
+                      </div>
+                    </div>
+
+                    {/* AFTER phone */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
+                      <div style={{
+                        width: "195px", height: "345px",
+                        border: "1.5px solid var(--border)", borderRadius: "32px",
+                        boxShadow: "0 0 0 5px var(--surface2)",
+                        overflow: "hidden", fontFamily: "var(--font-body)",
+                        display: "flex", flexDirection: "column",
+                      }}>
+                        {/* Notch */}
+                        <div style={{ display: "flex", justifyContent: "center", paddingTop: "14px", paddingBottom: "8px", background: "var(--bg)", flexShrink: 0 }}>
+                          <div style={{ width: "54px", height: "17px", background: "var(--surface2)", borderRadius: "8px" }} />
+                        </div>
+                        {/* Section label */}
+                        <div style={{ padding: "6px 15px 10px", background: "var(--bg)", flexShrink: 0 }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>How users actually think</span>
+                        </div>
+                        {/* Content — fill entire area */}
+                        <div style={{ padding: "0 10px", display: "flex", flexDirection: "column", gap: "4px", flex: 1 }}>
+                          {/* Featured block */}
+                          <div style={{ padding: "9px 10px", border: "1.5px solid var(--border)", borderRadius: "8px", background: "var(--surface2)", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "block", marginBottom: "6px" }}>Featured</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted2)", flexShrink: 0 }} />
+                              <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--text)", lineHeight: 1.4, letterSpacing: "-0.01em" }}>{cs.coreInsight.beforeAfter.after.items[0]}</span>
+                            </div>
+                          </div>
+                          {/* Remaining items */}
+                          {cs.coreInsight.beforeAfter.after.items.slice(1).map((item, i) => (
+                            <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", background: "var(--surface)", borderRadius: "8px", border: "1px solid var(--border)", flex: 1 }}>
+                              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
+                              <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--muted2)", lineHeight: 1.4, letterSpacing: "-0.01em" }}>{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Home bar */}
+                        <div style={{ display: "flex", justifyContent: "center", padding: "16px 0 16px", flexShrink: 0 }}>
+                          <div style={{ width: "36px", height: "3px", background: "var(--border)", borderRadius: "2px" }} />
+                        </div>
+                      </div>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted2)", margin: 0, lineHeight: 1.5, textAlign: "center", width: "195px" }}>
+                        {cs.coreInsight.beforeAfter.after.footnote}
+                      </p>
+                    </div>
+                  </motion.div>
+                  </div>
+                )}
+
                 {cs.insightImage && (
                   <ImageBlock image={cs.insightImage} placeholder="" onOpen={setLightboxSrc} />
                 )}
                 {!cs.approach && cs.researchEvidence && (
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", lineHeight: 1.7, marginTop: "20px" }}>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", lineHeight: 1.7, marginTop: "20px" }}>
                     {cs.researchEvidence}
                   </p>
                 )}
               </section>
             )}
 
+            {/* ── Design Strategy ── */}
+            {cs.designStrategy && (
+              <CsSection label="Design Strategy">
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2vw, 22px)", fontWeight: 300, letterSpacing: "-0.02em", lineHeight: 1.3, color: "var(--text)", margin: "0 0 28px" }}
+                >
+                  {cs.designStrategy.heading}
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", gap: "28px" }}
+                >
+                  {cs.designStrategy.principles.map((p, i) => (
+                    <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "9999px", padding: "3px 9px", marginTop: "1px", flexShrink: 0 }}>0{i + 1}</span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{p.title}</p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>{p.body}</p>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
+            {/* ── Design Approach ── */}
+            {cs.designApproach && (
+              <CsSection label="Design Exploration">
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 24px" }}
+                >
+                  {cs.designApproach.intro}
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", gap: "44px" }}
+                >
+                  {cs.designApproach.decisions.map((d, i) => (
+                    <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "9999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
+                        <DecisionBodyText>{d.body}</DecisionBodyText>
+                        {d.image && (
+                          <figure style={{ margin: 0, marginTop: "6px" }}>
+                            <ScrollScaleMedia
+                              onClick={() => setLightboxSrc(d.image!.src)}
+                              style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                            >
+                              {/* Renders the image at its natural aspect ratio so both
+                                  wide screenshots and tall flow diagrams display fully
+                                  without crop. `compact` images are capped at a shorter
+                                  max height and centered so they don't stretch to fill
+                                  the full card width (lightbox shows full size). */}
+                              <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
+                            </ScrollScaleMedia>
+                            {d.image.caption && (
+                              <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                                {d.image.caption}
+                              </figcaption>
+                            )}
+                          </figure>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
+            {/* ── Canvas board — Design Approach ── */}
+            {cs.canvasBoards?.find(b => b.section === "approach") && (() => {
+              const board = cs.canvasBoards!.find(b => b.section === "approach")!;
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, ease: EASE }}
+                  style={{
+                    marginBottom: "80px",
+                    borderRadius: "16px",
+                    border: "1px solid var(--border)",
+                    overflow: "hidden",
+                    background: "var(--surface2)",
+                    backgroundImage: "radial-gradient(circle, var(--border) 1px, transparent 1px)",
+                    backgroundSize: "20px 20px",
+                    padding: "28px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "12px",
+                    alignItems: "start",
+                  }}
+                >
+                  {board.images.map((img, i) => (
+                    <motion.div
+                      key={i}
+                      whileHover={{ scale: 1.02, zIndex: 10 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={() => setLightboxSrc(img.src)}
+                      style={{
+                        cursor: "zoom-in",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                        gridColumn: img.span === "wide" ? "span 2" : "span 1",
+                        gridRow: img.span === "tall" ? "span 2" : "span 1",
+                        position: "relative",
+                      }}
+                    >
+                      <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
+                        <CanvasBoardImage src={img.src} alt={img.alt} aspectRatio={img.span === "tall" ? "3/4" : "16/9"} />
+                      </div>
+                      {img.caption && (
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0, textAlign: "center" }}>
+                          {img.caption}
+                        </p>
+                      )}
+                    </motion.div>
+                  ))}
+                </motion.div>
+              );
+            })()}
+
+            {/* ── Homepage Layout ── */}
+            {cs.homepageLayout && (
+              <CsSection label="Homepage Layout" hideFromNav>
+                {cs.homepageLayout.intro && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 24px" }}
+                  >
+                    {cs.homepageLayout.intro}
+                  </motion.p>
+                )}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", justifyContent: "center" }}
+                >
+                  <div style={{ width: "360px", border: "1.5px solid var(--border)", borderRadius: "44px", boxShadow: "0 0 0 6px var(--surface2)", overflow: "hidden", fontFamily: "var(--font-body)" }}>
+                    {/* Notch */}
+                    <div style={{ display: "flex", justifyContent: "center", paddingTop: "18px", paddingBottom: "10px", background: "var(--bg)" }}>
+                      <div style={{ width: "80px", height: "22px", background: "var(--surface2)", borderRadius: "12px" }} />
+                    </div>
+                    {/* Architecture label */}
+                    <div style={{ padding: "10px 22px 12px", background: "var(--bg)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>Page Architecture</span>
+                    </div>
+                    {/* First fold */}
+                    <div style={{ margin: "0 16px", padding: "12px 16px", border: "1.5px solid var(--border)", borderRadius: "12px", background: "var(--surface2)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", display: "block", marginBottom: "6px" }}>First Fold, Unchanged</span>
+                      {cs.homepageLayout.firstFold.map((item, i) => (
+                        <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: i > 0 ? "5px" : 0 }}>
+                          <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0 }} />
+                          <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--muted2)", lineHeight: 1.4 }}>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Dashed divider */}
+                    <div style={{ display: "flex", alignItems: "center", padding: "10px 18px", gap: "8px" }}>
+                      <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", whiteSpace: "nowrap" }}>Restructured below</span>
+                      <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
+                    </div>
+                    {/* Below fold items */}
+                    <div style={{ padding: "0 16px 20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+                      {cs.homepageLayout.belowFold.map((item, i) => (
+                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "9px 12px", background: item.type === "break" ? "var(--surface2)" : "var(--surface)", borderRadius: "8px", border: "1px solid var(--border)" }}>
+                          <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--muted)", flexShrink: 0, marginTop: "4px" }} />
+                          <span style={{ fontSize: "var(--text-mono-lg)", color: "var(--muted)", lineHeight: 1.5 }}>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Home indicator */}
+                    <div style={{ display: "flex", justifyContent: "center", paddingBottom: "18px" }}>
+                      <div style={{ width: "48px", height: "4px", background: "var(--border)", borderRadius: "2px" }} />
+                    </div>
+                  </div>
+                </motion.div>
+              </CsSection>
+            )}
+
+            {/* ── Key Design Decisions (side-by-side cards) ── */}
+            {cs.keyDecisions && cs.keyDecisions.length > 0 && (
+              <CsSection label="Key Design Decisions" hideFromNav>
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" }}
+                >
+                  {cs.keyDecisions.map((d, i) => (
+                    <div key={i} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "24px", padding: "24px 24px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "16px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                        {d.stat && (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 3vw, 38px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.05, color: "var(--text)", margin: 0 }}>{d.stat.value}</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.5, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{d.stat.label}</p>
+                          </div>
+                        )}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                          <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(14px, 1.3vw, 15px)", fontWeight: 500, color: "var(--text)", lineHeight: 1.3 }}>{d.title}</span>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>{d.subtitle}</span>
+                        </div>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--muted2)", lineHeight: 1.65, margin: 0 }}>{d.body}</p>
+                      </div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                        {d.tags.map((tag, ti) => (
+                          <span key={ti} style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface2)", borderRadius: "9999px", padding: "3px 9px" }}>{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
             {cs.slug === "zetwerk-dc" ? (
-              <section id="cs-workflow" style={{ padding: "48px 0" }}>
+              <section id="cs-workflow" style={{ padding: "var(--space-9) 0" }}>
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -1094,22 +2169,265 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 </motion.div>
               </section>
             ) : cs.taskFlow && (
-              <section id="cs-workflow" style={{ padding: "48px 0" }}>
+              <CsSection label={cs.taskFlow.heading ?? "The workflow"} id="cs-workflow">
+                {cs.taskFlow.subheading && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "clamp(20px, 2vw, 24px)",
+                      fontWeight: 400,
+                      lineHeight: 1.35,
+                      letterSpacing: "-0.02em",
+                      color: "var(--text)",
+                      margin: "0 0 32px",
+                      maxWidth: "560px",
+                    }}
+                  >
+                    {cs.taskFlow.subheading}
+                  </motion.p>
+                )}
                 <motion.div
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.65, ease: EASE }}
+                  transition={{ duration: 0.6, ease: EASE }}
                 >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>
-                    {cs.taskFlow!.heading ?? "The New Workflow"}
-                  </p>
-                  <TaskFlowDiagram stages={cs.taskFlow.stages} />
+                  {/* Desktop: individual step cards separated by chevron connectors.
+                      Mobile: single bordered container — steps merge into one unit
+                      with internal dividers, chevrons hidden. */}
+                  <div className="taskflow-wrapper">
+                    <div className="taskflow-stages" style={{ display: "grid", alignItems: "stretch" }}>
+                      {cs.taskFlow.stages.map((stage, i) => (
+                        <Fragment key={i}>
+                          <motion.div
+                            className="taskflow-stage"
+                            initial={{ opacity: 0, y: 12 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.55, ease: EASE, delay: i * 0.08 }}
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "12px",
+                              padding: "24px 24px 24px",
+                              background: "var(--surface)",
+                              border: "1px solid var(--border)",
+                              borderRadius: "16px",
+                            }}
+                          >
+                            <span style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "var(--font-mono)",
+                              fontSize: "var(--text-mono)",
+                              fontWeight: 500,
+                              letterSpacing: "0.08em",
+                              color: "var(--muted)",
+                              background: "var(--bg)",
+                              border: "1px solid var(--border)",
+                              borderRadius: "8px",
+                              width: "30px",
+                              height: "22px",
+                              fontVariantNumeric: "tabular-nums",
+                            }}>
+                              {stage.number}
+                            </span>
+                            <div>
+                              <p style={{
+                                fontFamily: "var(--font-body)",
+                                fontSize: "var(--text-lead)",
+                                fontWeight: 500,
+                                letterSpacing: "-0.015em",
+                                color: "var(--text)",
+                                margin: "0 0 6px",
+                              }}>
+                                {stage.label}
+                              </p>
+                              {stage.description && (
+                                <p style={{
+                                  fontFamily: "var(--font-body)",
+                                  fontSize: "var(--text-body)",
+                                  lineHeight: 1.6,
+                                  letterSpacing: "-0.005em",
+                                  color: "var(--muted2)",
+                                  margin: 0,
+                                }}>
+                                  {stage.description}
+                                </p>
+                              )}
+                            </div>
+                          </motion.div>
+                          {i < cs.taskFlow!.stages.length - 1 && (
+                            <div className="taskflow-chevron" aria-hidden="true" style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "var(--muted)",
+                              padding: "0 6px",
+                            }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="9 6 15 12 9 18" />
+                              </svg>
+                            </div>
+                          )}
+                        </Fragment>
+                      ))}
+                    </div>
+                  </div>
+                  <style>{`
+                    /* Desktop — individual cards separated by chevrons */
+                    .taskflow-stages {
+                      grid-template-columns: ${cs.taskFlow.stages.map(() => "1fr").join(" auto ")};
+                    }
+
+                    /* Mobile — merge into one collective unit */
+                    @media (max-width: 720px) {
+                      .taskflow-wrapper {
+                        background: var(--surface);
+                        border: 1px solid var(--border);
+                        border-radius: 14px;
+                        overflow: hidden;
+                      }
+                      .taskflow-stages {
+                        grid-template-columns: 1fr !important;
+                        gap: 0 !important;
+                      }
+                      /* Each step loses its individual card shell on mobile */
+                      .taskflow-stage {
+                        background: transparent !important;
+                        border: none !important;
+                        border-radius: 0 !important;
+                        border-bottom: 1px solid var(--border) !important;
+                        padding: 20px 20px 22px !important;
+                      }
+                      /* Last step has no bottom divider */
+                      .taskflow-stage:last-of-type {
+                        border-bottom: none !important;
+                      }
+                      /* Hide chevron connectors — dividers do the job */
+                      .taskflow-chevron {
+                        display: none !important;
+                      }
+                    }
+                  `}</style>
                 </motion.div>
-              </section>
+              </CsSection>
             )}
 
-            {cs.decisions.some(d => d.persona) && (
+            {/* ── Key design decisions ──────────────────────────────────────────
+                Renders for all case studies that have a top-level cs.decisions
+                array (Planful, Apple, Astra, Zetwerk DC, Zetwerk BU).
+                FanCode uses cs.designApproach.decisions instead and is excluded
+                via the !cs.designApproach guard. ── */}
+            {cs.decisions && cs.decisions.length > 0 && !cs.designApproach && (
+              <CsSection label={cs.sectionLabels?.decisions ?? "Key design decisions"} navLabel={cs.navLabels?.decisions} id="decisions">
+                {cs.decisionsIntro && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: "0 0 24px" }}
+                  >
+                    {cs.decisionsIntro}
+                  </motion.p>
+                )}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "flex", flexDirection: "column", gap: "44px" }}
+                >
+                  {cs.decisions.map((d, i) => (
+                    <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "9999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
+                        <DecisionBodyText>{d.body}</DecisionBodyText>
+                        {/* Single image */}
+                        {d.image && (
+                          <figure style={{ margin: 0, marginTop: "6px" }}>
+                            <ScrollScaleMedia
+                              onClick={() => setLightboxSrc(d.image!.src)}
+                              style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                            >
+                              <img
+                                src={d.image.src}
+                                alt={d.image.alt}
+                                style={{ width: "100%", display: "block" }}
+                              />
+                            </ScrollScaleMedia>
+                            {d.image.caption && (
+                              <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
+                                {d.image.caption}
+                              </figcaption>
+                            )}
+                          </figure>
+                        )}
+                        {/* Videos */}
+                        {d.videos && d.videos.length > 0 && (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "6px" }}>
+                            {d.videos.map((v, vi) => (
+                              <figure key={vi} style={{ margin: 0 }}>
+                                <VideoBlock src={v.src} appType={cs.type} chromeUrl={chromeUrl} />
+                                {v.caption && (
+                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
+                                    {v.caption}
+                                  </figcaption>
+                                )}
+                              </figure>
+                            ))}
+                          </div>
+                        )}
+                        {/* Multiple images */}
+                        {d.images && d.images.length > 0 && (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "6px" }}>
+                            {d.images.map((img, ii) => (
+                              <figure key={ii} style={{ margin: 0 }}>
+                                <div
+                                  onClick={() => setLightboxSrc(img.src)}
+                                  style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                >
+                                  <img src={img.src} alt={img.alt} loading="lazy" decoding="async" style={{ width: "100%", display: "block" }} />
+                                </div>
+                                {img.caption && (
+                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
+                                    {img.caption}
+                                  </figcaption>
+                                )}
+                              </figure>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+
+                {/* ── epilogue — forward-looking note below shipped decisions ── */}
+                {cs.epilogue && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    style={{ paddingTop: "32px", borderTop: "1px solid var(--border)" }}
+                  >
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", color: "var(--muted)", lineHeight: 1.7, letterSpacing: "-0.01em", margin: 0 }}>
+                      {cs.epilogue}
+                    </p>
+                  </motion.div>
+                )}
+              </CsSection>
+            )}
+
+            {cs.decisions?.some(d => d.persona) && (
               <CsSection label="Who We Designed For">
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
@@ -1128,12 +2446,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     scrollbarWidth: "none",
                   }}
                 >
-                  {cs.decisions.filter(d => d.persona).map((d, i) => {
+                  {cs.decisions?.filter(d => d.persona).map((d, i) => {
+                    // Persona accents pulled from the chip-token system so they
+                    // theme-switch automatically and stay consistent with chips
+                    // used elsewhere in the case studies.
                     const accents = [
-                      { bg: "rgba(113,112,255,0.10)", text: "#7170ff", avatarBg: "rgba(113,112,255,0.15)" },
-                      { bg: "rgba(16,185,129,0.10)",  text: "#10b981", avatarBg: "rgba(16,185,129,0.15)"  },
-                      { bg: "rgba(113,112,255,0.07)", text: "#828fff", avatarBg: "rgba(113,112,255,0.12)" },
-                      { bg: "rgba(16,185,129,0.07)",  text: "#34d399", avatarBg: "rgba(16,185,129,0.12)"  },
+                      { bg: "var(--chip-indigo-bg)",  text: "var(--chip-indigo-text)",  avatarBg: "var(--chip-indigo-strip)" },
+                      { bg: "var(--chip-emerald-bg)", text: "var(--chip-emerald-text)", avatarBg: "var(--chip-emerald-strip)" },
+                      { bg: "var(--chip-violet-bg)",  text: "var(--chip-violet-text)",  avatarBg: "var(--chip-violet-strip)" },
+                      { bg: "var(--chip-teal-bg)",    text: "var(--chip-teal-text)",    avatarBg: "var(--chip-teal-strip)" },
                     ];
                     const accent = accents[i % accents.length];
                     const initials = d.persona!.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -1162,35 +2483,35 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           </svg>
                           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                             <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: accent.avatarBg, border: `1px solid ${accent.text}30`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 500, color: accent.text, letterSpacing: "0.04em" }}>{initials}</span>
+                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 500, color: accent.text, letterSpacing: "0.04em" }}>{initials}</span>
                             </div>
                             <div>
-                              <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.persona!.name}</p>
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.04em", color: "var(--muted)", margin: "3px 0 0" }}>{d.persona!.role}</p>
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.persona!.name}</p>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.04em", color: "var(--muted)", margin: "3px 0 0" }}>{d.persona!.role}</p>
                             </div>
                           </div>
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)", fontStyle: "italic", letterSpacing: "-0.01em", margin: 0 }}>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, color: "var(--muted2)", fontStyle: "italic", letterSpacing: "-0.01em", margin: 0 }}>
                             "{d.persona!.quote}"
                           </p>
                         </div>
                         <div style={{ background: "var(--bg)", borderTop: "1px solid var(--border)", borderRadius: "0 0 16px 16px", padding: "20px 24px", display: "flex", flexDirection: "column", gap: "12px" }}>
                           <div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "5px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "5px" }}>
                               <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ color: accent.text, flexShrink: 0 }}>
                                 <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2"/><circle cx="5" cy="5" r="2" stroke="currentColor" strokeWidth="1.2"/><circle cx="5" cy="5" r="0.8" fill="currentColor"/>
                               </svg>
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>Goal</p>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>Goal</p>
                             </div>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.55, color: "var(--muted2)", margin: 0 }}>{d.persona!.goal}</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.55, color: "var(--muted2)", margin: 0 }}>{d.persona!.goal}</p>
                           </div>
                           <div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "5px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "5px" }}>
                               <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ color: accent.text, flexShrink: 0 }}>
                                 <path d="M6.5 1.5L2.5 5.5H5L3.5 8.5L7.5 4.5H5L6.5 1.5Z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" strokeLinecap="round"/>
                               </svg>
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>Pain point</p>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", margin: 0 }}>Pain point</p>
                             </div>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.55, color: "var(--muted2)", margin: 0 }}>{d.persona!.pain}</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.55, color: "var(--muted2)", margin: 0 }}>{d.persona!.pain}</p>
                           </div>
                         </div>
                       </div>
@@ -1200,215 +2521,54 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            <CsSection label={cs.sectionLabels?.decisions ?? "Key Design Decisions"} id="decisions">
-              {cs.decisionsIntro && (
-                <div style={{ marginBottom: "48px" }}>
-                  <BodyText>{cs.decisionsIntro}</BodyText>
-                </div>
-              )}
-              <style>{`
-                .decision-num-badge {
-                  background: rgba(99, 102, 241, 0.12);
-                }
-                .decision-num-text {
-                  color: rgb(165, 168, 255);
-                }
-                [data-theme="light"] .decision-num-badge {
-                  background: rgba(99, 102, 241, 0.10);
-                }
-                [data-theme="light"] .decision-num-text {
-                  color: rgb(67, 56, 202);
-                }
-              `}</style>
-              <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
-                {cs.decisions.map((d, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, ease: EASE, delay: i * 0.06 }}
-                    style={{ display: "grid", gridTemplateColumns: "48px 1fr", gap: "24px" }}
-                  >
-                    <div style={{ display: "flex", paddingTop: "1px" }}>
-                      <div className="decision-num-badge" style={{ width: "28px", height: "28px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <span className="decision-num-text" style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", lineHeight: 1 }}>
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <h3 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3, display: "flex", alignItems: "center", gap: "8px" }}>
-                        {d.icon && DECISION_ICONS[d.icon] && (() => {
-                          const IconComp = DECISION_ICONS[d.icon];
-                          return <IconComp size={14} strokeWidth={1.6} style={{ color: "var(--muted)", flexShrink: 0 }} />;
-                        })()}
-                        {d.title}
-                      </h3>
-                      {cs.slug === "planful-esm-tables" && d.title.startsWith("What comes next") ? (
-                        <MapsDecisionBlock />
-                      ) : (
-                        /* Route through BodyText so bullets / labelled lists
-                           inside the decision body render as proper structural
-                           lists (was rendering them as flat prose with literal
-                           dashes before). */
-                        <BodyText>{d.body}</BodyText>
-                      )}
-                      {d.videos && d.videos.length > 0 && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 12 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.65, ease: EASE }}
-                          style={{ marginTop: "24px" }}
-                        >
-                          <div style={{ display: "grid", gridTemplateColumns: `repeat(${d.videos.length}, 1fr)`, gap: "12px", width: "100%" }}>
-                            {d.videos.map((v, vi) => (
-                              <div key={vi} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                                {v.label && (
-                                  <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)" }}>
-                                    {v.label}
-                                  </p>
-                                )}
-                                <div
-                                  onClick={() => setLightboxSrc(v.src)}
-                                  style={{ position: "relative", cursor: "zoom-in", borderRadius: "12px", overflow: "hidden", background: "var(--surface)" }}
-                                >
-                                  <video
-                                    src={v.src}
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    preload="metadata"
-                                    style={{ width: "100%", display: "block", pointerEvents: "none" }}
-                                  />
-                                  {/* Expand affordance — small badge top-right signalling
-                                      the video is clickable to view full-size in the lightbox. */}
-                                  <div style={{ position: "absolute", top: "8px", right: "8px", background: "rgba(0,0,0,0.65)", borderRadius: "6px", padding: "5px 8px", display: "flex", alignItems: "center", gap: "4px", color: "#fff", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "-0.01em", pointerEvents: "none", backdropFilter: "blur(4px)" }}>
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                      <polyline points="15 3 21 3 21 9" />
-                                      <polyline points="9 21 3 21 3 15" />
-                                      <line x1="21" y1="3" x2="14" y2="10" />
-                                      <line x1="3" y1="21" x2="10" y2="14" />
-                                    </svg>
-                                    <span>Expand</span>
-                                  </div>
-                                </div>
-                                {v.caption && (
-                                  <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted)", textAlign: "center" }}>
-                                    {v.caption}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                      {(d.images && d.images.length > 0 ? (
-                        <motion.div
-                          initial={{ opacity: 0, y: 12 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.65, ease: EASE }}
-                          style={{ marginTop: "24px" }}
-                        >
-                          <div style={{ display: "grid", gridTemplateColumns: d.imageStack ? "1fr" : "1fr 1fr", gap: "12px", width: "100%" }}>
-                            {d.images.map((img, idx) => (
-                              <div key={idx} onClick={() => setLightboxSrc(img.src)} style={{ position: "relative", cursor: "zoom-in" }}>
-                                <img src={img.src} alt={img.alt} style={{ width: "100%", display: "block", objectFit: "contain" }} />
-                                <ZoomBadge />
-                                {img.caption && (
-                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "8px", textAlign: "center" }}>
-                                    {img.caption}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      ) : d.image?.fullBleed ? (
-                        <motion.div
-                          initial={{ opacity: 0, y: 12 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.65, ease: EASE }}
-                          style={{ marginTop: "24px", marginLeft: "-72px", width: "calc(100% + 72px)", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}
-                        >
-                          <div style={{ position: "relative", width: "100%" }}>
-                            <img
-                              src={d.image.src}
-                              alt={d.image.alt}
-                              onClick={() => setLightboxSrc(d.image!.src)}
-                              style={{ width: "100%", display: "block", objectFit: "contain", cursor: "zoom-in" }}
-                            />
-                            <ZoomBadge />
-                          </div>
-                          {d.image.caption && (
-                            <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-                              {d.image.caption}
-                            </p>
-                          )}
-                        </motion.div>
-                      ) : d.image?.width ? (
-                        <motion.div
-                          initial={{ opacity: 0, y: 12 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.65, ease: EASE }}
-                          style={{ marginTop: "24px", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}
-                        >
-                          <div style={{ position: "relative", display: "inline-block" }}>
-                            <img
-                              src={d.image.src}
-                              alt={d.image.alt}
-                              onClick={() => setLightboxSrc(d.image!.src)}
-                              style={{ width: d.image.width, display: "block", objectFit: "contain", cursor: "zoom-in" }}
-                            />
-                            <ZoomBadge />
-                          </div>
-                          {d.image.caption && (
-                            <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-                              {d.image.caption}
-                            </p>
-                          )}
-                        </motion.div>
-                      ) : d.image?.zoomLens ? (
-                        <ZoomLensImage image={d.image} onOpen={setLensLightboxSrc} />
-                      ) : d.image ? (
-                        <ImageBlock image={d.image} placeholder="Wireframe, prototype or design artifact" onOpen={setLightboxSrc} />
-                      ) : null)}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </CsSection>
 
-            {/* Final Design — the polished result. Static design hero first
-                (instant "what shipped") then prototype motion (the product live). */}
-            {(cs.outcomesImage || cs.prototypeVideo) && (
+            {/* ── Final Design — repeat the before/after video pair so the
+                case study book-ends with motion. The same videos render up
+                top as the outcomes hero; here they sit before the result
+                metrics as the final visual beat. ── */}
+            {cs.outcomesCompare && (
               <CsSection label="Final Design">
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                  className="cs-2col"
+                  style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}
+                >
+                  {([
+                    { label: "Before", src: cs.outcomesCompare.before },
+                    { label: "After",  src: cs.outcomesCompare.after  },
+                  ] as const).map(({ label, src }) => (
+                    <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
+                      <ScrollScaleMedia style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                        <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
+                      </ScrollScaleMedia>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
+            {/* Prototype video / outcomes image — the polished result. */}
+            {(cs.outcomesImage || cs.prototypeVideo || cs.outcomesVideo) && (
+              <CsSection label="Final Design" className="exec-hide">
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                  {cs.outcomesImage && (
+                  {/* outcomesVideo renders first (Planful) */}
+                  {cs.outcomesVideo && (
                     <motion.div
                       initial={{ opacity: 0, y: 12 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.65, ease: EASE }}
-                      onClick={() => setLightboxSrc(cs.outcomesImage!.src)}
                     >
-                      <img
-                        src={cs.outcomesImage.src}
-                        alt={cs.outcomesImage.alt}
-                        style={{ width: "100%", display: "block", cursor: "zoom-in", borderRadius: "12px" }}
-                      />
-                      {cs.outcomesImage.caption && (
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
-                          {cs.outcomesImage.caption}
-                        </p>
-                      )}
+                      <ScrollScaleMedia>
+                        <VideoBlock src={cs.outcomesVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                      </ScrollScaleMedia>
                     </motion.div>
                   )}
+                  {/* prototypeVideo renders next */}
                   {cs.prototypeVideo && (
                     <motion.div
                       initial={{ opacity: 0, y: 12 }}
@@ -1416,15 +2576,113 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       viewport={{ once: true }}
                       transition={{ duration: 0.65, ease: EASE }}
                     >
-                      <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                      <ScrollScaleMedia>
+                        <VideoBlock src={cs.prototypeVideo} appType={cs.type} chromeUrl={chromeUrl} />
+                      </ScrollScaleMedia>
+                    </motion.div>
+                  )}
+                  {/* Optional intro text above the image */}
+                  {cs.outcomesIntro && (
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body-lg)",
+                      lineHeight: 1.65,
+                      letterSpacing: "-0.01em",
+                      color: "var(--muted2)",
+                      margin: 0,
+                      maxWidth: "560px",
+                    }}>
+                      {cs.outcomesIntro}
+                    </p>
+                  )}
+                  {/* Image renders below video */}
+                  {cs.outcomesImage && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.65, ease: EASE }}
+                    >
+                      <OutcomesImage
+                        src={cs.outcomesImage.src}
+                        alt={cs.outcomesImage.alt}
+                        caption={cs.outcomesImage.caption}
+                        width={cs.outcomesImage.width}
+                        onOpen={() => setLightboxSrc(cs.outcomesImage!.src)}
+                      />
                     </motion.div>
                   )}
                 </div>
               </CsSection>
             )}
 
-            <CsSection label={cs.sectionLabels?.outcomes ?? "Impact"} id="outcomes">
+            {/* ── Rollout — standalone section ── */}
+            {cs.resultSection?.rollout && cs.resultSection.rollout.length > 0 && (
+              <CsSection label="Rollout plan" hideFromNav>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1px", background: "var(--border)", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
+                >
+                  {cs.resultSection.rollout.map((r, i) => (
+                    <div key={i} style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: "6px", background: "var(--bg)" }}>
+                      <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2.2vw, 26px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text)" }}>
+                        {r.value}
+                      </span>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.5, letterSpacing: "-0.01em", color: "var(--muted)", margin: 0 }}>
+                        {r.label}
+                      </p>
+                    </div>
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
+            <CsSection label={cs.sectionLabels?.outcomes ?? "Result"} navLabel={cs.navLabels?.outcomes} id="outcomes">
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+
+                {/* ── FanCode Homepage — structured result block ── */}
+                {cs.resultSection && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.65, ease: EASE }}
+                    style={{ display: "flex", flexDirection: "column", gap: "32px" }}
+                  >
+
+                    {/* Primary metric tiles */}
+                    <div style={{ display: "grid", gridTemplateColumns: `repeat(${cs.resultSection.metrics.length}, 1fr)`, gap: "1px", background: "var(--border)", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}>
+                      {cs.resultSection.metrics.map((m, i) => (
+                        <div key={i} style={{ padding: "28px 24px 24px", display: "flex", flexDirection: "column", gap: "12px", background: "var(--bg)" }}>
+                          {m.icon ? (
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ color: "var(--text)" }}>
+                              <path d="M10 2L5 8h3.5v5h3V8H15L10 2Z" fill="currentColor" opacity="0.35" />
+                              <path d="M10 8L5 14h3.5v4h3v-4H15L10 8Z" fill="currentColor" />
+                            </svg>
+                          ) : (
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(26px, 3vw, 38px)", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1.0, color: "var(--text)" }}>
+                              {m.value}
+                            </span>
+                          )}
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>
+                            {m.label}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Body paragraph */}
+                    {cs.resultSection.body && (
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.75, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0, maxWidth: "640px" }}>
+                        {cs.resultSection.body}
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+
                 {/* Impact tiles — Planful ESM Tables */}
                 {cs.slug === "planful-esm-tables" && (
                   <motion.div
@@ -1432,11 +2690,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, ease: EASE }}
-                    style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden" }}
+                    className="cs-flex-tiles"
+                    style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
                   >
                     {/* Tile 1: Time on task */}
                     <div style={{ flex: 1, padding: "24px 24px 20px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
                         Time on task
                       </span>
                       <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap" }}>
@@ -1446,20 +2705,20 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         </svg>
                         <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 3.4vw, 36px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1 }}>10 to 15 min</span>
                       </div>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
                         ~95% reduction. Simple updates that took half a day now take a coffee break.
                       </p>
                     </div>
 
                     {/* Tile 2: Access expanded */}
                     <div style={{ flex: 1, padding: "24px 24px 20px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
                         Access expanded
                       </span>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 28px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1.15 }}>
                         Finance → Any team
                       </p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
                         Non-finance teams now load their own data without finance mediating every update.
                       </p>
                     </div>
@@ -1477,24 +2736,24 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap", marginBottom: "24px" }}>
                       <div>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>Before</p>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "8px" }}>Before</p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 300, letterSpacing: "-0.04em", color: "var(--muted)", lineHeight: 1 }}>5 backlogs</p>
                       </div>
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0, color: "var(--border)", marginTop: "20px" }}>
                         <path d="M3 10h14M13 5l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                       <div>
-                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--accent-success)", background: "color-mix(in srgb, var(--accent-success) 10%, transparent)", borderRadius: "8px", padding: "3px 7px", display: "inline-block", marginBottom: "8px" }}>After</span>
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-micro)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--accent-success)", background: "color-mix(in srgb, var(--accent-success) 10%, transparent)", borderRadius: "8px", padding: "3px 7px", display: "inline-block", marginBottom: "8px" }}>After</span>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 300, letterSpacing: "-0.04em", color: "var(--text)", lineHeight: 1 }}>1 sequenced roadmap</p>
                       </div>
                     </div>
                     <div style={{ paddingTop: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
                       {cs.outcomes.map((outcome, i) => (
                         <div key={i} style={{ display: "grid", gridTemplateColumns: "20px 1fr", gap: "10px", alignItems: "start" }}>
-                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--border)", paddingTop: "3px" }}>
+                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--border)", paddingTop: "3px" }}>
                             {String(i + 1).padStart(2, "0")}
                           </p>
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
                             {outcome}
                           </p>
                         </div>
@@ -1503,8 +2762,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 )}
 
-                {/* Outcomes — planful-esm-tables and Zetwerk BU have their own custom blocks above */}
-                {cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && (() => {
+
+                {/* Outcomes — planful-esm-tables, Zetwerk BU, FanCode, and apple-business-listings have their own custom blocks above */}
+                {cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && cs.slug !== "fancode-homepage" && cs.slug !== "apple-business-listings" && (() => {
                   /* Single-outcome treatment — promote the stat to a hero
                      stat block instead of an "01" numbered row. Triggers
                      when there's exactly one outcome AND it starts with a
@@ -1553,7 +2813,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <p
                           style={{
                             fontFamily: "var(--font-body)",
-                            fontSize: "15px",
+                            fontSize: "var(--text-lead)",
                             lineHeight: 1.55,
                             letterSpacing: "-0.01em",
                             color: "var(--muted2)",
@@ -1594,11 +2854,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         }}
                       >
                         <p style={{
-                          fontFamily: "var(--font-mono)", fontSize: "9px",
+                          fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                           letterSpacing: "0.1em", textTransform: "uppercase",
                           color: "var(--muted)", margin: 0,
                         }}>
-                          {isAstra ? "Validation" : "Outcome"}
+                          {isAstra ? "Validation" : "Result"}
                         </p>
                         {astraMatch ? (
                           <>
@@ -1617,7 +2877,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             {/* Supporting context */}
                             <p style={{
                               fontFamily: "var(--font-body)",
-                              fontSize: "13px",
+                              fontSize: "var(--text-body)",
                               lineHeight: 1.6,
                               letterSpacing: "-0.01em",
                               color: "var(--muted2)",
@@ -1630,7 +2890,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         ) : (
                           <p style={{
                             fontFamily: "var(--font-body)",
-                            fontSize: "16px",
+                            fontSize: "var(--text-title-sm)",
                             fontWeight: 400,
                             lineHeight: 1.55,
                             letterSpacing: "-0.01em",
@@ -1654,10 +2914,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
                       style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: "12px", alignItems: "start" }}
                     >
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.06em", color: "var(--border)", paddingTop: "3px" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--border)", paddingTop: "3px" }}>
                         {String(i + 1).padStart(2, "0")}
                       </p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
                         {outcome}
                       </p>
                     </motion.div>
@@ -1667,100 +2927,120 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </div>
             </CsSection>
 
-            {cs.contribution && (
-              <CsSection label="What I owned" id="ownership">
-                <BodyText>{cs.contribution}</BodyText>
-                {cs.contributionArtifacts && cs.contributionArtifacts.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.55, ease: EASE }}
-                    style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "20px" }}
-                  >
-                    {cs.contributionArtifacts.map((artifact, i) => (
-                      <motion.span
+            {/* ── Lesson — closing reflection for non-FanCode case studies.
+                cs.lesson is a plain string; FanCode uses cs.learnings instead.
+                First paragraph gets the featured callout treatment (matches
+                FanCode's northStar card), additional paragraphs render as
+                standard body prose below it. ── */}
+            {cs.lesson && cs.slug !== "fancode-homepage" && (
+              <CsSection label={cs.sectionLabels?.lesson ?? "Learnings"}>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ maxWidth: "720px", display: "flex", flexDirection: "column", gap: "20px" }}
+                >
+                  {cs.lesson.split("\n\n").map((para, i) => (
+                    i === 0 ? (
+                      <div key={i} style={{ padding: "24px", background: "var(--surface)", borderRadius: "12px", border: "1px solid var(--border)" }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(15px, 1.5vw, 17px)", fontWeight: 300, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
+                          {parseHighlights(para)}
+                        </p>
+                      </div>
+                    ) : (
+                      <BodyText key={i}>{para}</BodyText>
+                    )
+                  ))}
+                </motion.div>
+              </CsSection>
+            )}
+
+            {/* ── Learnings — closing reflection. Currently scoped to
+                fancode-homepage; other case studies had this section
+                intentionally removed earlier in the design pass. ── */}
+            {cs.slug === "fancode-homepage" && cs.learnings && (
+              <CsSection label={cs.sectionLabels?.lesson ?? "Learnings"}>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  style={{ maxWidth: "720px", display: "flex", flexDirection: "column", gap: "32px" }}
+                >
+                  {/* Featured headline insight */}
+                  <div style={{ padding: "24px 24px", background: "var(--surface)", borderRadius: "12px", border: "1px solid var(--border)" }}>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 1.8vw, 22px)", fontWeight: 300, lineHeight: 1.5, letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
+                      {cs.learnings.northStar}
+                    </p>
+                  </div>
+                  {/* Supporting takeaways — scannable list */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                    {cs.learnings.items.map((item, i) => (
+                      <div
                         key={i}
-                        initial={{ opacity: 0, scale: 0.92 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.3, ease: EASE, delay: i * 0.04 }}
-                        style={{
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "9px",
-                          letterSpacing: "0.06em",
-                          textTransform: "uppercase",
-                          color: "var(--muted2)",
-                          background: "var(--surface)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "8px",
-                          padding: "5px 10px",
-                        }}
+                        style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
                       >
-                        {artifact}
-                      </motion.span>
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "9999px", padding: "4px 8px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{item}</p>
+                      </div>
                     ))}
-                  </motion.div>
-                )}
+                  </div>
+                </motion.div>
               </CsSection>
             )}
 
             {cs.scrappedDirections && cs.scrappedDirections.length > 0 && (
-              <CsSection label="What We Tried & Killed">
-                <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                  {cs.scrappedDirections.map((dir, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 12 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
-                      style={{ display: "grid", gridTemplateColumns: "48px 1fr", gap: "24px" }}
-                    >
-                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.06em", color: "var(--muted)", paddingTop: "2px" }}>
-                        {String(i + 1).padStart(2, "0")}
-                      </p>
-                      <div>
-                        <h3 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 400, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3, textDecoration: "line-through", textDecorationColor: "var(--border)" }}>
-                          {dir.title}
-                        </h3>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)" }}>
+              <CsSection label="What We Tried & Killed" className="exec-hide">
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {cs.scrappedDirections.map((dir, i) => {
+                    /* Split on " vs " to extract the A and B options from the title.
+                       Falls back to just rendering the title if no "vs" separator. */
+                    const vsParts = dir.title.split(" vs ");
+                    const hasVs = vsParts.length === 2;
+                    const optionA = hasVs ? vsParts[0].trim() : null;
+                    const optionB = hasVs ? vsParts[1].trim() : null;
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
+                        style={{ background: "var(--surface)", borderRadius: "12px", padding: "16px 18px", boxShadow: "var(--card-shadow)" }}
+                      >
+                        {hasVs ? (
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
+                            {/* Chosen option — solid */}
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", background: "rgba(16,185,129,0.10)", border: "1px solid rgba(16,185,129,0.25)", borderRadius: "6px", padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                              <Check size={11} strokeWidth={1.75} style={{ color: "rgb(16,185,129)", flexShrink: 0 }} />{optionA}
+                            </span>
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)" }}>vs</span>
+                            {/* Rejected option — muted */}
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.01em", color: "var(--muted)", background: "var(--surface2)", borderRadius: "6px", padding: "4px 10px", textDecoration: "line-through", textDecorationColor: "var(--border)" }}>
+                              {optionB}
+                            </span>
+                          </div>
+                        ) : (
+                          <h3 style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "8px", lineHeight: 1.3 }}>
+                            {dir.title}
+                          </h3>
+                        )}
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.6, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
                           {dir.reason}
                         </p>
-                      </div>
-                    </motion.div>
-                  ))}
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </CsSection>
             )}
 
-            {cs.lesson && (() => {
-              /* Lead with the first sentence as a headline, then route the
-                 rest through BodyText so multi-paragraph lessons render as
-                 distinct blocks (and bullets render as bullets). Earlier
-                 this collapsed everything after the first sentence into
-                 one wall of prose. */
-              const dotIdx = cs.lesson.indexOf(". ");
-              const headline = dotIdx > -1 ? cs.lesson.slice(0, dotIdx + 1) : cs.lesson;
-              const body = dotIdx > -1 ? cs.lesson.slice(dotIdx + 2) : "";
-              return (
-                <CsSection label={cs.sectionLabels?.lesson ?? "What I learned"}>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px, 2vw, 22px)", fontWeight: 400, lineHeight: 1.4, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "640px" }}>
-                    {headline}
-                  </p>
-                  {body && (
-                    <div style={{ marginTop: "16px" }}>
-                      <BodyText>{body}</BodyText>
-                    </div>
-                  )}
-                </CsSection>
-              );
-            })()}
 
             {/* "What I'd Do Differently" section hidden across all case studies. Data
                 preserved in cs.reflection in case we want to bring it back. */}
             {false && cs.reflection && (
-              <CsSection label="What I'd Do Differently">
+              <CsSection label="What I'd Do Differently" className="exec-hide">
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "580px" }}>
                   {cs.reflection}
                 </p>
@@ -1768,7 +3048,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             )}
 
             {cs.references && cs.references.length > 0 && (
-              <CsSection label={cs.sectionLabels?.references ?? "References"}>
+              <CsSection label={cs.sectionLabels?.references ?? "References"} className="exec-hide" hideFromNav>
                 <ul style={{ display: "flex", flexDirection: "column", gap: "10px", listStyle: "none", padding: 0, margin: 0, maxWidth: "640px" }}>
                   {cs.references.map((ref, i) => (
                     <li key={i}>
@@ -1776,7 +3056,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         href={ref.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.55, color: "var(--muted2)", textDecoration: "underline", textDecorationColor: "var(--border)", textUnderlineOffset: "3px", display: "inline-flex", alignItems: "center", gap: "8px" }}
+                        style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.55, color: "var(--muted2)", textDecoration: "underline", textDecorationColor: "var(--border)", textUnderlineOffset: "3px", display: "inline-flex", alignItems: "center", gap: "8px" }}
                       >
                         {/* External-link icon — small arrow pointing out of a box,
                             signals "opens in new tab" before users click. */}
@@ -1796,52 +3076,78 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             </> /* end gated content wrapper */
             )}
 
-            {/* Next case study — mono-uppercase forward CTA at the end of the page,
-                mirrors the "Back to work" treatment at the top. Eyebrow line for
-                the system label, larger line for the actual destination title. */}
-            {next && (
+            {/* Prev / Next navigation — shown whenever at least one neighbour exists.
+                Previous on the left, Next on the right, both aligned to their edge.
+                Hidden slugs are suppressed on both sides. */}
+            {(prev || next) && (
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.6, ease: EASE }}
-                style={{ paddingTop: "64px", paddingBottom: "120px" }}
+                style={{
+                  paddingTop: "48px",
+                  paddingBottom: "120px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "16px",
+                  borderTop: "1px solid var(--border)",
+                }}
               >
-                <Link
-                  href={`/work/${next.slug}`}
-                  className="case-study-next-link"
-                  style={{
-                    display: "inline-flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                    textDecoration: "none",
-                  }}
-                >
-                  <span style={{
-                    fontFamily: "var(--font-mono)", fontSize: "10px",
-                    letterSpacing: "0.08em", textTransform: "uppercase",
-                    color: "var(--muted)",
-                    display: "inline-flex", alignItems: "center", gap: "6px",
-                  }}>
-                    Next case study
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M4 11v2h12l-5.59 5.59L12 20l8-8-8-8-1.41 1.41L16 11H4z"/>
-                    </svg>
-                  </span>
-                  <span
-                    className="case-study-next-title"
+                {prev ? (
+                  <Link
+                    href={`/work/${prev.slug}`}
+                    aria-label={`Previous case study: ${prev.title}`}
                     style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      background: "var(--text)",
+                      color: "var(--bg)",
+                      textDecoration: "none",
                       fontFamily: "var(--font-body)",
-                      fontSize: "clamp(20px, 2.4vw, 28px)",
-                      fontWeight: 400,
-                      letterSpacing: "-0.02em",
-                      lineHeight: 1.2,
-                      color: "var(--text)",
+                      fontSize: "var(--text-caption)",
+                      fontWeight: 500,
+                      letterSpacing: "-0.01em",
+                      flexShrink: 0,
                     }}
                   >
-                    {next.title}
-                  </span>
-                </Link>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M19 12H5M11 6l-6 6 6 6" />
+                    </svg>
+                    Previous
+                  </Link>
+                ) : <div />}
+
+                {next ? (
+                  <Link
+                    href={`/work/${next.slug}`}
+                    aria-label={`Next case study: ${next.title}`}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      background: "var(--text)",
+                      color: "var(--bg)",
+                      textDecoration: "none",
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-caption)",
+                      fontWeight: 500,
+                      letterSpacing: "-0.01em",
+                      flexShrink: 0,
+                    }}
+                  >
+                    Next
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                  </Link>
+                ) : <div />}
               </motion.div>
             )}
 
@@ -1863,20 +3169,20 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               }}
             >
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "11px",
+                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                 fontWeight: 400, letterSpacing: "-0.01em",
                 color: "var(--muted)", lineHeight: 1.3,
                 margin: 0,
               }}>
                 © 2026 · Arun Gaddam{" "}
                 <span style={{
-                  color: "#f5b800",
-                  textShadow: "0 0 6px rgba(245, 184, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.15)",
+                  color: "var(--accent-gold)",
+                  textShadow: "0 0 6px rgba(234, 179, 8, 0.45), 0 1px 0 rgba(255, 255, 255, 0.15)",
                   fontWeight: 500,
                 }}>ツ</span>
               </p>
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "11px",
+                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                 fontWeight: 400, letterSpacing: "-0.01em",
                 color: "var(--muted)", lineHeight: 1.3,
                 margin: 0,
@@ -1886,28 +3192,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   width="13"
                   height="13"
                   viewBox="0 0 24 24"
-                  style={{
-                    display: "inline-block",
-                    verticalAlign: "-2px",
-                    margin: "0 2px",
-                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.35)) drop-shadow(0 0 4px rgba(255, 60, 60, 0.45))",
-                  }}
-                  aria-label="love"
+                  fill="#D97757"
+                  aria-hidden
+                  style={{ display: "inline-block", verticalAlign: "-2px", margin: "0 2px" }}
                 >
-                  <defs>
-                    <radialGradient id="cs-heart-3d" cx="35%" cy="30%" r="75%">
-                      <stop offset="0%"   stopColor="#ff8a8a" />
-                      <stop offset="55%"  stopColor="#ff3b3b" />
-                      <stop offset="100%" stopColor="#a3000c" />
-                    </radialGradient>
-                  </defs>
-                  <path
-                    fill="url(#cs-heart-3d)"
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                  />
-                  <ellipse cx="9" cy="7.5" rx="2.2" ry="1.4" fill="rgba(255,255,255,0.55)" />
+                  <path d="M12 2c.5 6 2 7.5 10 10-8 2.5-9.5 4-10 10-.5-6-2-7.5-10-10 8-2.5 9.5-4 10-10z" />
                 </svg>
-                <span style={{ opacity: 0.6 }}> using Claude Code</span>
+                <span style={{ opacity: 0.6 }}>Claude Code</span>
               </p>
               <style>{`
                 @media (max-width: 480px) {
@@ -1921,7 +3212,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               `}</style>
             </div>
 
-          </div>
+          </div>{/* /.page-pad */}
         </article>
       </main>
       {/* Lightboxes wrapped in AnimatePresence so their `exit` animations actually run.
@@ -1938,70 +3229,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         )}
       </AnimatePresence>
 
-      {/* Section nav */}
-      <AnimatePresence>
-        {navVisible && (
-          <motion.nav
-            initial={{ opacity: 0, x: 12 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 12 }}
-            transition={{ duration: 0.25, ease: EASE }}
-            style={{
-              position: "fixed",
-              right: "24px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              zIndex: 30,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-              gap: "2px",
-            }}
-          >
-            {NAV_SECTIONS.map(({ id, label }) => {
-              const isActive = activeSection === id;
-              return (
-                <a
-                  key={id}
-                  href={`#${id}`}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    textDecoration: "none",
-                    padding: "4px 0",
-                    transition: "opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
-                    opacity: isActive ? 1 : 0.4,
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = "1")}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = isActive ? "1" : "0.4")}
-                >
-                  <span style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "8px",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: isActive ? "var(--text)" : "var(--muted)",
-                    transition: "color 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
-                  }}>
-                    {label}
-                  </span>
-                  <span style={{
-                    width: "6px",
-                    height: "6px",
-                    borderRadius: "50%",
-                    background: isActive ? "var(--text)" : "var(--border)",
-                    flexShrink: 0,
-                    // Active dot scales up — anchors the eye to "you are here"
-                    transform: isActive ? "scale(1.4)" : "scale(1)",
-                    transition: "background 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
-                  }} />
-                </a>
-              );
-            })}
-          </motion.nav>
-        )}
-      </AnimatePresence>
+      {/* Right-side floating nav removed -section nav now lives in the
+          left rail inside the page grid. The intersection observer and
+          activeSection / navVisible state above are reused verbatim. */}
     </div>
   );
 }
@@ -2017,11 +3247,11 @@ function ZoomBadge() {
         width: "26px",
         height: "26px",
         borderRadius: "8px",
-        background: "rgba(0,0,0,0.65)",
+        background: "rgba(10,10,10,0.65)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: "#fff",
+        color: "rgba(255,255,255,0.95)",
         pointerEvents: "none",
         opacity: 0.85,
       }}
@@ -2037,6 +3267,7 @@ function ZoomBadge() {
 
 function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; placeholder?: string; onOpen?: (src: string) => void }) {
   const [errored, setErrored] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const isEmpty = !image || errored;
 
   return (
@@ -2074,19 +3305,27 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
               <circle cx="6.5" cy="6.5" r="1.5" fill="currentColor" />
               <path d="M1 13l5-4 4 3.5 3-2.5 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
             </svg>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", opacity: 0.5 }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", opacity: 0.5 }}>
               {placeholder ?? "Add image or artifact"}
             </span>
           </div>
         ) : (
           <div style={image?.displayHeight ? { height: image.displayHeight, overflow: "hidden" } : undefined}>
+            {!loaded && (
+              <Shimmer
+                height={image?.displayHeight ?? 300}
+                borderRadius="0"
+              />
+            )}
             <img
               src={image!.src}
               alt={image!.alt}
+              loading="lazy"
+              onLoad={() => setLoaded(true)}
               onError={() => setErrored(true)}
               style={{
                 width: "100%",
-                display: "block",
+                display: loaded ? "block" : "none",
                 objectFit: image?.displayHeight ? "cover" : "contain",
                 objectPosition: image?.objectPosition ?? "center center",
                 height: image?.displayHeight ? "100%" : undefined,
@@ -2098,7 +3337,7 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
       {!isEmpty && image?.caption && (
         <figcaption style={{
           fontFamily: "var(--font-mono)",
-          fontSize: "9px",
+          fontSize: "var(--text-eyebrow)",
           letterSpacing: "0.08em",
           textTransform: "uppercase",
           color: "var(--muted)",
@@ -2171,7 +3410,7 @@ function VideoPlaceholder({ data }: { data: NonNullable<CaseStudy["videoPlacehol
         <p
           style={{
             fontFamily: "var(--font-mono)",
-            fontSize: "10px",
+            fontSize: "var(--text-mono)",
             letterSpacing: "0.14em",
             textTransform: "uppercase",
             color: "rgba(255,255,255,0.55)",
@@ -2186,7 +3425,7 @@ function VideoPlaceholder({ data }: { data: NonNullable<CaseStudy["videoPlacehol
         <p
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "16px",
+            fontSize: "var(--text-title-sm)",
             fontWeight: 500,
             letterSpacing: "-0.01em",
             color: "rgba(255,255,255,0.92)",
@@ -2201,7 +3440,7 @@ function VideoPlaceholder({ data }: { data: NonNullable<CaseStudy["videoPlacehol
         <p
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "13px",
+            fontSize: "var(--text-body)",
             lineHeight: 1.55,
             color: "rgba(255,255,255,0.6)",
             margin: 0,
@@ -2219,13 +3458,13 @@ function VideoPlaceholder({ data }: { data: NonNullable<CaseStudy["videoPlacehol
           bottom: "10px",
           right: "12px",
           fontFamily: "var(--font-mono)",
-          fontSize: "9px",
+          fontSize: "var(--text-eyebrow)",
           letterSpacing: "0.08em",
           textTransform: "uppercase",
           color: "rgba(255,255,255,0.4)",
           background: "rgba(0,0,0,0.3)",
-          padding: "3px 8px",
-          borderRadius: "999px",
+          padding: "4px 8px",
+          borderRadius: "9999px",
         }}
       >
         Video placeholder
@@ -2288,25 +3527,25 @@ function ContextCardsBlock({ cards }: { cards: NonNullable<CaseStudy["contextCar
             padding: "20px 22px",
           }}
         >
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: "6px", letterSpacing: "-0.01em" }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: "6px", letterSpacing: "-0.01em" }}>
             {card.title}
           </p>
           {card.lead && (
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0, marginBottom: card.points || card.modelPair || card.vsGrid ? "10px" : 0 }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, color: "var(--muted2)", margin: 0, marginBottom: card.points || card.modelPair || card.vsGrid ? "10px" : 0 }}>
               {card.lead}
             </p>
           )}
           {card.points && card.points.length > 0 && (
             <ul style={{ listStyle: "disc outside", paddingLeft: "20px", margin: 0, marginTop: card.lead ? 0 : "4px" }}>
               {card.points.map((p, j) => (
-                <li key={j} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "3px" }}>
+                <li key={j} style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "3px" }}>
                   {p}
                 </li>
               ))}
             </ul>
           )}
           {card.modelPair && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "12px", alignItems: "stretch", marginTop: "4px" }}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "12px", alignItems: "stretch", marginTop: "14px" }}
                  className="ctx-model-pair">
               <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
                 <span style={modelTagStyle}>{card.modelPair.leftTag}</span>
@@ -2328,14 +3567,14 @@ function ContextCardsBlock({ cards }: { cards: NonNullable<CaseStudy["contextCar
             </div>
           )}
           {card.vsGrid && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "4px" }}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "14px" }}
                  className="ctx-vs-grid">
               <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", fontWeight: 600, color: "var(--text)", margin: 0, marginBottom: "4px" }}>{card.vsGrid.leftLabel}</p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 600, color: "var(--text)", margin: 0, marginBottom: "4px" }}>{card.vsGrid.leftLabel}</p>
                 <p style={modelDescStyle}>{card.vsGrid.leftDesc}</p>
               </div>
               <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", fontWeight: 600, color: "var(--text)", margin: 0, marginBottom: "4px" }}>{card.vsGrid.rightLabel}</p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 600, color: "var(--text)", margin: 0, marginBottom: "4px" }}>{card.vsGrid.rightLabel}</p>
                 <p style={modelDescStyle}>{card.vsGrid.rightDesc}</p>
               </div>
               <style>{`
@@ -2354,25 +3593,102 @@ function ContextCardsBlock({ cards }: { cards: NonNullable<CaseStudy["contextCar
 const modelTagStyle: React.CSSProperties = {
   display: "inline-block",
   fontFamily: "var(--font-mono)",
-  fontSize: "9px",
+  fontSize: "var(--text-eyebrow)",
   fontWeight: 500,
   letterSpacing: "0.08em",
   textTransform: "uppercase",
   color: "var(--text)",
   background: "var(--surface2)",
   padding: "3px 9px",
-  borderRadius: "999px",
+  borderRadius: "9999px",
   marginBottom: "8px",
 };
 const modelTagStyleAlt: React.CSSProperties = { ...modelTagStyle, background: "var(--surface)" };
 const modelNameStyle: React.CSSProperties = {
-  fontFamily: "var(--font-body)", fontSize: "13.5px", fontWeight: 500,
+  fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 500,
   color: "var(--text)", margin: 0, marginBottom: "4px", letterSpacing: "-0.01em",
 };
 const modelDescStyle: React.CSSProperties = {
-  fontFamily: "var(--font-body)", fontSize: "12.5px", lineHeight: 1.55,
+  fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.55,
   color: "var(--muted2)", margin: 0,
 };
+
+/* ─── PersonaPreview ───────────────────────────────────────────
+   Compact persona row at the top of the Problem section. Inspired by
+   Bradley Ziffer's Amazon case study, where the human stake of the
+   problem is introduced via named personas before the systemic
+   explanation. Reuses persona data from cs.decisions[].persona — the
+   full persona cards still render in their normal place under
+   Decisions; this preview just surfaces the names and 1-line pain
+   points up front so a recruiter sees humans before frameworks.
+
+   Renders null when no personas are attached. */
+function PersonaPreview({ cs }: { cs: CaseStudy }) {
+  const personas = (cs.decisions ?? [])
+    .filter(d => d.persona)
+    .map(d => d.persona!)
+    .filter((p, i, arr) => arr.findIndex(x => x.name === p.name) === i);
+
+  if (personas.length === 0) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, ease: EASE }}
+      style={{
+        marginBottom: "28px",
+        padding: "16px 20px",
+        background: "var(--surface2)",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
+      <p style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: "var(--text-eyebrow)",
+        letterSpacing: "0.1em",
+        textTransform: "uppercase",
+        color: "var(--muted)",
+        margin: 0,
+      }}>
+        Who feels this problem
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        {personas.map(p => (
+          <div key={p.name} style={{ display: "flex", alignItems: "baseline", gap: "10px", flexWrap: "wrap" }}>
+            <span style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-body)",
+              fontWeight: 500,
+              color: "var(--text)",
+              letterSpacing: "-0.01em",
+            }}>{p.name}</span>
+            <span style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "var(--text-eyebrow)",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+            }}>{p.role}</span>
+            <span style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-body)",
+              color: "var(--muted2)",
+              letterSpacing: "-0.01em",
+              flex: "1 1 240px",
+              minWidth: "200px",
+              lineHeight: 1.5,
+            }}>{p.pain}</span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
 
 /* ─── ProblemCardsBlock ────────────────────────────────────────
    Stacked Problem cards. Each has a title, optional lead paragraph,
@@ -2400,18 +3716,18 @@ function ProblemCardsBlock({
             padding: "20px 22px",
           }}
         >
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: card.lead || card.points ? "6px" : 0, letterSpacing: "-0.01em" }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: card.lead || card.points ? "6px" : 0, letterSpacing: "-0.01em" }}>
             {card.title}
           </p>
           {card.lead && (
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0, marginBottom: card.points ? "10px" : 0 }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, color: "var(--muted2)", margin: 0, marginBottom: card.points ? "10px" : 0 }}>
               {card.lead}
             </p>
           )}
           {card.points && card.points.length > 0 && (
             <ul style={{ listStyle: "disc outside", paddingLeft: "20px", margin: 0 }}>
               {card.points.map((p, j) => (
-                <li key={j} style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "3px" }}>
+                <li key={j} style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.7, color: "var(--muted2)", marginBottom: "3px" }}>
                   {p}
                 </li>
               ))}
@@ -2433,7 +3749,7 @@ function ProblemCardsBlock({
               <div style={{ marginTop: "20px" }}>
                 {card.breakdown!.title && (
                   <p style={{
-                    fontFamily: "var(--font-mono)", fontSize: "9px",
+                    fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                     letterSpacing: "0.08em", textTransform: "uppercase",
                     color: "var(--muted)", margin: 0, marginBottom: "12px",
                   }}>
@@ -2444,7 +3760,7 @@ function ProblemCardsBlock({
                   {card.breakdown!.points.map((p, j) => (
                     <div key={j} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
                       <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{breakdownIcons[j % breakdownIcons.length]}</div>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{p}</p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{p}</p>
                     </div>
                   ))}
                 </div>
@@ -2475,7 +3791,7 @@ function ProblemCardsBlock({
               />
               {card.image.caption && (
                 <p style={{
-                  fontFamily: "var(--font-mono)", fontSize: "9px",
+                  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                   letterSpacing: "0.08em", textTransform: "uppercase",
                   color: "var(--muted)", textAlign: "center",
                   padding: "10px 0 0",
@@ -2500,7 +3816,7 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
   return (
     <div>
       {data.intro && (
-        <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "12px" }}>
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "12px" }}>
           {data.intro}
         </p>
       )}
@@ -2536,29 +3852,43 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
                 <UserCircle size={12} strokeWidth={1.5} />
               </div>
               <span style={{
-                fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 500,
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", fontWeight: 500,
                 letterSpacing: "0.08em", textTransform: "uppercase",
                 color: "var(--text)",
               }}>{s.label}</span>
             </div>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0, marginBottom: "4px" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-lead)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0, marginBottom: "3px" }}>
               {s.name}
             </p>
-            {/* Roles — body font, sentence case, sits in the same
-                typographic family as the body sentence below it. The
-                old mono caps treatment broke type rhythm with the
-                rest of the card. */}
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", letterSpacing: "-0.005em", color: "var(--muted)", margin: 0, marginBottom: "10px" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", letterSpacing: "-0.005em", color: "var(--muted)", margin: 0, marginBottom: "14px" }}>
               {s.roles}
             </p>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "13.5px", lineHeight: 1.65, color: "var(--muted2)", margin: 0 }}>
-              {s.body}
-            </p>
+            {/* Quote — core user question, displayed prominently */}
+            {s.quote && (
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontStyle: "italic", lineHeight: 1.5, letterSpacing: "-0.01em", color: "var(--text)", margin: "0 0 12px", borderLeft: "2px solid var(--border)", paddingLeft: "12px" }}>
+                &ldquo;{s.quote}&rdquo;
+              </p>
+            )}
+            {/* Bullets — tight list replacing prose body */}
+            {s.bullets && s.bullets.length > 0 ? (
+              <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "8px" }}>
+                {s.bullets.map((b, j) => (
+                  <li key={j} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
+                    <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "var(--muted)", marginTop: "7px", flexShrink: 0 }} />
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : s.body ? (
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, color: "var(--muted2)", margin: 0 }}>
+                {s.body}
+              </p>
+            ) : null}
           </motion.div>
         ))}
       </div>
       {data.closing && (
-        <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)", marginTop: "16px", maxWidth: "640px" }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, color: "var(--muted2)", marginTop: "16px", maxWidth: "640px" }}>
           {data.closing}
         </p>
       )}
@@ -2574,158 +3904,175 @@ function UserSegmentsBlock({ data }: { data: NonNullable<CaseStudy["userSegments
 function AppleChallengeBlock({ text }: { text: string }) {
   const blocks = text.split("\n\n");
 
-  // Locate diagnosis bullets and design question by content shape.
-  const bulletIdx = blocks.findIndex(b => b.split("\n").every(l => l.trim().startsWith("- ")) && b.split("\n").length >= 2);
+  // Locate structural blocks by content shape.
+  const bulletIdx   = blocks.findIndex(b => b.split("\n").every(l => l.trim().startsWith("- ")) && b.split("\n").length >= 2);
   const questionIdx = blocks.findIndex(b => /design question:/i.test(b) && /\?\s*$/.test(b));
+  // "The real problem…" intro sits right before the bullets.
+  const insightIdx  = bulletIdx > 0 ? bulletIdx - 1 : -1;
 
-  // Parse each diagnosis bullet into a "lead" (first phrase / stat) and
-  // a "body" (the rest, often a parenthetical qualifier). The lead
-  // becomes the card's headline; the body sits below as supporting text.
-  const FACT_RE = /^\s*-\s+(.+?)(?:\s*[(,]\s*(.+?)\s*\)?)?$/;
+  // Parse each bullet into short lead + optional qualifier body.
+  const FACT_RE = /^\s*-\s+(.+?)(?:\s+\((.+?)\)\s*)?$/;
   const facts = bulletIdx >= 0
     ? blocks[bulletIdx].split("\n").map(line => {
         const m = line.match(FACT_RE);
         if (!m) return { lead: line.replace(/^\s*-\s*/, ""), body: "" };
-        const lead = m[1].trim();
-        const body = (m[2] || "").trim();
-        return { lead, body };
+        return { lead: m[1].trim(), body: (m[2] || "").trim() };
       })
     : [];
 
-  // Split the design question into label + question text.
+  // Split the design question into label + body.
   let qLabel = "";
-  let qBody = "";
+  let qBody  = "";
   if (questionIdx >= 0) {
-    const m = blocks[questionIdx].match(/^([^:]+:)\s*(.+)$/);
-    if (m) {
-      qLabel = m[1];
-      qBody = m[2];
-    } else {
-      qBody = blocks[questionIdx];
-    }
+    const m = blocks[questionIdx].match(/^([^:]+:)\s*([\s\S]+)$/);
+    if (m) { qLabel = m[1]; qBody = m[2]; }
+    else   { qBody = blocks[questionIdx]; }
   }
 
+  // The "after" goals paired to each "before" fact — hard-coded because
+  // this component is Reputation-specific and the goals come from the
+  // design decisions, not from user-facing text.
+  const goals = [
+    { lead: "Platform equity",          body: "Google, Apple, Bing, Facebook on equal footing" },
+    { lead: "5 clear sections",         body: "Grouped by what data means, not where it comes from" },
+    { lead: "Consistent structure",     body: "Cross-platform metrics separated from platform-specific ones" },
+  ];
+
+  const MONO_LABEL: React.CSSProperties = {
+    fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em",
+    textTransform: "uppercase", color: "var(--muted)", margin: 0, marginBottom: "18px",
+  };
+  const ITEM_LEAD: React.CSSProperties = {
+    fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500,
+    lineHeight: 1.4, letterSpacing: "-0.01em", color: "var(--text)", margin: 0,
+  };
+  const ITEM_BODY: React.CSSProperties = {
+    fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55,
+    letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0,
+  };
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-      {blocks.map((block, i) => {
-        if (i === bulletIdx) {
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: EASE }}
-              className="apple-challenge-facts"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "12px",
-                marginTop: "4px",
-              }}
-            >
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+
+      {/* ── Lede paragraph ─────────────────────────────────────── */}
+      {blocks[0] && <BodyText>{blocks[0]}</BodyText>}
+
+      {/* ── Insight heading — large editorial statement ─────────── */}
+      {insightIdx >= 0 && (
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: EASE }}
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "clamp(20px, 2.4vw, 26px)",
+            fontWeight: 300,
+            lineHeight: 1.4,
+            letterSpacing: "-0.025em",
+            color: "var(--text)",
+            margin: 0,
+          }}
+        >
+          {/* Keep only the first sentence — the "The real problem…" opener */}
+          {blocks[insightIdx].split(".")[0].trim()}.
+        </motion.p>
+      )}
+
+      {/* ── Before / After comparison card ──────────────────────── */}
+      {facts.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.65, ease: EASE }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "1px",
+            background: "var(--border)",
+            border: "1px solid var(--border)",
+            borderRadius: "16px",
+            overflow: "hidden",
+          }}
+        >
+          {/* LEFT — Before */}
+          <div style={{ background: "var(--bg)", padding: "24px 24px 28px" }}>
+            <p style={MONO_LABEL}>The existing dashboard</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               {facts.map((f, j) => (
-                <div
-                  key={j}
-                  style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "12px",
-                    padding: "20px 18px 18px",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                  }}
-                >
-                  <p
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      lineHeight: 1.45,
-                      letterSpacing: "-0.01em",
-                      color: "var(--text)",
-                      margin: 0,
-                    }}
-                  >
-                    {f.lead}
-                  </p>
-                  {f.body && (
-                    <p
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: "13px",
-                        lineHeight: 1.6,
-                        letterSpacing: "-0.01em",
-                        color: "var(--muted2)",
-                        margin: 0,
-                      }}
-                    >
-                      {f.body}
-                    </p>
-                  )}
+                <div key={j} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                    color: "var(--muted)", background: "var(--surface2)",
+                    borderRadius: "9999px", padding: "2px 8px",
+                    marginTop: "2px", flexShrink: 0,
+                  }}>
+                    {String(j + 1).padStart(2, "0")}
+                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                    <p style={ITEM_LEAD}>{f.lead}</p>
+                    {f.body && <p style={ITEM_BODY}>{f.body}</p>}
+                  </div>
                 </div>
               ))}
-              <style>{`
-                @media (max-width: 720px) {
-                  .apple-challenge-facts { grid-template-columns: 1fr !important; }
-                }
-              `}</style>
-            </motion.div>
-          );
-        }
-        if (i === questionIdx) {
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.65, ease: EASE }}
-              style={{
-                marginTop: "8px",
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: "16px",
-                padding: "32px 28px 30px",
-                position: "relative",
-              }}
-            >
-              {qLabel && (
-                <p
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "var(--muted)",
-                    margin: 0,
-                    marginBottom: "14px",
-                  }}
-                >
-                  {qLabel.replace(/:$/, "")}
-                </p>
-              )}
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "14px",
-                  fontWeight: 400,
-                  lineHeight: 1.65,
-                  letterSpacing: "-0.01em",
-                  color: "var(--text)",
-                  margin: 0,
-                  maxWidth: "640px",
-                }}
-              >
-                {qBody}
-              </p>
-            </motion.div>
-          );
-        }
-        // Default: regular paragraph(s) — let BodyText handle this block.
-        return <BodyText key={i}>{block}</BodyText>;
-      })}
+            </div>
+          </div>
+
+          {/* RIGHT — Design goal */}
+          <div style={{ background: "var(--surface)", padding: "24px 24px 28px" }}>
+            <p style={MONO_LABEL}>Design goal</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {goals.map((g, j) => (
+                <div key={j} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                    color: "var(--muted)", background: "color-mix(in srgb, var(--accent-warm) 12%, transparent)",
+                    borderRadius: "9999px", padding: "2px 8px",
+                    marginTop: "2px", flexShrink: 0,
+                  }}>
+                    {String(j + 1).padStart(2, "0")}
+                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                    <p style={ITEM_LEAD}>{g.lead}</p>
+                    <p style={ITEM_BODY}>{g.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ── Design question — left-accent callout ───────────────── */}
+      {questionIdx >= 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.05 }}
+          style={{
+            borderLeft: "2px solid var(--accent-warm)",
+            paddingLeft: "20px",
+          }}
+        >
+          {qLabel && (
+            <p style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em",
+              textTransform: "uppercase", color: "var(--muted)", margin: 0, marginBottom: "10px",
+            }}>
+              {qLabel.replace(/:$/, "")}
+            </p>
+          )}
+          <p style={{
+            fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 400,
+            lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--text)",
+            margin: 0, maxWidth: "600px",
+          }}>
+            {qBody}
+          </p>
+        </motion.div>
+      )}
     </div>
   );
 }
@@ -2750,37 +4097,28 @@ function CaseStudyContactCluster() {
       className="cs-contact-cluster"
       style={{ display: "flex", alignItems: "center", gap: "8px" }}
     >
+      {/* Plain-text CTA pattern — matches About panel + case study back button. */}
       <button
         onClick={copyEmail}
         aria-label={copied ? "Email copied" : "Copy email address"}
         style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "12px",
+          fontFamily: "var(--font-mono)",
+          fontSize: "var(--text-mono)",
           fontWeight: 400,
-          letterSpacing: "-0.01em",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
           color: copied ? "var(--accent-success)" : "var(--muted)",
-          padding: "8px 14px",
-          borderRadius: "8px",
-          border: "1px solid var(--border)",
+          padding: "8px 4px",
+          border: "none",
           background: "transparent",
           cursor: "pointer",
           display: "inline-flex",
           alignItems: "center",
-          gap: "5px",
-          transition: "color 0.18s, border-color 0.18s, background 0.18s",
+          gap: "4px",
+          transition: "color 0.18s",
         }}
-        onMouseEnter={e => {
-          if (!copied) {
-            e.currentTarget.style.color = "var(--text)";
-            e.currentTarget.style.borderColor = "var(--text)";
-          }
-        }}
-        onMouseLeave={e => {
-          if (!copied) {
-            e.currentTarget.style.color = "var(--muted)";
-            e.currentTarget.style.borderColor = "var(--border)";
-          }
-        }}
+        onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; } }}
+        onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; } }}
       >
         {copied ? "Copied ✓" : "Copy email"}
       </button>
@@ -2790,32 +4128,24 @@ function CaseStudyContactCluster() {
         target="_blank"
         rel="noopener noreferrer"
         style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "12px",
+          fontFamily: "var(--font-mono)",
+          fontSize: "var(--text-mono)",
           fontWeight: 400,
-          letterSpacing: "-0.01em",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
           color: "var(--muted)",
-          padding: "8px 14px",
-          borderRadius: "8px",
-          border: "1px solid var(--border)",
-          background: "transparent",
+          padding: "8px 4px",
           display: "inline-flex",
           alignItems: "center",
-          gap: "5px",
-          transition: "color 0.18s, border-color 0.18s, background 0.18s",
+          gap: "4px",
+          transition: "color 0.18s",
           textDecoration: "none",
         }}
-        onMouseEnter={e => {
-          e.currentTarget.style.color = "var(--text)";
-          e.currentTarget.style.borderColor = "var(--text)";
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.color = "var(--muted)";
-          e.currentTarget.style.borderColor = "var(--border)";
-        }}
+        onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
+        onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
       >
-        <ArrowUpRight size={11} strokeWidth={1.5} />
         LinkedIn
+        <ArrowUpRight size={11} strokeWidth={1.5} />
       </Link>
 
       {/* Mobile: hide cluster — the homepage Contact panel sits one tap
@@ -2829,17 +4159,75 @@ function CaseStudyContactCluster() {
   );
 }
 
-function CsSection({ label, children, id }: { label: string; children: React.ReactNode; id?: string }) {
+/* Scroll-linked scale wrapper for featured media (videos, decision
+   images). Uses Framer Motion's useScroll/useTransform with a per-
+   element target ref so the effect runs in every browser (not just
+   ones that support CSS animation-timeline). Spring smoothing on the
+   raw scrollYProgress keeps the scale feeling like weight, not
+   choppy step changes. */
+function ScrollScaleMedia({
+  children,
+  className,
+  style,
+  onClick,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  onClick?: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const smooth = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const scale = useTransform(smooth, [0, 0.5, 1], [0.92, 1.02, 0.95]);
+  /* prefers-reduced-motion: render the static layout, no transform. */
+  if (reduced) {
+    return (
+      <div ref={ref} className={className} onClick={onClick} style={style}>
+        {children}
+      </div>
+    );
+  }
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      onClick={onClick}
+      style={{ ...style, scale, willChange: "transform" }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function CsSection({ label, navLabel, children, id, className, hideFromNav }: { label: string; navLabel?: string; children: React.ReactNode; id?: string; className?: string; hideFromNav?: boolean }) {
+  // Auto-generate an id from the label when none is passed so every
+  // section becomes anchorable and shows up in the left rail. Explicit
+  // ids still win (preserves existing anchor URLs like #cs-overview).
+  // Sections with hideFromNav skip the data-nav-label tag so the DOM
+  // scan doesn't pick them up for the rail — used for sections that
+  // don't aid scanning (e.g. layout / decisions / rollout in FanCode).
+  // navLabel overrides what shows in the rail without changing the
+  // section's visible heading (e.g. Apple's narrative heading "What's
+  // a Business Listing?" reads as "Context" in the rail).
+  const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const finalId = id ?? (slug ? `cs-${slug}` : undefined);
   return (
     <motion.section
-      id={id}
+      id={finalId}
+      data-nav-label={hideFromNav ? undefined : (navLabel ?? label)}
+      className={className}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.65, ease: EASE }}
-      style={{ padding: "48px 0" }}
+      style={{ padding: "var(--space-9) 0" }}
     >
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "24px", borderTop: "1px solid var(--border)", paddingTop: "16px" }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "var(--space-7)", borderTop: "1px solid var(--border)", paddingTop: "var(--space-4)" }}>{label}</p>
       {children}
     </motion.section>
   );
@@ -2879,14 +4267,14 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", flexWrap: "wrap", gap: "12px" }}>
-        <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: 590, letterSpacing: "-0.012em", color: "var(--text)", margin: 0 }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-lead)", fontWeight: 600, letterSpacing: "-0.012em", color: "var(--text)", margin: 0 }}>
           {p.label}
         </p>
         <a
           href={p.src}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "5px", padding: "5px 10px", borderRadius: "6px", border: "1px solid var(--border)", transition: "color 0.15s, border-color 0.15s" }}
+          style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 8px", borderRadius: "6px", border: "1px solid var(--border)", transition: "color 0.15s, border-color 0.15s" }}
           onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.borderColor = "var(--text-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
         >
@@ -2906,9 +4294,9 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
           borderRadius: "10px",
         }}>
           <span style={{
-            fontFamily: "var(--font-mono)", fontSize: "9px",
+            fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
             letterSpacing: "0.08em", textTransform: "uppercase",
-            color: "var(--muted)", padding: "5px 10px",
+            color: "var(--muted)", padding: "4px 8px",
             alignSelf: "center",
           }}>
             Jump to
@@ -2918,9 +4306,9 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
               key={`${s.role ?? ""}-${s.screen}`}
               onClick={() => jump(i)}
               style={{
-                fontFamily: "var(--font-body)", fontSize: "11px",
-                fontWeight: 510, letterSpacing: "-0.01em",
-                padding: "5px 10px", borderRadius: "6px",
+                fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
+                fontWeight: 500, letterSpacing: "-0.01em",
+                padding: "4px 8px", borderRadius: "6px",
                 border: "none", cursor: "pointer",
                 background: i === activeIdx ? "var(--text)" : "transparent",
                 color:      i === activeIdx ? "var(--bg)"   : "var(--muted2)",
@@ -2960,6 +4348,130 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
   );
 }
 
+function Shimmer({ height, borderRadius = "12px" }: { height: number | string; borderRadius?: string }) {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height,
+        borderRadius,
+        background: "linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%)",
+        backgroundSize: "400% 100%",
+        animation: "shimmer 1.4s ease infinite",
+      }}
+    />
+  );
+}
+
+function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt: string; caption?: string; width?: string; onOpen?: () => void }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div style={{ width: "100%" }}>
+      <div
+        onClick={onOpen}
+        style={{
+          cursor: onOpen ? "zoom-in" : undefined,
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "16px",
+          padding: "12px",
+          position: "relative",
+        }}
+      >
+        {!loaded && (
+          <div style={{ position: "absolute", inset: "12px", width: width ?? "100%", margin: "0 auto" }}>
+            <Shimmer height="100%" borderRadius="8px" />
+          </div>
+        )}
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+          style={{
+            width: width ?? "100%",
+            display: "block",
+            borderRadius: "8px",
+            opacity: loaded ? 1 : 0,
+            margin: "0 auto",
+          }}
+        />
+      </div>
+      {loaded && caption && (
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
+          {caption}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* Canvas-board image with shimmer placeholder. Each board image is a JPEG
+   that can take a moment on slow networks; without this the dot-grid panel
+   shows empty white cards. */
+function CanvasBoardImage({ src, alt, aspectRatio }: { src: string; alt: string; aspectRatio: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div style={{ position: "relative", aspectRatio, width: "100%" }}>
+      {!loaded && (
+        <div style={{ position: "absolute", inset: 0 }}>
+          <Shimmer height="100%" borderRadius="0" />
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        style={{ width: "100%", height: "100%", display: "block", objectFit: "cover", opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
+      />
+    </div>
+  );
+}
+
+/* Inline image inside a Design Approach decision card. Unlike the canvas
+   board (fixed 16/9 / 3/4 ratios), this renders at the image's natural
+   aspect ratio with a max height so wide and tall images both display
+   fully. Shimmer placeholder while loading. Uses an effect to catch the
+   case where the browser already has the image cached (onLoad never
+   fires for those, so the ref check is the only reliable signal). */
+function DesignApproachImage({ src, alt, maxHeight = 360, compact = false }: { src: string; alt: string; maxHeight?: number; compact?: boolean }) {
+  const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    if (imgRef.current?.complete) setLoaded(true);
+  }, [src]);
+  return (
+    <div style={{ position: "relative", width: "100%", minHeight: loaded ? undefined : "120px" }}>
+      {!loaded && (
+        <div style={{ position: "absolute", inset: 0 }}>
+          <Shimmer height="100%" borderRadius="0" />
+        </div>
+      )}
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        style={{
+          /* compact images: natural size, centered, not stretched */
+          width: compact ? "auto" : "100%",
+          maxWidth: "100%",
+          height: "auto",
+          maxHeight: `${maxHeight}px`,
+          objectFit: "contain",
+          display: "block",
+          margin: compact ? "0 auto" : undefined,
+          opacity: loaded ? 1 : 0,
+          transition: "opacity 0.3s ease",
+        }}
+      />
+    </div>
+  );
+}
+
 function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string; chromeUrl?: string }) {
   // Mobile case studies skip the macOS browser chrome — it's misleading for an
   // app prototype. Detect on the case-study `type` string (e.g. "Consumer Mobile App").
@@ -2967,18 +4479,24 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
   // URL pill in the chrome bar. Falls back to a generic "app.example.com" if no
   // chromeUrl is passed — but we always want to pass one to keep it accurate per case.
   const urlLabel = chromeUrl || "app.example.com";
+  const [ready, setReady] = useState(false);
 
   if (isMobile) {
     return (
       <div style={{ display: "flex", justifyContent: "center", background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}>
-        <video
-          src={src}
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{ maxHeight: "640px", maxWidth: "100%", display: "block", borderRadius: "12px", background: "#000" }}
-        />
+        <div style={{ position: "relative", width: "100%", maxWidth: "320px" }}>
+          {!ready && <Shimmer height={480} borderRadius="12px" />}
+          <video
+            src={src}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="none"
+            onCanPlay={() => setReady(true)}
+            style={{ maxHeight: "640px", maxWidth: "100%", display: ready ? "block" : "none", borderRadius: "12px", background: "#0a0a0a" }}
+          />
+        </div>
       </div>
     );
   }
@@ -2994,16 +4512,18 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
           ))}
         </div>
         {/* URL pill — centred */}
-        <div style={{ background: "var(--surface)", borderRadius: "5px", padding: "4px 14px", display: "flex", alignItems: "center", gap: "6px", maxWidth: "240px", width: "100%" }}>
+        <div style={{ background: "var(--surface)", borderRadius: "4px", padding: "4px 14px", display: "flex", alignItems: "center", gap: "6px", maxWidth: "240px", width: "100%" }}>
           <svg width="8" height="10" viewBox="0 0 8 10" fill="none" style={{ flexShrink: 0, opacity: 0.4 }}>
             <rect x="1" y="4" width="6" height="5.5" rx="1" stroke="currentColor" strokeWidth="1.2" />
             <path d="M2.5 4V2.8a1.5 1.5 0 013 0V4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)", letterSpacing: "0", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {urlLabel}
           </span>
         </div>
       </div>
+      {/* Shimmer shown until video is ready to play */}
+      {!ready && <Shimmer height={400} borderRadius="0" />}
       {/* Video */}
       <video
         src={src}
@@ -3011,7 +4531,9 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
         loop
         muted
         playsInline
-        style={{ width: "100%", display: "block", maxHeight: "520px", objectFit: "contain", background: "var(--surface)" }}
+        preload="none"
+        onCanPlay={() => setReady(true)}
+        style={{ width: "100%", display: ready ? "block" : "none", maxHeight: "520px", objectFit: "contain", background: "var(--surface)" }}
       />
     </div>
   );
@@ -3048,12 +4570,12 @@ function ZetwerkSystemBlock() {
   const Tile = ({ label, filled }: { label: string; filled?: boolean }) => (
     <div style={{
       flex: 1,
-      padding: "14px 12px",
+      padding: "16px 12px",
       border: "1px solid var(--border)",
       borderRadius: "6px",
       background: filled ? "var(--surface)" : "transparent",
       fontFamily: "var(--font-body)",
-      fontSize: "12px",
+      fontSize: "var(--text-caption)",
       letterSpacing: "-0.01em",
       color: "var(--text)",
       textAlign: "center" as const,
@@ -3073,17 +4595,17 @@ function ZetwerkSystemBlock() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", borderTop: "1px solid var(--border)", paddingTop: "16px", marginBottom: "0" }}>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", borderTop: "1px solid var(--border)", paddingTop: "16px", marginBottom: "0" }}>
         The system
       </p>
-      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)", maxWidth: "640px" }}>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, color: "var(--muted2)", maxWidth: "640px" }}>
         From document creation to lifecycle visibility: two flows operating on one shared record. A list-first landing page gives Ops a single place to find any of the 800+ monthly challans by status, search, filter, or export.
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "12px" }}>
         {/* Flow 1: Create */}
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
             Flow 1 · Create
           </span>
           <div style={{ display: "flex", alignItems: "stretch", gap: "0" }}>
@@ -3098,17 +4620,17 @@ function ZetwerkSystemBlock() {
 
         {/* Shared record bridge */}
         <div style={{ padding: "14px 16px", border: "1px solid var(--border)", borderRadius: "6px", background: "var(--surface)", display: "flex", flexDirection: "column", gap: "4px", textAlign: "center" }}>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)" }}>
             Shared record
           </span>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "-0.01em", color: "var(--muted2)" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.01em", color: "var(--muted2)" }}>
             Visible to BizOps, Tax, and Logistics simultaneously
           </span>
         </div>
 
         {/* Flow 2: Track */}
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
             Flow 2 · Track
           </span>
           <div style={{ display: "flex", alignItems: "stretch", gap: "0" }}>
@@ -3131,31 +4653,31 @@ function ZetwerkDualUserBlock() {
       {/* Dual-user comparison */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
         <div style={{ padding: "20px 22px", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "10px" }}>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)" }}>
             Business Operations
           </span>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, color: "var(--muted2)" }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.6, color: "var(--muted2)" }}>
             Two minutes to file it. A truck idling outside. Get it wrong and the shipment doesn&apos;t move.
           </p>
         </div>
         <div style={{ padding: "20px 22px", display: "flex", flexDirection: "column", gap: "10px", background: "var(--surface)" }}>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)" }}>
             Tax Specialist
           </span>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, color: "var(--muted2)" }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.6, color: "var(--muted2)" }}>
             Pulls up the same record three months later for a GST filing. If BizOps got it wrong, Tax can&apos;t fix it, only explain it to a tax officer.
           </p>
         </div>
       </div>
 
       {/* Closing paragraph */}
-      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)", maxWidth: "640px" }}>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, color: "var(--muted2)", maxWidth: "640px" }}>
         Designing for one would break the other. So the project shifted: stop building a form. <Highlight>Build a forward trail the whole chain could share. The document becomes a printout of state, not the source of it.</Highlight>
       </p>
 
       {/* Strategic callout — left-bordered */}
       <div style={{ borderLeft: "2px solid var(--border)", paddingLeft: "20px", marginTop: "8px" }}>
-        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.65, color: "var(--muted2)", maxWidth: "640px" }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.65, color: "var(--muted2)", maxWidth: "640px" }}>
           Zetwerk doesn&apos;t own factories, it orchestrates 10,000+ of them. Its whole pitch is that you can see where your goods are. The challan workflow was the place that pitch was breaking. <Highlight>Fixing this wasn&apos;t a productivity play. It was protecting what the company sells.</Highlight>
         </p>
       </div>
@@ -3173,7 +4695,7 @@ function MapsDecisionBlock() {
   ];
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.65, color: "var(--muted2)" }}>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.65, color: "var(--muted2)" }}>
         The four-stage flow solves data loading. But after data is loaded, someone still has to route it to the right place in the financial model. At launch, that step required backend support from an implementation team.
       </p>
 
@@ -3186,7 +4708,7 @@ function MapsDecisionBlock() {
               border: "1px solid var(--border)",
               borderRadius: "6px",
               fontFamily: "var(--font-body)",
-              fontSize: "12px",
+              fontSize: "var(--text-caption)",
               color: p.gap ? "var(--text)" : "var(--muted)",
               background: p.gap ? "var(--surface)" : "transparent",
               fontWeight: p.gap ? 500 : 400,
@@ -3195,7 +4717,7 @@ function MapsDecisionBlock() {
               {p.label}
             </div>
             {i < pills.length - 1 && (
-              <span style={{ color: "var(--muted)", fontSize: "12px", fontFamily: "var(--font-mono)" }}>›</span>
+              <span style={{ color: "var(--muted)", fontSize: "var(--text-caption)", fontFamily: "var(--font-mono)" }}>›</span>
             )}
           </Fragment>
         ))}
@@ -3203,28 +4725,28 @@ function MapsDecisionBlock() {
 
       {/* Maps closes the loop card */}
       <div style={{ border: "1px solid var(--border)", borderRadius: "10px", padding: "20px 22px", display: "flex", flexDirection: "column", gap: "16px" }}>
-        <h4 style={{ fontFamily: "var(--font-body)", fontSize: "14px", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3, margin: 0 }}>
+        <h4 style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.3, margin: 0 }}>
           Maps closes the loop
         </h4>
-        <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.6, color: "var(--muted2)" }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.6, color: "var(--muted2)" }}>
           A visual interface where finance teams draw the connections between ESM columns and OLAP dimensions themselves, no backend access, no developer dependency. The workflow becomes end-to-end: any team member loads, validates, publishes, and routes their data without leaving the product.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid var(--border)", borderRadius: "8px", overflow: "hidden" }}>
           {/* Without Maps — de-emphasized */}
           <div style={{ padding: "14px 16px", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "8px" }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
               Without Maps
             </span>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted)" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted)" }}>
               Teams finish publishing. Implementation consultants route the data from the backend. Turnaround: hours to days.
             </p>
           </div>
           {/* With Maps — full readable */}
           <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "8px", background: "var(--surface)" }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text)" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text)" }}>
               With Maps
             </span>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", lineHeight: 1.55, color: "var(--muted2)" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted2)" }}>
               Finance teams draw the connections visually. Data reaches the right model dimensions in the same session.
             </p>
           </div>
@@ -3271,7 +4793,7 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
             <div style={{ display: "flex", alignItems: "baseline", gap: "8px", flexWrap: "wrap", lineHeight: 1.2 }}>
               <span style={{
                 fontFamily: "var(--font-mono)",
-                fontSize: "9px",
+                fontSize: "var(--text-eyebrow)",
                 letterSpacing: "0.08em",
                 color: "var(--muted)",
               }}>
@@ -3284,7 +4806,7 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
                   transition={{ duration: 0.22, ease: EASE }}
                   style={{
                     fontFamily: "var(--font-mono)",
-                    fontSize: "9px",
+                    fontSize: "var(--text-eyebrow)",
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
                     color: "var(--text)",
@@ -3325,7 +4847,7 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
                   position: "absolute",
                   inset: 0,
                   fontFamily: "var(--font-body)",
-                  fontSize: "14px",
+                  fontSize: "var(--text-body-lg)",
                   fontWeight: 500,
                   letterSpacing: "-0.02em",
                   color: "var(--text)",
@@ -3344,7 +4866,7 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
                     position: "absolute",
                     inset: 0,
                     fontFamily: "var(--font-body)",
-                    fontSize: "12px",
+                    fontSize: "var(--text-caption)",
                     lineHeight: 1.45,
                     letterSpacing: "-0.005em",
                     color: "var(--muted2)",
@@ -3425,9 +4947,10 @@ function parseHighlights(text: string): React.ReactNode[] {
    gives lists proper visual rhythm so the page scans cleanly. */
 const BODY_PARA_STYLE: React.CSSProperties = {
   fontFamily: "var(--font-body)",
-  fontSize: "14px",
+  fontSize: "var(--text-body-lg)",
   fontWeight: 400,
   lineHeight: 1.65,
+  letterSpacing: "-0.01em",
   color: "var(--muted2)",
   maxWidth: "580px",
 };
@@ -3457,7 +4980,7 @@ function BulletList({ items }: { items: string[] }) {
           key={i}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "14px",
+            fontSize: "var(--text-body-lg)",
             lineHeight: 1.6,
             color: "var(--muted2)",
             paddingLeft: "18px",
@@ -3468,10 +4991,11 @@ function BulletList({ items }: { items: string[] }) {
             aria-hidden="true"
             style={{
               position: "absolute",
-              left: 0,
-              top: "0.55em",
-              width: "6px",
-              height: "1px",
+              left: "2px",
+              top: "0.6em",
+              width: "4px",
+              height: "4px",
+              borderRadius: "50%",
               background: "var(--muted)",
             }}
           />
@@ -3519,8 +5043,8 @@ function LabeledList({ rows }: { rows: { label: string; value: string }[] }) {
         >
           <span style={{
             fontFamily: "var(--font-mono)",
-            fontSize: "10px",
-            letterSpacing: "0.06em",
+            fontSize: "var(--text-mono)",
+            letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: "var(--text)",
             whiteSpace: "nowrap",
@@ -3529,7 +5053,7 @@ function LabeledList({ rows }: { rows: { label: string; value: string }[] }) {
           </span>
           <span style={{
             fontFamily: "var(--font-body)",
-            fontSize: "14px",
+            fontSize: "var(--text-body-lg)",
             lineHeight: 1.6,
             color: "var(--muted2)",
           }}>
@@ -3540,13 +5064,13 @@ function LabeledList({ rows }: { rows: { label: string; value: string }[] }) {
               className="labeled-list-chip"
               style={{
                 fontFamily: "var(--font-mono)",
-                fontSize: "9px",
+                fontSize: "var(--text-eyebrow)",
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 color: "var(--muted)",
                 background: "var(--surface)",
                 border: "1px solid var(--border)",
-                borderRadius: "999px",
+                borderRadius: "9999px",
                 padding: "3px 9px",
                 whiteSpace: "nowrap",
                 justifySelf: "end",
@@ -3677,7 +5201,7 @@ function ZoomLensImage({ image, onOpen }: { image: CaseStudyImage; onOpen?: (src
         transform: `scale(${ZOOM})`,
         transformOrigin: `${pos.x}px ${pos.y}px`,
       }}>
-        <img src={image.src} alt="" style={{ width: "100%", display: "block", objectFit: "contain" }} />
+        <img src={image.src} alt="" loading="lazy" decoding="async" style={{ width: "100%", display: "block", objectFit: "contain" }} />
       </div>
     </motion.div>
   );
@@ -3696,7 +5220,7 @@ function ZoomLensImage({ image, onOpen }: { image: CaseStudyImage; onOpen?: (src
         onMouseMove={handleMouseMove}
         style={{ position: "relative", overflow: "hidden", background: "var(--surface2)", cursor: "crosshair" }}
       >
-        <img src={image.src} alt={image.alt} style={{ width: "100%", display: "block", objectFit: "contain" }} />
+        <img src={image.src} alt={image.alt} loading="lazy" decoding="async" style={{ width: "100%", display: "block", objectFit: "contain" }} />
         <AnimatePresence>
           {isHovering && zoomedLayer}
         </AnimatePresence>
@@ -3733,11 +5257,11 @@ function ZoomLensImage({ image, onOpen }: { image: CaseStudyImage; onOpen?: (src
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>
         {image.caption && (
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
             {image.caption}
           </p>
         )}
-        <p style={{ fontFamily: "var(--font-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", opacity: 0.5, marginLeft: "auto" }}>
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", opacity: 0.5, marginLeft: "auto" }}>
           Hover to inspect
         </p>
       </div>
@@ -3846,9 +5370,9 @@ function LensLightbox({ src, onClose }: { src: string | null; onClose: () => voi
             backdropFilter: "blur(6px)",
             border: "1px solid rgba(255,255,255,0.1)",
             borderRadius: "8px",
-            padding: "5px 12px",
+            padding: "4px 12px",
             fontFamily: "var(--font-mono)",
-            fontSize: "9px",
+            fontSize: "var(--text-eyebrow)",
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: "rgba(255,255,255,0.5)",
@@ -3878,7 +5402,7 @@ function LensLightbox({ src, onClose }: { src: string | null; onClose: () => voi
           justifyContent: "center",
           cursor: "pointer",
           color: "rgba(255,255,255,0.7)",
-          fontSize: "18px",
+          fontSize: "var(--text-title)",
           lineHeight: 1,
         }}
       >
@@ -3889,11 +5413,16 @@ function LensLightbox({ src, onClose }: { src: string | null; onClose: () => voi
 }
 
 function Lightbox({ src, onClose }: { src: string | null; onClose: () => void }) {
+  // Naturalize the displayed size: if the source image is smaller than
+  // 90vw/90vh, cap the display width to its natural width so the lightbox
+  // doesn't visually upscale it. Without this a 125px-wide phone mockup
+  // would stretch to the full lightbox area and look severely blurred.
+  const [naturalWidth, setNaturalWidth] = useState<number | null>(null);
   if (!src) return null;
-  // Detect video sources so the lightbox can play them at full size, not just images.
   const isVideo = /\.(mov|mp4|webm)$/i.test(src);
   return (
     <motion.div
+      className="cs-lightbox"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -3909,9 +5438,18 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
         justifyContent: "center",
         padding: "24px",
         backdropFilter: "blur(8px)",
-        cursor: "pointer",
+        cursor: "zoom-out",
       }}
     >
+      {/* Force-override any cached cursor:none that may still be served
+          from CDN / browser cache. Local rule wins for everything inside
+          the lightbox regardless of upstream. */}
+      <style>{`
+        .cs-lightbox, .cs-lightbox * { cursor: revert !important; }
+        .cs-lightbox { cursor: zoom-out !important; }
+        .cs-lightbox img, .cs-lightbox video { cursor: default !important; }
+        .cs-lightbox button { cursor: pointer !important; }
+      `}</style>
       {isVideo ? (
         <motion.video
           src={src}
@@ -3930,7 +5468,7 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
             borderRadius: "16px",
             boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
             cursor: "default",
-            background: "#000",
+            background: "#0a0a0a",
           }}
         />
       ) : (
@@ -3940,13 +5478,15 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         onClick={(e) => e.stopPropagation()}
+        onLoad={(e) => setNaturalWidth(e.currentTarget.naturalWidth)}
         style={{
-          maxWidth: "90vw",
+          maxWidth: naturalWidth ? `min(90vw, ${naturalWidth}px)` : "90vw",
           maxHeight: "90vh",
           objectFit: "contain",
           borderRadius: "16px",
           boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
           cursor: "default",
+          imageRendering: "auto",
         }}
         alt=""
       />
@@ -3968,7 +5508,7 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
           justifyContent: "center",
           cursor: "pointer",
           color: "rgba(255,255,255,0.7)",
-          fontSize: "18px",
+          fontSize: "var(--text-title)",
           lineHeight: 1,
         }}
       >
@@ -3977,3 +5517,57 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
     </motion.div>
   );
 }
+/* ─── DecisionBodyText ─────────────────────────────────────────────────────
+   Renders a decision body string at the compact 13px/muted style used inside
+   the decisions blocks. Handles:
+     • ==highlight== markers  (via parseHighlights)
+     • \n\n paragraph breaks
+     • - bullet lists          (lines starting with "- ")
+     • Label: body lists       (first line ends ":", rest are "- " bullets)
+   Keeps decision title (13px/500) visually dominant over the body (13px/400). */
+const DECISION_BODY_STYLE: React.CSSProperties = {
+  fontFamily: "var(--font-body)",
+  fontSize: "var(--text-body)",
+  lineHeight: 1.7,
+  letterSpacing: "-0.01em",
+  color: "var(--muted)",
+  margin: 0,
+};
+
+function DecisionBodyText({ children }: { children: string }) {
+  const blocks = children.split("\n\n");
+
+  function renderBlock(block: string, key: number): React.ReactNode {
+    const lines = block.split("\n").filter(Boolean);
+    if (lines.length > 1 && lines.every(l => l.startsWith("- "))) {
+      return (
+        <ul key={key} style={{ margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "3px" }}>
+          {lines.map((l, i) => (
+            <li key={i} style={DECISION_BODY_STYLE}>{parseHighlights(l.slice(2))}</li>
+          ))}
+        </ul>
+      );
+    }
+    if (lines.length > 1 && lines[0].endsWith(":") && lines.slice(1).every(l => l.startsWith("- "))) {
+      return (
+        <div key={key}>
+          <p style={DECISION_BODY_STYLE}>{parseHighlights(lines[0])}</p>
+          <ul style={{ margin: "4px 0 0", paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "3px" }}>
+            {lines.slice(1).map((l, i) => (
+              <li key={i} style={DECISION_BODY_STYLE}>{parseHighlights(l.slice(2))}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    return <p key={key} style={DECISION_BODY_STYLE}>{parseHighlights(block)}</p>;
+  }
+
+  if (blocks.length === 1) return <>{renderBlock(blocks[0], 0)}</>;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      {blocks.map((block, i) => renderBlock(block, i))}
+    </div>
+  );
+}
+

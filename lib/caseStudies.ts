@@ -16,10 +16,18 @@ export type TaskFlowStage = {
   meta?: { label: string; value: string }[];
 };
 
+/* Tonal palette for inline chips embedded in case study hero titles.
+   Mirrors the home About panel H1 chip system. */
+export type CaseStudyChipTone = "indigo" | "teal" | "amber" | "violet" | "emerald";
+
 export type CaseStudy = {
   slug: string;
   number: string;
   title: string;
+  /** Optional map of phrase → tone. Each phrase found in `title` is rendered
+      as an InlineChip in the detail hero. Plain string remains the source of
+      truth (used for SEO, OG tags, sitemap, etc.). */
+  titleHighlights?: Record<string, CaseStudyChipTone>;
   subtitle: string;
   /** Short impact statement shown on the Selected Work card thumbnail.
       Replaces the subtitle in the card view. should convey the key outcome
@@ -57,13 +65,13 @@ export type CaseStudy = {
     sub?: string;
   };
   problem: string;
-  problemBreakdown?: { points: string[]; impact: string };
+  problemBreakdown?: { points: string[]; richPoints?: { title: string; bullets: string[] }[]; impact?: string };
   problemImage?: CaseStudyImage;
   insight?: string;
   insightImage?: CaseStudyImage;
   decisionsIntro?: string;
-  decisions: { title: string; body: string; image?: CaseStudyImage; images?: CaseStudyImage[]; imageStack?: boolean; videos?: { src: string; label?: string; caption?: string }[]; persona?: { name: string; role: string; goal: string; pain: string; quote: string }; /** Optional icon glyph name shown beside the decision title. Names map to Icon.tsx exports (e.g. "Scissors", "ChartActivity", "LayoutGrid", "Info"). */ icon?: string }[];
-  taskFlow?: { heading?: string; stages: TaskFlowStage[] };
+  decisions?: { title: string; body: string; image?: CaseStudyImage; images?: CaseStudyImage[]; imageStack?: boolean; videos?: { src: string; label?: string; caption?: string }[]; persona?: { name: string; role: string; goal: string; pain: string; quote: string }; /** Optional icon glyph name shown beside the decision title. Names map to Icon.tsx exports (e.g. "Scissors", "ChartActivity", "LayoutGrid", "Info"). */ icon?: string }[];
+  taskFlow?: { heading?: string; subheading?: string; stages: TaskFlowStage[] };
   prototypeVideo?: string;
   /** One or more interactive prototypes embedded as iframes. Each block
       renders inline in the Prototype section, with its label as a sub-heading.
@@ -79,7 +87,15 @@ export type CaseStudy = {
   }[];
   outcomesImage?: CaseStudyImage;
   outcomesImages?: CaseStudyImage[];
+  /** Optional short text rendered above the outcomesImage in the Final Design section. */
+  outcomesIntro?: string;
+  /** Optional video shown above the outcome text in the Result section. */
+  outcomesVideo?: string;
   outcomes: string[];
+  /** Optional epilogue note rendered below the decisions block without a
+      number pill or section label. Used for forward-looking context that
+      doesn't belong alongside shipped decisions (e.g. "next phase" work). */
+  epilogue?: string;
   insightDiagram?: "olap-vs-esm";
   researchEvidence?: string;
   approach?: string;
@@ -87,6 +103,11 @@ export type CaseStudy = {
   scrappedDirections?: { title: string; reason: string }[];
   reflection?: string;
   lesson?: string;
+  /** Structured learnings block. `northStar` is the headline insight rendered
+      large and featured; `items` are the supporting takeaways shown as a
+      scannable list below it. When present, replaces the plain `lesson` text
+      in the Learnings section for fancode-homepage. */
+  learnings?: { northStar: string; items: string[] };
   contribution?: string;
   contributionArtifacts?: string[];
   references?: { label: string; url: string }[];
@@ -120,7 +141,16 @@ export type CaseStudy = {
   userSegments?: {
     intro?: string;
     closing?: string;
-    segments: { label: string; name: string; roles: string; body: string }[];
+    segments: {
+      label: string;
+      name: string;
+      roles: string;
+      body: string;
+      /** Optional core user question — displayed prominently above bullets. */
+      quote?: string;
+      /** Optional tight bullets replacing the prose body. */
+      bullets?: string[];
+    }[];
   };
   /** Optional contextCards. structured Context section with multiple
       titled cards. Each card may carry a lead paragraph and / or a
@@ -172,6 +202,93 @@ export type CaseStudy = {
     lesson?: string;
     references?: string;
   };
+  /** Optional rail-only label overrides. When set, the side-rail uses
+      these shorter / scannable labels even though the actual section
+      heading still renders the full sectionLabels text. Useful when the
+      section title is narrative (e.g. "What's a Business Listing?") but
+      a scanner needs a quick category word in the rail ("Context"). */
+  navLabels?: {
+    overview?: string;
+    problem?: string;
+    decisions?: string;
+    outcomes?: string;
+  };
+  /** Optional visual stat blocks for the Overview. */
+  contextStats?: { stat: string; label: string }[];
+  /** Optional app store links rendered in the Overview. */
+  appStoreLinks?: { android?: string; ios?: string };
+  /** Optional named context section rendered between Overview and Problem. */
+  contextSection?: {
+    title: string;
+    intro?: string;
+    /** Optional hero stat displayed large above the cards. */
+    stat?: string;
+    statLabel?: string;
+    cards: { tag: string; body: string }[];
+  };
+  /** Optional display stat at the top of the Problem section. */
+  problemStat?: { stat: string; label: string };
+  /** Optional sub-heading rendered above the problemCards list. */
+  problemCardsLabel?: string;
+  /** Optional Discovery & Research section rendered after the Problem. */
+  discoverySection?: {
+    intro?: string;
+    stats?: { value: string; label: string }[];
+    findings: { title: string; body: string; image?: { src: string; alt: string; caption?: string }; images?: { src: string; alt: string; caption?: string }[] }[];
+  };
+  /** Optional Core Insight section rendered after Discovery & Research. */
+  coreInsight?: {
+    heading: string;
+    body: string[];
+    beforeAfter?: {
+      before: { header: string; items: string[]; footnote: string };
+      after:  { header: string; items: string[]; footnote: string };
+    };
+  };
+  /** Optional Design Strategy section rendered after Core Insight. */
+  designStrategy?: {
+    heading: string;
+    principles: { title: string; body: string }[];
+  };
+  /** Optional Design Approach section rendered after Design Strategy. */
+  designApproach?: {
+    intro: string;
+    decisions: { title: string; body: string; image?: { src: string; alt: string; caption?: string; compact?: boolean } }[];
+  };
+  /** Optional before/after video comparison for the outcomes section. */
+  outcomesCompare?: { before: string; after: string };
+  /** Figma-canvas-style image boards — keyed by section (e.g. "discovery", "approach"). */
+  canvasBoards?: {
+    section: "discovery" | "approach";
+    images: { src: string; alt: string; caption?: string; span?: "wide" | "tall" | "normal" }[];
+  }[];
+  /** Static before/after image pair shown before the Result section. */
+  beforeAfterImages?: {
+    before: { src: string; label: string };
+    after:  { src: string; label: string };
+  };
+  /** Structured result section (fancode-homepage style). */
+  resultSection?: {
+    heading: string;
+    intro: string;
+    metrics: { value?: string; icon?: boolean; label: string }[];
+    body: string;
+    rollout?: { value: string; label: string }[];
+  };
+  /** Optional Homepage Layout section with a phone mockup. */
+  homepageLayout?: {
+    intro?: string;
+    firstFold: { label: string }[];
+    belowFold: { label: string; type: "content" | "break" }[];
+  };
+  /** Optional Key Design Decisions side-by-side cards. */
+  keyDecisions?: {
+    title: string;
+    subtitle: string;
+    body: string;
+    tags: string[];
+    stat?: { value: string; label: string };
+  }[];
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -179,14 +296,15 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "planful-esm-tables",
     number: "08",
-    title: "Moving a critical finance workflow from Excel to the web.",
+    title: "Financial planning workflow",
+    titleHighlights: { "Financial planning": "amber" },
     subtitle:
       "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
-    cardImpact: "~95% reduction in time on task. 3.5 hrs → 10 to 15 min",
+    cardImpact: "~95% reduction in time on task. 3.5 hrs to 10-15 min",
     company: "Planful",
     type: "Enterprise SaaS · Fintech",
     role: "Senior Product Designer (IC)",
-    timeline: "~1 month design · 2 to 3 months rollout",
+    timeline: "~1 month design",
     team: "Product, Engineering, Implementation Consultants",
     tags: ["Enterprise software", "Data workflow", "Fintech", "Web Application"],
     heroLabel: "Real Work",
@@ -197,14 +315,14 @@ export const caseStudies: CaseStudy[] = [
       overview: "Context",
       problem: "Problem",
       decisions: "Key design decisions",
-      outcomes: "Outcome",
-      lesson: "What I learned",
+      outcomes: "Result",
+      lesson: "Learnings",
       references: "References",
     },
 
     metrics: [
       {
-        value: "3.5 hrs → 10 to 15 min",
+        value: "3.5 hrs to 10-15 min",
         label: "Time on task",
         body: "~95% reduction. Simple updates that took half a day now take a coffee break.",
       },
@@ -218,7 +336,8 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "Moving a critical finance workflow from Excel to the web. Planful's data preparation tool only worked through a complicated Excel plug-in on Windows machines. I designed it as a modern web app.",
 
-    contextVideo: "/images/planful/planful%20product%20video.mp4",
+    contextVideo: "/images/planful/planful-product-video.mp4",
+    outcomesVideo: "/images/planful/planful-product-video.mp4",
     chromeUrl: "app.planful.com",
 
     /* Plain prose at the top of the Context section. no card, no
@@ -255,34 +374,30 @@ export const caseStudies: CaseStudy[] = [
        reading about how the workspace feeds the model. */
     insightDiagram: "olap-vs-esm",
 
-    /* Problem section. plain prose sets the scene, the Issues
-       card carries the screenshot, breakdown grid, and business
-       impact. Image is nested inside the card (not standalone). */
-    problem:
-      "Before ESM Tables existed, this workflow already had a tool. A key part of it lived inside [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom plug in for Excel, PowerPoint, and Word. It worked. but it came with real friction.",
+    /* Challenge section. Impact statement leads — the cost comes
+       first, then the breakdown explains why. */
+    problemStat: {
+      stat: "Only experts could use it. Everyone else waited.",
+      label: "The existing workflow ran through a Windows-only Excel plug-in that locked access to a handful of power users.",
+    },
 
-    /* Issues card. single card with the screenshot, breakdown
-       grid, and business-impact callout. Image sits inside the
-       card so the visual and the diagnosis stay together. */
+    problem:
+      "The tool was [Spotlight for Microsoft 365](https://planful.com/solution-hub/spotlight-microsoft/solution/), a custom Excel plug-in. It worked, but it came with real access and usability friction.",
+
     problemCards: [
       {
         title: "Issues with the Excel Spotlight",
         image: {
-          src: "/images/planful/data-model-comparison.png",
+          src: "/images/planful/data-model-comparison.jpg",
           alt: "Excel Spotlight, the legacy tool it replaced",
           caption: "Excel Spotlight, the tool teams were using before",
         },
         breakdown: {
           points: [
-            "Windows only and desktop bound",
-            "Required manual install and regular updates",
-            "Couldn't be used on a Mac or in a browser",
-            "Hard to use and requires significant training cost. Demands high user cognition during the task",
+            "Windows only. No Mac, no browser",
+            "Manual install and frequent updates required",
+            "Steep learning curve, high cognitive load for non-experts",
           ],
-          impact: {
-            title: "What it cost the business",
-            text: "Only a small group of experts could confidently use it. Slower decisions and delayed forecasts. A knowledge bottleneck that didn't scale as the business grew.",
-          },
         },
       },
     ],
@@ -293,24 +408,36 @@ export const caseStudies: CaseStudy[] = [
           label: "User group 1",
           name: "Occasional contributor",
           roles: "Sales ops · Marketing · HR",
-          body: "Owns a slice of the company's data and updates it on a schedule. Not a finance person. Wants to be in and out fast, drop in numbers, see they look right, get back to the day job.",
+          body: "",
+          quote: "Just let me drop the numbers in and go.",
+          bullets: [
+            "Quarterly data owner, not a finance person",
+            "No appetite for training or complexity",
+            "Done when the numbers look right",
+          ],
         },
         {
           label: "User group 2",
           name: "Senior finance team",
           roles: "FP&A · Finance analysts",
-          body: "Maintains the structure itself, defining tables, writing the calculation logic, deciding when data is ready to publish. Years of Excel experience. Cares deeply about precision and won't accept a tool that takes away control.",
+          body: "",
+          quote: "I need the same control I have in Excel.",
+          bullets: [
+            "Owns the model: structure, logic, publish",
+            "Excel fluency is load-bearing, not optional",
+            "Any loss of precision is a dealbreaker",
+          ],
         },
       ],
-      closing:
-        "The challenge wasn't designing for one or the other. It was finding a level of clarity where the contributor could work alone without help, and the finance team didn't feel they'd lost any control.",
+      closing: "Speed for one. Control for the other. Both non-negotiable.",
     },
 
     contribution:
       "I led design end to end as Senior Product Designer, from problem framing and scoping through research, UX, interaction details, prototyping, and design QA.\n\nValidated weekly with the PM, leadership, and engineering. Brought in customer implementation consultants to make sure the workflow matched real forecasting rhythms, not what the team imagined them to be. During development, I ran design QA to ensure shipped interactions matched intent.",
 
     taskFlow: {
-      heading: "A clear four-step journey",
+      heading: "Task Flow",
+      subheading: "A clear four-step journey",
       stages: [
         { number: "01", label: "Add",       description: "Upload a file or paste in data" },
         { number: "02", label: "Transform", description: "Apply calculations and shape the data" },
@@ -326,18 +453,18 @@ export const caseStudies: CaseStudy[] = [
         title: "A familiar spreadsheet, not a new tool to learn",
         body: "Users already know how spreadsheets work. We built on a battle tested enterprise grid (Syncfusion) so the muscle memory carried over: type, paste, drag, fill. We focused design effort on the workflow itself, not on rebuilding the grid. Scaled to large datasets and met the security standards non negotiable in fintech (SOC 2 Type 2 certified).",
         image: {
-          src: "/images/planful/Engg feasibility .png",
+          src: "/images/planful/engg-feasibility.jpg",
           alt: "The Syncfusion grid pattern that shaped the technical approach",
           caption: "Syncfusion, the grid pattern that shaped the technical approach",
         },
       },
       /* 2. clearer copy + section walkthrough video. */
       {
-        title: "Drag, drop, or paste. no waiting for big files",
+        title: "Drag, drop, or paste. No waiting for big files",
         body: "Two ways in, both first class: drop a file, or paste straight from a spreadsheet. For files of 50,000+ rows, the first 1,000 rows preview instantly so users can start working before the full upload finishes.",
         videos: [
           {
-            src: "/images/planful/Two%20ways%20in,%20with%20progress%20that%20doesn't%20make%20people%20wait%20.mov",
+            src: "/images/planful/two-ways-in.mp4",
             label: "Drag & drop or paste data",
             caption: "Live preview of the first 1,000 rows while the rest streams in.",
           },
@@ -347,10 +474,10 @@ export const caseStudies: CaseStudy[] = [
          key feature; ESM Tables lives inside it, sequenced fourth
          because it is not part of everyday modeling work. */
       {
-        title: "Inside Dynamic Planning. fourth in the list, not the daily driver",
+        title: "Inside Dynamic Planning. Fourth in the list, not the daily driver",
         body: "Dynamic Planning is the core modeling surface finance teams use every day. ESM Tables lives inside it as the fourth tab, not the first thing they open. No separate app to install, no new login. discovering the feature meant clicking one tab over from where they already were.",
         image: {
-          src: "/images/planful/Navigation.png",
+          src: "/images/planful/navigation.jpg",
           alt: "ESM Tables nested inside Dynamic Planning as the fourth tab",
           caption: "Nested inside Dynamic Planning, where the modeling work already happens",
         },
@@ -363,7 +490,7 @@ export const caseStudies: CaseStudy[] = [
         body: "Every column has a type: text, number, date, formula, constant. A side panel opens from the column header showing only the settings relevant to that type. Power users get full control. Casual users aren't overwhelmed.",
         videos: [
           {
-            src: "/images/planful/%20Column%20settings%20without%20a%20maze%20of%20menus.mov",
+            src: "/images/planful/column-settings.mp4",
             label: "Column settings",
             caption: "Type aware side panel surfaces only what's relevant.",
           },
@@ -373,12 +500,12 @@ export const caseStudies: CaseStudy[] = [
          now a single tighter paragraph that keeps the why and the
          alternative considered. */
       {
-        title: "Live colour feedback on formulas",
+        title: "Live color feedback on formulas",
         body: "Colour highlights show which cells a formula touches as the user types. no preview step, no extra click. I considered a preview step (safer, but adds friction to every formula); the live feedback catches mistakes the moment they happen, so the extra safety wasn't worth the cost.",
         image: {
           src: "/images/planful/formula-feedback.png",
-          alt: "Live colour feedback in the formula bar as the user types",
-          caption: "Live colour feedback as you type, see what changes before it does",
+          alt: "Live color feedback in the formula bar as the user types",
+          caption: "Live color feedback as you type, see what changes before it does",
         },
       },
       /* 5. plain language. Drop the "not in a post-submission
@@ -389,7 +516,7 @@ export const caseStudies: CaseStudy[] = [
         body: "When data fails validation, the cell itself flags up. A side panel groups issues by type, and each one carries a row link that takes the user straight to the cell. Fix in place, no need to start over.",
         videos: [
           {
-            src: "/images/planful/Errors%20flagged%20in%20context,%20not%20in%20a%20post-submission%20report.mov",
+            src: "/images/planful/errors-flagged.mp4",
             label: "Errors in context",
             caption: "Click a row in the side panel; the grid jumps to the cell.",
           },
@@ -402,7 +529,7 @@ export const caseStudies: CaseStudy[] = [
         body: "At period close, teams replace the full dataset. Mid cycle, they add rows without touching what's already there. Both modes are explicit at upload time, no scripting, no support ticket. A task that used to require rebuilding the whole table now takes a click.",
         videos: [
           {
-            src: "/images/planful/Bulk%20Update%20Video.mov",
+            src: "/images/planful/bulk-update.mp4",
             label: "Bulk update",
             caption: "Overwrite replaces. Append adds. Both visible at the moment they matter.",
           },
@@ -412,57 +539,9 @@ export const caseStudies: CaseStudy[] = [
          The end-to-end story is now: load → transform → validate
          → publish → map (next decision). Publish-specific friction
          doesn't earn its own beat. */
-      /* 8. Data Maps: the next phase. No static image (the video covers
-         it). Title reframes this as a forward-looking project beat,
-         not a post-publish step. */
-      {
-        title: "The next phase of the project",
-        body: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Data Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
-        videos: [
-          {
-            src: "/images/planful/MAPS.mov",
-            label: "Data Maps",
-            caption: "Visual mapping from ESM columns to financial model dimensions.",
-          },
-        ],
-      },
     ],
 
-    users: [
-      {
-        role: "Finance Analyst",
-        name: "Data preparation · period close",
-        bullets: [
-          "Manages ESM table updates at quarter and period close",
-          "Runs data loads, validates column types, and publishes to the core financial model",
-          "Previously tied to a Windows machine running the Excel plug-in",
-          "Errors in the load corrupt forecast data downstream. zero tolerance",
-        ],
-        coreTension: "Speed at period close vs. zero tolerance for data errors",
-      },
-      {
-        role: "Business Team Owner",
-        name: "Self-service data loading · no mediator",
-        bullets: [
-          "Owns the data but couldn't load it. always routed through Finance",
-          "Updates were delayed by Finance's queue and manual back-and-forth",
-          "Needs to load independently without risking the shared model",
-          "Doesn't think in database terms. needs the tool to think for them",
-        ],
-        coreTension: "Autonomy without the guardrails Finance used to provide",
-      },
-      {
-        role: "Finance Manager",
-        name: "Model integrity · data governance",
-        bullets: [
-          "Accountable for everything that enters the core financial model",
-          "Historically gatekept access to prevent costly load errors",
-          "Goal: let teams self-serve without losing oversight",
-          "A single bad publish can ripple through quarterly forecasts",
-        ],
-        coreTension: "Can't review every load personally. but can't afford not to",
-      },
-    ],
+    epilogue: "Once data is published, the next step is mapping each ESM column to the right dimension in the core financial model. Today the team handles this through a backend handoff. We designed the next project, Data Maps, where finance teams draw those connections visually themselves, closing the loop end to end.",
 
     outcomes: [
       "3.5 hrs → 10 to 15 min. A ~95% reduction in time on task. Simple updates that took half a day now take a coffee break.",
@@ -475,28 +554,29 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     lesson:
-      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.\n\nThe 95% time reduction didn't come from a faster grid. It came from asking: \"What decisions can the system make so users only decide when it matters?\"",
+      "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.",
   },
   {
     slug: "astra",
     number: "00",
-    title: "AI Contract Review & Approval Workflow",
-    subtitle: "What does 85 to 90% AI accuracy look like as a UX? Two flows, built in a weekend with Claude Code.",
-    cardImpact: "Full working prototype shipped in a weekend. AI review + approval in 2 flows",
+    title: "AI Contract Review and Approval Workflow",
+    titleHighlights: { "AI": "violet", "Contract Review": "amber", "Approval Workflow": "indigo" },
+    subtitle: "When AI is right 85 to 90% of the time, what should the other 10 to 15% look like? Two flows, built in 6–8 hours with Claude Code.",
+    cardImpact: "Working prototype shipped in 6–8 hours. AI review and approval in 2 flows.",
     company: "AI Exploration",
     type: "AI · B2B SaaS",
     role: "AI UX",
-    timeline: "2026 · Weekend build",
+    timeline: "2026 · 6–8 hour build",
     team: "Solo (designer + Claude Code)",
     tags: ["AI UX", "B2B SaaS", "Built with Claude"],
     heroLabel: "AI Exploration",
     confidential: false,
 
     summary:
-      "==When an AI is right 85 to 90% of the time, what does the remaining 10 to 15% look like in the interface?== Two flows, built in a weekend with Claude Code. Working through that answer.",
+      "==When AI is right 85 to 90% of the time, what should the other 10 to 15% look like in the interface?==\n\nTwo flows, built in 6–8 hours with Claude Code. Still working through the answer.",
 
     context:
-      "B2B contract intelligence: AI extracts 30 to 40 fields from a vendor contract, a human reviews and corrects, approval routes through a configured workflow. The design problem isn't the upload or the dashboard. It's the seam between what the model extracted and what the reviewer actually trusts.",
+      "AI scans a contract and pulls out 30 to 40 fields.\n\nA person checks the result, fixes mistakes, and sends it for approval.\n\n==The hard part isn't the upload or the dashboard.== It's the moment a reviewer has to decide whether to trust what the AI pulled out.",
 
 
     users: [
@@ -504,85 +584,85 @@ export const caseStudies: CaseStudy[] = [
         role: "Procurement Professional",
         name: "Contract review · data accuracy",
         bullets: [
-          "Processes 5 to 15 contracts per day",
-          "Reviews AI-extracted fields, corrects mistakes, approves data before it enters the workflow",
-          "Errors that slip through have real financial consequences",
-          "Needs to move fast without sacrificing accuracy",
+          "Handles 5 to 15 contracts a day.",
+          "Checks the AI's work, fixes mistakes, approves the data.",
+          "Mistakes cost the company real money.",
+          "Needs to move fast without losing accuracy.",
         ],
-        coreTension: "Speed vs. accuracy at 85 to 90% AI reliability",
+        coreTension: "Speed vs. accuracy when the AI is right 85 to 90% of the time.",
       },
       {
         role: "Legal Professional",
         name: "Contract review · risk and liability",
         bullets: [
-          "Reviews the same contract as procurement. but for risk, not data accuracy",
-          "Scrutinizes indemnity clauses, SLAs, liability terms",
-          "Errors that slip through have real legal consequences",
-          "Needs a view scoped to what legal actually owns",
+          "Reads the same contract as procurement, but for risk, not data.",
+          "Focuses on indemnity, SLAs, and liability terms.",
+          "Mistakes here become legal problems.",
+          "Needs a view that shows only what legal owns.",
         ],
-        coreTension: "Shared document, completely different job",
+        coreTension: "Same document, completely different job.",
       },
       {
         role: "Procurement Manager",
         name: "Workflow configuration · approval routing",
         bullets: [
-          "Configures 10 to 15 approval chains across the organisation",
-          "Rules vary by contract type, dollar threshold, vendor risk, and department",
-          "Currently managed through email. approvals get stuck, skipped, or misrouted",
-          "Needs to build and edit rules without engineering support",
+          "Sets up 10 to 15 approval paths across the company.",
+          "Rules change by contract type, dollar amount, vendor risk, and department.",
+          "Today it runs over email. Approvals get stuck, skipped, or sent to the wrong person.",
+          "Needs to build and edit rules without engineering help.",
         ],
-        coreTension: "Complex logic that must feel like plain language",
+        coreTension: "Complex logic that has to read like plain English.",
       },
     ],
 
     uxGoals: [
       {
-        title: "Make AI uncertainty actionable",
-        body: "At 85 to 90% accuracy, every field needs an explicit state. confident, needs review, or missing. The reviewer shouldn't have to infer confidence from a percentage or a tooltip.",
+        title: "Make AI uncertainty easy to act on",
+        body: "Every field gets a clear state: confident, needs review, or missing.\n\nThe reviewer shouldn't have to guess confidence from a number or a tooltip.",
       },
       {
-        title: "Separate the two review jobs",
-        body: "Procurement and legal read the same contract but own different decisions. One shared surface forces each role to scroll past work that isn't theirs.",
+        title: "Split the two review jobs",
+        body: "Procurement and legal read the same contract but care about different things.\n\nOne shared screen makes each role scroll past work that isn't theirs.",
       },
       {
-        title: "Make rule-building feel like writing a sentence",
-        body: "A procurement manager building approval paths shouldn't have to think in condition logic. Every rule should compile to plain English they can read back and verify.",
+        title: "Make rule building feel like writing a sentence",
+        body: "A manager building approval paths shouldn't have to think in conditions.\n\nEvery rule should read back in plain English they can check at a glance.",
       },
     ],
 
     productGoals: [
       {
-        title: "Replace email-based approval routing",
-        body: "Approvals currently get stuck, skipped, or sent to the wrong person. A configurable workflow layer removes the manual dependency and makes the process auditable.",
+        title: "Replace email-based approvals",
+        body: "Today, approvals get stuck, skipped, or sent to the wrong person.\n\nA configurable workflow removes the manual handoff and makes the process easy to track.",
       },
       {
-        title: "Reduce errors entering the approval chain",
-        body: "Wrong data approved by procurement becomes a legal or financial liability downstream. The review interface is the last line of defence before data is treated as fact.",
+        title: "Catch errors before they enter the approval chain",
+        body: "Bad data approved by procurement becomes a legal or financial problem later.\n\nThe review screen is the last check before that data is treated as a fact.",
       },
       {
-        title: "Ship two flows that work as a system",
-        body: "Contract review feeds the approval workflow. Designing them separately misses the coupling. the intake quality directly affects what routes through the approval chain.",
+        title: "Ship two flows that work together",
+        body: "Contract review feeds the approval workflow.\n\nDesigning them apart misses how they connect: what comes in shapes what gets routed.",
       },
     ],
 
     problem:
-      "Most AI products treat model uncertainty as a footnote: a confidence percentage tucked into a tooltip the reviewer never opens. ==That's not a UX solution. It's a UX abdication.==\n\nAt 85 to 90% accuracy, every extracted field is a micro-decision: trust it, flag it, or fix it. That decision needs to be cheap, visible, and impossible to accidentally skip. Designing that interaction, and the routing layer that governs what happens after, is the actual product.",
+      "Most AI products hide uncertainty in a tooltip the reviewer never opens.\n\n==That's not design. That's ducking the problem.==\n\nAt 85 to 90% accuracy, every field is a small decision: trust it, check it, or fix it.\n\nThe decision has to be fast, easy to see, and impossible to skip.\n\nDesigning that moment, and the rules for what happens next, is the actual product.",
 
     decisions: [
       {
-        title: "Two roles, two tracks: same contract, different emphasis",
+        title: "Two roles, two tracks. Same contract, different focus.",
         body:
-          "Procurement resolves factual gaps; legal scrutinizes indemnity, SLAs, and liability terms. A shared screen forces each role to scroll past noise they don't own. The flow separates them: procurement clears the unresolved queue and hands off. Legal sees only what matters to them, in the order it matters.",
+          "Procurement fixes data gaps. Legal looks at indemnity, SLAs, and liability.\n\nOne shared screen makes each role scroll past work that isn't theirs. So the flow splits them.\n\nProcurement clears the open fields first, then hands off. Legal sees only what matters to legal, in the order that matters.",
       },
       {
-        title: "Three explicit field states, not a confidence score",
+        title: "Three clear field states, not a confidence number",
         body:
-          "Confident, needs review, missing: every extracted field carries one. The reviewer sweeps unresolved fields first. The title bar shows a live count. Approval is gated on zero remaining. ==The queue is the work, not the document.==",
+          "Every field is tagged: confident, needs review, or missing.\n\nThe reviewer handles the open ones first. The top bar shows how many are left. You can't approve until that number hits zero.\n\n==The list of open items is the work, not the contract.==",
       },
       {
-        title: "Every workflow rule compiles to a sentence a human can read",
+        title: "Every rule reads like a sentence",
         body:
-          "An admin building 10 to 15 approval paths shouldn't have to parse condition logic in their head. At every step of the builder, the configured rule renders as plain English: 'Software contracts under $50K go to direct manager only.' That sentence is the verification surface during build, and the artifact they scan on the landing page a month later.",
+          "An admin building 10 to 15 approval paths shouldn't have to think in logic. At every step, the rule shows as plain English.\n\nExample: \"Software contracts under $50K go to direct manager only.\"\n\nThat sentence is how they check the rule while building it, and how they read it back a month later.",
       },
     ],
 
@@ -593,23 +673,25 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     approach:
-      "==6 to 8 hours, problem to live React prototype, with Claude Code.==\n\nClaude was the thought partner throughout, not just for code. Structuring the problem space, pressure-testing interaction hypotheses, iterating wireframes fast enough to throw most of them away. The role-based handoff insight didn't come from a brief; it surfaced asking whose attention an unresolved indemnity clause actually needs.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
+      "==6–8 hours, from problem to a working React prototype, using Claude Code.==\n\nClaude was a thinking partner, not just a code tool.\n\nWe worked through the problem together, tested ideas, and threw away most of the wireframes.\n\nThe role-based handoff didn't come from a brief. It came from asking who actually needs to see an open indemnity clause.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
 
     outcomes: [
-      "Validated by a product-stage B2B company. the interaction model and role-based handoff were reviewed and confirmed as production-ready thinking. Two complete flows shipped in 8 hours.",
+      "Reviewed with Astra's contract intelligence team. The role-based handoff was the part they pushed back on the most, and the part we kept.",
+      "Two complete flows, shipped in 6–8 hours.",
     ],
 
     lesson:
-      "AI UX isn't about making the model look smarter. It's about making the human's correction work feel effortless. ==The interface that earns trust makes uncertainty visible, actionable, and impossible to skip.==",
+      "AI UX isn't about making the model look smart.\n\nIt's about making the person's correction work feel easy.\n\n==The interface earns trust by making uncertainty obvious, fixable, and impossible to skip.==",
 
     reflection:
-      "The role-based handoff is a hypothesis, not a finding. The real question (do procurement and legal want separate surfaces or a shared negotiation space?) needs users, not wireframes. Speculative work earns its keep by making the bet explicit enough to disprove.",
+      "The role-based handoff is a hypothesis, not a finding.\n\nThe real question (do procurement and legal want separate screens, or a shared negotiation space?) needs users, not wireframes.\n\nSpeculative work earns its place by making the bet clear enough to disprove.",
   },
   /* ── #07 Bringing Apple into Business Listing Performance (fresh, verbatim) ── */
   {
     slug: "apple-business-listings",
     number: "07",
-    title: "Bringing Apple Maps into Business Listing Performance",
+    title: "Apple Maps Business Insights",
+    titleHighlights: { "Apple Maps": "indigo" },
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
     cardImpact: "~68% weekly adoption from launch. Apple Maps data visible across 100M+ US users",
     company: "Reputation.com",
@@ -624,9 +706,16 @@ export const caseStudies: CaseStudy[] = [
     sectionLabels: {
       overview: "What's a Business Listing?",
       problem: "The Challenge",
-      decisions: "What I Did",
-      outcomes: "The Impact",
-      lesson: "What This Taught Me",
+      decisions: "Key design decisions",
+      outcomes: "Result",
+      lesson: "Learnings",
+    },
+    /* Rail-only labels: the narrative section headings ("What's a
+       Business Listing?", "The Challenge") read well in place but
+       don't scan well in a 200px rail. Use category words there. */
+    navLabels: {
+      overview: "Context",
+      problem: "Problem",
     },
 
     chromeUrl: "app.reputation.com",
@@ -645,41 +734,82 @@ export const caseStudies: CaseStudy[] = [
     contextVideo: "/images/reputation/after.mp4",
 
     context:
-      "When you search \"coffee shop near me\" on your phone, the results come from platforms like Google Maps, Apple Maps, or Bing. Each platform shows business information: hours, phone number, photos, reviews. Enterprises with hundreds or thousands of locations need to manage how they appear across all these platforms and track which ones actually bring customers through the door. That's what Reputation does, and the Business Listing Performance dashboard is where customers go to see if their listings are working.",
+      "When someone searches \"coffee shop near me\", the results come from platforms like Google Maps, Apple Maps, or Bing, each surfacing your listing to potential customers.",
+
+    contextSection: {
+      title: "Why Apple Business Listings matter",
+      stat: "100M+",
+      statLabel: "US customers use Apple Maps daily",
+      cards: [
+        {
+          tag: "Apple Maps reach",
+          body: "The default navigation app on every iPhone, iPad, Mac, and CarPlay system. For any business with physical locations, it's a primary discovery channel alongside Google.",
+        },
+        {
+          tag: "What a listing drives",
+          body: "A Business Listing on Apple Maps determines whether a customer calls, gets directions, or visits a website. At enterprise scale (hundreds of locations) even marginal improvements compound across the entire portfolio.",
+        },
+        {
+          tag: "The visibility gap",
+          body: "Reputation partnered with Apple in 2023 to surface Apple Business Connect data. The dashboard hadn't caught up, leaving customers with no way to see how their Apple Maps listings were actually performing.",
+        },
+      ],
+    },
+
+    contextCards: [
+      {
+        title: "What each listing shows",
+        lead: "Every platform surfaces the same signals to people searching nearby.",
+        points: [
+          "Hours, address, and phone number",
+          "Photos and customer reviews",
+          "Direction requests and website clicks",
+        ],
+      },
+      {
+        title: "The enterprise challenge",
+        vsGrid: {
+          leftLabel: "What they manage",
+          leftDesc: "Hundreds or thousands of location listings across Google, Apple, Bing, and Facebook, each needing accurate, consistent information.",
+          rightLabel: "What they need to know",
+          rightDesc: "Which platforms actually drive calls, directions, and foot traffic, not just views. That's what the Business Listing Performance dashboard answers.",
+        },
+      },
+    ],
 
     contextImage: {
-      src: "/images/reputation/Thumbnail .png",
+      src: "/images/reputation/thumbnail.jpg",
       alt: "Listings Performance dashboard",
     },
 
     problem:
-      "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard. Multi-location businesses managing hundreds of locations couldn't see how their Apple Maps listings were performing, a critical blind spot when 100M+ US customers use Apple Maps daily.\n\nThe real problem wasn't just adding Apple. The existing dashboard was:\n\n- 80% Google-specific widgets (search patterns, calling times, geographic data)\n- 20+ cluttered sections with no clear grouping\n- Lacking clear structure (common metrics mixed with platform-specific data)\n\nThe design question: How do you integrate Apple's limited data into a Google-dominant dashboard without making it look broken, while giving all platforms equal respect?",
+      "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard. Multi-location businesses managing hundreds of locations couldn't see how their Apple Maps listings were performing, a critical blind spot when 100M+ US customers use Apple Maps daily.\n\nThe real problem wasn't just adding Apple. The existing dashboard was:\n\n- 80% Google-specific widgets (search patterns, calling times, geographic data)\n- 20+ cluttered sections with no clear grouping\n- Lacking clear structure (common metrics mixed with platform specific data)\n\nThe design question: How do you integrate Apple's limited data into a Google-dominant dashboard without making it look broken, while giving all platforms equal respect?",
 
     projectGoals: {
       business:
-        "Reputation partnered with Apple in 2023. The dashboard hadn't caught up.\n\n- Deliver on the Apple partnership promise by surfacing Apple Business Connect performance data\n- Close the blind spot for 100M+ iOS users who use Apple Maps as default navigation\n- Strengthen Reputation's position as the only platform with unified multi-platform listing insights at enterprise scale",
+        "- Apple partnership since 2023, the dashboard hadn't caught up\n- Surface Apple Business Connect data inside the dashboard\n- Remove the Apple Maps blind spot for 100M+ daily US users\n- Make Reputation the only platform with unified multi-platform listing analytics",
       ux:
-        "- Create platform equity when data capabilities vary dramatically (Google = rich behavioral data, Apple/Bing = basic engagement metrics)\n- Avoid making the dashboard feel like \"Google insights with other platforms tacked on\"\n- Prevent empty states that would make Apple integration look broken or incomplete\n- Enable unified cross-platform performance view without sacrificing valuable platform-specific insights",
+        "- Platform equity: Apple, Bing, and Facebook alongside Google, not as afterthoughts\n- No broken empty states when Apple suppresses data below its privacy threshold\n- Unified cross-platform view; platform-specific depth available on demand",
       user:
-        "- Marketing managers and local SEO specialists managing dozens to thousands of locations\n- Can customers find us on Apple Maps?\n- Which platform drives more direction requests, Google or Apple?\n- Why is our Austin location underperforming on Apple compared to Dallas?\n- Did updating our photos across platforms actually increase engagement?",
+        "- Marketing managers and local SEO teams managing hundreds of locations\n- Can customers find us on Apple Maps?\n- Which platform drives more direction requests, Google or Apple?\n- Why is our Austin location underperforming on Apple vs. Dallas?\n- Did updating photos across platforms actually move the needle?",
     },
 
     decisions: [
       {
         title: "Made tough calls to create balance",
         body:
-          "Removed low-value Google widgets:\n\n- Deprecated APIs (Google was sunsetting them anyway)\n- Niche insights with low engagement (time-of-day calling patterns)\n- Redundant visualizations (had both donut + line chart for many metrics)\n\nResult:\n- Reduced from 20 widgets → 12 focused sections\n- Cut scroll length by 40%\n- Increased value per widget\n\n==This was risky== (customers relied on some of those insights), but data showed users wanted breadth over depth: quick answers across all platforms, not exhaustive detail on one.",
+          "Removed low value Google widgets:\n\n- Deprecated APIs (Google was sunsetting them anyway)\n- Niche insights with low engagement (time of day calling patterns)\n- Redundant visualizations (had both donut + line chart for many metrics)\n\nResult:\n- Reduced from 20 widgets → 12 focused sections\n- Cut scroll length by 40%\n- Increased value per widget\n\n==This was risky== (customers relied on some of those insights), but data showed users wanted breadth over depth: quick answers across all platforms, not exhaustive detail on one.",
         image: {
-          src: "/images/reputation/overview before:after .png",
+          src: "/images/reputation/overview-before-after.png",
           alt: "Overview cards before and after: brand colour removed in favour of neutral, data-legible design",
         },
       },
       {
         title: "Designed interactive visualizations for progressive disclosure",
         body:
-          "Sunburst chart with drill-down.\n\n==Benefits:== Unified view AND platform-specific insights. No tab-switching or modals needed. Users explore at their own pace.",
+          "Sunburst chart with drill-down.\n\n==Benefits:== Unified view AND platform specific insights. No tab switching or modals needed. Users explore at their own pace.",
         image: {
-          src: "/images/reputation/Sunburst Chart Interaction.jpg",
+          src: "/images/reputation/sunburst-chart.jpg",
           alt: "Sunburst chart interaction: top-level Actions breakdown, click-through showing source-level distribution",
           caption: "Left: Default view showing action types across all platforms (Calls, Directions, Website). Right: Drill-down view showing platform breakdown after clicking \"Website\".",
         },
@@ -687,11 +817,12 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Restructured the entire dashboard into 5 clear sections",
         body:
-          "The original dashboard had 20+ widgets with no grouping. common metrics mixed with Google-specific data, making it impossible to scan. The redesign organized everything into 5 clear sections:\n\nOverview: Cross-platform summary (All platforms)\nActions: Calls, directions, website clicks (All platforms)\nImpressions: Listing views breakdown (All platforms)\nDiscovery: Search patterns, device types (Google only)\nAdditional Actions: Platform-unique actions (Per platform)\n\n==Key insight:== By explicitly labeling platform-specific sections, users understood why Apple wasn't everywhere. It's not a gap, it's a capability difference.",
+          "The original dashboard had 20+ widgets with no grouping. common metrics mixed with Google-specific data, making it impossible to scan. The redesign organized everything into 5 clear sections:\n\nOverview: Cross-platform summary (All platforms)\nActions: Calls, directions, website clicks (All platforms)\nImpressions: Listing views breakdown (All platforms)\nDiscovery: Search patterns, device types (Google only)\nAdditional Actions: Platform-unique actions (Per platform)\n\n==Key insight:== By explicitly labeling platform specific sections, users understood why Apple wasn't everywhere. It's not a gap, it's a capability difference.",
         image: {
-          src: "/images/reputation/Before:After image .jpg",
+          src: "/images/reputation/before-after-image.jpg",
           alt: "Before and after of the Listings Performance dashboard: from a wall of 20+ Google-heavy widgets to a clear 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
           caption: "before: 20+ widgets, no grouping, Google-heavy. After: 5 clear sections, platform equity, Apple integrated.",
+          width: "70%",
         },
       },
       {
@@ -699,16 +830,26 @@ export const caseStudies: CaseStudy[] = [
         body:
           "During live testing, we discovered Apple suppresses metrics below a privacy threshold (undocumented in their API). Some customers saw zeros and thought it was broken.\n\nSolution: Added a dismissible banner explaining Apple's privacy policy and suggesting longer date ranges for accurate data.\n\n==Proactive transparency > reactive support tickets.==",
         image: {
-          src: "/images/reputation/Honest about what Apple can't show.jpg",
+          src: "/images/reputation/honest-apple-cant-show.jpg",
           alt: "Apple data suppression notice on the Listings Performance dashboard",
         },
       },
     ],
 
     outcomesImage: {
-      src: "/images/reputation/Listings Performance_Final Design.jpg",
+      src: "/images/reputation/listings-performance.jpg",
       alt: "Final design of the Listings Performance dashboard: 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
       caption: "the final dashboard: 5 sections, platform equity, Apple integrated.",
+      width: "65%",
+    },
+
+    resultSection: {
+      heading: "What the integration delivered",
+      intro: "",
+      metrics: [
+        { value: "~68%", label: "of customers check Apple Maps data week on week post-launch" },
+      ],
+      body: "",
     },
 
     outcomes: [
@@ -716,7 +857,7 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     lesson:
-      "Small tasks aren't always small. What started as \"add Apple to the dashboard\" became a 3-month strategic redesign involving weeks of stakeholder alignment, iterative exploration, and post-launch discovery.\n\nPatience through consensus-building pays off. 45 days to finalize the approach felt slow, but that collaborative process with PM, engineering, and leadership created buy-in that made execution smooth and led to a better solution.\n\nSometimes the best UX isn't changing the system. It's helping users understand it. We couldn't change Apple's privacy threshold, but we could educate users about why it exists and what to do about it.",
+      "Small tasks aren't always small. What started as \"add Apple to the dashboard\" became a 3 month strategic redesign involving weeks of stakeholder alignment, iterative exploration, and post launch discovery.",
 
     references: [
       { label: "Reputation launches integration with Apple Business Connect (Reputation press room)", url: "https://reputation.com/press-room/reputation-launches-integration-with-apple-business-connect/" },
@@ -730,360 +871,292 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "fancode-homepage",
     number: "06",
-    title: "FanCode Homepage Redesign",
-    subtitle: "We were sorting the homepage by content. Our users were sorting it by tournament.",
-    cardImpact: "Below-fold dead zone reversed. unused sections became active across every user cohort",
+    title: "Rethink FanCode Sports app Homepage",
+    titleHighlights: { "Homepage": "indigo" },
+    subtitle: "How a mental model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15 - 20%.",
+    cardImpact: "15 - 20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",
     company: "FanCode",
     type: "Consumer Mobile App · Sports & Streaming",
-    role: "Manager UX (IC)",
-    timeline: "1 month",
-    team: "Product, Data, Content, Engineering",
-    tags: ["Consumer Mobile", "Sports", "Homepage", "Retention", "IA", "Design Systems"],
+    role: "UX Manager",
+    timeline: "30 days · 2022",
+    team: "Product, Data Science, Content, Engineering, CEO",
+    tags: ["Consumer Mobile", "Sports", "Information Architecture", "Mental Model Design", "Component Systems", "Content Strategy"],
     heroLabel: "Real Work",
     confidential: true,
 
     metrics: [
-      { value: ">90%", label: "of users dropped past the first fold (before)" },
-      { value: "3M+", label: "monthly active users on FanCode at the time" },
+      { value: ">90% drop-off", label: "Before", body: "Below the 1st fold of the homepage, over 90% of users dropped off." },
+      { value: "↑ ~15 - 20%", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15 - 20% across user cohorts." },
     ],
 
-    summary:
-      "More than 90% of FanCode users dropped past the first fold. India's all-in-one sports app (live streaming, scores, news, shop, 3M+ monthly active users) was running on a homepage where most of the page was dying below the fold. ==I restructured around how cricket fans actually think: tournament first, then match, then teams and players. The dead zone reversed.==",
+    summary: "",
 
-    contextVideo: "/images/fancode/hp-overview.mp4",
+    contextVideo: "/images/fancode/fancode-homepage-before.mp4",
 
-    context:
-      "The homepage had become the company's growth bottleneck. Every new feature, content investment, or campaign had to fight for first-fold space because below the fold didn't work. Promotional placements, content launches, partnerships: every team was lobbying for the one slot that converted. Fixing the dead zone wasn't a UX project. It was a growth unlock for the entire product.",
+    contextStats: [
+      { stat: "~50M+ users", label: "FanCode is India's premier live sports streaming platform, part of the Dream Sports group." },
+    ],
 
-    problem:
-      "From the original brief: data suggests users scroll on the Homepage, but very few click or consume anything below the first fold.",
+    appStoreLinks: {
+      android: "https://play.google.com/store/apps/details?id=com.dream11sportsguru&hl=en_IN",
+      ios:     "https://apps.apple.com/in/app/fancode-live-cricket-scores/id1406379831",
+    },
 
-    problemBreakdown: {
-      points: [
-        "More than 90% of users dropped past the first fold without tapping anything below it",
-        "Match cards absorbed almost every click across every cohort (Organic, Marketing, Dream11 fantasy users)",
-        "New and diverse content struggled to gain visibility against this concentration",
+    contextSection: {
+      title: "Context",
+      intro: "The homepage was created once and reused. It became a shared billboard where every team competed for the same limited real estate.",
+      cards: [
+        {
+          tag:  "The Contest",
+          body: "The first fold was constantly contested. Any team that wanted discovery, adoption, or visibility pushed for prime placement.",
+        },
+        {
+          tag:  "The Paradox",
+          body: "It was the only reliable discovery surface in the product, so the pressure was relentless, and the space was finite.",
+        },
       ],
-      impact: "Saurabh (the first-time user we built the brief around) opened the app from an ad, scrolled, and left without tapping anything past the match card.",
     },
 
-    insight:
-      "==The homepage sorted by content format. Cricket fans sort by tournament.== Match the structure to how users actually think, and the rest of the page starts working.",
-
-    approach:
-      "The team had been trying to fix this homepage for a while. The metric wasn't moving.\n\nSo before touching the design, I asked a different question: are we even solving the right problem?\n\nI pulled together everything we already knew. The scroll data. What PMs across teams kept saying. The CEO's repeated feedback. Old research that had never gone anywhere. Put it all on one wall.\n\nThe same thing kept showing up. We'd built the homepage around the content we had: Live Updates, Top Videos, Trending. But our users weren't thinking that way. A cricket fan opens the app thinking 'IPL today, India tour next.' Not 'I want to look at Top Videos.' The page was speaking a different language than its users.\n\n==That single shift, sort by tournament not by content type, became the whole strategy.== Every design move came from there. Pattern-based IA. Tournament-shaped blocks. Personalisation as a roadmap, not a launch feature.\n\nThe rest was execution. Scroll audit, competitor benchmark, stakeholder deck, handoff, design QA, post-launch numbers in Looker. The work everyone shows off in a case study. But the actual unlock happened before any of that, when I refused to redesign until I'd asked the right question.",
-
-    uxGoals: [
-      {
-        title: "Match tournament-first navigation",
-        body: "Cricket fans open the app thinking 'IPL today, India tour next'. not 'I want Top Videos'. Every below-fold section should answer a tournament question, not a content-format question.",
-      },
-      {
-        title: "Make below-the-fold scannable",
-        body: "More than 90% of users dropped past the first fold without tapping. The structure needed to earn scroll. clear section shapes, consistent rhythm, and deliberate pattern breaks that signal value at a glance.",
-      },
-      {
-        title: "Teach the pattern once, apply it everywhere",
-        body: "Each tournament section follows the same structure: matches → updates → videos. Learn it once on IPL and the entire page becomes legible. Cognitive load should drop with every new section, not reset.",
-      },
-    ],
-
-    productGoals: [
-      {
-        title: "Reverse below-fold drop-off",
-        body: "The dead zone below the first fold wasn't a scroll problem. it was a trust problem. The goal was to turn single-digit below-fold consumption into real traffic distributed across the page.",
-      },
-      {
-        title: "Give PMs more than one slot",
-        body: "Every team was lobbying for first-fold space because nothing else converted. Fixing the structure meant unlocking multiple distribution points, so campaigns, partnerships, and content launches had somewhere to land.",
-      },
-      {
-        title: "Ship personalisation in two phases",
-        body: "Preference-based personalisation (Continue Watching, Recommended for You) ships immediately. Behaviour-based personalisation waits for the consumption pipeline. Two tracks, clear data milestone between them.",
-      },
-    ],
-
-    researchEvidence:
-      "Before touching any designs, I mapped everything the team already knew: scroll data, PM feedback, CEO input, and months of old research that had never gone anywhere. Four signals kept appearing.",
-
-    researchFindings: [
-      {
-        title: "Two named users we designed for",
-        body: "The brief defined two scenarios. Saurabh: 21-25, cricket-only fan, downloaded FanCode from an ad. Spends time on the homepage trying to understand what the app offers. Karan: 21-25, cricket-only, plays fantasy sports, mid-income, Android plus a Firestick. Already a FanCode user but defaults to Cricbuzz for daily news and scores. His own words from the research: 'FanCode to me should be working, functioning like Cricbuzz, with the value add of live streaming and shopping.' Both followed the same mental model: tournaments, then matches, then teams and players, then updates.",
-      },
-      {
-        title: "What leadership signalled",
-        body: "Direct feedback from the CEO lined up with the data. One: make it easy to navigate and find things. Two: explore if we can reduce the size of the nudge in the first fold. Three: it lacks a sense of separation, it's hard to focus on content pieces in the homepage. The third call was the strongest signal that the structural problem was visible to leadership, not just the data.",
-      },
-      {
-        title: "Content team constraints",
-        body: "Sessions with the content team showed what was actually possible. Original and partnership content carried different freshness windows and licensing rules. Some sections could be repackaged, like Hot Right Now from breaking news. Others could not, like sponsored Featured Videos. Knowing what could be moved meant the new IA fit content reality, not fought it.",
-      },
-      {
-        title: "The big-tournament exception",
-        body: "During IPL (India's biggest annual cricket tournament), one below-fold block pulled an order of magnitude more engagement than every other section. That gap was the proof point. The model could work below the fold when the content was high-value and the user was the right kind of fan. The fix was not teaching users to scroll. It was making every below-fold section earn its place the way IPL already did.",
-      },
-    ],
-
-    decisions: [
-      {
-        title: "First fold: lead with what users already click",
-        body: "Match cards already absorbed nearly every click across every cohort. So I rebuilt the fold around what users were already doing. Live matches and key highlights got primary slots. I shrank the promo nudge directly addressing the CEO's call: explore if we can reduce the size of the nudge. That gave Featured Videos room to surface below. Match card structure stayed the same because the data proved it was the homepage's primary value. Featured Video size was being A/B tested at handoff. The 'New from FanCode' label was being trialled for removal.\n\n==Impact:== Featured Videos got the visual weight the click data already proved they deserved. The fold stopped competing with itself. The highest-value zone (live match cards) got room to breathe.",
-        image: {
-          src: "/images/fancode/hp-card-use-case.jpg",
-          alt: "Redesigned first fold: contextual filter chips at the top, match-card-led layout below, with the shrunk nudge giving Featured Videos room to surface",
-          caption: "the redesigned first fold: filter chips on top, match cards leading, Featured Videos given room below the shrunk nudge",
-          displayHeight: "600px",
-          objectPosition: "top",
-        },
-      },
-      {
-        title: "Tournament-shaped, not content-shaped",
-        body: "I reorganised the homepage into modular tournament-based sections. Each tournament got one entry point for everything from it: matches, updates, videos, news. Content from the same tournament stopped scattering across unrelated sections elsewhere on the page. This matched how Karan and Saurabh both navigated. The page finally read coherently for the way fans think.\n\n==Impact:== Below-fold sections stopped feeling random. Cricket fans could scan the page by the only unit that mattered to them: the tournament. The same content that previously got ignored started getting clicked, because users could now find it.",
-        image: {
-          src: "/images/fancode/hp-new-concepts.jpg",
-          alt: "New FanCode homepage concept: each tournament gets its own block with matches, updates, and videos grouped together instead of scattered across content-format sections",
-          caption: "each tournament gets one block on the homepage with its matches, updates, and videos grouped together",
-          displayHeight: "700px",
-          objectPosition: "top",
-        },
-      },
-      {
-        title: "One shape, repeated. Learned once, scanned everywhere.",
-        body: "The biggest differentiator. I codified the page into one repeating shape. Every tournament-level section followed the same structure:\n\n[Tournament]\n  → Matches\n  → Updates\n  → Videos\n(repeat)\n\nThis created rhythm, reduced cognitive load, and improved scanability. The CEO's call about lack of separation was directly addressed. Users learned the pattern once and could scan the rest. Pattern Breaks like Featured Videos and FanCode Exclusives were used as deliberate interruptions, adding interest without randomness.\n\n==Impact:== The 'lacks separation' problem went away because every section now had the same shape. New content could ship into the existing pattern without redesigning the page, which is what unblocked the PMs lobbying for first-fold space.",
-        image: {
-          src: "/images/fancode/hp-concept-strategy.jpg",
-          alt: "Concept strategy diagram showing the repeating layout pattern applied across tournament-level sections of the homepage",
-          caption: "the concept strategy in full: one shape repeated across every tournament section, with deliberate pattern breaks to add interest",
-          displayHeight: "700px",
-          objectPosition: "top",
-        },
-      },
-      {
-        title: "Each tournament got its own back-room",
-        body: "I built a dedicated detail page for every tournament. Hero video, every match, every news article, every video clip from that tournament, all in one place. The homepage linked into it via tournament names and a 'See full coverage' CTA. The homepage became the entry point. The tournament page became the depth. This took pressure off the homepage to surface everything itself.\n\n==Impact:== Content distributed across the scroll instead of overloading the top. Each tournament absorbed its full coverage into one page. The homepage stopped trying to be everything for every fan.",
-        images: [
-          {
-            src: "/images/fancode/hp-hybrid-listing.jpg",
-            alt: "Tournament detail page for IPL Auction 2022: hero video at top, mixed feed of articles and videos from the same tournament below",
-            caption: "the tournament back-room: hero video at top, every article and video from that tournament in one scrollable list",
-            displayHeight: "600px",
-            objectPosition: "top",
-          },
-          {
-            src: "/images/fancode/hp-hybrid-listing-scroll.jpg",
-            alt: "Tournament detail page scrolled, with the tournament name now sticky in the top navigation bar",
-            caption: "on scroll, the tournament name sticks in the header so users always know where they are",
-            displayHeight: "600px",
-            objectPosition: "top",
-          },
-        ],
-      },
-      {
-        title: "Personalisation as a roadmap, not a launch feature",
-        body: "Continue Watching and a Recommended for You row shipped immediately, sourced from preference collection at tournament, team, and player level. The behaviour-based personalisation tier (Recommended for You drawn from what users actually watched, not just what they followed) was deferred until the consumption data pipeline was ready. A clear data milestone marked the upgrade path.\n\n==Impact:== Returning users got a personalisation surface today, not in six months. The structural fix didn't have to wait for the data pipeline. The two tracks ran in parallel, with each tier shipping when its dependencies were ready.",
-        image: {
-          src: "/images/fancode/hp-user-state-exploration.jpg",
-          alt: "Design exploration showing the four homepage states across the personalisation roadmap: first-time user, repeat user with no signal, with partial preferences, and with full behavioural personalisation",
-          caption: "the four homepage states the personalisation roadmap was designed for, from first-time user to fully personalised",
-          displayHeight: "600px",
-          objectPosition: "top",
-        },
-      },
-    ],
-
-    prototypeVideo: "/images/fancode/hp-prototype.mov",
-
-    outcomesImage: {
-      src: "/images/fancode/hp-final-ui.jpg",
-      alt: "Final FanCode homepage design: first scroll state on the left, light theme and dark theme post-scroll views on the right",
-      caption: "final design: first scroll state and the homepage post-first-fold in light and dark themes",
+    problemStat: {
+      stat:  "90%",
+      label: "of users dropped off after the first fold.",
     },
 
-    outcomes: [
-      "The dead zone reversed. Sections that previously sat at single-digit consumption started getting reached, scrolled, and clicked.",
-      "Behaviour shifted, not just clicks. Dream11 users (almost entirely match-card-only before launch) started opening tournament pages and detail surfaces.",
-      "The homepage stopped being a single-lane road. PMs stopped lobbying for the one slot that worked, because there were now many.",
-    ],
+    problem: "",
 
-    scrappedDirections: [
-      {
-        title: "Partial personalisation now vs full personalisation later",
-        reason: "Option A (chose): ship partial personalisation immediately, sourced from preference collection. Continue Watching and a Recommended row went live with the redesign. Option B (rejected): wait for the consumption data pipeline to mature, then ship full personalisation in one release. Why A: six weeks of engineering vs six months. Users got a personalisation surface today. The pipeline matures separately, with a clear data milestone marking when the behavioural layer lands.",
-      },
-      {
-        title: "Cricket-first IA vs multisport parity at launch",
-        reason: "Option A (chose): cricket-heavy IA, designed to extend cleanly to other sports later. The cricket experience went deep. Option B (rejected): full parity across football, kabaddi, and NBA from launch. Why A: cricket was the sole priority sport for the next year. Stretching design and content effort across multisport would have weakened the cricket fix that was actually moving the metric. Multisport joins later, on a structure built to receive it.",
-      },
-      {
-        title: "Shrunk nudge vs denser first-fold for promo space",
-        reason: "Option A (chose): shrink the promo nudge, give match cards and Featured Videos room. Option B (rejected): denser first-fold with more promotional surface area for campaigns and brand pushes. Why A: data showed match cards absorbed nearly every click. The CEO directly asked to shrink the nudge. Real estate for above-fold promotion was lost, but first-fold clarity was gained, which is what the metric actually needed.",
-      },
-    ],
+    insight: "The FanCode homepage was organised around what we could produce. It needed to be organised around how users think. Sports fans follow tournaments, teams, and players. Not content formats. Restructuring around that mental model was the single most important design decision of this project.",
 
-    lesson:
-      "When one surface underperforms, the cost shows up everywhere else. Teams start lobbying for the one slot that works. Below-fold disengagement was not just a UX problem at FanCode. It was a growth bottleneck. Fixing it unblocked every other team that needed homepage exposure for whatever they were shipping next.",
-
-    reflection:
-      "The CEO's feedback (hard to focus, lacks separation, reduce the nudge) was confirmed by the data before we ever heard it. That alignment made the decisions easier. Post-launch, I reviewed the numbers in Looker directly. The drop-off below the fold visibly reversed. But the deeper question, did Karan-shaped users open the competitor less, was never measured. That was the metric the brief actually asked for, and we never built the instrument to answer it.\n\nNext steps: a personalisation engine running on actual behaviour. Sport-level customisation as cricket-only stops being the constraint. Dynamic content ranking rather than static. A/B tests on layout patterns and modules to keep the system learning.",
-  },
-
-  {
-    slug: "fancode-ftux",
-    number: "02",
-    title: "First-Time User Experience",
-    subtitle: "Users were deleting the app within 2 hours of download. The product worked. The first minute didn't.",
-    cardImpact: "5 features shipped from 15 interviews. free trial, splash redesign, restructured FTUX",
-    company: "FanCode",
-    type: "Consumer Mobile App Sports & Media",
-    role: "Manager UX",
-    timeline: "2021",
-    team: "Product, Engineering, Marketing, Content, UI Design",
-    tags: ["Consumer Mobile", "Retention Design", "FTUX", "Research"],
-    heroLabel: "Real Work",
-    confidential: false,
-
-    summary:
-      "During IPL, FanCode was acquiring users fast and losing them faster. New users downloaded the app expecting to watch live cricket. Most found no live match. Those who did hit an immediate paywall. The app had no answer for the gap between what users expected and what they actually got. I led the research and redesign across onboarding, the match page, and the homepage to change what new users saw, felt, and decided in those first 60 seconds.",
-
-    metrics: [
-      { value: "~2 hrs", label: "Time before new IPL users deleted the app" },
-      { value: "15", label: "Remote user interviews across Tier 1 and Tier 2 cities" },
-    ],
-
-    context:
-      "FanCode is India's premier sports streaming app. It serves two very different users: cricket fans who want live scores and match coverage, and fantasy players building teams for real money. Both arrive through the same front door. During IPL, that door saw its highest traffic of the year. And the highest churn.",
-
-    problem:
-      "A user downloads the app to watch something live. There is no live match at that exact moment. Even if there is, clicking it shows a paywall. No instant value. No reason to trust a brand they don't know. ==Users were deleting the app within 2 hours of downloading it.== Competitors like Cricbuzz and Cricinfo didn't have this problem. Not because they had better content, but because new users knew what they were getting from the first tap.",
-
-    approach:
-      "Before any design, I needed to understand why users were leaving and whether the problem was the product or the experience. I chose remote user interviews over surveys because I wanted to observe behaviour, not collect opinions. I recruited two specific groups: primary Cricbuzz users who had also installed FanCode, and FanCode users who had downloaded and not returned. Both groups had experienced the same first-minute gap from different sides. After synthesis, I ran a stakeholder workshop with product, marketing, and engineering before presenting recommendations so the findings shaped decisions together rather than being handed down. The output wasn't a report. It was a shared roadmap.",
-
-    researchEvidence:
-      "Fifteen interviews, 1 hour each, across 16 cities: Tier 1 and Tier 2. During sessions I asked users to open both apps and show me how they normally used them. They didn't narrate. They navigated. On Cricbuzz, users moved quickly and confidently. On FanCode, they slowed down, looked around, and stopped. The pattern was the same across every session: land on the homepage, tap a match, hit the paywall, pause. The decision to delete wasn't made after extended use. It was made in that one sequence.",
-
-    researchFindings: [
-      {
-        title: "Trust before transaction",
-        body: "Users compared FanCode against apps they already trusted. They were running a trust audit in the first minute. The paywall arrived before they had any reason to believe the product was worth it.",
-      },
-      {
-        title: "Perception of speed",
-        body: "Empty screens during loading read as broken, not slow. The old splash showed player images that users tapped past quickly, landing on a homepage that hadn't finished loading.",
-      },
-      {
-        title: "Conflicting personas, one front door",
-        body: "Cricket fans and fantasy players had fundamentally different first tasks. The experience was built for neither. For new users who came for live cricket, the default Fantasy tab on the match page was the wrong place to start.",
-      },
-      {
-        title: "Ads don't matter until trust is established",
-        body: "Users said they disliked ads. But observation showed they ignored them entirely on Cricbuzz because the core product had already earned their attention. Ads-free was not a reason to switch.",
-      },
-    ],
-
-    insight:
-      "The problem wasn't the paywall. Users had no reason to trust FanCode before they hit it. Every session showed the same pattern: a trust audit in the first 60 seconds. We weren't giving them anything to pass it.",
-
-    decisions: [
-      {
-        title: "Logo animation as the illusion of speed",
-        body: "The old splash used player imagery. Users tapped through it and landed on a homepage still loading: an empty screen that read as broken. We replaced it with a logo animation: the FC mark expanding to the FANCODE wordmark on the brand's orange. The homepage preloaded behind it. Users perceived the app as fast. The tradeoff was losing player faces at the very top of the funnel. We accepted it because brand recall and perceived speed mattered more at this stage than imagery.",
-        image: {
-          src: "/images/fancode/splash-animation.png",
-          alt: "Old player-led splash versus new FC logo animation expanding to FANCODE wordmark on orange",
-          caption: "Old splash vs new: logo animation buys time for the homepage to load",
+    coreInsight: {
+      heading: "The mental model shift",
+      body: [
+        "Users don't follow content. They follow tournaments, teams, and players. Every research signal pointed to the same root cause: the homepage was organised around what we could produce, not how fans think.",
+        "A fan following the IPL doesn't think in formats. They think in one question: show me everything about IPL right now. The new homepage had to mirror that, not the editorial workflow behind it.",
+      ],
+      beforeAfter: {
+        before: {
+          header: "How the homepage was organised",
+          items: [
+            "News & updates",
+            "Video",
+            "Multi-sport blocks",
+            "Sport specific blocks",
+          ],
+          footnote: "Organised by content format",
+        },
+        after: {
+          header: "How users actually think",
+          items: [
+            "Tournaments",
+            "Teams",
+            "Players",
+          ],
+          footnote: "Organised by sports entity",
         },
       },
-      {
-        title: "5 minutes free before the paywall",
-        body: "New users had no basis to judge whether FanCode was worth paying for. We introduced a 5-minute free trial on live match pages: Watch Free Now, Free Preview, Playing Video, Free Trial Ended, Buy a Pass. Users could see and verify the actual stream quality before any money changed hands. The tradeoff was giving away paid content. We accepted it because trust had to come before transaction, and a user who experienced the product was far more likely to pay than one who hadn't.",
-        image: {
-          src: "/images/fancode/free-trial-flow.png",
-          alt: "5-minute free trial sequence from Watch Free Now through to Free Trial Ended and Buy a Pass",
-          caption: "Free trial flow: Watch Free Now to Free Preview to trial end to purchase prompt",
-        },
-      },
-      {
-        title: "Info tab first, Fantasy tab second",
-        body: "When a user tapped a match before it started, they landed on the Fantasy tab by default. For non-fantasy users (the majority of new arrivals) this was the wrong starting point. It assumed context they didn't have. We changed the default pre-match landing to the Info tab: teams, match details, tournament context. Pure cricket fans could orient. Fantasy users still had their tab one tap away. The tradeoff was leading with the tab that doesn't drive FanCode's primary monetisation. We accepted it because for a first-time user, context had to come before conversion.",
-        image: {
-          src: "/images/fancode/match-tab-default.png",
-          alt: "Match detail page: Info tab default for FTU left, Fantasy tab default right",
-          caption: "Info tab as the default: orient the new user before asking them to transact",
-        },
-      },
-      {
-        title: "Upfront registration as a retention bet",
-        body: "Data showed registered users had significantly higher retention than guests. The existing app let anyone browse without registering. We designed an upfront registration flow (splash, welcome screen, phone number, OTP, homepage) and ran it as an A/B test. The tradeoff was early friction. Some users would drop before completing registration. But the users who completed it were more likely to come back. We accepted the tradeoff because the goal was retention, not just installs.",
-        image: {
-          src: "/images/fancode/registration-ab.png",
-          alt: "Upfront registration A/B test flow: splash to welcome to phone entry to OTP to homepage",
-          caption: "Registration A/B: early commitment in exchange for higher long-term retention",
-        },
-      },
-      {
-        title: "Homepage restructured around Watch Live",
-        body: "The existing homepage buried live content inside a nav tab. New users arrived looking for live cricket and couldn't find it immediately. We restructured for the first-time experience: Watch Live card prominent at the top, personalised content segments below, and a bottom bar that surfaced Live before Fantasy Stats and Shop. We also explored moving Profile and Explore to the top nav. The tradeoff was running multiple navigation experiments in parallel, which risked muddying the signal. We scoped the first release to the live card and bottom bar only, and deferred the top nav change.",
-        image: {
-          src: "/images/fancode/homepage-nav.png",
-          alt: "Homepage navigation redesign: Watch Live card at top and restructured bottom navigation bar",
-          caption: "Watch Live as the first thing users see: what they came for, where they expect it",
-        },
-      },
-    ],
+    },
 
-    scrappedDirections: [
-      {
-        title: "Multisport as a retention hook",
-        reason: "Research showed the overwhelming majority of users came for cricket. Surfacing Football and Kabaddi content during onboarding added noise without value for the primary user. Multisport was deprioritised from the first-time experience entirely.",
-      },
-      {
-        title: "Ads-free experience as a value proposition",
-        reason: "We considered leading with FanCode's cleaner ad experience in onboarding. Research showed users had tuned out ads on Cricbuzz entirely. They didn't notice them because the core product had already earned their trust. Ads-free was not a reason to switch.",
-      },
-      {
-        title: "Multi-language onboarding",
-        reason: "We explored onboarding in Hindi and regional languages. Research showed most users in Tier 2 cities still preferred English. The complexity of localisation wasn't justified by the lift it would have produced at this stage.",
-      },
-    ],
+    discoverySection: {
+      intro: "Inputs that shaped the strategy",
+      findings: [
+        {
+          title: "The first fold turf war",
+          body: "Every team competed for the same strip of real estate with no one accountable for the page's coherence.",
+          image: {
+            src: "/images/fancode/ux-review-current-homepage.jpg",
+            alt: "UX review of the current first fold",
+            caption: "UX review · first fold",
+          },
+        },
+        {
+          title: "Content organised for operations, not users",
+          body: "Sections were sorted by content type (news, scores, videos), not by what a sports fan actually looks for.",
+          image: {
+            src: "/images/fancode/overall-homepage.jpg",
+            alt: "UX review of overall homepage",
+            caption: "UX review of overall homepage",
+          },
+        },
+        {
+          title: "Tournament discovery was broken",
+          body: "If a tournament wasn't featured in the first fold, users had no reliable way to find it.",
+        },
+        {
+          title: "The page felt stale",
+          body: "Some sections hadn't changed in weeks, a serious trust problem for a platform built on real time sport.",
+          images: [
+            { src: "/images/fancode/competitive-analysis.jpg",                                      alt: "Competitive analysis",           caption: "Competitive analysis"         },
+            { src: "/images/fancode/competitive-analysis-deep-dive.jpg", alt: "Competitive analysis deep dive", caption: "Deep dive into the problem"   },
+          ],
+        },
+      ],
+    },
 
-    outcomes: [
-      "Research delivered end-to-end: brief, 15 interviews, affinity mapping, user journey map, and an executive summary that became the input for the product roadmap",
-      "Shaped what didn't get built: multisport deprioritised for FTUX, Tour 360 Experience sequenced into the next product cycle. The research gave the team a shared basis for those decisions",
-      "Splash redesign shipped: logo animation replaced player imagery, eliminating the empty homepage state on arrival",
-      "5-minute free trial introduced on live match pages, giving new users a chance to experience the product before being asked to pay",
-      "Match page default landing tab changed from Fantasy to Info for first-time users",
-      "Upfront registration A/B test launched to measure the retention impact of early commitment",
-      "Homepage restructured with Watch Live as the primary entry point for new users",
-    ],
+
+    designStrategy: {
+      heading: "The strategic bets before a single screen was designed",
+      principles: [
+        {
+          title: "Align to the user's mental model",
+          body: "Organise around sports, tournaments, teams, and players, not content formats. The page should feel built for how fans think, not how we operate internally.",
+        },
+        {
+          title: "Design for scalability and daily content freshness",
+          body: "Build a reusable component that can be populated with any story. The structural pattern stays consistent; the content makes it feel new every day.",
+        },
+        {
+          title: "Create multiple journey entry points",
+          body: "Every section below the fold should deep link into specific parts of the app. The homepage becomes a multi-lane launchpad, not a single gateway.",
+        },
+      ],
+    },
+
+    designApproach: {
+      intro: "The redesign was built on four interconnected structural decisions. Each one addressed a specific failure mode that the discovery work had surfaced.",
+      decisions: [
+        {
+          title: "The reusable contextual component",
+          body: "Built a single Coverage Card that could be populated with any sport, tournament, team, or player story. The structural pattern was fixed; the content logic was configurable. This meant the page could feel fresh every day without requiring a design change.",
+          image: {
+            src: "/images/fancode/reusable-contextual-component.jpg",
+            alt: "Reusable Coverage Card component, populated with multiple story types",
+            caption: "Reusable Coverage Card component",
+          },
+        },
+        {
+          title: "Scroll rhythm: pattern, break, pattern",
+          body: "The page alternates between contextual content blocks and pattern breaks: Quick Singles (a visual cricket snapshot) and the Tournaments discovery browser. The breaks prevent the scroll from feeling like a feed, and give users a reason to keep going.",
+          image: {
+            src: "/images/fancode/new-homepage-seamless-flow.jpg",
+            alt: "Concept design, seamless pattern flow",
+            caption: "Seamless design pattern flow",
+          },
+        },
+        {
+          title: "Deep linking throughout and personalisation for new and returning users",
+          body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination. The same architecture supports personalised rails (Continue Watching, Recommended For You) that adapt for new versus returning users. The IA and content strategy underpinning this ensured every section had a clear ownership, a content type, and a hierarchy, so the page scaled without becoming chaotic.",
+          image: {
+            src: "/images/fancode/new-homepage-first-return-users.jpg",
+            alt: "Concept design, personalisation states for first-time and returning users",
+            caption: "Personalisation concepts for new and returning users",
+          },
+        },
+        {
+          title: "A dedicated tournament discovery block",
+          body: "A scrollable row of all active tournaments, positioned in the below fold section. Directly addresses the discovery gap the data surfaced: if a tournament wasn't in the first fold, users couldn't find it.",
+          image: {
+            src: "/images/fancode/tour-collection.jpg",
+            alt: "Tournament collection discovery block",
+            caption: "Tournament discovery block",
+            compact: true,
+          },
+        },
+      ],
+    },
+
+    canvasBoards: [],
+
+    homepageLayout: {
+      intro: "The first fold remained unchanged. It was performing well and carried strong broadcast rights value. Everything below it was restructured.",
+      firstFold: [
+        { label: "Nudge cards + Live broadcast highlights" },
+      ],
+      belowFold: [
+        { label: "Detailed coverage block (top live or upcoming story)", type: "content" },
+        { label: "\"What's Hot Right Now\": trending sport/tournament component", type: "content" },
+        { label: "Contextual coverage card (e.g. IPL, team match day, player story)", type: "content" },
+        { label: "Pattern break: \"Quick Singles\", visual cricket snapshot", type: "break" },
+        { label: "Contextual coverage card (continued)", type: "content" },
+        { label: "Pattern break: Tournaments discovery browser", type: "break" },
+        { label: "Additional sport specific blocks (football, motorsport, etc.)", type: "content" },
+      ],
+    },
 
     contribution:
-      "I owned the full arc from research planning to shipped designs. I wrote the research brief, defined the recruitment criteria, moderated all 15 interviews, and led synthesis sessions with cross-functional team members as note takers. I facilitated the stakeholder workshop that aligned product, marketing, and engineering on priority order before any design began. I designed the FTUX wireframes, the free trial flow, the match page tab logic, and the homepage restructure. I set the scope constraints that kept navigation experiments phased (one surface at a time) to avoid conflating signals across tests.",
+      "With multiple teams, product and design leadership, and the CEO all invested in the homepage, alignment was as important as the design work itself. I ran a structured workshop where I presented the redesign across four distinct user states, not just the final happy path:\n\n1. First-time user. How does the homepage feel on day one? What signals trust, surfaces the product's value immediately, and drives initial activation?\n2. Returning user, no personalisation. The baseline experience for most users. Content led, editorially curated, always fresh through the Coverage Card system.\n3. Returning user, partial personalisation. Continue Watching and Recommended for You active. The page begins to recognise you and reflect your history.\n4. Returning user, full personalisation. The future state. Homepage fully tailored to followed sports, teams, and players. Built into the architecture today; shipped in a future sprint.\n\nPresenting all four states together did two things. It gave stakeholders a coherent long term vision: this wasn't a one off visual refresh, it was a platform with room to grow. And it gave every team a clear picture of how their content would surface across each state, ==substantially reducing the internal competition for the first fold==. The system now had multiple discovery surfaces. There was room for everyone.",
 
     contributionArtifacts: [
-      "Research brief",
-      "User interviews",
-      "Affinity mapping",
-      "Journey mapping",
-      "Stakeholder workshop",
-      "Wireframes",
-      "Interaction design",
-      "Prototyping",
+      "Cross functional research synthesis",
+      "Strategy alignment with CEO + leadership",
+      "IA + content strategy",
     ],
 
-    lesson:
-      "New users don't evaluate apps on features. They evaluate them on trust. Every decision in this project was ultimately answering one question: why should I believe this app is worth my time right now? Getting the org aligned on that question before any design started was the most valuable thing I did.",
+    outcomesCompare: {
+      before: "/images/fancode/fancode-homepage-before.mp4",
+      after:  "/images/fancode/fancode-homepage-after.mp4",
+    },
+
+    beforeAfterImages: {
+      before: { src: "/images/fancode/earlier-homepage.jpg", label: "Earlier homepage" },
+      after:  { src: "/images/fancode/overall-homepage.jpg", label: "Redesigned homepage"  },
+    },
+
+    resultSection: {
+      heading: "What the data showed",
+      intro: "The redesign was validated through a staged A/B rollout, starting with under 5% of users, monitoring engagement and retention metrics week on week, then expanding to 10%, and eventually rolling out to 100% of the user base as the numbers held.",
+      metrics: [
+        { value: "15 - 20%", label: "lift in engagement below the first fold" },
+        { icon: true, label: "homepage adoption: more users entering multiple app journeys from home" },
+      ],
+      body: "",
+      rollout: [
+        { value: "<5%", label: "Initial A/B test" },
+        { value: "10%", label: "Expanded rollout" },
+        { value: "100%", label: "Full production" },
+      ],
+    },
+
+    keyDecisions: [
+      {
+        title: "Cricket first, built to expand",
+        subtitle: "Architecture decision",
+        body: "99% cricket audience. New sports slot in as content blocks, no structural rebuild needed.",
+        tags: ["Architecture", "Scalability"],
+      },
+      {
+        title: "Partial over full personalisation",
+        subtitle: "Scope decision",
+        body: "Scoped to \"Continue Watching\" and \"Recommended For You.\" Follow buttons seed the system for future use.",
+        tags: ["Personalisation", "Scoping"],
+      },
+      {
+        title: "The \"too simple\" challenge",
+        subtitle: "Stakeholder pushback",
+        body: "Stakeholders pushed back on uniformity. The counter: Instagram and YouTube both do this. Predictable structure moves attention to content.",
+        tags: ["Stakeholder Management"],
+      },
+      {
+        title: "Stakeholder alignment",
+        subtitle: "Alignment as a design deliverable",
+        body: "Mapped five personalisation states in one workshop. Leadership saw the full picture. Approval followed.",
+        tags: ["Workshop", "Alignment"],
+      },
+    ],
+
+    outcomes: [
+      "Shipped through a staged A/B rollout: starting at sub-5% of users, validating week on week before expanding to 10%, then 25%, then full rollout. At each stage, the hypothesis was validated before proceeding.",
+      "15 - 20% increase in engagement below the 1st fold of the homepage, sustained post launch across cohorts. Directly tied to the structural changes in the redesign.",
+      "Homepage adoption broadened: the Coverage Cards, Tournaments Explorer, and partial personalisation rails created multiple distinct entry points into the app's core experiences. The homepage stopped being a single gateway. It became a multi lane on ramp into the product.",
+    ],
+
+    learnings: {
+      northStar: "The hardest design problems are rarely visual. They're structural.",
+      items: [
+        "Reorganise around how users think, not what you can produce. The mental model shift was the real design decision; every visual choice followed from it.",
+        "Understand your constraints deeply, ship what moves the needle today, and design with tomorrow already in mind.",
+      ],
+    },
 
     reflection:
-      "I'd involve the growth team earlier in the free trial design. We landed on 5 minutes without access to their conversion window data. That data would have shaped the decision from the start instead of being factored in after the fact.",
+      "The hypothesis was validated. Organising content around user mental models (tournaments, teams, trending moments) rather than content formats gave users a reason to scroll. The lift was measurable, sustained, and tied directly to the structural changes.\n\nWhat I'd do differently: instrument the team level signals from day one. The Coverage Cards captured interest at the surface, but I never measured whether Karan-shaped users (the fantasy player who defaulted to Cricbuzz) opened the competitor less after the redesign. That was the metric the brief actually asked for.\n\nFollow-up work the foundation made possible: a personalisation engine running on actual behaviour, sport-level customisation as cricket only stops being the constraint, dynamic content ranking rather than static, and ongoing A/B tests on layout patterns to keep the system learning.",
   },
   {
     slug: "zetwerk-dc",
     number: "03",
+    confidential: true,
     title: "Supply chain coordination at scale",
+    titleHighlights: { "Supply chain": "amber", "scale": "indigo" },
     subtitle:
-      "Designed a digital delivery challan workflow for a 500+ supplier network, turning a paper-based process that tied up 8 employees full-time into a system any ops user could run, with built-in GST compliance for the tax team.",
+      "Designed a digital delivery challan workflow for a 500+ supplier network, turning a paper based process that tied up 8 employees full-time into a system any ops user could run, with built-in GST compliance for the tax team.",
     cardImpact: "90% user adoption in first 3 months. 800+ monthly challans off paper",
     company: "Zetwerk",
     type: "Enterprise Application, Supply Chain",
@@ -1106,23 +1179,23 @@ export const caseStudies: CaseStudy[] = [
       "Zetwerk is a manufacturing unicorn orchestrating 10,000+ factories, growing at 493% YoY.",
 
     summary:
-      "Its delivery operations were bottlenecked on paper challans handwritten in multiple languages, reconciled through spreadsheets and email. I led end-to-end design of the Delivery Challan module, turning paper into a structured digital workflow embedded in the supply chain platform.",
+      "Its delivery operations were bottlenecked on paper challans handwritten in multiple languages, reconciled through spreadsheets and email. I led end to end design of the Delivery Challan module, turning paper into a structured digital workflow embedded in the supply chain platform.",
 
     metrics: [
-      { value: "90%", label: "User adoption in first 3 months" },
-      { value: "800+", label: "Monthly challan requests handled" },
-      { value: "26", label: "Design QA improvements shipped" },
+      { value: "90%", label: "User adoption", body: "of the warehouse, quality, and logistics teams adopted the new flow in the first 3 months." },
+      { value: "800+", label: "Monthly volume", body: "challan requests handled per month after launch." },
+      { value: "26", label: "Design QA wins", body: "design QA improvements shipped across the workflow." },
     ],
 
     problem:
-      "At 493% year-over-year growth, Zetwerk's delivery process was producing 800+ challans a month. Eight people, 500+ suppliers, multiple Indian languages, all on paper, handwritten, reconciled through spreadsheets and email.\n\n==On the surface, the failure looked like delays and compliance risk. Underneath, it was structural.==",
+      "At 493% year over year growth, Zetwerk's delivery process was producing 800+ challans a month. Eight people, 500+ suppliers, multiple Indian languages, all on paper, handwritten, reconciled through spreadsheets and email.\n\n==On the surface, the failure looked like delays and compliance risk. Underneath, it was structural.==",
 
     problemBreakdown: {
       points: [
         "Manual data entry prone to errors and typos",
         "No real-time visibility into delivery or inventory status",
         "Paper challans in multiple languages, hard to standardise",
-        "Slow, error-prone communication across warehouse, quality, and logistics teams",
+        "Slow, error prone communication across warehouse, quality, and logistics teams",
         "8 employees tied up in challan creation for 800+ monthly requests",
         "Compliance risk: delayed or inaccurate tax filings due to missing data",
       ],
@@ -1136,7 +1209,7 @@ export const caseStudies: CaseStudy[] = [
     researchFindings: [
       {
         title: "Paper is the root of the error chain",
-        body: "The reliance on paper-based processes introduced frequent typos and inconsistencies, compounded by challans being handwritten in multiple languages across India. Each manual error downstream required reconciliation through slow email chains, often delaying shipments and tax filings alike.",
+        body: "The reliance on paper based processes introduced frequent typos and inconsistencies, compounded by challans being handwritten in multiple languages across India. Each manual error downstream required reconciliation through slow email chains, often delaying shipments and tax filings alike.",
       },
       {
         title: "No visibility meant no accountability",
@@ -1208,7 +1281,7 @@ export const caseStudies: CaseStudy[] = [
         title: "PO-driven auto-population",
         body: "Integrated challan creation directly with the existing order system: enter a Supplier PO and Bill From, Bill To, GST inherit from the order record. The largest class of manual error vanished, in exchange for a hard dependency on order-data quality.",
         image: {
-          src: "/images/zetwerk/dc-create.png",
+          src: "/images/zetwerk/dc-create.jpg",
           alt: "Create Delivery Challan form showing transaction details, supply type selection, and auto-populated Bill From and Bill To sections",
           caption: "Enter a Supplier PO. Bill From, Bill To, GST inherit from the order record.",
         },
@@ -1217,7 +1290,7 @@ export const caseStudies: CaseStudy[] = [
         title: "Mandatory preview before creation",
         body: "A challan is a legal document that can't be deleted once created, so we added a formatted PDF preview of the exact document about to be generated. The preview is the moment BizOps' speed and Tax's accuracy meet, against the small cost of one extra screen.",
         image: {
-          src: "/images/zetwerk/dc-preview.png",
+          src: "/images/zetwerk/dc-preview.jpg",
           alt: "Preview of Delivery Challan showing formatted PDF with CNH Manufacturing as sender, item descriptions, quantities, and GST amounts",
           caption: "Preview the exact legal document before it becomes a compliance record.",
         },
@@ -1226,7 +1299,7 @@ export const caseStudies: CaseStudy[] = [
         title: "One detail page, three documents",
         body: "Brought the DC document, linked E-way bill, and transport details onto a single detail page rather than three separate views. Density beats navigation when the original failure was context-switching.",
         image: {
-          src: "/images/zetwerk/dc-detail.png",
+          src: "/images/zetwerk/dc-detail.jpg",
           alt: "Delivery Challan detail view showing DC document attached, E-way bill with dates, and transportation details including logistics company",
           caption: "DC, E-way bill, and transport on one page. Reconciliation stops being three tabs.",
         },
@@ -1235,7 +1308,7 @@ export const caseStudies: CaseStudy[] = [
         title: "Return and Dispatch tracking, added scope",
         body: "Added a Return or Dispatch tab on the DC detail so individual goods can be marked dispatched or returned, each action time-stamped to the original challan and invoice. Tax surfaced this as a regulatory requirement in research, so we took the scope hit in exchange for a tighter timeline.",
         image: {
-          src: "/images/zetwerk/dc-return-dispatch.png",
+          src: "/images/zetwerk/dc-return-dispatch.jpg",
           alt: "Return or Dispatch tab on DC detail showing Mark Dispatch and Mark Return actions with reference IDs, dates, and return/dispatch types",
           caption: "Return or Dispatch: full lifecycle of the goods, on the same record.",
         },
@@ -1243,14 +1316,14 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     outcomes: [
-      "90% adoption within 3 months, on an internal workflow where users had spent years optimizing around spreadsheets.",
+      "90% adoption within 3 months, on an internal workflow where users had spent years optimising around spreadsheets.",
       "BizOps stopped opening four spreadsheets to find one challan.",
       "Tax stopped chasing missing data three months after the fact.",
       "26 design improvements identified and shipped through structured Design QA with PMs and engineers.",
     ],
 
     contribution:
-      "End-to-end design ownership across the full project arc: research planning, moderation of both interview formats (1:1 in-depth and group), synthesis and data collaboration, concept design, usability testing, final designs, and Design QA. I worked across a cross-functional team of PM, Development, QA, Business Analysts, Data Science, and Business Operations throughout.",
+      "End-to-end design ownership across the full project arc: research planning, moderation of both interview formats (1:1 in-depth and group), synthesis and data collaboration, concept design, usability testing, final designs, and Design QA. I worked across a cross functional team of PM, Development, QA, Business Analysts, Data Science, and Business Operations throughout.",
 
     contributionArtifacts: [
       "User Research",
@@ -1267,7 +1340,9 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "zetwerk-bu-ecosystem",
     number: "04",
+    confidential: true,
     title: "Enterprise Service Design & Operations Research",
+    titleHighlights: { "Service Design": "indigo", "Operations Research": "amber" },
     subtitle: "Five teams. Five broken workflows. Nobody had ever drawn the full picture.",
     cardImpact: "5 competing backlogs → 1 sequenced plan. first complete view of how ops actually worked",
     company: "Zetwerk",
@@ -1278,19 +1353,19 @@ export const caseStudies: CaseStudy[] = [
     heroLabel: "Real Work",
 
     context:
-      "Every company has an official system and a shadow system. The official one is in the org chart. The shadow system is the spreadsheet three people maintain, the WhatsApp group where decisions actually get made, the person whose phone you call when the platform doesn't have the answer.\n\nZetwerk was growing at nearly 500% year-on-year. That kind of growth doesn't just stress the product. It stresses every process underneath it. The platform built to coordinate five teams across hundreds of monthly orders was being systematically bypassed. Not broken. Bypassed. Everyone had quietly built their own version of how to get work done.",
+      "Every company has an official system and a shadow system. The official one is in the org chart. The shadow system is the spreadsheet three people maintain, the WhatsApp group where decisions actually get made, the person whose phone you call when the platform doesn't have the answer.\n\nZetwerk was growing at nearly 500% year on year. That kind of growth doesn't just stress the product. It stresses every process underneath it. The platform built to coordinate five teams across hundreds of monthly orders was being systematically bypassed. Not broken. Bypassed. Everyone had quietly built their own version of how to get work done.",
 
     summary:
-      "Zetwerk was growing at nearly 500% year-on-year and the PM team had a backlog. Every team had their own version of what needed fixing. Nobody disagreed there was a problem. They disagreed about where it was. I was brought in to answer one question: why isn't the platform working, and what should we build next?\n\nThe answer required mapping how work actually moved across five teams, not how it was supposed to. The output was a service blueprint, a set of personas, and a prioritised roadmap. For the first time, the PM team had a shared, evidence-based basis for what to build and why.",
+      "Zetwerk was growing at nearly 500% year on year and the PM team had a backlog. Every team had their own version of what needed fixing. Nobody disagreed there was a problem. They disagreed about where it was. I was brought in to answer one question: why isn't the platform working, and what should we build next?\n\nThe answer required mapping how work actually moved across five teams, not how it was supposed to. The output was a service blueprint, a set of personas, and a prioritised roadmap. For the first time, the PM team had a shared, evidence-based basis for what to build and why.",
 
     tldr: {
       problem: "Five teams had quietly bypassed the platform. Nobody had mapped where work actually flowed.",
-      approach: "Role-based interviews + a service blueprint reviewed and corrected by every team.",
+      approach: "Role based interviews + a service blueprint reviewed and corrected by every team.",
       outcome: "Replaced five competing team backlogs with one evidence-based product roadmap.",
     },
 
     metrics: [
-      { value: "5 backlogs → 1", label: "Competing team roadmaps replaced by a single sequenced plan the PM team could act on" },
+      { value: "5 backlogs → 1", label: "Sequenced roadmap", body: "Competing team roadmaps replaced by a single sequenced plan the PM team could act on." },
     ],
 
     problem:
@@ -1301,8 +1376,8 @@ export const caseStudies: CaseStudy[] = [
         "The system had no way to filter orders by assigned person. Everyone saw everything, all the time",
         "Business Finance managed profit & loss and financial risk positions entirely in personal Excel files",
         "Procurement negotiated supplier quotes over WhatsApp, leaving no record of the conversation anywhere",
-        "Every invoice had to route through a third-party service, adding 15 to 20 minutes of waiting per order while loaded vehicles sat idle",
-        "No real-time delivery tracking: operations managers called drivers directly to find out where shipments were",
+        "Every invoice had to route through a third party service, adding 15 to 20 minutes of waiting per order while loaded vehicles sat idle",
+        "No real time delivery tracking: operations managers called drivers directly to find out where shipments were",
         "Sales spent 1 in 4 working hours resolving delivery problems that the system should have prevented",
       ],
       impact:
@@ -1310,23 +1385,23 @@ export const caseStudies: CaseStudy[] = [
     },
 
     approach:
-      "Before the first session, I wrote three research questions: How does work actually flow across teams versus how the platform assumes it flows? Where are the highest-leverage points of failure, and who currently owns them? What would it take for each team to trust a shared system over the workarounds they'd already built?\n\nI proposed a service blueprint as the primary research artifact: a cross-functional process map that shows not just what each team does, but where their work depends on, blocks, or is invisible to everyone else's. The PM had already tried fixing the screens. It hadn't moved the numbers. The blueprint was the case for going deeper before going further.\n\nI structured sessions by role, not by division. All Operations users together regardless of which part of the business they worked in. Six people across five roles is a small sample for a system this complex. I addressed it by triangulating against four months of operational data from the data science team, and by treating the blueprint as a working document each team reviewed and corrected before it was used to make any decisions.\n\nOne scope decision I got wrong. Finance wasn't in the original research plan. I'd flagged them as relevant before we started. Payment approvals appeared in my pre-research mapping of the system. The PM pushed back: Finance doesn't interact with the platform directly. I accepted the constraint. Two weeks of Operations interviews pointing at invoice approvals later, I made the case again and got Finance added. I should have held the line in week one.",
+      "Before the first session, I wrote three research questions: How does work actually flow across teams versus how the platform assumes it flows? Where are the highest-leverage points of failure, and who currently owns them? What would it take for each team to trust a shared system over the workarounds they'd already built?\n\nI proposed a service blueprint as the primary research artifact: a cross functional process map that shows not just what each team does, but where their work depends on, blocks, or is invisible to everyone else's. The PM had already tried fixing the screens. It hadn't moved the numbers. The blueprint was the case for going deeper before going further.\n\nI structured sessions by role, not by division. All Operations users together regardless of which part of the business they worked in. Six people across five roles is a small sample for a system this complex. I addressed it by triangulating against four months of operational data from the data science team, and by treating the blueprint as a working document each team reviewed and corrected before it was used to make any decisions.\n\nOne scope decision I got wrong. Finance wasn't in the original research plan. I'd flagged them as relevant before we started. Payment approvals appeared in my pre research mapping of the system. The PM pushed back: Finance doesn't interact with the platform directly. I accepted the constraint. Two weeks of Operations interviews pointing at invoice approvals later, I made the case again and got Finance added. I should have held the line in week one.",
 
     researchEvidence:
-      "In-person sessions with six people across five roles: Operations (Bhoopendra and Mithilesh, the latter leading a 16-person regional team), Business Finance (Akansha, added mid-project), Procurement (Rama), and Sales (Priya). Each session traced a full day-to-day workflow with specific focus on when and why they reached for something outside the platform. Findings were triangulated against four months of operational data from the data science team. The completed blueprint was reviewed and corrected in a working session with each team before being used as a decision-making tool.",
+      "In-person sessions with six people across five roles: Operations (Bhoopendra and Mithilesh, the latter leading a 16-person regional team), Business Finance (Akansha, added mid-project), Procurement (Rama), and Sales (Priya). Each session traced a full day to day workflow with specific focus on when and why they reached for something outside the platform. Findings were triangulated against four months of operational data from the data science team. The completed blueprint was reviewed and corrected in a working session with each team before being used as a decision-making tool.",
 
     researchFindings: [
       {
         title: "My opening hypothesis was wrong",
-        body: "I went in expecting the core problem to be the platform's interface: too generic, no role-based filtering, hard to navigate under time pressure. Two sessions in, that hypothesis was wrong. The interface problems were real but secondary. The platform was built to a process model nobody was actually following. Fixing the UI would have made it slightly less frustrating to use a system that wasn't solving the right problem. Catching this early enough to reorient the interview guide was what made the rest of the research useful.",
+        body: "I went in expecting the core problem to be the platform's interface: too generic, no role based filtering, hard to navigate under time pressure. Two sessions in, that hypothesis was wrong. The interface problems were real but secondary. The platform was built to a process model nobody was actually following. Fixing the UI would have made it slightly less frustrating to use a system that wasn't solving the right problem. Catching this early enough to reorient the interview guide was what made the rest of the research useful.",
       },
       {
-        title: "The platform was a record-keeper, not a workflow tool",
+        title: "The platform was a record keeper, not a workflow tool",
         body: "People logged completed actions in the system but did the actual work elsewhere. Bhoopendra kept a personal Excel sheet because the platform couldn't filter to his own orders. Akansha ran financial calculations in spreadsheets only she and one colleague understood. The platform captured what had happened, not what needed to happen next. For five teams coordinating hundreds of moving parts, that distinction isn't a usability issue. It's an operational failure.",
       },
       {
         title: "The invoice delay was a process design failure, not a vendor problem",
-        body: "The invoice delay wasn't a vendor performance problem. It was a structural failure nobody had named yet. Every shipment had to route through a third-party service before a vehicle could move: 15 to 20 minutes per order, every time. Internally it was treated as a speed problem: pressure the vendor. Research showed it was structural: three parties, one sequential handoff, no shared visibility into where the delay was occurring. When a process requires sequential action with no shared view of progress, delays are guaranteed regardless of how fast any one party moves. The vendor wasn't the problem. The architecture was.",
+        body: "The invoice delay wasn't a vendor performance problem. It was a structural failure nobody had named yet. Every shipment had to route through a third party service before a vehicle could move: 15 to 20 minutes per order, every time. Internally it was treated as a speed problem: pressure the vendor. Research showed it was structural: three parties, one sequential handoff, no shared visibility into where the delay was occurring. When a process requires sequential action with no shared view of progress, delays are guaranteed regardless of how fast any one party moves. The vendor wasn't the problem. The architecture was.",
       },
       {
         title: "Sales was being used as the system's customer service fallback",
@@ -1385,7 +1460,7 @@ export const caseStudies: CaseStudy[] = [
           number: "04",
           label: "Fulfilment",
           description:
-            "Operations arranges the full delivery: confirming supplier orders, waiting for invoices from a third-party service, loading the vehicle, and tracking delivery almost entirely over phone and WhatsApp.",
+            "Operations arranges the full delivery: confirming supplier orders, waiting for invoices from a third party service, loading the vehicle, and tracking delivery almost entirely over phone and WhatsApp.",
           meta: [
             { label: "Who", value: "Operations" },
             { label: "Tools", value: "Platform, Excel, WhatsApp, phone" },
@@ -1407,7 +1482,7 @@ export const caseStudies: CaseStudy[] = [
     decisions: [
       {
         title: "A service blueprint before any wireframes",
-        body: "The blueprint proved my opening hypothesis wrong, in the right direction. I'd expected to find interface failures. What I found instead was that the failures weren't in the screens at all: they lived in the handoffs between teams. The invoice delay lived between Operations and a third-party service. The Sales escalation problem lived between Operations and the customer. The Finance risk lived between two people and a spreadsheet. None of those were fixable by improving a UI. The tradeoff was delaying visible output by several weeks. The PM accepted it because the previous attempt (fixing screens) hadn't changed anything.",
+        body: "The blueprint proved my opening hypothesis wrong, in the right direction. I'd expected to find interface failures. What I found instead was that the failures weren't in the screens at all: they lived in the handoffs between teams. The invoice delay lived between Operations and a third party service. The Sales escalation problem lived between Operations and the customer. The Finance risk lived between two people and a spreadsheet. None of those were fixable by improving a UI. The tradeoff was delaying visible output by several weeks. The PM accepted it because the previous attempt (fixing screens) hadn't changed anything.",
         image: {
           src: "/images/zetwerk-bu/service-blueprint.png",
           alt: "Full BU Ecosystem service blueprint with five workflow stages across customer actions, front-stage interactions, back-stage interactions, support processes, and opportunity areas",
@@ -1429,7 +1504,7 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "Mapping the invoice flow as a systemic failure, not a vendor issue",
-        body: "The invoice delay had been treated as a vendor management problem for months: pressure the third-party service, escalate, move faster. Research showed the problem was structural, which meant vendor pressure would never fix it. Three parties, one sequential handoff, no shared visibility into where the delay was occurring. Operations was spending 15 to 20 minutes per order waiting for paperwork while loaded vehicles sat idle. The reframe mattered because it changed what solutions were even possible: if it's a vendor problem, you escalate. If it's a structural problem, you redesign the process, including building a flow that lets Zetwerk create invoices directly instead of waiting. The tradeoff was a longer timeline. There was no quick version of this fix, and pretending otherwise would have repeated the mistake.",
+        body: "The invoice delay had been treated as a vendor management problem for months: pressure the third party service, escalate, move faster. Research showed the problem was structural, which meant vendor pressure would never fix it. Three parties, one sequential handoff, no shared visibility into where the delay was occurring. Operations was spending 15 to 20 minutes per order waiting for paperwork while loaded vehicles sat idle. The reframe mattered because it changed what solutions were even possible: if it's a vendor problem, you escalate. If it's a structural problem, you redesign the process, including building a flow that lets Zetwerk create invoices directly instead of waiting. The tradeoff was a longer timeline. There was no quick version of this fix, and pretending otherwise would have repeated the mistake.",
         persona: {
           name: "Mithilesh",
           role: "Regional Operations Lead · 16-person team",
@@ -1451,7 +1526,7 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "One shared map instead of five competing backlogs",
-        body: "The blueprint becoming a roadmap wasn't automatic. It required a two-day prioritisation workshop with all five team leads. Every proposed initiative had to be placed on the map and defend its system-level leverage. Teams argued for their priorities against that evidence. The roadmap that came out wasn't what any single team had wanted. It was what the system showed was needed first.\n\nThe Operations lead said it plainly in the first workshop session: 'This is interesting, but it doesn't help me fix my quarter.' He was right. We spent an additional session with him translating the system findings into near-term priorities his team could act on. That session turned him from a critic of the roadmap into a sponsor of it. Without it, the blueprint would have been an artefact everyone acknowledged and nobody used.\n\nThe tradeoff was that the sequencing made some local fixes look lower priority than they felt to the teams experiencing them. We held the line because the alternative (each team advocating for their own pain) was exactly how decisions had been made before the research. It's why there had been five backlogs and no coherent plan.",
+        body: "The blueprint becoming a roadmap wasn't automatic. It required a two day prioritisation workshop with all five team leads. Every proposed initiative had to be placed on the map and defend its system level leverage. Teams argued for their priorities against that evidence. The roadmap that came out wasn't what any single team had wanted. It was what the system showed was needed first.\n\nThe Operations lead said it plainly in the first workshop session: 'This is interesting, but it doesn't help me fix my quarter.' He was right. We spent an additional session with him translating the system findings into near-term priorities his team could act on. That session turned him from a critic of the roadmap into a sponsor of it. Without it, the blueprint would have been an artefact everyone acknowledged and nobody used.\n\nThe tradeoff was that the sequencing made some local fixes look lower priority than they felt to the teams experiencing them. We held the line because the alternative (each team advocating for their own pain) was exactly how decisions had been made before the research. It's why there had been five backlogs and no coherent plan.",
         persona: {
           name: "Priya",
           role: "Sales",
@@ -1463,7 +1538,7 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     outcomes: [
-      "A two-day prioritisation workshop using the blueprint as the working document produced the first roadmap all five teams had agreed on, each initiative sequenced by system-level leverage, not by which team shouted loudest",
+      "A two day prioritisation workshop using the blueprint as the working document produced the first roadmap all five teams had agreed on, each initiative sequenced by system level leverage, not by which team shouted loudest",
       "An invoice delay blamed on a slow vendor for months was reframed as a structural process failure, opening solutions the business could actually control, including a direct invoice creation flow that shipped as the Delivery Challan module the following quarter",
       "A critical risk the product had never accounted for was surfaced and escalated: key company operations were running through a spreadsheet only two people could read. This was brought to leadership and added to the risk register",
       "The blueprint became the standing reference document for product planning, referenced in quarterly roadmap sessions for the two quarters that followed",
@@ -1471,7 +1546,7 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     contribution:
-      "I owned the research strategy, methodology, and execution end-to-end: writing the research questions, scoping the participant set (including making the case for Finance mid-project), designing and moderating all six sessions, building the service blueprint, running the two-day prioritisation workshop with team leads, synthesising into personas and opportunity areas, and presenting the phased roadmap to the product team and leadership. I set the scope, made the methodology calls, and defended the findings when they created friction. A junior UX designer I was mentoring owned design execution throughout, which meant I could stay fully in the research and strategic layer without splitting attention.",
+      "I owned the research strategy, methodology, and execution end-to-end: writing the research questions, scoping the participant set (including making the case for Finance mid-project), designing and moderating all six sessions, building the service blueprint, running the two day prioritisation workshop with team leads, synthesising into personas and opportunity areas, and presenting the phased roadmap to the product team and leadership. I set the scope, made the methodology calls, and defended the findings when they created friction. A junior UX designer I was mentoring owned design execution throughout, which meant I could stay fully in the research and strategic layer without splitting attention.",
 
     contributionArtifacts: [
       "Research Strategy",
@@ -1484,10 +1559,10 @@ export const caseStudies: CaseStudy[] = [
     ],
 
     reflection:
-      "I would involve Finance from session one and push harder on that call in week one. The argument I accepted ('they don't interact with the platform directly') was never sufficient for a cross-functional system study. I had already noted them in my pre-research mapping. Accepting the constraint meant the Finance research was compressed into one session when two would have produced sharper findings. It also meant a critical risk sat undiscovered for two weeks longer than it needed to. In a project where the entire value is seeing the full system, partial scope is a structural compromise, and I made it when I shouldn't have.",
+      "I would involve Finance from session one and push harder on that call in week one. The argument I accepted ('they don't interact with the platform directly') was never sufficient for a cross functional system study. I had already noted them in my pre research mapping. Accepting the constraint meant the Finance research was compressed into one session when two would have produced sharper findings. It also meant a critical risk sat undiscovered for two weeks longer than it needed to. In a project where the entire value is seeing the full system, partial scope is a structural compromise, and I made it when I shouldn't have.",
 
     lesson:
-      "The hardest part of this project wasn't building the blueprint. It was holding the line on scope. I let a reasonable-sounding argument override a research instinct I had already documented. Finance was in my pre-research system map. I flagged them. I let the constraint stand anyway. The lesson isn't about service blueprints or synthesis methods. It's about research independence: when you've mapped the system and identified a dependency, 'they don't use the platform directly' is not sufficient grounds for exclusion. Scope decisions made before the research starts should require the same standard of evidence as the findings that come out of it.",
+      "The hardest part of this project wasn't building the blueprint. It was holding the line on scope. I let a reasonable-sounding argument override a research instinct I had already documented. Finance was in my pre research system map. I flagged them. I let the constraint stand anyway. The lesson isn't about service blueprints or synthesis methods. It's about research independence: when you've mapped the system and identified a dependency, 'they don't use the platform directly' is not sufficient grounds for exclusion. Scope decisions made before the research starts should require the same standard of evidence as the findings that come out of it.",
   },
 
 ];
