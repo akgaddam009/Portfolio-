@@ -3418,7 +3418,15 @@ export default function Home() {
            cursor and scroll position wake a panel. Gated behind
            [data-dim-ready="true"] so the load-time reveal animation
            runs uninhibited. Mobile keeps full contrast (panels are
-           stacked vertically anyway). */
+           stacked vertically anyway).
+
+           Light theme override: opacity-fade reads as washed-out and
+           "disabled" on white. In light mode every panel stays at 100%
+           opacity; hierarchy is carried by the shadow system instead
+           (PANEL_SHADOW_LIGHT vs PANEL_SHADOW_ACTIVE_LIGHT — already
+           defined, ~2x ambient depth difference). Dark mode keeps the
+           60% fade because near-black surfaces read as receding depth
+           when faded, not as dulled content. */
         @media (min-width: 641px) {
           .panels-container[data-dim-ready="true"] .panel {
             transition:
@@ -3427,6 +3435,10 @@ export default function Home() {
           }
           .panels-container[data-dim-ready="true"] .panel:not(.is-active):not(:hover) {
             opacity: 0.6 !important;
+          }
+          /* Light theme: no opacity fade on inactive panels */
+          [data-theme="light"] .panels-container[data-dim-ready="true"] .panel:not(.is-active):not(:hover) {
+            opacity: 1 !important;
           }
         }
         @media (prefers-reduced-motion: reduce) {
