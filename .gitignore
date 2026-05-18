@@ -39,3 +39,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Large legacy video assets (>100MB) — keep local, deploy uses compressed .mp4
+public/images/system/overview.mov
+
+# Untracked giant media that snuck in via wildcard adds — keep local, don't push
+public/images/system/Screen Recording*
+public/images/Fancode Homepage /
+public/images/reputation/After .mov
+public/images/reputation/Before .mov
+public/images/astra/Meet - Persona Research Group*
+
+# Reference materials downloaded into the repo, not part of the build
+awesome-design-md-main/
+awesome-design-md-main.zip
+
+# Local dev scaffolding — not part of the deployed site
+.agents/
+.claude/
+skills-lock.json
+writer.md

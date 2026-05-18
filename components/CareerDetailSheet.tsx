@@ -75,7 +75,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               bottom: 0, left: 0, right: 0,
               maxHeight: "88vh",
               background: "var(--bg)",
-              borderRadius: "18px 18px 0 0",
+              borderRadius: "20px 20px 0 0",
               border: "1px solid var(--border)",
               borderBottom: "none",
               zIndex: 401,
@@ -105,7 +105,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               {item.logoDomain && (
                 <div style={{
                   width: "44px", height: "44px",
-                  borderRadius: "12px",
+                  borderRadius: "16px",
                   border: "1px solid var(--border)",
                   background: "var(--bg)",
                   overflow: "hidden",
@@ -126,8 +126,8 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               <h2 style={{
                 fontFamily: "var(--font-body)",
                 fontSize: "clamp(18px, 4vw, 24px)",
-                fontWeight: 300,
-                letterSpacing: "-0.03em",
+                fontWeight: 510,
+                letterSpacing: "-0.025em",
                 color: "var(--text)",
                 lineHeight: 1.2,
                 marginBottom: "8px",
@@ -137,10 +137,10 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
 
               {/* Company + date */}
               <p style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "9px",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
+                fontFamily: "var(--font-body)",
+                fontSize: "11px",
+                fontWeight: 510,
+                letterSpacing: "-0.01em",
                 color: "var(--muted)",
                 marginBottom: "24px",
               }}>
@@ -151,7 +151,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               {item.description && (
                 <p style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "14px",
+                  fontSize: "15px",
                   fontWeight: 400,
                   letterSpacing: "-0.01em",
                   lineHeight: 1.65,
@@ -166,10 +166,10 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               {item.highlights && item.highlights.length > 0 && (
                 <div style={{ marginBottom: "32px" }}>
                   <p style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "8px",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "11px",
+                    fontWeight: 510,
+                    letterSpacing: "-0.01em",
                     color: "var(--muted)",
                     marginBottom: "16px",
                   }}>
@@ -184,7 +184,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                         }}>·</span>
                         <p style={{
                           fontFamily: "var(--font-body)",
-                          fontSize: "14px", fontWeight: 400,
+                          fontSize: "15px", fontWeight: 400,
                           letterSpacing: "-0.01em", lineHeight: 1.55,
                           color: "var(--text)",
                         }}>
@@ -200,10 +200,10 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               {item.learnings && item.learnings.length > 0 && (
                 <div style={{ marginBottom: "48px" }}>
                   <p style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "8px",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "11px",
+                    fontWeight: 510,
+                    letterSpacing: "-0.01em",
                     color: "var(--muted)",
                     marginBottom: "16px",
                   }}>
@@ -218,7 +218,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                         }}>·</span>
                         <p style={{
                           fontFamily: "var(--font-body)",
-                          fontSize: "14px", fontWeight: 400,
+                          fontSize: "15px", fontWeight: 400,
                           letterSpacing: "-0.01em", lineHeight: 1.55,
                           color: "var(--text)",
                         }}>
@@ -248,7 +248,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                 whileTap={hasPrev ? { scale: 0.9 } : {}}
                 style={{
                   width: "40px", height: "40px",
-                  borderRadius: "12px",
+                  borderRadius: "16px",
                   border: "1px solid var(--border)",
                   background: "var(--bg)",
                   color: "var(--text)",
@@ -268,15 +268,15 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                 style={{
                   height: "40px",
                   padding: "0 28px",
-                  borderRadius: "12px",
+                  borderRadius: "16px",
                   border: "1px solid var(--border)",
                   background: "var(--bg)",
                   color: "var(--text)",
                   cursor: "pointer",
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "9px",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
+                  fontFamily: "var(--font-body)",
+                  fontSize: "13px",
+                  fontWeight: 510,
+                  letterSpacing: "-0.01em",
                 }}
               >
                 Close
@@ -288,7 +288,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                 whileTap={hasNext ? { scale: 0.9 } : {}}
                 style={{
                   width: "40px", height: "40px",
-                  borderRadius: "12px",
+                  borderRadius: "16px",
                   border: "1px solid var(--border)",
                   background: "var(--bg)",
                   color: "var(--text)",

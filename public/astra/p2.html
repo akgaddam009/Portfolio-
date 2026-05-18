@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astra — P2 Final: Workflow Management (Admin)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg: #F5F3EF;
+  --surface: #FFFFFF;
+  --surface2: #FAF9F7;
+  --border: #D8D2C8;
+  --border-light: #EAE6DF;
+  --text-1: #18160F;
+  --text-2: #655F55;
+  --text-3: #A69F94;
+  --red: #B83228; --red-bg: #FCF0EE; --red-border: #F0C4BE; --red-dot: #D94035;
+  --yellow: #B87314; --yellow-bg: #FDF7EE; --yellow-border: #F0D8A8; --yellow-dot: #E8970A;
+  --green: #2A6E3F; --green-bg: #EEF6F1; --green-border: #B8DEC8; --green-dot: #2E8B4A;
+  --blue: #1A4A8A; --blue-bg: #EEF3FC; --blue-border: #B8CCEC; --blue-dot: #2060C0;
+  --teal: #1A6A6A; --teal-bg: #EEF6F6; --teal-border: #B8DCDC; --teal-dot: #1E8A8A;
+  --wire: #E2DDD6; --wire-dark: #C8C0B4;
+  --shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
+}
+
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-1); min-height: 100vh; }
+
+/* ══ NAV ══ */
+.nav { position: sticky; top: 0; z-index: 200; background: var(--text-1); display: flex; align-items: stretch; }
+.nav-brand { padding: 0 18px; display: flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; color: #fff; border-right: 1px solid #2A2820; letter-spacing: 0.05em; }
+.nav-v { font-size: 9px; color: #777; background: #2A2820; padding: 2px 5px; border-radius: 2px; }
+.nav-role { padding: 0 14px; display: flex; align-items: center; border-right: 1px solid #2A2820; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-dot); }
+.nav-label { padding: 0 16px; display: flex; align-items: center; font-size: 10px; color: #555; letter-spacing: 0.05em; text-transform: uppercase; flex: 1; }
+.tabs { display: flex; overflow-x: auto; }
+.tab { padding: 0 13px; height: 42px; display: flex; align-items: center; gap: 5px; font-size: 10px; color: #666; cursor: pointer; border-right: 1px solid #2A2820; letter-spacing: 0.03em; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; transition: background 0.12s; flex-shrink: 0; }
+.tab:hover { color: #bbb; background: #1E1C15; }
+.tab.active { color: #fff; background: #282418; }
+.tab-n { font-size: 9px; color: #444; }
+.tab.active .tab-n { color: #888; }
+.pip { width: 5px; height: 5px; border-radius: 50%; background: var(--teal-dot); flex-shrink: 0; }
+
+/* ══ SCREENS ══ */
+.screens { padding: 22px 26px; }
+.screen { display: none; max-width: 1300px; margin: 0 auto; }
+.screen.active { display: block; }
+.screen-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.s-step { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 3px; background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal-border); letter-spacing: 0.04em; }
+.s-title { font-size: 14px; font-weight: 600; }
+.s-scenario { font-size: 9px; font-family: 'IBM Plex Mono', monospace; padding: 2px 7px; border-radius: 3px; border: 1px solid var(--border-light); background: var(--bg); color: var(--text-3); }
+.s-desc { font-size: 11px; color: var(--text-3); margin-left: auto; }
+
+/* ══ CHROME ══ */
+.chrome { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; position: relative; }
+
+/* ══ TOPBAR ══ */
+.topbar { height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid var(--border-light); background: var(--surface); }
+.tb-logo { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; }
+.tb-sep { width: 1px; height: 16px; background: var(--border-light); }
+.tb-role-chip { font-size: 9px; font-family: 'IBM Plex Mono', monospace; padding: 2px 7px; border-radius: 3px; background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal-border); font-weight: 500; }
+.tb-back { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-2); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-light); cursor: pointer; background: transparent; }
+.tb-crumb { font-size: 11px; color: var(--text-3); }
+.tb-crumb .active { color: var(--text-1); font-weight: 500; }
+.tb-crumb-sep { margin: 0 4px; }
+.tb-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+/* BUTTONS */
+.btn { height: 30px; padding: 0 14px; font-size: 11px; font-weight: 500; font-family: 'DM Sans', sans-serif; border-radius: 5px; cursor: pointer; letter-spacing: 0.01em; border: 1px solid; display: inline-flex; align-items: center; gap: 5px; }
+.btn-ghost { background: transparent; border-color: var(--border); color: var(--text-2); }
+.btn-primary { background: var(--text-1); border-color: var(--text-1); color: #fff; }
+.btn-teal { background: var(--teal); border-color: var(--teal); color: #fff; }
+.btn-success { background: var(--green); border-color: var(--green); color: #fff; }
+.btn-warning { background: transparent; border-color: var(--yellow-border); color: var(--yellow); }
+.btn-danger { background: transparent; border-color: var(--red-border); color: var(--red); }
+.btn-sm { height: 28px; padding: 0 12px; font-size: 10px; }
+.btn-xs { height: 24px; padding: 0 8px; font-size: 9px; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.02em; }
+
+/* STATUS CHIPS */
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 3px; font-size: 9px; font-weight: 500; font-family: 'IBM Plex Mono', monospace; }
+.chip-dot { width: 4px; height: 4px; border-radius: 50%; }
+.chip-active { background: var(--green-bg); color: var(--green); }
+.chip-active .chip-dot { background: var(--green-dot); }
+.chip-draft { background: var(--yellow-bg); color: var(--yellow); }
+.chip-draft .chip-dot { background: var(--yellow-dot); }
+.chip-disabled { background: var(--bg); color: var(--text-3); border: 1px solid var(--border-light); }
+.chip-disabled .chip-dot { background: var(--text-3); }
+
+/* TOGGLE SWITCH */
+.toggle { display: flex; align-items: center; cursor: pointer; }
+.toggle-track { width: 32px; height: 16px; border-radius: 8px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+.toggle-track.on { background: var(--green-dot); }
+.toggle-track.off { background: var(--wire-dark); }
+.toggle-thumb { width: 12px; height: 12px; background: #fff; border-radius: 50%; position: absolute; top: 2px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.toggle-track.on .toggle-thumb { left: 18px; }
+.toggle-track.off .toggle-thumb { left: 2px; }
+
+/* ══ APP SHELL ══ */
+.app-shell { display: flex; min-height: 540px; }
+.left-nav { width: 176px; border-right: 1px solid var(--border-light); padding: 12px 0; background: var(--surface2); flex-shrink: 0; }
+.ln-section { padding: 4px 14px 3px; font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
+.ln-item { padding: 6px 14px; font-size: 11px; color: var(--text-2); cursor: pointer; display: flex; align-items: center; gap: 7px; }
+.ln-item.active { background: var(--surface); color: var(--text-1); font-weight: 500; border-right: 2px solid var(--text-1); }
+.ln-dot { width: 5px; height: 5px; border-radius: 50%; }
+.ln-badge { font-family: 'IBM Plex Mono', monospace; font-size: 9px; background: var(--red-bg); color: var(--red); padding: 1px 5px; border-radius: 3px; margin-left: auto; }
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ══════════════════════════════════════
+   S1 · WORKFLOW LANDING PAGE
+══════════════════════════════════════ */
+
+/* SUMMARY STATS BAR */
+.stats-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-light); }
+.stat-item { flex: 1; padding: 10px 20px; border-right: 1px solid var(--border-light); }
+.stat-item:last-child { border-right: none; }
+.stat-num { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 500; }
+.stat-lbl { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+
+/* TOOLBAR */
+.wf-toolbar { display: flex; align-items: center; gap: 10px; padding: 11px 20px; border-bottom: 1px solid var(--border-light); }
+.wf-title { font-size: 14px; font-weight: 600; flex: 1; }
+.filter-bar-inline { display: flex; gap: 6px; align-items: center; }
+.filter-chip { font-size: 10px; padding: 3px 9px; border-radius: 3px; border: 1px solid var(--border-light); background: var(--surface); cursor: pointer; color: var(--text-2); font-family: 'DM Sans', sans-serif; }
+.filter-chip.active { background: var(--text-1); color: #fff; border-color: var(--text-1); }
+
+/* CONFLICT BANNER */
+.conflict-banner { display: flex; align-items: center; gap: 8px; padding: 8px 20px; background: var(--red-bg); border-bottom: 1px solid var(--red-border); font-size: 11px; color: var(--red); }
+.cb-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--red-dot); flex-shrink: 0; }
+.cb-link { text-decoration: underline; cursor: pointer; font-weight: 500; margin-left: 4px; }
+
+/* PRIORITY NOTE */
+.priority-note { padding: 7px 20px; background: var(--blue-bg); border-bottom: 1px solid var(--blue-border); font-size: 10px; color: var(--blue); display: flex; align-items: center; gap: 8px; }
+
+/* WORKFLOW TABLE */
+.wf-table { flex: 1; overflow-y: auto; }
+
+/* GROUP HEADER */
+.group-header { display: flex; align-items: center; gap: 10px; padding: 8px 20px; background: var(--surface2); border-bottom: 1px solid var(--border-light); border-top: 1px solid var(--border-light); }
+.gh-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); flex: 1; font-family: 'IBM Plex Mono', monospace; }
+.gh-count { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--text-3); background: var(--bg); border: 1px solid var(--border-light); padding: 1px 6px; border-radius: 3px; }
+
+/* WORKFLOW ROW */
+.wf-hdr { display: grid; grid-template-columns: 28px 1.8fr 1.2fr 1.4fr 1fr 80px 80px; padding: 7px 20px; background: var(--bg); border-bottom: 1px solid var(--border-light); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); align-items: center; }
+.wf-row { display: grid; grid-template-columns: 28px 1.8fr 1.2fr 1.4fr 1fr 80px 80px; padding: 10px 20px; border-bottom: 1px solid var(--border-light); font-size: 11px; align-items: center; cursor: pointer; transition: background 0.1s; }
+.wf-row:hover { background: var(--bg); }
+.wf-row:hover .row-actions { opacity: 1; }
+.wf-row.conflict { background: var(--red-bg); }
+.wf-row.disabled-row { opacity: 0.5; }
+.row-drag { color: var(--text-3); font-size: 12px; cursor: grab; }
+.wf-name { font-weight: 500; }
+.wf-name-sub { font-size: 10px; color: var(--text-3); margin-top: 1px; font-family: 'IBM Plex Mono', monospace; }
+.wf-condition { font-size: 10px; color: var(--text-2); line-height: 1.6; }
+.chain-pills { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.chain-pill { font-size: 9px; font-family: 'IBM Plex Mono', monospace; background: var(--bg); border: 1px solid var(--border-light); padding: 2px 6px; border-radius: 3px; color: var(--text-2); }
+.chain-arrow { font-size: 9px; color: var(--text-3); }
+.wf-meta { font-size: 10px; color: var(--text-3); line-height: 1.5; }
+.row-actions { display: flex; gap: 5px; opacity: 0; transition: opacity 0.1s; align-items: center; }
+.deferred-row-wrap { padding: 8px 16px 12px; }
+.deferred-row { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border: 2px dashed var(--border); border-radius: 5px; background: var(--bg); opacity: 0.45; font-size: 10px; color: var(--text-3); }
+
+/* ══════════════════════════════════════
+   S2 · CREATE WORKFLOW — STEP 1: CONDITIONS
+══════════════════════════════════════ */
+.wizard-shell { display: grid; grid-template-columns: 220px 1fr; min-height: 560px; }
+
+/* WIZARD NAV */
+.wizard-nav { border-right: 1px solid var(--border-light); padding: 18px 0; background: var(--surface2); display: flex; flex-direction: column; }
+.wn-title { padding: 0 16px 12px; font-size: 11px; font-weight: 600; color: var(--text-2); border-bottom: 1px solid var(--border-light); margin-bottom: 6px; }
+.wstep { display: flex; align-items: flex-start; gap: 10px; padding: 8px 16px; border-left: 2px solid transparent; }
+.wstep.active { background: var(--bg); border-left-color: var(--text-1); }
+.wstep.done { opacity: 0.65; }
+.wstep.upcoming { opacity: 0.35; }
+.wstep-num { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 500; flex-shrink: 0; margin-top: 1px; }
+.wstep.active .wstep-num { background: var(--text-1); color: #fff; }
+.wstep.done .wstep-num { background: var(--green-dot); color: #fff; }
+.wstep.upcoming .wstep-num { background: var(--wire); color: var(--text-3); }
+.wstep-lbl { font-size: 11px; font-weight: 500; }
+.wstep-sub { font-size: 9px; color: var(--text-3); margin-top: 1px; font-family: 'IBM Plex Mono', monospace; }
+.wstep-connector { width: 1px; height: 10px; background: var(--border-light); margin-left: 25px; }
+
+/* RULE SUMMARY in nav */
+.rule-summary { margin: 14px 12px 0; background: var(--bg); border: 1px solid var(--border-light); border-radius: 5px; padding: 10px 11px; }
+.rs-label { font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 7px; font-family: 'IBM Plex Mono', monospace; }
+.rs-row { display: flex; gap: 6px; font-size: 10px; margin-bottom: 4px; }
+.rs-key { color: var(--text-3); font-family: 'IBM Plex Mono', monospace; flex-shrink: 0; }
+.rs-val { font-weight: 500; color: var(--text-2); }
+.rs-pending { color: var(--text-3); font-style: italic; font-weight: 400; }
+
+/* WIZARD BODY */
+.wizard-body { display: flex; flex-direction: column; }
+.wb-scroll { flex: 1; padding: 22px 24px; overflow-y: auto; }
+.wb-title { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
+.wb-sub { font-size: 11px; color: var(--text-3); line-height: 1.6; margin-bottom: 22px; }
+
+/* WIZARD FOOTER */
+.wizard-footer { padding: 12px 24px; border-top: 1px solid var(--border-light); background: var(--surface2); display: flex; align-items: center; gap: 10px; }
+.wf-prog-wrap { flex: 1; }
+.wf-prog-label { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--text-3); margin-bottom: 4px; }
+.wf-prog-track { height: 3px; background: var(--border-light); border-radius: 2px; width: 180px; overflow: hidden; }
+.wf-prog-fill { height: 100%; background: var(--text-1); border-radius: 2px; }
+
+/* CONDITION BUILDER */
+.condition-builder { display: flex; flex-direction: column; gap: 0; }
+.cond-row { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+.cond-prefix { font-size: 11px; font-weight: 600; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; width: 38px; flex-shrink: 0; }
+.cond-select { height: 32px; padding: 0 10px; font-size: 11px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text-1); cursor: pointer; }
+.cond-select.placeholder { color: var(--text-3); }
+.cond-select.filled { background: var(--bg); }
+.cond-op { height: 32px; padding: 0 10px; font-size: 11px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text-1); }
+.cond-val { height: 32px; padding: 0 10px; font-size: 11px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text-1); }
+.cond-val.active-input { border-color: var(--text-1); box-shadow: 0 0 0 2px rgba(24,22,15,0.05); }
+.cond-remove { font-size: 12px; color: var(--text-3); cursor: pointer; padding: 2px 4px; }
+.add-cond-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--blue); cursor: pointer; padding: 5px 0; font-weight: 500; margin-top: 4px; }
+
+/* SMART NUDGE */
+.smart-nudge { margin-top: 12px; background: var(--yellow-bg); border: 1px solid var(--yellow-border); border-radius: 5px; padding: 9px 11px; font-size: 10px; color: var(--yellow); display: flex; align-items: flex-start; gap: 8px; }
+.nudge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--yellow-dot); flex-shrink: 0; margin-top: 3px; }
+.nudge-actions { display: flex; gap: 6px; margin-top: 6px; }
+.nudge-btn { font-size: 10px; padding: 3px 9px; border-radius: 3px; border: 1px solid; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.nudge-yes { border-color: var(--yellow-border); color: var(--yellow); background: transparent; }
+.nudge-skip { border-color: var(--border-light); color: var(--text-3); background: transparent; }
+
+/* RULE PREVIEW BOX */
+.rule-preview { margin-top: 16px; background: var(--bg); border: 1px solid var(--border-light); border-radius: 5px; padding: 10px 12px; }
+.rp-lbl { font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; font-family: 'IBM Plex Mono', monospace; }
+.rp-sentence { font-size: 11px; color: var(--text-2); line-height: 1.8; }
+.rp-hl { font-weight: 600; color: var(--text-1); background: var(--border-light); padding: 1px 5px; border-radius: 3px; }
+
+/* OPTIONAL CONDITIONS */
+.optional-section { margin-top: 20px; }
+.optional-title { font-size: 10px; font-weight: 600; color: var(--text-2); margin-bottom: 10px; letter-spacing: 0.04em; display: flex; align-items: center; gap: 8px; }
+.optional-badge { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--text-3); background: var(--bg); border: 1px solid var(--border-light); padding: 1px 6px; border-radius: 3px; }
+.optional-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.optional-field { }
+.opt-label { font-size: 10px; font-weight: 600; color: var(--text-2); margin-bottom: 5px; letter-spacing: 0.03em; }
+.opt-select { width: 100%; height: 30px; padding: 0 10px; font-size: 11px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text-3); }
+
+/* ══════════════════════════════════════
+   S3 · CREATE WORKFLOW — STEP 2: CHAIN
+══════════════════════════════════════ */
+
+/* STEP CARDS */
+.step-cards { display: flex; flex-direction: column; gap: 0; }
+.step-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 6px; padding: 11px 13px; display: flex; align-items: flex-start; gap: 11px; }
+.step-card.active-step { border-color: var(--text-1); box-shadow: 0 0 0 2px rgba(24,22,15,0.05); }
+.step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--text-1); color: #fff; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.step-body { flex: 1; }
+.step-lbl { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; font-family: 'IBM Plex Mono', monospace; }
+.approver-row { display: flex; align-items: center; gap: 8px; }
+.approver-inp { height: 30px; padding: 0 10px; font-size: 11px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text-1); flex: 1; }
+.approver-inp.filled { background: var(--bg); }
+.step-meta { font-size: 10px; color: var(--text-3); margin-top: 4px; font-family: 'IBM Plex Mono', monospace; }
+.step-actions { display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap; align-items: center; }
+.step-act { font-size: 9px; padding: 2px 7px; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--text-3); cursor: pointer; }
+.step-act.remove { border-color: var(--red-border); color: var(--red); }
+.step-act.reorder { cursor: grab; }
+.optional-toggle-row { display: flex; align-items: center; gap: 6px; }
+.optional-lbl { font-size: 10px; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; }
+.step-connector { display: flex; align-items: center; gap: 8px; padding: 4px 0 4px 11px; }
+.sc-line { width: 1px; height: 14px; background: var(--border-light); }
+.sc-lbl { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--text-3); }
+.add-step { display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 2px dashed var(--border-light); border-radius: 6px; cursor: pointer; transition: all 0.1s; }
+.add-step:hover { border-color: var(--border); background: var(--bg); }
+.as-icon { width: 24px; height: 24px; border-radius: 50%; background: var(--wire); border: 1px solid var(--wire-dark); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-3); flex-shrink: 0; }
+.as-lbl { font-size: 11px; color: var(--text-3); }
+
+/* NOTIFICATION PANEL */
+.notif-panel { margin-top: 16px; background: var(--bg); border: 1px solid var(--border-light); border-radius: 5px; padding: 10px 12px; }
+.notif-title { font-size: 10px; font-weight: 600; color: var(--text-2); margin-bottom: 8px; }
+.notif-row { display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--text-2); margin-bottom: 5px; }
+.notif-check { width: 13px; height: 13px; border: 1px solid var(--border); border-radius: 2px; background: var(--text-1); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 8px; flex-shrink: 0; }
+.notif-uncheck { width: 13px; height: 13px; border: 1px solid var(--border); border-radius: 2px; background: var(--surface); flex-shrink: 0; }
+
+/* DEFERRED BLOCK */
+.deferred-block { margin-top: 12px; display: flex; align-items: center; gap: 12px; padding: 9px 13px; border: 2px dashed var(--border); border-radius: 5px; background: var(--bg); opacity: 0.5; font-size: 10px; color: var(--text-3); }
+.def-badge { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--text-3); background: var(--wire); padding: 2px 6px; border-radius: 3px; flex-shrink: 0; }
+
+/* ══════════════════════════════════════
+   S4 · CREATE WORKFLOW — STEP 3: REVIEW
+══════════════════════════════════════ */
+.review-layout-2col { display: grid; grid-template-columns: 1fr 320px; min-height: 520px; }
+.review-main { padding: 22px; border-right: 1px solid var(--border-light); overflow-y: auto; }
+.review-section { margin-bottom: 20px; }
+.review-section-title { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; font-family: 'IBM Plex Mono', monospace; display: flex; align-items: center; gap: 8px; }
+.edit-link { font-size: 9px; color: var(--blue); cursor: pointer; text-decoration: underline; font-family: 'DM Sans', sans-serif; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.cond-preview-card { background: var(--bg); border: 1px solid var(--border-light); border-radius: 5px; padding: 12px 14px; }
+.cond-preview-sentence { font-size: 12px; color: var(--text-2); line-height: 1.8; }
+.cond-preview-hl { font-weight: 600; color: var(--text-1); background: var(--border-light); padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+.chain-preview-vertical { display: flex; flex-direction: column; gap: 0; }
+.cpv-step { display: flex; align-items: flex-start; gap: 10px; }
+.cpv-indicator { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.cpv-circle { width: 26px; height: 26px; border-radius: 50%; background: var(--text-1); color: #fff; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+.cpv-line { width: 1px; height: 20px; background: var(--border-light); }
+.cpv-body { padding: 2px 0 16px; flex: 1; }
+.cpv-name { font-size: 12px; font-weight: 500; }
+.cpv-role { font-size: 10px; color: var(--text-3); }
+.cpv-optional { font-size: 9px; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+.plain-lang-preview { background: var(--teal-bg); border: 1px solid var(--teal-border); border-radius: 5px; padding: 10px 12px; margin-top: 12px; }
+.plp-label { font-size: 8px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; }
+.plp-text { font-size: 11px; color: var(--teal); line-height: 1.7; }
+
+/* REVIEW SIDEBAR */
+.review-sidebar { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.rs-section-title { font-size: 10px; font-weight: 600; color: var(--text-2); margin-bottom: 8px; letter-spacing: 0.04em; }
+.workflow-name-input { width: 100%; height: 32px; padding: 0 10px; font-size: 12px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text-1); margin-bottom: 8px; }
+.workflow-name-input.filled { background: var(--surface); border-color: var(--text-1); font-weight: 500; }
+.rs-note { font-size: 10px; color: var(--text-3); line-height: 1.6; }
+.action-buttons-final { display: flex; flex-direction: column; gap: 8px; }
+.fab { width: 100%; padding: 10px; font-size: 12px; font-weight: 500; border-radius: 5px; border: 1px solid; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.fab-activate { background: var(--teal); border-color: var(--teal); color: #fff; }
+.fab-draft { background: transparent; border-color: var(--yellow-border); color: var(--yellow); }
+.fab-discard { background: transparent; border-color: var(--border); color: var(--text-3); }
+.warning-note { font-size: 10px; color: var(--red); background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 4px; padding: 7px 9px; display: flex; gap: 6px; align-items: flex-start; line-height: 1.5; }
+
+/* ══════════════════════════════════════
+   S5 · VIEW / EDIT WORKFLOW
+══════════════════════════════════════ */
+.edit-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 560px; }
+.edit-sidebar { border-right: 1px solid var(--border-light); padding: 18px; display: flex; flex-direction: column; gap: 14px; background: var(--surface2); overflow-y: auto; }
+.edit-main { padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+
+.workflow-info-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 6px; overflow: hidden; }
+.wic-header { padding: 10px 13px; background: var(--bg); border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 8px; }
+.wic-title { font-size: 11px; font-weight: 600; flex: 1; }
+.wic-body { padding: 10px 13px; display: flex; flex-direction: column; gap: 7px; }
+.wic-row { display: flex; gap: 8px; font-size: 10px; }
+.wic-label { color: var(--text-3); font-family: 'IBM Plex Mono', monospace; width: 80px; flex-shrink: 0; }
+.wic-val { font-weight: 500; flex: 1; }
+
+/* QUICK ACTIONS */
+.quick-actions { display: flex; flex-direction: column; gap: 6px; }
+.qa-btn { width: 100%; padding: 8px 12px; font-size: 11px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border-light); border-radius: 5px; background: var(--surface); cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text-2); font-weight: 500; }
+.qa-btn:hover { background: var(--bg); border-color: var(--border); }
+.qa-btn.danger { color: var(--red); border-color: var(--red-border); }
+.qa-btn.danger:hover { background: var(--red-bg); }
+.qa-icon { font-size: 12px; flex-shrink: 0; }
+
+/* IN-FLIGHT WARNING */
+.inflight-warn { padding: 8px 13px; background: var(--yellow-bg); border: 1px solid var(--yellow-border); border-radius: 5px; font-size: 10px; color: var(--yellow); display: flex; gap: 7px; align-items: flex-start; line-height: 1.6; }
+.iw-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--yellow-dot); flex-shrink: 0; margin-top: 3px; }
+
+/* EDIT SECTION */
+.edit-section-header { font-size: 11px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+.condition-display { background: var(--bg); border: 1px solid var(--border-light); border-radius: 5px; padding: 10px 13px; margin-bottom: 10px; }
+.cd-row { display: flex; align-items: center; gap: 8px; font-size: 11px; margin-bottom: 5px; }
+.cd-prefix { font-weight: 600; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; width: 38px; flex-shrink: 0; }
+.cond-tag { background: var(--surface); border: 1px solid var(--border-light); border-radius: 3px; padding: 3px 8px; font-size: 11px; }
+.cond-edit-row { display: flex; align-items: center; gap: 7px; }
+.cond-input-edit { height: 30px; padding: 0 9px; font-size: 11px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--yellow-dot); border-radius: 4px; background: var(--yellow-bg); color: var(--text-1); width: 110px; }
+.change-note { font-size: 9px; color: var(--yellow); font-family: 'IBM Plex Mono', monospace; margin-top: 3px; }
+.step-card-edit { background: var(--surface); border: 1px solid var(--border-light); border-radius: 5px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.sce-drag { color: var(--text-3); font-size: 12px; cursor: grab; }
+.sce-num { width: 22px; height: 22px; border-radius: 50%; background: var(--text-1); color: #fff; font-family: 'IBM Plex Mono', monospace; font-size: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sce-body { flex: 1; }
+.sce-name { font-size: 11px; font-weight: 500; }
+.sce-role { font-size: 10px; color: var(--text-3); }
+.sce-changed { font-size: 9px; color: var(--yellow); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+.sce-actions { display: flex; gap: 5px; flex-shrink: 0; }
+.save-bar { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--yellow-bg); border: 1px solid var(--yellow-border); border-radius: 6px; }
+.sb-text { flex: 1; font-size: 10px; color: var(--yellow); }
+
+/* ── SCROLLBARS ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">ASTRA <span class="nav-v">P2 FINAL</span></div>
+  <div class="nav-role">Admin / Super User</div>
+  <div class="nav-label">Workflow Management</div>
+  <div class="tabs">
+    <div class="tab active" onclick="show(0)"><span class="tab-n">S1</span> Workflow landing <span class="pip"></span></div>
+    <div class="tab" onclick="show(1)"><span class="tab-n">S2</span> Create · Step 1 conditions <span class="pip"></span></div>
+    <div class="tab" onclick="show(2)"><span class="tab-n">S3</span> Create · Step 2 chain <span class="pip"></span></div>
+    <div class="tab" onclick="show(3)"><span class="tab-n">S4</span> Create · Step 3 review <span class="pip"></span></div>
+    <div class="tab" onclick="show(4)"><span class="tab-n">S5</span> View / Edit workflow <span class="pip"></span></div>
+  </div>
+</nav>
+
+<div class="screens">
+
+<!-- ════════════════════════════════════════
+     S1 · WORKFLOW LANDING PAGE
+     All 10–15 workflows · grouped · conflict banner
+════════════════════════════════════════ -->
+<div class="screen active" id="s0">
+  <div class="screen-hdr">
+    <span class="s-step">Admin · S1</span>
+    <span class="s-title">Workflow Management — Landing Page</span>
+    <span class="s-scenario">First-time + returning admin</span>
+    <span class="s-desc">10–15 workflows · grouped by type · drag to reorder priority · conflict detected · enable/disable toggle</span>
+  </div>
+  <div class="chrome">
+    <div class="topbar">
+      <div class="tb-logo">ASTRA</div>
+      <div class="tb-sep"></div>
+      <div class="tb-role-chip">Admin</div>
+      <div class="tb-crumb"><span class="active">Workflow Rules</span></div>
+      <div class="tb-right">
+        <button class="btn btn-ghost btn-sm">Import CSV</button>
+        <button class="btn btn-teal btn-sm">+ New workflow</button>
+      </div>
+    </div>
+    <div class="app-shell">
+      <div class="left-nav">
+        <div class="ln-section" style="margin-top:8px">Workspace</div>
+        <div class="ln-item"><div class="ln-dot" style="background:var(--wire-dark)"></div>Contracts</div>
+        <div class="ln-item"><div class="ln-dot" style="background:var(--wire-dark)"></div>Vendors</div>
+        <div class="ln-item"><div class="ln-dot" style="background:var(--wire-dark)"></div>Approvals</div>
+        <div class="ln-item"><div class="ln-dot" style="background:var(--wire-dark)"></div>Reports</div>
+        <div class="ln-section" style="margin-top:14px">Settings</div>
+        <div class="ln-item active"><div class="ln-dot" style="background:var(--text-1)"></div>Workflow Rules</div>
+        <div class="ln-item"><div class="ln-dot" style="background:var(--wire-dark)"></div>Team & Roles</div>
+        <div class="ln-item"><div class="ln-dot" style="background:var(--wire-dark)"></div>Integrations</div>
+        <div class="ln-item"><div class="ln-dot" style="background:var(--wire-dark)"></div>Audit Log</div>
+      </div>
+      <div class="main">
+        <!-- STATS BAR -->
+        <div class="stats-bar">
+          <div class="stat-item"><div class="stat-num" style="color:var(--green)">9</div><div class="stat-lbl">Active workflows</div></div>
+          <div class="stat-item"><div class="stat-num" style="color:var(--yellow)">2</div><div class="stat-lbl">Draft</div></div>
+          <div class="stat-item"><div class="stat-num" style="color:var(--text-3)">2</div><div class="stat-lbl">Disabled</div></div>
+
+        </div>
+
+
+
+        <!-- TOOLBAR -->
+        <div class="wf-toolbar">
+          <div class="wf-title">Approval Workflows</div>
+          <div class="filter-bar-inline">
+            <div class="filter-chip active">All</div>
+            <div class="filter-chip">Software</div>
+            <div class="filter-chip">Legal</div>
+            <div class="filter-chip">MSA</div>
+
+          </div>
+          <input style="height:26px;padding:0 10px;font-size:10px;font-family:'DM Sans',sans-serif;border:1px solid var(--border);border-radius:4px;background:var(--surface);width:150px" placeholder="Search workflows…">
+        </div>
+
+        <!-- PRIORITY NOTE -->
+        <div class="priority-note">
+          <span>⟺</span>
+          <span>Drag <strong>⠿</strong> to reorder — rules are evaluated top to bottom. Higher rules take precedence when conditions overlap.</span>
+        </div>
+
+        <div class="wf-table">
+          <div class="wf-hdr"><span></span><span>Workflow name</span><span>Conditions</span><span>Approval chain</span><span>Status</span><span>Toggle</span><span></span></div>
+
+          <!-- GROUP: Software -->
+          <div class="group-header">
+            <div class="gh-label">Software / SaaS</div>
+            <div class="gh-count">3 workflows</div>
+          </div>
+
+          <div class="wf-row">
+            <div class="row-drag">⠿</div>
+            <div><div class="wf-name">Software &lt; $50K</div><div class="wf-name-sub">Direct manager approval</div></div>
+            <div class="wf-condition">Type: Software<br>Value under $50,000</div>
+            <div class="chain-pills"><div class="chain-pill">Direct manager</div></div>
+            <div><div class="chip chip-active"><div class="chip-dot"></div>Active</div></div>
+            <div><div class="toggle"><div class="toggle-track on"><div class="toggle-thumb"></div></div></div></div>
+            <div class="row-actions"><button class="btn btn-xs btn-ghost">Edit</button></div>
+          </div>
+
+          <div class="wf-row">
+            <div class="row-drag">⠿</div>
+            <div><div class="wf-name">Software &gt; $50K</div><div class="wf-name-sub">High-value software</div></div>
+            <div class="wf-condition">Type: Software<br>Value over $50,000</div>
+            <div class="chain-pills"><div class="chain-pill">Legal</div><div class="chain-arrow">→</div><div class="chain-pill">VP Procurement</div><div class="chain-arrow">→</div><div class="chain-pill">CFO</div></div>
+            <div><div class="chip chip-active"><div class="chip-dot"></div>Active</div></div>
+            <div><div class="toggle"><div class="toggle-track on"><div class="toggle-thumb"></div></div></div></div>
+            <div class="row-actions"><button class="btn btn-xs btn-ghost">Edit</button></div>
+          </div>
+
+          <div class="wf-row">
+            <div class="row-drag">⠿</div>
+            <div><div class="wf-name">Software · Engineering dept.</div><div class="wf-name-sub">Engineering team override</div></div>
+            <div class="wf-condition">Type: Software<br>Dept: Engineering</div>
+            <div class="chain-pills"><div class="chain-pill">Eng. Manager</div><div class="chain-arrow">→</div><div class="chain-pill">CTO</div></div>
+            <div><div class="chip chip-draft"><div class="chip-dot"></div>Draft</div></div>
+            <div><div class="toggle"><div class="toggle-track off"><div class="toggle-thumb"></div></div></div></div>
+            <div class="row-actions"><button class="btn btn-xs btn-ghost">Edit</button></div>
+          </div>
+
+          <!-- GROUP: Legal -->
+          <div class="group-header">
+            <div class="gh-label">Legal / NDA</div>
+            <div class="gh-count">2 workflows</div>
+          </div>
+
+          <div class="wf-row">
+            <div class="row-drag">⠿</div>
+            <div><div class="wf-name">Legal / NDA — All</div><div class="wf-name-sub">Standard NDA chain</div></div>
+            <div class="wf-condition">Type: Legal / NDA<br>Any value</div>
+            <div class="chain-pills"><div class="chain-pill">Legal team</div><div class="chain-arrow">→</div><div class="chain-pill">VP Legal</div></div>
+            <div><div class="chip chip-active"><div class="chip-dot"></div>Active</div></div>
+            <div><div class="toggle"><div class="toggle-track on"><div class="toggle-thumb"></div></div></div></div>
+            <div class="row-actions"><button class="btn btn-xs btn-ghost">Edit</button></div>
+          </div>
+
+          <div class="wf-row disabled-row">
+            <div class="row-drag">⠿</div>
+            <div><div class="wf-name">NDA Fast-track</div><div class="wf-name-sub">Disabled — superseded by above</div></div>
+            <div class="wf-condition">Type: Legal / NDA<br>Value under $10,000</div>
+            <div class="chain-pills"><div class="chain-pill">Legal Manager</div></div>
+            <div><div class="chip chip-disabled"><div class="chip-dot"></div>Disabled</div></div>
+            <div><div class="toggle"><div class="toggle-track off"><div class="toggle-thumb"></div></div></div></div>
+            <div class="row-actions"><button class="btn btn-xs btn-ghost">Edit</button></div>
+          </div>
+
+          <!-- GROUP: Master Services -->
+          <div class="group-header">
+            <div class="gh-label">Master Services Agreement</div>
+            <div class="gh-count">2 workflows</div>
+          </div>
+
+          <div class="wf-row">
+            <div class="row-drag">⠿</div>
+            <div><div class="wf-name">MSA — Standard</div><div class="wf-name-sub">All MSA contracts</div></div>
+            <div class="wf-condition">Type: Master Services<br>Any value</div>
+            <div class="chain-pills"><div class="chain-pill">Procurement</div><div class="chain-arrow">→</div><div class="chain-pill">VP Procurement</div><div class="chain-arrow">→</div><div class="chain-pill">CFO</div></div>
+            <div><div class="chip chip-active"><div class="chip-dot"></div>Active</div></div>
+            <div><div class="toggle"><div class="toggle-track on"><div class="toggle-thumb"></div></div></div></div>
+            <div class="row-actions"><button class="btn btn-xs btn-ghost">Edit</button></div>
+          </div>
+
+          <div class="wf-row">
+            <div class="row-drag">⠿</div>
+            <div><div class="wf-name">MSA — High risk vendor</div><div class="wf-name-sub">Elevated approval chain</div></div>
+            <div class="wf-condition">Type: Master Services<br>Risk: High</div>
+            <div class="chain-pills"><div class="chain-pill">Legal</div><div class="chain-arrow">→</div><div class="chain-pill">VP Procurement</div><div class="chain-arrow">→</div><div class="chain-pill">CEO</div></div>
+            <div><div class="chip chip-active"><div class="chip-dot"></div>Active</div></div>
+            <div><div class="toggle"><div class="toggle-track on"><div class="toggle-thumb"></div></div></div></div>
+            <div class="row-actions"><button class="btn btn-xs btn-ghost">Edit</button></div>
+          </div>
+
+          <!-- GROUP: Finance -->
+          <div class="group-header">
+            <div class="gh-label">Finance / Department</div>
+            <div class="gh-count">2 workflows</div>
+          </div>
+
+          <div class="wf-row">
+            <div class="row-drag">⠿</div>
+            <div><div class="wf-name">Finance dept. contracts</div><div class="wf-name-sub">Finance team routing</div></div>
+            <div class="wf-condition">Dept: Finance<br>Any type, any value</div>
+            <div class="chain-pills"><div class="chain-pill">Finance Manager</div><div class="chain-arrow">→</div><div class="chain-pill">CFO</div></div>
+            <div><div class="chip chip-active"><div class="chip-dot"></div>Active</div></div>
+            <div><div class="toggle"><div class="toggle-track on"><div class="toggle-thumb"></div></div></div></div>
+            <div class="row-actions"><button class="btn btn-xs btn-ghost">Edit</button></div>
+          </div>
+
+          <div class="wf-row">
+            <div class="row-drag">⠿</div>
+            <div><div class="wf-name">Emergency procurement</div><div class="wf-name-sub">Fast-track for urgent spend</div></div>
+            <div class="wf-condition">Tag: Emergency<br>Value under $25,000</div>
+            <div class="chain-pills"><div class="chain-pill">Dept. VP</div><div class="chain-arrow">→</div><div class="chain-pill">CFO</div></div>
+            <div><div class="chip chip-draft"><div class="chip-dot"></div>Draft</div></div>
+            <div><div class="toggle"><div class="toggle-track off"><div class="toggle-thumb"></div></div></div></div>
+            <div class="row-actions"><button class="btn btn-xs btn-ghost">Edit</button></div>
+          </div>
+
+          <!-- DEFERRED -->
+          <div class="deferred-row-wrap">
+            <div class="deferred-row">
+              <span>⟳</span>
+              <span>Renewals → auto-approve if terms unchanged — deferred to sprint 2 · requires AI term comparison</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S2 · CREATE: STEP 1 — CONDITIONS
+     Empty start state → first condition → two conditions
+════════════════════════════════════════ -->
+<div class="screen" id="s1">
+  <div class="screen-hdr">
+    <span class="s-step">Admin · S2</span>
+    <span class="s-title">Create Workflow — Step 1: Define Conditions</span>
+    <span class="s-scenario">First-time admin · new approval path</span>
+    <span class="s-desc">Empty start · progressive condition reveal · smart nudge · plain-language preview · optional fields</span>
+  </div>
+  <div class="chrome">
+    <div class="topbar">
+      <div class="tb-logo">ASTRA</div>
+      <div class="tb-sep"></div>
+      <div class="tb-role-chip">Admin</div>
+      <div class="tb-back">← Workflow Rules</div>
+      <div class="tb-crumb"><span>Workflow Rules</span><span class="tb-crumb-sep">/</span><span class="active">New workflow · Step 1</span></div>
+      <div class="tb-right"><button class="btn btn-ghost btn-sm">Save draft</button></div>
+    </div>
+    <div class="wizard-shell">
+      <div class="wizard-nav">
+        <div class="wn-title">Create workflow</div>
+        <div class="wstep active"><div class="wstep-num">1</div><div><div class="wstep-lbl">Define conditions</div><div class="wstep-sub">When does this fire?</div></div></div>
+        <div class="wstep-connector"></div>
+        <div class="wstep upcoming"><div class="wstep-num">2</div><div><div class="wstep-lbl">Approval chain</div><div class="wstep-sub">Who approves, in order</div></div></div>
+        <div class="wstep-connector"></div>
+        <div class="wstep upcoming"><div class="wstep-num">3</div><div><div class="wstep-lbl">Review & activate</div><div class="wstep-sub">Confirm before going live</div></div></div>
+        <div class="rule-summary">
+          <div class="rs-label">Workflow summary</div>
+          <div class="rs-row"><div class="rs-key">When</div><div class="rs-val">Software / SaaS</div></div>
+          <div class="rs-row"><div class="rs-key">AND</div><div class="rs-val">Value &gt; $50,000</div></div>
+          <div class="rs-row"><div class="rs-key">Chain</div><div class="rs-val rs-pending">Not set yet</div></div>
+        </div>
+      </div>
+
+      <div class="wizard-body">
+        <div class="wb-scroll">
+          <div class="wb-title">When should this workflow apply?</div>
+          <div class="wb-sub">Add conditions one at a time. The workflow fires when a contract matches all of them. Start with contract type — that's the most common first condition.</div>
+
+          <!-- THREE STATES SHOWN SEQUENTIALLY -->
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; align-items:start; margin-bottom:20px;">
+
+            <!-- STATE A: EMPTY START -->
+            <div style="border:1px solid var(--border-light); border-radius:6px; overflow:hidden;">
+              <div style="padding:7px 11px; background:var(--surface2); border-bottom:1px solid var(--border-light); font-size:9px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); font-family:'IBM Plex Mono',monospace; display:flex; align-items:center; gap:7px;">
+                <div style="width:14px;height:14px;border-radius:50%;background:var(--text-1);color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">A</div>
+                Empty start
+              </div>
+              <div style="padding:13px;">
+                <div class="cond-row">
+                  <div class="cond-prefix">When</div>
+                  <select class="cond-select placeholder" style="flex:1"><option value="" disabled selected>Choose a field…</option><option>Contract type</option><option>Contract value</option><option>Vendor risk level</option><option>Department</option></select>
+                </div>
+                <div style="font-size:10px; color:var(--text-3); font-style:italic; display:flex; align-items:center; gap:5px; padding:4px 0 2px 44px;">
+                  <span style="font-size:12px">↑</span> Choose a field to define your first condition
+                </div>
+                <div style="margin-top:10px; font-size:9px; font-family:'IBM Plex Mono',monospace; color:var(--blue); background:var(--blue-bg); border:1px solid var(--blue-border); border-radius:3px; padding:5px 7px; line-height:1.6;">↳ No pre-filling. Admin decides what this rule is based on.</div>
+              </div>
+            </div>
+
+            <!-- STATE B: FIRST CONDITION SET + NUDGE -->
+            <div style="border:1px solid var(--border-light); border-radius:6px; overflow:hidden;">
+              <div style="padding:7px 11px; background:var(--surface2); border-bottom:1px solid var(--border-light); font-size:9px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); font-family:'IBM Plex Mono',monospace; display:flex; align-items:center; gap:7px;">
+                <div style="width:14px;height:14px;border-radius:50%;background:var(--text-1);color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">B</div>
+                First condition set
+              </div>
+              <div style="padding:13px;">
+                <div class="cond-row">
+                  <div class="cond-prefix">When</div>
+                  <select class="cond-select filled">
+                    <option>Contract type</option>
+                  </select>
+                  <select class="cond-op"><option>is</option><option>is not</option></select>
+                  <select class="cond-val">
+                    <option>Software / SaaS</option><option>Legal / NDA</option><option>Master Services</option>
+                  </select>
+                  <div class="cond-remove">✕</div>
+                </div>
+                <div class="smart-nudge">
+                  <div class="nudge-dot"></div>
+                  <div>
+                    <div>Most Software workflows also filter by value. Add a threshold?</div>
+                    <div class="nudge-actions">
+                      <button class="nudge-btn nudge-yes">Yes, add value threshold</button>
+                      <button class="nudge-btn nudge-skip">Skip</button>
+                    </div>
+                  </div>
+                </div>
+                <div style="margin-top:10px; font-size:9px; font-family:'IBM Plex Mono',monospace; color:var(--blue); background:var(--blue-bg); border:1px solid var(--blue-border); border-radius:3px; padding:5px 7px; line-height:1.6;">↳ Nudge fires once after Contract type is selected. Dismissible permanently.</div>
+              </div>
+            </div>
+
+            <!-- STATE C: TWO CONDITIONS + PREVIEW -->
+            <div style="border:1px solid var(--border-light); border-radius:6px; overflow:hidden;">
+              <div style="padding:7px 11px; background:var(--surface2); border-bottom:1px solid var(--border-light); font-size:9px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); font-family:'IBM Plex Mono',monospace; display:flex; align-items:center; gap:7px;">
+                <div style="width:14px;height:14px;border-radius:50%;background:var(--text-1);color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">C</div>
+                Two conditions + preview
+              </div>
+              <div style="padding:13px;">
+                <div class="cond-row">
+                  <div class="cond-prefix">When</div>
+                  <select class="cond-select filled"><option>Contract type</option></select>
+                  <select class="cond-op"><option>is</option></select>
+                  <select class="cond-val"><option>Software / SaaS</option></select>
+                  <div class="cond-remove">✕</div>
+                </div>
+                <div class="cond-row" style="margin-top:6px">
+                  <div class="cond-prefix">AND</div>
+                  <select class="cond-select filled"><option>Contract value</option></select>
+                  <select class="cond-op"><option>is over</option><option>is under</option></select>
+                  <input class="cond-val active-input" value="$50,000" type="text" style="width:90px">
+                  <div class="cond-remove">✕</div>
+                </div>
+                <div class="add-cond-btn" style="margin-top:6px">+ Add another condition</div>
+                <div class="rule-preview" style="margin-top:10px">
+                  <div class="rp-lbl">Plain-language preview</div>
+                  <div class="rp-sentence">Apply when type is <span class="rp-hl">Software / SaaS</span> AND value is over <span class="rp-hl">$50,000</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OPTIONAL CONDITIONS -->
+          <div class="optional-section">
+            <div class="optional-title">
+              Optional additional conditions
+              <span class="optional-badge">leave blank to skip</span>
+            </div>
+            <div class="optional-grid">
+              <div class="optional-field">
+                <div class="opt-label">Vendor risk level</div>
+                <select class="opt-select"><option value="" disabled selected>Any risk level</option><option>Standard</option><option>High risk</option></select>
+              </div>
+              <div class="optional-field">
+                <div class="opt-label">Department</div>
+                <select class="opt-select"><option value="" disabled selected>Any department</option><option>Engineering</option><option>Finance</option><option>Legal</option><option>Operations</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-footer">
+          <div class="wf-prog-wrap">
+            <div class="wf-prog-label">Step 1 of 3</div>
+            <div class="wf-prog-track"><div class="wf-prog-fill" style="width:33%"></div></div>
+          </div>
+          <button class="btn btn-ghost btn-sm">Cancel</button>
+          <button class="btn btn-primary btn-sm">Next: Set approval chain →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S3 · CREATE: STEP 2 — APPROVAL CHAIN
+════════════════════════════════════════ -->
+<div class="screen" id="s2">
+  <div class="screen-hdr">
+    <span class="s-step">Admin · S3</span>
+    <span class="s-title">Create Workflow — Step 2: Configure Approval Chain</span>
+    <span class="s-scenario">First-time admin · building chain</span>
+    <span class="s-desc">Step cards · add/remove/reorder approvers · optional toggle · notification settings · deferred auto-approve</span>
+  </div>
+  <div class="chrome">
+    <div class="topbar">
+      <div class="tb-logo">ASTRA</div>
+      <div class="tb-sep"></div>
+      <div class="tb-role-chip">Admin</div>
+      <div class="tb-back">← Workflow Rules</div>
+      <div class="tb-crumb"><span>Workflow Rules</span><span class="tb-crumb-sep">/</span><span class="active">New workflow · Step 2</span></div>
+      <div class="tb-right"><button class="btn btn-ghost btn-sm">Save draft</button></div>
+    </div>
+    <div class="wizard-shell">
+      <div class="wizard-nav">
+        <div class="wn-title">Create workflow</div>
+        <div class="wstep done"><div class="wstep-num">✓</div><div><div class="wstep-lbl">Define conditions</div><div class="wstep-sub">Software / SaaS &gt; $50K ✓</div></div></div>
+        <div class="wstep-connector"></div>
+        <div class="wstep active"><div class="wstep-num">2</div><div><div class="wstep-lbl">Approval chain</div><div class="wstep-sub">Who approves, in order</div></div></div>
+        <div class="wstep-connector"></div>
+        <div class="wstep upcoming"><div class="wstep-num">3</div><div><div class="wstep-lbl">Review & activate</div><div class="wstep-sub">Confirm before going live</div></div></div>
+        <div class="rule-summary">
+          <div class="rs-label">Workflow summary</div>
+          <div class="rs-row"><div class="rs-key">When</div><div class="rs-val">Software / SaaS</div></div>
+          <div class="rs-row"><div class="rs-key">AND</div><div class="rs-val">Value &gt; $50,000</div></div>
+          <div class="rs-row"><div class="rs-key">Chain</div><div class="rs-val">Building…</div></div>
+        </div>
+      </div>
+
+      <div class="wizard-body">
+        <div class="wb-scroll">
+          <div class="wb-title">Build the approval chain</div>
+          <div class="wb-sub">Add approvers in order. Each step must be completed before the next approver is notified. Drag steps to reorder.</div>
+
+          <div class="step-cards">
+            <!-- STEP 1 -->
+            <div class="step-card">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-lbl">Step 1 — First approver</div>
+                <div class="approver-row">
+                  <input class="approver-inp filled" value="Legal team (group)" readonly>
+                  <button class="btn btn-ghost btn-sm">Change</button>
+                </div>
+                <div class="step-meta"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b7dbd2d0d6dbf7c1d6dbd8c5d6d9c399d4d8da">[email&#160;protected]</a> · Group — any member can approve</div>
+                <div class="step-actions">
+                  <div class="optional-toggle-row">
+                    <div class="toggle"><div class="toggle-track off"><div class="toggle-thumb"></div></div></div>
+                    <div class="optional-lbl">Optional step</div>
+                  </div>
+                  <button class="step-act reorder">⠿ Reorder</button>
+                  <button class="step-act remove">Remove</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-connector"><div class="sc-line"></div><div class="sc-lbl">then</div></div>
+
+            <!-- STEP 2 -->
+            <div class="step-card active-step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-lbl">Step 2 — Second approver</div>
+                <div class="approver-row">
+                  <input class="approver-inp filled" value="VP of Procurement" readonly>
+                  <button class="btn btn-ghost btn-sm">Change</button>
+                </div>
+                <div class="step-meta">Priya Mehta · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1262607b6b735264737e7d60737c663c717d7f">[email&#160;protected]</a></div>
+                <div class="step-actions">
+                  <div class="optional-toggle-row">
+                    <div class="toggle"><div class="toggle-track off"><div class="toggle-thumb"></div></div></div>
+                    <div class="optional-lbl">Optional step</div>
+                  </div>
+                  <button class="step-act reorder">⠿ Reorder</button>
+                  <button class="step-act remove">Remove</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-connector"><div class="sc-line"></div><div class="sc-lbl">then</div></div>
+
+            <!-- STEP 3 -->
+            <div class="step-card">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-lbl">Step 3 — Final approver</div>
+                <div class="approver-row">
+                  <input class="approver-inp filled" value="CFO" readonly>
+                  <button class="btn btn-ghost btn-sm">Change</button>
+                </div>
+                <div class="step-meta">Rohit Sharma · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="91e3fef9f8e5d1e7f0fdfee3f0ffe5bff2fefc">[email&#160;protected]</a> · final sign-off</div>
+                <div class="step-actions">
+                  <div class="optional-toggle-row">
+                    <div class="toggle"><div class="toggle-track off"><div class="toggle-thumb"></div></div></div>
+                    <div class="optional-lbl">Optional step</div>
+                  </div>
+                  <button class="step-act reorder">⠿ Reorder</button>
+                  <button class="step-act remove">Remove</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-connector"><div class="sc-line"></div></div>
+
+            <!-- ADD STEP -->
+            <div class="add-step">
+              <div class="as-icon">+</div>
+              <div class="as-lbl">Add another approver step</div>
+            </div>
+
+            <!-- NOTIFICATIONS -->
+            <div class="notif-panel">
+              <div class="notif-title">Notifications</div>
+              <div class="notif-row"><div class="notif-check">✓</div>Notify contract submitter when approved</div>
+              <div class="notif-row"><div class="notif-check">✓</div>Send reminder after 48 hours of inaction</div>
+              <div class="notif-row"><div class="notif-uncheck"></div>Notify admin if approval stalls 5+ days</div>
+            </div>
+
+            <!-- DEFERRED: auto-approve -->
+            <div style="margin-top:12px">
+              <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px;font-family:'IBM Plex Mono',monospace;">Coming in sprint 2</div>
+              <div class="deferred-block">
+                <div style="width:22px;height:22px;border-radius:50%;background:var(--wire-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0">AI</div>
+                <div style="flex:1">Auto-approve if renewal terms unchanged — requires AI comparison against previous contract</div>
+                <div class="def-badge">sprint 2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-footer">
+          <div class="wf-prog-wrap">
+            <div class="wf-prog-label">Step 2 of 3</div>
+            <div class="wf-prog-track"><div class="wf-prog-fill" style="width:66%"></div></div>
+          </div>
+          <button class="btn btn-ghost btn-sm">← Back</button>
+          <button class="btn btn-primary btn-sm">Next: Review & activate →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S4 · CREATE: STEP 3 — REVIEW & ACTIVATE
+════════════════════════════════════════ -->
+<div class="screen" id="s3">
+  <div class="screen-hdr">
+    <span class="s-step">Admin · S4</span>
+    <span class="s-title">Create Workflow — Step 3: Review & Activate</span>
+    <span class="s-scenario">First-time admin · final step</span>
+    <span class="s-desc">Full rule summary · chain preview · plain-language confirmation · name the workflow · activate or save as draft</span>
+  </div>
+  <div class="chrome">
+    <div class="topbar">
+      <div class="tb-logo">ASTRA</div>
+      <div class="tb-sep"></div>
+      <div class="tb-role-chip">Admin</div>
+      <div class="tb-back">← Workflow Rules</div>
+      <div class="tb-crumb"><span>Workflow Rules</span><span class="tb-crumb-sep">/</span><span class="active">New workflow · Review</span></div>
+    </div>
+    <div class="wizard-shell">
+      <div class="wizard-nav">
+        <div class="wn-title">Create workflow</div>
+        <div class="wstep done"><div class="wstep-num">✓</div><div><div class="wstep-lbl">Define conditions</div><div class="wstep-sub">Software / SaaS &gt; $50K ✓</div></div></div>
+        <div class="wstep-connector"></div>
+        <div class="wstep done"><div class="wstep-num">✓</div><div><div class="wstep-lbl">Approval chain</div><div class="wstep-sub">Legal → VP → CFO ✓</div></div></div>
+        <div class="wstep-connector"></div>
+        <div class="wstep active"><div class="wstep-num">3</div><div><div class="wstep-lbl">Review & activate</div><div class="wstep-sub">Confirm before going live</div></div></div>
+        <div class="rule-summary">
+          <div class="rs-label">Workflow summary</div>
+          <div class="rs-row"><div class="rs-key">When</div><div class="rs-val">Software / SaaS</div></div>
+          <div class="rs-row"><div class="rs-key">AND</div><div class="rs-val">Value &gt; $50,000</div></div>
+          <div class="rs-row"><div class="rs-key">Chain</div><div class="rs-val">Legal → VP → CFO</div></div>
+        </div>
+      </div>
+
+      <div class="wizard-body">
+        <div class="review-layout-2col" style="min-height:0">
+          <div class="review-main">
+            <!-- CONDITIONS REVIEW -->
+            <div class="review-section">
+              <div class="review-section-title">Conditions <span class="edit-link">← Edit</span></div>
+              <div class="cond-preview-card">
+                <div class="cond-preview-sentence">
+                  Apply when contract type is <span class="cond-preview-hl">Software / SaaS</span>
+                  AND value is over <span class="cond-preview-hl">$50,000</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CHAIN REVIEW -->
+            <div class="review-section">
+              <div class="review-section-title">Approval chain <span class="edit-link">← Edit</span></div>
+              <div class="chain-preview-vertical">
+                <div class="cpv-step">
+                  <div class="cpv-indicator"><div class="cpv-circle">1</div><div class="cpv-line"></div></div>
+                  <div class="cpv-body"><div class="cpv-name">Legal team (group)</div><div class="cpv-role">First review · any member can approve</div></div>
+                </div>
+                <div class="cpv-step">
+                  <div class="cpv-indicator"><div class="cpv-circle">2</div><div class="cpv-line"></div></div>
+                  <div class="cpv-body"><div class="cpv-name">Priya Mehta</div><div class="cpv-role">VP Procurement · second review</div></div>
+                </div>
+                <div class="cpv-step">
+                  <div class="cpv-indicator"><div class="cpv-circle">3</div></div>
+                  <div class="cpv-body"><div class="cpv-name">Rohit Sharma</div><div class="cpv-role">CFO · final sign-off</div></div>
+                </div>
+              </div>
+
+              <!-- PLAIN LANGUAGE CONFIRMATION -->
+              <div class="plain-lang-preview">
+                <div class="plp-label">What this workflow does</div>
+                <div class="plp-text">
+                  When a <strong>Software / SaaS</strong> contract valued over <strong>$50,000</strong> is submitted, Astra will automatically route it to the <strong>Legal team</strong> for first review, then to <strong>Priya Mehta</strong> (VP Procurement), and finally to <strong>Rohit Sharma</strong> (CFO) for sign-off. Each step must be completed in order. Approvers are notified by email. A reminder fires after 48 hours of inaction.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTION SIDEBAR -->
+          <div class="review-sidebar">
+            <div>
+              <div class="rs-section-title">Name this workflow</div>
+              <input class="workflow-name-input filled" value="Software &gt; $50K" type="text">
+              <div class="rs-note">Choose a name that's clear to all admins who manage workflows. This name appears in the workflow list and in approval notifications.</div>
+            </div>
+
+            <div>
+              <div class="rs-section-title">Activate workflow</div>
+              <div class="action-buttons-final">
+                <button class="fab fab-activate">✓ Activate workflow now</button>
+                <button class="fab fab-draft">⊙ Save as draft — activate later</button>
+                <button class="fab fab-discard">✕ Discard and start over</button>
+              </div>
+              <div style="margin-top:10px; font-size:9px; font-family:'IBM Plex Mono',monospace; color:var(--text-3); background:var(--bg); border:1px solid var(--border-light); border-radius:3px; padding:6px 8px; line-height:1.6;">
+                ↳ Activating makes this workflow live immediately. All matching contracts submitted from this point will follow this chain.
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+
+        <div class="wizard-footer">
+          <div class="wf-prog-wrap">
+            <div class="wf-prog-label">Step 3 of 3</div>
+            <div class="wf-prog-track"><div class="wf-prog-fill" style="width:100%"></div></div>
+          </div>
+          <button class="btn btn-ghost btn-sm">← Back</button>
+          <button class="btn btn-teal btn-sm">Activate workflow →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S5 · VIEW / EDIT EXISTING WORKFLOW
+     Returning admin · small change · in-flight warning
+════════════════════════════════════════ -->
+<div class="screen" id="s4">
+  <div class="screen-hdr">
+    <span class="s-step">Admin · S5</span>
+    <span class="s-title">View / Edit Workflow — Returning admin</span>
+    <span class="s-scenario">Returning admin · small edit · approver swap · disable workflow · duplicate</span>
+    <span class="s-desc">Inline condition edit · step card edit · in-flight warning · quick actions · save bar on change</span>
+  </div>
+  <div class="chrome">
+    <div class="topbar">
+      <div class="tb-logo">ASTRA</div>
+      <div class="tb-sep"></div>
+      <div class="tb-role-chip">Admin</div>
+      <div class="tb-back">← Workflow Rules</div>
+      <div class="tb-crumb"><span>Workflow Rules</span><span class="tb-crumb-sep">/</span><span class="active">Software &gt; $50K</span></div>
+      <div class="tb-right">
+        <div class="chip chip-active" style="height:24px"><div class="chip-dot"></div>Active</div>
+        <button class="btn btn-ghost btn-sm">Test workflow</button>
+      </div>
+    </div>
+
+    <div class="edit-layout">
+      <!-- EDIT SIDEBAR: workflow info + quick actions -->
+      <div class="edit-sidebar">
+        <!-- WORKFLOW INFO -->
+        <div class="workflow-info-card">
+          <div class="wic-header">
+            <div class="wic-title">Software &gt; $50K</div>
+            <div class="chip chip-active" style="font-size:9px"><div class="chip-dot"></div>Active</div>
+          </div>
+          <div class="wic-body">
+            <div class="wic-row"><div class="wic-label">Created</div><div class="wic-val">Mar 12, 2026 · Admin</div></div>
+            <div class="wic-row"><div class="wic-label">Last edited</div><div class="wic-val">Apr 1, 2026 · Rajan K.</div></div>
+            <div class="wic-row"><div class="wic-label">Contracts</div><div class="wic-val">47 processed · 2 in-flight</div></div>
+            <div class="wic-row"><div class="wic-label">Group</div><div class="wic-val">Software / SaaS</div></div>
+          </div>
+        </div>
+
+        <!-- IN-FLIGHT WARNING -->
+        <div class="inflight-warn">
+          <div class="iw-dot"></div>
+          <span><strong>2 contracts are currently in this workflow.</strong> Changes apply to new contracts only. In-flight contracts continue on the original chain.</span>
+        </div>
+
+        <!-- TOGGLE -->
+        <div style="background:var(--surface);border:1px solid var(--border-light);border-radius:5px;padding:10px 13px;display:flex;align-items:center;gap:10px;">
+          <div style="flex:1"><div style="font-size:11px;font-weight:500">Workflow active</div><div style="font-size:10px;color:var(--text-3)">Disable to stop new contracts routing via this chain</div></div>
+          <div class="toggle"><div class="toggle-track on"><div class="toggle-thumb"></div></div></div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div>
+          <div style="font-size:10px;font-weight:600;color:var(--text-2);margin-bottom:8px;letter-spacing:0.04em">Quick actions</div>
+          <div class="quick-actions">
+            <button class="qa-btn"><span class="qa-icon">⧉</span>Duplicate this workflow</button>
+            <button class="qa-btn"><span class="qa-icon">↓</span>Export as CSV</button>
+            <button class="qa-btn danger"><span class="qa-icon">✕</span>Delete workflow</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDIT MAIN: conditions + chain -->
+      <div class="edit-main">
+
+        <!-- CONDITIONS -->
+        <div>
+          <div class="edit-section-header">
+            Conditions
+            <span style="font-size:10px;color:var(--blue);cursor:pointer;font-weight:400;text-decoration:underline">+ Add condition</span>
+          </div>
+          <div class="condition-display">
+            <div class="cd-row">
+              <div class="cd-prefix">When</div>
+              <div class="cond-tag">Contract type</div>
+              <div style="font-size:11px;color:var(--text-3)">is</div>
+              <div class="cond-tag">Software / SaaS</div>
+              <div style="margin-left:auto; font-size:10px; color:var(--blue); cursor:pointer; text-decoration:underline">Edit</div>
+            </div>
+            <!-- VALUE THRESHOLD — being edited -->
+            <div class="cond-edit-row">
+              <div class="cd-prefix">AND</div>
+              <div class="cond-tag">Contract value</div>
+              <div style="font-size:11px;color:var(--text-3)">is over</div>
+              <input class="cond-input-edit" value="$50,000">
+              <div style="font-size:10px;color:var(--blue);cursor:pointer;text-decoration:underline">Save</div>
+              <div style="font-size:10px;color:var(--text-3);cursor:pointer">Cancel</div>
+            </div>
+            <div class="change-note">↑ Changed from $50,000 — applies to new contracts only</div>
+          </div>
+        </div>
+
+        <!-- APPROVAL CHAIN -->
+        <div>
+          <div class="edit-section-header">
+            Approval chain
+            <span style="font-size:10px;color:var(--blue);cursor:pointer;font-weight:400;text-decoration:underline">+ Add step</span>
+          </div>
+
+          <!-- STEP 1 — unchanged -->
+          <div class="step-card-edit">
+            <div class="sce-drag">⠿</div>
+            <div class="sce-num">1</div>
+            <div class="sce-body">
+              <div class="sce-name">Legal team (group)</div>
+              <div class="sce-role">First review · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="442821232528043225282b36252a306a272b29">[email&#160;protected]</a></div>
+            </div>
+            <div class="sce-actions">
+              <button class="btn btn-xs btn-ghost">Edit</button>
+              <button class="btn btn-xs" style="border-color:var(--red-border);color:var(--red);background:transparent">Remove</button>
+            </div>
+          </div>
+
+          <!-- STEP 2 — changed approver -->
+          <div class="step-card-edit" style="border:1px solid var(--yellow-dot); background:var(--yellow-bg)">
+            <div class="sce-drag">⠿</div>
+            <div class="sce-num">2</div>
+            <div class="sce-body">
+              <div class="sce-name">Karthik Menon</div>
+              <div class="sce-role">VP Procurement · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fd969c8f89959496bd8b9c91928f9c9389d39e9290">[email&#160;protected]</a></div>
+              <div class="sce-changed">Changed from: Priya Mehta (VP Procurement)</div>
+            </div>
+            <div class="sce-actions">
+              <button class="btn btn-xs btn-ghost">Edit</button>
+              <button class="btn btn-xs" style="border-color:var(--red-border);color:var(--red);background:transparent">Remove</button>
+            </div>
+          </div>
+
+          <!-- STEP 3 — unchanged -->
+          <div class="step-card-edit">
+            <div class="sce-drag">⠿</div>
+            <div class="sce-num">3</div>
+            <div class="sce-body">
+              <div class="sce-name">Rohit Sharma</div>
+              <div class="sce-role">CFO · final sign-off</div>
+            </div>
+            <div class="sce-actions">
+              <button class="btn btn-xs btn-ghost">Edit</button>
+              <button class="btn btn-xs" style="border-color:var(--red-border);color:var(--red);background:transparent">Remove</button>
+            </div>
+          </div>
+
+          <!-- SAVE BAR — appears when changes are made -->
+          <div class="save-bar">
+            <div class="sb-text">
+              <strong>2 unsaved changes</strong> — Step 2 approver changed · Value threshold changed
+            </div>
+            <button class="btn btn-ghost btn-sm">Discard</button>
+            <button class="btn btn-success btn-sm">Save changes</button>
+          </div>
+
+        </div><!-- /approval chain section -->
+
+      </div><!-- /edit-main -->
+    </div><!-- /edit-layout -->
+  </div><!-- /chrome -->
+</div><!-- /screen s4 -->
+
+</div><!-- /screens -->
+
+<script>
+  function show(i) {
+    document.querySelectorAll('.screen').forEach((s,idx) => s.classList.toggle('active', idx===i));
+    document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+  }
+</script>
+</body>
+</html>

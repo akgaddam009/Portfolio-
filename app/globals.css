@@ -1,15 +1,21 @@
 @import "tailwindcss";
 
-/* ─── Design Tokens — MC-inspired ───────────────────── */
+/* ─── Design Tokens — Apple-inspired light system ────
+   Apple's light theme: pure white is the ELEVATED layer (cards), not the base.
+   The page itself sits on a barely-tinted cool gray. Text is never pure black —
+   the signature #1d1d1f has a subtle warm-cool balance that reads "considered."
+   All grays carry a cool undertone (computed via systemGray rather than
+   chromatic-neutral RGB) which is the technical move that makes Apple "premium." */
 :root {
-  --bg:       #ffffff;
-  --surface:  #f5f5f5;
-  --surface2: #ebebeb;
-  --border:   #e5e5e5;
-  --text:     #0a0a0a;
-  --muted:    #737373;
-  --muted2:   #404040;
-  --chrome:   #eeeeed;
+  --bg:       #fafafa;   /* page canvas — off-white. Cards lift via card-shadow, not surface contrast */
+  --surface:  #ffffff;   /* primary background — for elevated cards */
+  --surface2: #f5f5f7;   /* tertiary — subtle differentiation for hover / inset */
+  --border:   #d2d2d7;   /* opaque separator — visible cool gray */
+  --text:       #1d1d1f;   /* the Apple signature: NOT pure black, has 6% lift */
+  --text-hover: #3a3a3c;   /* hover — slightly softened near-black, less harsh than --text */
+  --muted:    #6e6e73;   /* secondary label — cool gray */
+  --muted2:   #424245;   /* tertiary label — deeper cool gray */
+  --chrome:   #f5f5f7;   /* grouped-background canvas — panels float on this */
 
   --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Fira Mono', monospace;
@@ -21,33 +27,93 @@
   --dur-fast: 180ms;
   --dur-base: 320ms;
   --dur-slow: 650ms;
+
+  /* ── Semantic accent tokens — Apple system colors ── */
+  --accent-success: #34c759;  /* Apple systemGreen — copy-success, "In use", "After" */
+  --accent-error:   #ff3b30;  /* Apple systemRed — error states only */
+
+  /* ── Brand accent — burnt terracotta. Phase-1 trial, used as punctuation:
+     "Now" dot, text highlight sweep. NOT used for body text (3.05:1 light /
+     5.34:1 dark — passes for marks and icons, not for paragraphs). */
+  --accent-warm:    #d17b53;
+
+  /* ── Section accent — muted violet. Used for icon badges and labels in
+     case study goal / persona cards. Sits in the purple family but
+     desaturated enough to feel considered rather than defaulted.
+     Candidates: #7c6fe8 (B, current) · #9b8ff5 (lighter) · #6e66d6 (deeper) */
+  --accent-violet:  #9b8ff5;
+
+  /* ── Soft hover overlay — theme-aware via color-mix ──
+     Replaces full --surface2 swaps on icon buttons / chrome elements where
+     the original feels too intense. Auto-adapts because --text differs per theme. */
+  --hover: color-mix(in srgb, var(--text) 5%, transparent);
+
+  /* ── Card depth tokens ──
+     Light: pure layered shadow lifts cards off the warm bg, no border needed.
+     Dark: shadow + 1px ring (since shadows don't read on dark — the ring is
+     the edge that prevents the card from bleeding into the canvas). */
+  --card-shadow:       0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.05);
+  --card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.09);
 }
 
-/* ─── Dark theme ─────────────────────────────────────── */
+/* ─── Dark theme — 3-level hierarchy, lifted scale ─
+   Three distinct depth layers, tuned for legibility against pure-black canvas:
+   - Chrome (#000000): the canvas — outermost layer, deepest
+   - Bg (#141414): panel fills — 20-unit step above canvas (panels visibly lift)
+   - Surface (#1c1c1c): card fills — 8-unit step above panel
+   Cards lift off panels by 8 units; surface2 (#242424) and border (#2a2a2a)
+   continue the scale. Each card layer also takes a 1px white hairline ring
+   because drop shadows darken, and there's nothing to darken on near-black. */
 [data-theme="dark"] {
-  --bg:       #111111;
-  --surface:  #1c1c1c;
-  --surface2: #252525;
-  --border:   #2e2e2e;
-  --text:     #efefef;
-  --muted:    #888888;
-  --muted2:   #b8b8b8;
-  --chrome:   #0d0d0d;
+  /* Lifted dark scale — canvas stays pure black, but panels and cards each
+     gain visible elevation steps so the depth model reads in dark mode the
+     same way it does in light mode. */
+  --bg:       #141414;   /* panel fill — lifted from pure-black canvas (20-unit step for legibility) */
+  --surface:  #1c1c1c;   /* card fill — lifted from panel */
+  --surface2: #242424;   /* hover / inset — one subtle step further */
+  --border:   #2a2a2a;   /* hairline — visible against the new bg */
+  --text:       #ffffff;
+  --text-hover: #c8c3bc;   /* hover — warm parchment off-white, softer than pure white */
+  --muted:    #71717b;   /* Figma Storm Gray (grey/46) — secondary label */
+  --muted2:   #a1a1aa;   /* lifted from --muted for body / value text */
+  --chrome:   #000000;   /* canvas — pure black, panels lift off it */
+
+  /* Ring does the edge definition (drop shadows are invisible on dark bg).
+     Soft drop shadow adds ambient depth on the lighter panel backgrounds. */
+  --card-shadow:       0 0 0 1px rgba(255, 255, 255, 0.07),
+                       0 1px 3px rgba(0, 0, 0, 0.45),
+                       0 4px 16px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.10),
+                       0 2px 6px rgba(0, 0, 0, 0.55),
+                       0 12px 28px rgba(0, 0, 0, 0.4);
 }
 
 /* ─── Nav frosted glass — theme-aware ───────────────── */
+/* Liquid-glass treatment: blur+saturate gives the frost, the inset 1px highlight
+   simulates physical edge refraction (light catching on the top edge of the
+   surface), and the bottom border replaces the solid one with a softer tint. */
 .nav-glass {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 [data-theme="dark"] .nav-glass {
-  background: rgba(13, 13, 13, 0.92);
+  background: rgba(28, 28, 30, 0.82);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+              0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-/* ─── Panel sticky header — fully opaque so scroll content never bleeds through ── */
+/* ─── Panel sticky header — opaque + scroll shadow via scroll-driven JS class ── */
 .panel-header-glass {
   background: var(--bg);
+  transition: box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.panel-header-glass.scrolled {
+  box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.04);
+}
+[data-theme="dark"] .panel-header-glass.scrolled {
+  box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.3);
 }
 
 /* ─── Base ───────────────────────────────────────────── */
@@ -79,8 +145,10 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-/* ─── Cursor ─────────────────────────────────────────── */
-*, *::before, *::after { cursor: none !important; }
+/* ─── Cursor — only suppress native cursor on pointer devices ─── */
+@media (hover: hover) and (pointer: fine) {
+  *, *::before, *::after { cursor: none !important; }
+}
 
 /* ─── Links ──────────────────────────────────────────── */
 a { color: inherit; text-decoration: none; }
@@ -128,6 +196,7 @@ a { color: inherit; text-decoration: none; }
   overflow: hidden;
 }
 
+
 /* ─── Buttons ────────────────────────────────────────── */
 .btn-primary {
   display: inline-flex;
@@ -163,7 +232,7 @@ a { color: inherit; text-decoration: none; }
               transform var(--dur-base) var(--ease-expo);
   letter-spacing: -0.01em;
 }
-.btn-secondary:hover { border-color: var(--text); color: var(--text); transform: translateY(-1px); }
+.btn-secondary:hover { border-color: var(--text-hover); color: var(--text-hover); transform: translateY(-1px); }
 
 /* ─── Nav link with underline ────────────────────────── */
 .nav-link {
@@ -185,7 +254,7 @@ a { color: inherit; text-decoration: none; }
   transform-origin: left center;
   transition: transform var(--dur-base) var(--ease-expo);
 }
-.nav-link:hover { color: var(--text); }
+.nav-link:hover { color: var(--text-hover); }
 .nav-link:hover::after { transform: scaleX(1); }
 
 /* ─── Marquee ────────────────────────────────────────── */
@@ -193,7 +262,26 @@ a { color: inherit; text-decoration: none; }
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-.marquee-track { animation: marquee 40s linear infinite; }
+.marquee-track {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+/* Pause continuously-moving content on hover so visitors can actually read it. */
+.marquee-track:hover,
+.skills-ticker:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ─── Work card thumbnail — hover image-change behaviour removed.
+   Previously: scale(1.04) on hover plus a brightness shift in dark mode.
+   The card itself still gets its shadow-elevation hover from the inline
+   onMouseEnter handler; only the thumbnail content is now static on hover. */
+/* Dark mode: bright UI screenshots (Financial Data, Listings, etc.) blast
+   against the #2c2c2e card surface. Tone them down ~8% with a slight
+   warm tilt to integrate them into the theme. Stays consistent on hover. */
+[data-theme="dark"] .work-thumb {
+  filter: brightness(0.88) contrast(1.02) saturate(0.95);
+}
+
 
 /* ─── Text highlighter — sticky to element ──────────── */
 @keyframes highlight-sweep {
@@ -201,10 +289,12 @@ a { color: inherit; text-decoration: none; }
   to   { background-size: 100% 100%; }
 }
 .text-highlight {
+  /* Terracotta highlight sweep — warm pigment ink, not yellow marker. The
+     low-opacity layer reads as a thoughtful editor's mark, not Microsoft Word. */
   background-image: linear-gradient(
     transparent 18%,
-    rgba(251, 191, 36, 0.28) 18%,
-    rgba(251, 191, 36, 0.28) 88%,
+    color-mix(in srgb, var(--accent-warm) 28%, transparent) 18%,
+    color-mix(in srgb, var(--accent-warm) 28%, transparent) 88%,
     transparent 88%
   );
   background-size: 0% 100%;
@@ -233,17 +323,42 @@ a { color: inherit; text-decoration: none; }
 
 /* ─── Availability pulse dot ─────────────────────────── */
 @keyframes availability-pulse {
-  0%, 100% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.45); }
-  60%       { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);   }
+  0%, 100% { box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent-success) 35%, transparent); }
+  60%       { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-success) 0%, transparent);  }
 }
 .availability-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #22c55e;
+  background: var(--accent-success);
   display: inline-block;
   flex-shrink: 0;
-  animation: availability-pulse 2.5s ease-out infinite;
+  animation: availability-pulse 4s ease-out infinite;
+  animation-delay: 2s;
+}
+
+/* ─── Skip nav — visible on keyboard focus only ──────── */
+.skip-nav {
+  position: fixed;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 0 0 8px 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  transition: top 0.2s;
+}
+.skip-nav:focus { top: 0; }
+
+/* ─── Keyboard focus ring ─────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* ─── Mobile responsive layout ───────────────────────── */
@@ -273,6 +388,77 @@ a { color: inherit; text-decoration: none; }
   }
   .desktop-nav-arrows { display: none !important; }
   .panel-dots { display: none !important; }
+
+  /* Solid nav backdrop on mobile — content scrolling under a transparent
+     fixed nav is the recruiter-on-phone "feels broken" tell. */
+  .nav-glass {
+    background: rgba(255, 255, 255, 0.98) !important;
+  }
+  [data-theme="dark"] .nav-glass {
+    background: rgba(28, 28, 30, 0.98) !important;
+  }
+
+  /* Career panel: the timeline uses absolute positioning calibrated to
+     desktop widths. On mobile, give the panel more vertical room so
+     cards don't clip dates and roles. Min-height ensures the entire
+     timeline is visible without scroll-trap inside the stacked layout. */
+  #career-panel-container,
+  .panel:has(#career-panel-container) {
+    min-height: 720px;
+  }
+}
+
+/* ─── Film grain overlay ─────────────────────────────── */
+.grain-overlay {
+  position: fixed;
+  /* Oversized by 150px each side so translations never reveal an edge */
+  inset: -150px;
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  opacity: 0.045;
+  pointer-events: none;
+  z-index: 9990;
+  animation: grain-shift 1s steps(10) infinite;
+}
+
+@keyframes grain-shift {
+  0%   { transform: translate(  0px,   0px); }
+  10%  { transform: translate(-22px, -16px); }
+  20%  { transform: translate(-42px,  11px); }
+  30%  { transform: translate( 17px, -38px); }
+  40%  { transform: translate(-18px,  32px); }
+  50%  { transform: translate(-38px,  17px); }
+  60%  { transform: translate( 28px,   0px); }
+  70%  { transform: translate(  0px,  22px); }
+  80%  { transform: translate( 12px, -22px); }
+  90%  { transform: translate(-28px,  12px); }
+  100% { transform: translate(  0px,   0px); }
+}
+
+/* ─── Page transitions — View Transitions API ────────── */
+/*
+ * Next.js 16 calls document.startViewTransition() on every
+ * navigation when experimental.viewTransition is enabled.
+ * We only need CSS — no <ViewTransition> wrapper components.
+ *
+ * Old page fades + scales down slightly (like stepping back).
+ * New page fades + lifts in (like stepping forward).
+ * 100ms delay on the enter lets the exit finish first.
+ */
+::view-transition-old(root) {
+  animation: 200ms ease-in both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 300ms ease-out 120ms both vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ─── Reduced motion ─────────────────────────────────── */
@@ -281,4 +467,11 @@ a { color: inherit; text-decoration: none; }
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+  /* View transition pseudo-elements aren't matched by * */
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
 }
+

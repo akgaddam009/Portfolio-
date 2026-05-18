@@ -1,0 +1,367 @@
+/* ─── Astra prototype design tokens ────────────────────
+   Scoped under .astra-app so they don't leak into the rest
+   of the portfolio. Preserves the warm cream + IBM Plex
+   Mono palette from the original wireframes — this is an
+   Astra product mock, not portfolio chrome. */
+
+.astra-app {
+  /* Surfaces */
+  --astra-bg:           #F5F3EF;
+  --astra-surface:      #FFFFFF;
+  --astra-surface-2:    #FAF9F7;
+  --astra-border:       #D8D2C8;
+  --astra-border-light: #EAE6DF;
+  --astra-wire:         #E2DDD6;
+  --astra-wire-dark:    #C8C0B4;
+
+  /* Text */
+  --astra-text-1: #18160F;
+  --astra-text-2: #655F55;
+  --astra-text-3: #A69F94;
+
+  /* Status colours */
+  --astra-red:        #B83228;
+  --astra-red-bg:     #FCF0EE;
+  --astra-red-border: #F0C4BE;
+  --astra-red-dot:    #D94035;
+
+  --astra-yellow:        #B87314;
+  --astra-yellow-bg:     #FDF7EE;
+  --astra-yellow-border: #F0D8A8;
+  --astra-yellow-dot:    #E8970A;
+
+  --astra-green:        #2A6E3F;
+  --astra-green-bg:     #EEF6F1;
+  --astra-green-border: #B8DEC8;
+  --astra-green-dot:    #2E8B4A;
+
+  --astra-blue:        #1A4A8A;
+  --astra-blue-bg:     #EEF3FC;
+  --astra-blue-border: #B8CCEC;
+  --astra-blue-dot:    #2060C0;
+
+  --astra-purple:        #5A2A8A;
+  --astra-purple-bg:     #F3EEF9;
+  --astra-purple-border: #C8B0E0;
+  --astra-purple-dot:    #7B4ABF;
+
+  /* Shadows */
+  --astra-shadow:    0 1px 4px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --astra-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.14);
+
+  /* Typography */
+  --astra-font-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --astra-font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  font-family: var(--astra-font-body);
+  background: var(--astra-bg);
+  color: var(--astra-text-1);
+  min-height: 100dvh;
+}
+
+/* Reset/normalize within the astra-app scope only */
+.astra-app *,
+.astra-app *::before,
+.astra-app *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Top nav (Astra branded) ─────────────────── */
+.astra-nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: var(--astra-text-1);
+  display: flex;
+  align-items: stretch;
+  height: 42px;
+}
+
+.astra-nav-brand {
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--astra-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  border-right: 1px solid #2A2820;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+.astra-nav-brand-v {
+  font-size: 9px;
+  color: #777;
+  background: #2A2820;
+  padding: 2px 5px;
+  border-radius: 2px;
+}
+
+.astra-nav-role-section {
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #2A2820;
+}
+
+.astra-role-label {
+  padding: 0 14px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: var(--astra-font-mono);
+}
+.astra-role-label-proc  { color: #E8970A; }
+.astra-role-label-legal { color: #7B4ABF; }
+.astra-role-label-admin { color: #B8DEC8; }
+
+.astra-nav-back {
+  margin-left: auto;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--astra-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: #999;
+  text-decoration: none;
+  border-left: 1px solid #2A2820;
+  transition: color 0.15s, background 0.15s;
+}
+.astra-nav-back:hover {
+  color: #fff;
+  background: #1E1C15;
+}
+
+/* ─── Role switcher (P1 only) ─── */
+.astra-role-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+}
+.astra-role-pill {
+  padding: 4px 10px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--astra-font-mono);
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.astra-role-pill:hover { color: #ccc; background: #1E1C15; }
+.astra-role-pill.proc.active  { color: #E8970A; background: #2A2418; border-color: #5A4818; }
+.astra-role-pill.legal.active { color: #BC93D9; background: #261A2E; border-color: #44285A; }
+
+/* ─── Page container ─── */
+.astra-screen {
+  padding: 22px 26px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* ─── Chrome card (the app shell) ─── */
+.astra-chrome {
+  background: var(--astra-surface);
+  border: 1px solid var(--astra-border);
+  border-radius: 8px;
+  box-shadow: var(--astra-shadow);
+  overflow: hidden;
+  position: relative;
+}
+
+.astra-topbar {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--astra-border-light);
+  background: var(--astra-surface);
+}
+.astra-tb-logo {
+  font-family: var(--astra-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+.astra-tb-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--astra-border-light);
+}
+.astra-tb-role-chip {
+  font-size: 9px;
+  font-family: var(--astra-font-mono);
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+.astra-tb-role-chip.proc  { background: var(--astra-yellow-bg); color: var(--astra-yellow); border: 1px solid var(--astra-yellow-border); }
+.astra-tb-role-chip.legal { background: var(--astra-purple-bg); color: var(--astra-purple); border: 1px solid var(--astra-purple-border); }
+.astra-tb-back {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--astra-text-2);
+  padding: 4px 8px; border-radius: 4px;
+  border: 1px solid var(--astra-border-light);
+  cursor: pointer; background: transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+.astra-tb-back:hover { color: var(--astra-text-1); border-color: var(--astra-text-2); }
+.astra-tb-crumb {
+  font-size: 11px; color: var(--astra-text-3);
+  display: flex; align-items: center; gap: 4px;
+}
+.astra-tb-crumb .active { color: var(--astra-text-1); font-weight: 500; }
+.astra-tb-right {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ─── Buttons ─── */
+.astra-btn {
+  font-family: var(--astra-font-body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: opacity 0.15s, background 0.15s, border-color 0.15s, color 0.15s;
+}
+.astra-btn-primary {
+  background: var(--astra-text-1);
+  color: var(--astra-surface);
+}
+.astra-btn-primary:hover { opacity: 0.85; }
+.astra-btn-ghost {
+  background: transparent;
+  color: var(--astra-text-2);
+  border: 1px solid var(--astra-border);
+}
+.astra-btn-ghost:hover { color: var(--astra-text-1); border-color: var(--astra-text-2); }
+.astra-btn-sm { font-size: 11px; padding: 5px 10px; }
+
+/* ─── App shell (with left nav) ─── */
+.astra-app-shell {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  min-height: 540px;
+}
+.astra-left-nav {
+  border-right: 1px solid var(--astra-border-light);
+  background: var(--astra-surface-2);
+  padding: 14px 8px;
+  font-size: 12px;
+}
+.astra-ln-section {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--astra-text-3);
+  font-family: var(--astra-font-mono);
+  padding: 4px 12px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+.astra-ln-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: var(--astra-text-2);
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.12s, color 0.12s;
+}
+.astra-ln-item:hover { background: var(--astra-bg); }
+.astra-ln-item.active { background: var(--astra-bg); color: var(--astra-text-1); font-weight: 500; }
+.astra-ln-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.astra-main {
+  padding: 18px 22px;
+  background: var(--astra-surface);
+  overflow: hidden;
+}
+
+/* ─── Status chips ─── */
+.astra-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--astra-font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 3px 7px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+}
+.astra-chip-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.astra-chip-draft    { background: var(--astra-bg);          color: var(--astra-text-3); border-color: var(--astra-border); }
+.astra-chip-draft .astra-chip-dot    { background: var(--astra-text-3); }
+.astra-chip-review   { background: var(--astra-yellow-bg);   color: var(--astra-yellow); border-color: var(--astra-yellow-border); }
+.astra-chip-review .astra-chip-dot   { background: var(--astra-yellow-dot); }
+.astra-chip-legal    { background: var(--astra-purple-bg);   color: var(--astra-purple); border-color: var(--astra-purple-border); }
+.astra-chip-legal .astra-chip-dot    { background: var(--astra-purple-dot); }
+.astra-chip-approved { background: var(--astra-green-bg);    color: var(--astra-green);  border-color: var(--astra-green-border); }
+.astra-chip-approved .astra-chip-dot { background: var(--astra-green-dot); }
+.astra-chip-returned { background: var(--astra-red-bg);      color: var(--astra-red);    border-color: var(--astra-red-border); }
+.astra-chip-returned .astra-chip-dot { background: var(--astra-red-dot); }
+
+/* ─── Card / form helpers ─── */
+.astra-card {
+  background: var(--astra-surface);
+  border: 1px solid var(--astra-border-light);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+/* ─── Field rows ─── */
+.astra-field {
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--astra-border-light);
+  align-items: start;
+}
+.astra-field:last-child { border-bottom: none; }
+.astra-field-label {
+  font-size: 11px;
+  font-family: var(--astra-font-mono);
+  color: var(--astra-text-3);
+  letter-spacing: 0.02em;
+  padding-top: 2px;
+}
+.astra-field-value {
+  font-size: 13px;
+  color: var(--astra-text-1);
+  word-break: break-word;
+}
+.astra-field-value.muted { color: var(--astra-text-3); font-style: italic; }
+.astra-field-status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  align-self: center;
+  flex-shrink: 0;
+}
+.astra-field-status-dot.confident    { background: var(--astra-green-dot); }
+.astra-field-status-dot.needs-review { background: var(--astra-yellow-dot); }
+.astra-field-status-dot.missing      { background: var(--astra-red-dot); }

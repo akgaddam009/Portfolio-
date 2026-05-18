@@ -47,20 +47,23 @@ export default function ThemeToggle() {
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       title={dark ? "Switch to light mode" : "Switch to dark mode"}
       style={{
-        width: "32px",
-        height: "32px",
-        borderRadius: "8px",
-        border: "1px solid var(--border)",
-        background: "transparent",
+        width: "44px",
+        height: "44px",
+        borderRadius: "12px",
+        border: "none",
+        background: "var(--surface)",
+        boxShadow: "var(--card-shadow)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
         flexShrink: 0,
-        transition: "background 0.2s, border-color 0.2s",
+        transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
       }}
-      onMouseEnter={e => (e.currentTarget.style.background = "var(--surface2)")}
-      onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+      // Shadow elevation system (matches cards). Resting uses --card-shadow,
+      // hover lifts to --card-shadow-hover. No border anywhere.
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
     >
       <AnimatePresence mode="wait" initial={false}>
         {dark ? (
