@@ -151,15 +151,11 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
           </div>
         </section>
 
-        {/* Public hero media — same asset shown on the homepage card.
-            Dominates the first fold so the password panel sits below.
-
-            One uniform 16:10 frame across every confidential case study
-            so the gate UI reads consistent regardless of which work the
-            visitor lands on. Portrait (mobile) recordings render
-            object-fit: contain inside the same frame, with a tasteful
-            backdrop fill — same shape as landscape, just letterboxed
-            with intent. */}
+        {/* Public hero media — rendered with the same VideoBlock pattern
+            used inside the unlocked case study, so the first fold of the
+            gate matches what the visitor would see after unlocking.
+            Mobile recordings get the centered phone-style frame; web
+            products get the macOS browser chrome. */}
         {(coverVideo || coverPoster) && (
           <section style={{ padding: "var(--space-8) 0 0" }}>
             <div className="page-pad">
@@ -168,79 +164,103 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
                 style={{
-                  position: "relative",
-                  width: "100%",
                   maxWidth: "1120px",
                   margin: "0 auto",
-                  aspectRatio: "16 / 10",
-                  minHeight: "min(72vh, 720px)",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  background: coverOrientation === "portrait"
-                    ? "radial-gradient(ellipse at center, var(--surface) 0%, var(--surface2) 100%)"
-                    : "var(--surface2)",
-                  border: "1px solid var(--border)",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.06)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
                 }}
               >
-                {coverVideo ? (
-                  <video
-                    src={coverVideo}
-                    poster={coverPoster}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      width: coverOrientation === "portrait" ? "auto" : "100%",
-                      height: coverOrientation === "portrait" ? "92%" : "100%",
-                      objectFit: coverOrientation === "portrait" ? "contain" : "cover",
-                      display: "block",
-                      borderRadius: coverOrientation === "portrait" ? "20px" : "0",
-                      boxShadow: coverOrientation === "portrait"
-                        ? "0 8px 32px rgba(0,0,0,0.12)"
-                        : "none",
-                    }}
-                  />
-                ) : coverPoster ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={coverPoster}
-                    alt=""
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      width: coverOrientation === "portrait" ? "auto" : "100%",
-                      height: coverOrientation === "portrait" ? "92%" : "100%",
-                      objectFit: coverOrientation === "portrait" ? "contain" : "cover",
-                      display: "block",
-                      borderRadius: coverOrientation === "portrait" ? "20px" : "0",
-                    }}
-                  />
-                ) : null}
+                {coverOrientation === "portrait" ? (
+                  // Mobile phone frame — mirrors VideoBlock isMobile branch
+                  <div style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    background: "var(--surface)",
+                    borderRadius: "16px",
+                    padding: "24px",
+                    boxShadow: "var(--card-shadow)",
+                  }}>
+                    <div style={{ position: "relative", width: "100%", maxWidth: "320px" }}>
+                      {coverVideo ? (
+                        <video
+                          src={coverVideo}
+                          poster={coverPoster}
+                          autoPlay loop muted playsInline preload="metadata"
+                          style={{
+                            maxHeight: "640px",
+                            maxWidth: "100%",
+                            display: "block",
+                            borderRadius: "12px",
+                            background: "#0a0a0a",
+                          }}
+                        />
+                      ) : coverPoster ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={coverPoster}
+                          alt=""
+                          style={{
+                            maxHeight: "640px",
+                            maxWidth: "100%",
+                            display: "block",
+                            borderRadius: "12px",
+                          }}
+                        />
+                      ) : null}
+                    </div>
+                  </div>
+                ) : (
+                  // Web product — macOS browser chrome, mirrors VideoBlock landscape branch
+                  <div style={{
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                    background: "var(--chrome)",
+                    boxShadow: "var(--card-shadow)",
+                  }}>
+                    {/* Chrome bar with traffic lights and URL pill */}
+                    <div style={{
+                      position: "relative", height: "38px",
+                      background: "var(--chrome)",
+                      borderBottom: "1px solid var(--border)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <div style={{
+                        position: "absolute", left: "14px",
+                        display: "flex", alignItems: "center", gap: "6px",
+                      }}>
+                        {["#ff5f57", "#febc2e", "#28c840"].map((c, i) => (
+                          <div key={i} style={{ width: "10px", height: "10px", borderRadius: "50%", background: c }} />
+                        ))}
+                      </div>
+                    </div>
+                    {coverVideo ? (
+                      <video
+                        src={coverVideo}
+                        poster={coverPoster}
+                        autoPlay loop muted playsInline preload="metadata"
+                        style={{
+                          width: "100%",
+                          display: "block",
+                          maxHeight: "520px",
+                          objectFit: "contain",
+                          background: "var(--surface)",
+                        }}
+                      />
+                    ) : coverPoster ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={coverPoster}
+                        alt=""
+                        style={{
+                          width: "100%",
+                          display: "block",
+                          maxHeight: "520px",
+                          objectFit: "contain",
+                          background: "var(--surface)",
+                        }}
+                      />
+                    ) : null}
+                  </div>
+                )}
               </motion.div>
-
-              {/* Scroll affordance — quiet mono caption that signals the
-                  password panel sits below the fold. */}
-              <p
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "var(--text-eyebrow)",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "var(--muted)",
-                  textAlign: "center",
-                  marginTop: "var(--space-6)",
-                }}
-              >
-                Scroll to unlock ↓
-              </p>
             </div>
           </section>
         )}
