@@ -336,23 +336,6 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
                 </motion.button>
               </form>
 
-              {/* Contact nudge */}
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-caption)",
-                  color: "var(--muted)",
-                  marginTop: "20px",
-                }}
-              >
-                Don&apos;t have it?{" "}
-                <a
-                  href="mailto:akgaddam009@gmail.com"
-                  style={{ color: "var(--text)", textDecoration: "underline", textUnderlineOffset: "3px" }}
-                >
-                  Reach out →
-                </a>
-              </p>
             </motion.div>
           </div>
         </div>
