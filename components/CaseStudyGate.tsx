@@ -153,10 +153,13 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
 
         {/* Public hero media — same asset shown on the homepage card.
             Dominates the first fold so the password panel sits below.
-            Layout differs by orientation:
-              landscape (web product): wide 16:10 frame, fills viewport
-              portrait  (mobile app):  centered phone-shaped frame so
-                                       the recording isn't cropped */}
+
+            One uniform 16:10 frame across every confidential case study
+            so the gate UI reads consistent regardless of which work the
+            visitor lands on. Portrait (mobile) recordings render
+            object-fit: contain inside the same frame, with a tasteful
+            backdrop fill — same shape as landscape, just letterboxed
+            with intent. */}
         {(coverVideo || coverPoster) && (
           <section style={{ padding: "var(--space-8) 0 0" }}>
             <div className="page-pad">
@@ -167,15 +170,20 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
                 style={{
                   position: "relative",
                   width: "100%",
-                  maxWidth: coverOrientation === "portrait" ? "360px" : "1120px",
+                  maxWidth: "1120px",
                   margin: "0 auto",
-                  aspectRatio: coverOrientation === "portrait" ? "9 / 19.5" : "16 / 10",
-                  minHeight: coverOrientation === "portrait" ? "min(72vh, 720px)" : "min(72vh, 720px)",
-                  borderRadius: coverOrientation === "portrait" ? "32px" : "16px",
+                  aspectRatio: "16 / 10",
+                  minHeight: "min(72vh, 720px)",
+                  borderRadius: "16px",
                   overflow: "hidden",
-                  background: "var(--surface2)",
+                  background: coverOrientation === "portrait"
+                    ? "radial-gradient(ellipse at center, var(--surface) 0%, var(--surface2) 100%)"
+                    : "var(--surface2)",
                   border: "1px solid var(--border)",
                   boxShadow: "0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.06)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
                 {coverVideo ? (
@@ -188,10 +196,16 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
                     playsInline
                     preload="metadata"
                     style={{
-                      width: "100%",
-                      height: "100%",
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      width: coverOrientation === "portrait" ? "auto" : "100%",
+                      height: coverOrientation === "portrait" ? "92%" : "100%",
                       objectFit: coverOrientation === "portrait" ? "contain" : "cover",
                       display: "block",
+                      borderRadius: coverOrientation === "portrait" ? "20px" : "0",
+                      boxShadow: coverOrientation === "portrait"
+                        ? "0 8px 32px rgba(0,0,0,0.12)"
+                        : "none",
                     }}
                   />
                 ) : coverPoster ? (
@@ -200,10 +214,13 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
                     src={coverPoster}
                     alt=""
                     style={{
-                      width: "100%",
-                      height: "100%",
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      width: coverOrientation === "portrait" ? "auto" : "100%",
+                      height: coverOrientation === "portrait" ? "92%" : "100%",
                       objectFit: coverOrientation === "portrait" ? "contain" : "cover",
                       display: "block",
+                      borderRadius: coverOrientation === "portrait" ? "20px" : "0",
                     }}
                   />
                 ) : null}
