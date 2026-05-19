@@ -37,9 +37,15 @@ type GateProps = {
   heroLabel: string;
   /** Public-safe teaser text. Falls back to a generic prompt if absent. */
   teaser?: string;
+  /** Public hero media (same asset shown on the homepage card). Renders
+      in the first fold above the password panel so visitors get a taste
+      of the work before being asked to unlock. Both fields are public
+      assets allowlisted in proxy.ts — never confidential payload. */
+  coverVideo?: string;
+  coverPoster?: string;
 };
 
-export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GateProps) {
+export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVideo, coverPoster }: GateProps) {
   const router = useRouter();
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState<null | "wrong" | "rate-limited" | "config">(null);
@@ -71,8 +77,7 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
   return (
     <>
       <main id="main-content" style={{ paddingTop: "52px" }}>
-        {/* Hero band — matches the look of CaseStudyDetail so the page
-           feels like a real case study with a gate on top, not a 403. */}
+        {/* Hero band */}
         <section style={{ padding: "var(--space-8) 0", borderBottom: "1px solid var(--border)" }}>
           <div className="page-pad">
             <Link
@@ -102,7 +107,7 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
                     letterSpacing: "0.06em",
                     textTransform: "uppercase",
                     padding: "3px 8px",
-                    background: "var(--surface)",
+                    background: "var(--surface2)",
                     color: "var(--muted)",
                     borderRadius: "4px",
                   }}
@@ -117,7 +122,7 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
                   letterSpacing: "0.06em",
                   textTransform: "uppercase",
                   padding: "3px 8px",
-                  background: "var(--surface)",
+                  background: "var(--surface2)",
                   color: "var(--muted)",
                   borderRadius: "4px",
                 }}
@@ -142,74 +147,164 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
           </div>
         </section>
 
+        {/* Public hero media — same asset shown on the homepage card.
+            Lives above the gate so the first fold gives visitors a
+            sense of the work before they're asked to unlock. */}
+        {(coverVideo || coverPoster) && (
+          <section style={{ padding: "var(--space-8) 0 0" }}>
+            <div className="page-pad">
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: "960px",
+                  margin: "0 auto",
+                  aspectRatio: "16 / 9",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  background: "var(--surface2)",
+                  border: "1px solid var(--border)",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.06)",
+                }}
+              >
+                {coverVideo ? (
+                  <video
+                    src={coverVideo}
+                    poster={coverPoster}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                ) : coverPoster ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={coverPoster}
+                    alt=""
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                ) : null}
+              </motion.div>
+            </div>
+          </section>
+        )}
+
         {/* Gate card */}
-        <div style={{ padding: "var(--space-9) 0 120px" }}>
+        <div style={{ padding: "var(--space-10) 0 120px" }}>
           <div className="page-pad">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: EASE }}
               style={{
-                borderRadius: "16px",
-                padding: "56px 40px 48px",
+                borderRadius: "20px",
+                padding: "52px 44px 44px",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 textAlign: "center",
-                gap: "20px",
+                gap: "0",
                 background: "var(--surface)",
-                boxShadow: "var(--card-shadow)",
-                maxWidth: "560px",
+                border: "1px solid var(--border)",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.04), 0 16px 48px rgba(0,0,0,0.08)",
+                maxWidth: "480px",
                 margin: "0 auto",
               }}
             >
-              <svg
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ color: "var(--muted)" }}
+              {/* Lock icon in a circle */}
+              <div
+                style={{
+                  width: "64px",
+                  height: "64px",
+                  borderRadius: "50%",
+                  background: "var(--surface2)",
+                  border: "1px solid var(--border)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: "24px",
+                  flexShrink: 0,
+                }}
               >
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-
-              <div>
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-title)",
-                    fontWeight: 400,
-                    letterSpacing: "-0.02em",
-                    color: "var(--text)",
-                    marginBottom: "8px",
-                    lineHeight: 1.3,
-                  }}
+                <svg
+                  width="26"
+                  height="26"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ color: "var(--muted2)" }}
                 >
-                  This case study is password protected
-                </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-body)",
-                    color: "var(--muted)",
-                    lineHeight: 1.65,
-                    maxWidth: "320px",
-                  }}
-                >
-                  {teaser ?? "Much of my work is confidential. Please reach out for the password."}
-                </p>
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
               </div>
 
+              {/* Eyebrow */}
+              <p
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "var(--text-eyebrow)",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "var(--muted)",
+                  marginBottom: "10px",
+                }}
+              >
+                Confidential
+              </p>
+
+              {/* Heading */}
+              <p
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-title-lg)",
+                  fontWeight: 500,
+                  letterSpacing: "-0.025em",
+                  color: "var(--text)",
+                  marginBottom: "10px",
+                  lineHeight: 1.25,
+                }}
+              >
+                This case study is password protected
+              </p>
+
+              {/* Subtext */}
+              <p
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-body)",
+                  color: "var(--muted)",
+                  lineHeight: 1.65,
+                  maxWidth: "340px",
+                  marginBottom: "32px",
+                }}
+              >
+                {teaser ?? "Much of my work is under NDA. Reach out and I'll share the password."}
+              </p>
+
+              {/* Form — stacked layout */}
               <form
                 onSubmit={handleSubmit}
-                className="cs-pw-form"
                 aria-label="Unlock this case study"
-                style={{ display: "flex", gap: "8px", width: "100%", maxWidth: "340px" }}
+                style={{ width: "100%", maxWidth: "320px" }}
               >
                 <label htmlFor="cs-gate-password" className="sr-only">
                   Password
@@ -223,23 +318,25 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
                     setPwInput(e.target.value);
                     setPwError(null);
                   }}
-                  placeholder="Password"
+                  placeholder="Enter password"
                   autoComplete="off"
                   disabled={isPending}
                   aria-invalid={pwError !== null}
                   aria-describedby={pwError ? "cs-gate-error" : undefined}
                   style={{
-                    flex: 1,
+                    width: "100%",
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-body-lg)",
                     letterSpacing: "-0.01em",
                     color: "var(--text)",
                     background: "var(--bg)",
-                    border: `1px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
+                    border: `1.5px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
                     borderRadius: "10px",
-                    padding: "10px 14px",
+                    padding: "11px 14px",
                     outline: "none",
-                    transition: "border-color 0.2s",
+                    transition: "border-color 0.18s",
+                    marginBottom: "10px",
+                    boxSizing: "border-box",
                   }}
                   onFocus={(e) => {
                     if (!pwError) e.currentTarget.style.borderColor = "var(--text)";
@@ -248,56 +345,60 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
                     if (!pwError) e.currentTarget.style.borderColor = "var(--border)";
                   }}
                 />
+
+                <AnimatePresence>
+                  {pwError && (
+                    <motion.p
+                      id="cs-gate-error"
+                      role="alert"
+                      aria-live="polite"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2, ease: EASE }}
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "var(--text-mono)",
+                        color: "var(--accent-error)",
+                        letterSpacing: "0.04em",
+                        marginBottom: "10px",
+                        textAlign: "left",
+                      }}
+                    >
+                      {pwError === "rate-limited"
+                        ? `Too many attempts. Try again in ${retryInSec ?? 0}s.`
+                        : pwError === "config"
+                        ? "Server not configured. Contact me directly."
+                        : "Incorrect password. Try again."}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+
                 <motion.button
                   type="submit"
-                  whileTap={{ scale: 0.95 }}
+                  whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   disabled={isPending}
                   style={{
+                    width: "100%",
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-body-lg)",
-                    fontWeight: 400,
+                    fontWeight: 500,
                     letterSpacing: "-0.01em",
-                    padding: "10px 20px",
+                    padding: "12px 20px",
                     background: "var(--text)",
                     color: "var(--bg)",
                     border: "none",
                     borderRadius: "10px",
                     cursor: isPending ? "wait" : "pointer",
-                    whiteSpace: "nowrap",
-                    opacity: isPending ? 0.7 : 1,
+                    opacity: isPending ? 0.65 : 1,
+                    transition: "opacity 0.15s",
                   }}
                 >
-                  {isPending ? "..." : "Unlock"}
+                  {isPending ? "Unlocking…" : "Unlock"}
                 </motion.button>
               </form>
 
-              <AnimatePresence>
-                {pwError && (
-                  <motion.p
-                    id="cs-gate-error"
-                    role="alert"
-                    aria-live="polite"
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25, ease: EASE }}
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-mono)",
-                      color: "var(--accent-error)",
-                      letterSpacing: "0.04em",
-                      marginTop: "-8px",
-                    }}
-                  >
-                    {pwError === "rate-limited"
-                      ? `Too many attempts. Try again in ${retryInSec ?? 0}s.`
-                      : pwError === "config"
-                      ? "Server not configured. Please contact me directly."
-                      : "Incorrect password. Try again."}
-                  </motion.p>
-                )}
-              </AnimatePresence>
             </motion.div>
           </div>
         </div>
