@@ -1,69 +1,30 @@
 import type { Metadata } from "next";
-import { Inter, DM_Mono, DM_Sans } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { AntdProvider } from "@/components/dashboard/AntdProvider";
 import "./globals.css";
-import Cursor from "@/components/Cursor";
-import AnalyticsClient from "@/components/AnalyticsClient";
-import RouteProgress from "@/components/RouteProgress";
 
-const inter = Inter({
-  variable: "--font-inter",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  display: "swap",
 });
 
-const dmMono = DM_Mono({
-  variable: "--font-dm-mono",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  weight: ["400"],
-  display: "swap",
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  weight: "400",
   subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "swap",
 });
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,        // never disable zoom — accessibility requirement
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfbfd" },
-    { media: "(prefers-color-scheme: dark)",  color: "#000000" },
-  ],
-};
 
 export const metadata: Metadata = {
-  title: "Arun Gaddam — Senior Product Designer",
+  title: "Underwrite — AI copilot for credit underwriting",
   description:
-    "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",
-  metadataBase: new URL("https://arungaddamux.vercel.app"),
-  alternates: {
-    canonical: "https://arungaddamux.vercel.app",
-  },
-  openGraph: {
-    title: "Arun Gaddam — Senior Product Designer",
-    description:
-      "I design the systems that enterprise teams depend on — turning complex workflows, ambiguous data, and organizational chaos into products people actually trust.",
-    type: "website",
-    url: "https://arungaddamux.vercel.app",
-    siteName: "Arun Gaddam",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Arun Gaddam — Senior Product Designer",
-    description:
-      "I design the systems that enterprise teams depend on — turning complex workflows, ambiguous data, and organizational chaos into products people actually trust.",
-    creator: "@akgaddam",
-  },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
+    "AI copilot for credit teams at manufacturing OEMs and supply-chain NBFCs. Drafts the proposal note, recommends a credit limit with audit-grade reasoning, and captures structured overrides.",
 };
 
 export default function RootLayout({
@@ -72,48 +33,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${dmMono.variable} ${dmSans.variable}`} suppressHydrationWarning>
-      <body>
-        {/* Sync theme before first paint — prevents flash behind the loader */}
-        <script
-          dangerouslySetInnerHTML={{
-            /* Theme priority:
-                 1. User's explicit choice (localStorage 'theme') wins.
-                 2. Otherwise auto-pick by local hour — dark from 18:00 to 05:59,
-                    light from 06:00 to 17:59. Mirrors the natural light cycle. */
-            __html: `try{var t=localStorage.getItem('theme');var h=new Date().getHours();var auto=(h>=18||h<6)?'dark':'light';document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:auto);}catch(e){document.documentElement.setAttribute('data-theme','light');}`,
-          }}
-        />
-        {/* JSON-LD structured data — Person schema for Google rich results */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Person",
-              name: "Arun Gaddam",
-              url: "https://arungaddamux.vercel.app",
-              jobTitle: "Senior Product Designer",
-              description:
-                "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",
-              sameAs: [
-                "https://www.linkedin.com/in/akgaddam/",
-                "https://medium.com/@akgaddam",
-              ],
-              address: {
-                "@type": "PostalAddress",
-                addressLocality: "Hyderabad",
-                addressCountry: "IN",
-              },
-            }),
-          }}
-        />
-        {/* Skip to main content — for keyboard/screen-reader users (CSS-only, no JS needed) */}
-        <a href="#main-content" className="skip-nav">Skip to content</a>
-        <Cursor />
-        <RouteProgress />
-        {children}
-        <AnalyticsClient />
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
+    >
+      <body className="min-h-full bg-background text-foreground">
+        <AntdRegistry>
+          <AntdProvider>{children}</AntdProvider>
+        </AntdRegistry>
+        <Analytics />
       </body>
     </html>
   );
