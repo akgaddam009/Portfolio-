@@ -83,19 +83,31 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
           <div className="page-pad">
             <Link
               href="/#work"
+              className="cs-back-link"
               style={{
                 fontFamily: "var(--font-mono)",
-                fontSize: "var(--text-eyebrow)",
+                fontSize: "var(--text-mono)",
+                fontWeight: 400,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 color: "var(--muted)",
+                padding: "8px 4px",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "6px",
+                gap: "4px",
                 marginBottom: "var(--space-8)",
+                transition: "color 0.18s",
               }}
+              onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
             >
-              ← Back to work
+              {/* Material Design `arrow_back` — matches the icon used inside
+                  the unlocked case study so the back affordance is consistent
+                  across gate and detail. */}
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+              </svg>
+              Back
             </Link>
 
             <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
