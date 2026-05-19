@@ -148,8 +148,10 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
         </section>
 
         {/* Public hero media — same asset shown on the homepage card.
-            Lives above the gate so the first fold gives visitors a
-            sense of the work before they're asked to unlock. */}
+            Dominates the first fold so the password panel sits cleanly
+            below it. minHeight pushes the gate below the viewport on
+            standard 13"–16" laptop screens; aspect-ratio fallback keeps
+            the media well-proportioned on taller viewports. */}
         {(coverVideo || coverPoster) && (
           <section style={{ padding: "var(--space-8) 0 0" }}>
             <div className="page-pad">
@@ -160,9 +162,10 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
                 style={{
                   position: "relative",
                   width: "100%",
-                  maxWidth: "960px",
+                  maxWidth: "1120px",
                   margin: "0 auto",
-                  aspectRatio: "16 / 9",
+                  aspectRatio: "16 / 10",
+                  minHeight: "min(72vh, 720px)",
                   borderRadius: "16px",
                   overflow: "hidden",
                   background: "var(--surface2)",
@@ -200,6 +203,22 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
                   />
                 ) : null}
               </motion.div>
+
+              {/* Scroll affordance — quiet mono caption that signals the
+                  password panel sits below the fold. */}
+              <p
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "var(--text-eyebrow)",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "var(--muted)",
+                  textAlign: "center",
+                  marginTop: "var(--space-6)",
+                }}
+              >
+                Scroll to unlock ↓
+              </p>
             </div>
           </section>
         )}
