@@ -59,6 +59,8 @@ const PUBLIC_ASSETS = new Set<string>([
   "/images/astra/overview.mp4",
   "/images/fancode-ftux/fc-ftux-thumbnail.jpg",
   "/images/fancode/fancode-homepage-after.mp4",
+  "/images/fancode/fancode-homepage-before.mp4",
+  "/images/fancode/earlier-homepage.jpg",
   "/images/fancode/overall-homepage.jpg",
   "/images/planful/landing-page.jpg",
   "/images/planful/planful-product-video.mp4",

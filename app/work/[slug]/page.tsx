@@ -35,10 +35,18 @@ const HIDDEN_SLUGS = new Set<string>([
    assets allowlisted in proxy.ts: same media a visitor sees on the home
    card, just embedded inside the gate so the first fold has something to
    show before the unlock prompt. */
-const GATE_COVERS: Record<string, { video?: string; poster?: string; orientation?: "landscape" | "portrait" }> = {
-  "planful-esm-tables":      { video: "/images/planful/planful-product-video.mp4", poster: "/images/planful/landing-page.jpg", orientation: "landscape" },
-  "apple-business-listings": { video: "/images/reputation/after.mp4",                poster: "/images/reputation/thumbnail.jpg", orientation: "landscape" },
-  "fancode-homepage":        { video: "/images/fancode/fancode-homepage-after.mp4", poster: "/images/fancode/overall-homepage.jpg", orientation: "portrait" },
+/* Per-slug hero media for the gate. Either a single VideoBlock-style
+   src, or a before/after pair that mirrors the unlocked case study's
+   `outcomesCompare` layout. Both shapes are public assets allowlisted
+   in proxy.ts. */
+type GateCover =
+  | { kind: "single"; src: string; appType: string; chromeUrl?: string }
+  | { kind: "pair";   before: string; after: string };
+
+const GATE_COVERS: Record<string, GateCover> = {
+  "planful-esm-tables":      { kind: "single", src: "/images/planful/planful-product-video.mp4", appType: "Enterprise SaaS · Fintech",   chromeUrl: "app.planful.com" },
+  "apple-business-listings": { kind: "single", src: "/images/reputation/after.mp4",              appType: "Enterprise SaaS · Analytics", chromeUrl: "app.reputation.com" },
+  "fancode-homepage":        { kind: "pair",   before: "/images/fancode/fancode-homepage-before.mp4", after: "/images/fancode/fancode-homepage-after.mp4" },
 };
 
 // Slugs not emitted by generateStaticParams (including HIDDEN_SLUGS)
@@ -146,9 +154,7 @@ export default async function CaseStudyPage({
         title={cs.title}
         tags={cs.tags ?? []}
         heroLabel={cs.heroLabel}
-        coverVideo={cover?.video}
-        coverPoster={cover?.poster}
-        coverOrientation={cover?.orientation ?? "landscape"}
+        cover={cover}
       />
     );
   }

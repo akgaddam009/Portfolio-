@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { unlock } from "@/app/actions/unlock";
+import VideoBlock from "@/components/ui/VideoBlock";
 
 /* Standalone gate component for confidential case studies.
 
@@ -37,19 +38,15 @@ type GateProps = {
   heroLabel: string;
   /** Public-safe teaser text. Falls back to a generic prompt if absent. */
   teaser?: string;
-  /** Public hero media (same asset shown on the homepage card). Renders
-      in the first fold above the password panel so visitors get a taste
-      of the work before being asked to unlock. Both fields are public
-      assets allowlisted in proxy.ts — never confidential payload. */
-  coverVideo?: string;
-  coverPoster?: string;
-  /** Drives the cover layout. "landscape" → wide 16:10 frame for web
-      products. "portrait" → tall phone-frame for mobile recordings so
-      the video isn't cropped sideways. */
-  coverOrientation?: "landscape" | "portrait";
+  /** Public hero — either a single VideoBlock or a before/after pair,
+      mirroring how the unlocked case study presents its hero. All
+      sources are public assets allowlisted in proxy.ts. */
+  cover?:
+    | { kind: "single"; src: string; appType: string; chromeUrl?: string }
+    | { kind: "pair";   before: string; after: string };
 };
 
-export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVideo, coverPoster, coverOrientation = "landscape" }: GateProps) {
+export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }: GateProps) {
   const router = useRouter();
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState<null | "wrong" | "rate-limited" | "config">(null);
@@ -151,113 +148,37 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
           </div>
         </section>
 
-        {/* Public hero media — rendered with the same VideoBlock pattern
-            used inside the unlocked case study, so the first fold of the
-            gate matches what the visitor would see after unlocking.
-            Mobile recordings get the centered phone-style frame; web
-            products get the macOS browser chrome. */}
-        {(coverVideo || coverPoster) && (
+        {/* Public hero — single VideoBlock OR a before/after pair,
+            matching the same pattern the unlocked case study uses. */}
+        {cover && (
           <section style={{ padding: "var(--space-8) 0 0" }}>
             <div className="page-pad">
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-                style={{
-                  maxWidth: "1120px",
-                  margin: "0 auto",
-                }}
+                style={{ maxWidth: "1120px", margin: "0 auto" }}
               >
-                {coverOrientation === "portrait" ? (
-                  // Mobile phone frame — mirrors VideoBlock isMobile branch
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    background: "var(--surface)",
-                    borderRadius: "16px",
-                    padding: "24px",
-                    boxShadow: "var(--card-shadow)",
-                  }}>
-                    <div style={{ position: "relative", width: "100%", maxWidth: "320px" }}>
-                      {coverVideo ? (
-                        <video
-                          src={coverVideo}
-                          poster={coverPoster}
-                          autoPlay loop muted playsInline preload="metadata"
-                          style={{
-                            maxHeight: "640px",
-                            maxWidth: "100%",
-                            display: "block",
-                            borderRadius: "12px",
-                            background: "#0a0a0a",
-                          }}
-                        />
-                      ) : coverPoster ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={coverPoster}
-                          alt=""
-                          style={{
-                            maxHeight: "640px",
-                            maxWidth: "100%",
-                            display: "block",
-                            borderRadius: "12px",
-                          }}
-                        />
-                      ) : null}
-                    </div>
-                  </div>
+                {cover.kind === "single" ? (
+                  <VideoBlock src={cover.src} appType={cover.appType} chromeUrl={cover.chromeUrl} />
                 ) : (
-                  // Web product — macOS browser chrome, mirrors VideoBlock landscape branch
-                  <div style={{
-                    borderRadius: "16px",
-                    overflow: "hidden",
-                    background: "var(--chrome)",
-                    boxShadow: "var(--card-shadow)",
-                  }}>
-                    {/* Chrome bar with traffic lights and URL pill */}
-                    <div style={{
-                      position: "relative", height: "38px",
-                      background: "var(--chrome)",
-                      borderBottom: "1px solid var(--border)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <div style={{
-                        position: "absolute", left: "14px",
-                        display: "flex", alignItems: "center", gap: "6px",
-                      }}>
-                        {["#ff5f57", "#febc2e", "#28c840"].map((c, i) => (
-                          <div key={i} style={{ width: "10px", height: "10px", borderRadius: "50%", background: c }} />
-                        ))}
+                  // Before / After pair — mirrors outcomesCompare from CaseStudyDetail
+                  <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                    {([
+                      { label: "Before", src: cover.before },
+                      { label: "After",  src: cover.after  },
+                    ] as const).map(({ label, src }) => (
+                      <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
+                        <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                          <video
+                            src={src}
+                            autoPlay loop muted playsInline preload="auto"
+                            style={{ width: "100%", display: "block" }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    {coverVideo ? (
-                      <video
-                        src={coverVideo}
-                        poster={coverPoster}
-                        autoPlay loop muted playsInline preload="metadata"
-                        style={{
-                          width: "100%",
-                          display: "block",
-                          maxHeight: "520px",
-                          objectFit: "contain",
-                          background: "var(--surface)",
-                        }}
-                      />
-                    ) : coverPoster ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={coverPoster}
-                        alt=""
-                        style={{
-                          width: "100%",
-                          display: "block",
-                          maxHeight: "520px",
-                          objectFit: "contain",
-                          background: "var(--surface)",
-                        }}
-                      />
-                    ) : null}
+                    ))}
                   </div>
                 )}
               </motion.div>
