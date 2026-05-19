@@ -30,6 +30,17 @@ const HIDDEN_SLUGS = new Set<string>([
   "astra",
 ]);
 
+/* Public hero media per confidential slug — mirrors the homepage WORK_THUMBS
+   / WORK_POSTERS maps in app/page.tsx. These are non-confidential preview
+   assets allowlisted in proxy.ts: same media a visitor sees on the home
+   card, just embedded inside the gate so the first fold has something to
+   show before the unlock prompt. */
+const GATE_COVERS: Record<string, { video?: string; poster?: string }> = {
+  "planful-esm-tables":      { video: "/images/planful/planful-product-video.mp4", poster: "/images/planful/landing-page.jpg" },
+  "apple-business-listings": { video: "/images/reputation/after.mp4",                poster: "/images/reputation/thumbnail.jpg" },
+  "fancode-homepage":        { video: "/images/fancode/fancode-homepage-after.mp4", poster: "/images/fancode/overall-homepage.jpg" },
+};
+
 // Slugs not emitted by generateStaticParams (including HIDDEN_SLUGS)
 // return 404 directly — no server-side render attempt, no leak.
 export const dynamicParams = false;
@@ -129,11 +140,14 @@ export default async function CaseStudyPage({
      with public-safe metadata. The confidential payload (problem,
      insight, decisions, outcomes) is never sent to the browser. */
   if (cs.confidential && !(await isUnlocked())) {
+    const cover = GATE_COVERS[slug];
     return (
       <CaseStudyGate
         title={cs.title}
         tags={cs.tags ?? []}
         heroLabel={cs.heroLabel}
+        coverVideo={cover?.video}
+        coverPoster={cover?.poster}
       />
     );
   }

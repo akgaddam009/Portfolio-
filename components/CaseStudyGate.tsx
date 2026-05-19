@@ -37,9 +37,15 @@ type GateProps = {
   heroLabel: string;
   /** Public-safe teaser text. Falls back to a generic prompt if absent. */
   teaser?: string;
+  /** Public hero media (same asset shown on the homepage card). Renders
+      in the first fold above the password panel so visitors get a taste
+      of the work before being asked to unlock. Both fields are public
+      assets allowlisted in proxy.ts — never confidential payload. */
+  coverVideo?: string;
+  coverPoster?: string;
 };
 
-export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GateProps) {
+export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVideo, coverPoster }: GateProps) {
   const router = useRouter();
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState<null | "wrong" | "rate-limited" | "config">(null);
@@ -140,6 +146,63 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser }: GatePr
             </h1>
           </div>
         </section>
+
+        {/* Public hero media — same asset shown on the homepage card.
+            Lives above the gate so the first fold gives visitors a
+            sense of the work before they're asked to unlock. */}
+        {(coverVideo || coverPoster) && (
+          <section style={{ padding: "var(--space-8) 0 0" }}>
+            <div className="page-pad">
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: "960px",
+                  margin: "0 auto",
+                  aspectRatio: "16 / 9",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  background: "var(--surface2)",
+                  border: "1px solid var(--border)",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.06)",
+                }}
+              >
+                {coverVideo ? (
+                  <video
+                    src={coverVideo}
+                    poster={coverPoster}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                ) : coverPoster ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={coverPoster}
+                    alt=""
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                ) : null}
+              </motion.div>
+            </div>
+          </section>
+        )}
 
         {/* Gate card */}
         <div style={{ padding: "var(--space-10) 0 120px" }}>
