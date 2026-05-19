@@ -43,9 +43,13 @@ type GateProps = {
       assets allowlisted in proxy.ts — never confidential payload. */
   coverVideo?: string;
   coverPoster?: string;
+  /** Drives the cover layout. "landscape" → wide 16:10 frame for web
+      products. "portrait" → tall phone-frame for mobile recordings so
+      the video isn't cropped sideways. */
+  coverOrientation?: "landscape" | "portrait";
 };
 
-export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVideo, coverPoster }: GateProps) {
+export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVideo, coverPoster, coverOrientation = "landscape" }: GateProps) {
   const router = useRouter();
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState<null | "wrong" | "rate-limited" | "config">(null);
@@ -148,10 +152,11 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
         </section>
 
         {/* Public hero media — same asset shown on the homepage card.
-            Dominates the first fold so the password panel sits cleanly
-            below it. minHeight pushes the gate below the viewport on
-            standard 13"–16" laptop screens; aspect-ratio fallback keeps
-            the media well-proportioned on taller viewports. */}
+            Dominates the first fold so the password panel sits below.
+            Layout differs by orientation:
+              landscape (web product): wide 16:10 frame, fills viewport
+              portrait  (mobile app):  centered phone-shaped frame so
+                                       the recording isn't cropped */}
         {(coverVideo || coverPoster) && (
           <section style={{ padding: "var(--space-8) 0 0" }}>
             <div className="page-pad">
@@ -162,11 +167,11 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
                 style={{
                   position: "relative",
                   width: "100%",
-                  maxWidth: "1120px",
+                  maxWidth: coverOrientation === "portrait" ? "360px" : "1120px",
                   margin: "0 auto",
-                  aspectRatio: "16 / 10",
-                  minHeight: "min(72vh, 720px)",
-                  borderRadius: "16px",
+                  aspectRatio: coverOrientation === "portrait" ? "9 / 19.5" : "16 / 10",
+                  minHeight: coverOrientation === "portrait" ? "min(72vh, 720px)" : "min(72vh, 720px)",
+                  borderRadius: coverOrientation === "portrait" ? "32px" : "16px",
                   overflow: "hidden",
                   background: "var(--surface2)",
                   border: "1px solid var(--border)",
@@ -185,7 +190,7 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
                     style={{
                       width: "100%",
                       height: "100%",
-                      objectFit: "cover",
+                      objectFit: coverOrientation === "portrait" ? "contain" : "cover",
                       display: "block",
                     }}
                   />
@@ -197,7 +202,7 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, coverVid
                     style={{
                       width: "100%",
                       height: "100%",
-                      objectFit: "cover",
+                      objectFit: coverOrientation === "portrait" ? "contain" : "cover",
                       display: "block",
                     }}
                   />

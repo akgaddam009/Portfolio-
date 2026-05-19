@@ -35,10 +35,10 @@ const HIDDEN_SLUGS = new Set<string>([
    assets allowlisted in proxy.ts: same media a visitor sees on the home
    card, just embedded inside the gate so the first fold has something to
    show before the unlock prompt. */
-const GATE_COVERS: Record<string, { video?: string; poster?: string }> = {
-  "planful-esm-tables":      { video: "/images/planful/planful-product-video.mp4", poster: "/images/planful/landing-page.jpg" },
-  "apple-business-listings": { video: "/images/reputation/after.mp4",                poster: "/images/reputation/thumbnail.jpg" },
-  "fancode-homepage":        { video: "/images/fancode/fancode-homepage-after.mp4", poster: "/images/fancode/overall-homepage.jpg" },
+const GATE_COVERS: Record<string, { video?: string; poster?: string; orientation?: "landscape" | "portrait" }> = {
+  "planful-esm-tables":      { video: "/images/planful/planful-product-video.mp4", poster: "/images/planful/landing-page.jpg", orientation: "landscape" },
+  "apple-business-listings": { video: "/images/reputation/after.mp4",                poster: "/images/reputation/thumbnail.jpg", orientation: "landscape" },
+  "fancode-homepage":        { video: "/images/fancode/fancode-homepage-after.mp4", poster: "/images/fancode/overall-homepage.jpg", orientation: "portrait" },
 };
 
 // Slugs not emitted by generateStaticParams (including HIDDEN_SLUGS)
@@ -148,6 +148,7 @@ export default async function CaseStudyPage({
         heroLabel={cs.heroLabel}
         coverVideo={cover?.video}
         coverPoster={cover?.poster}
+        coverOrientation={cover?.orientation ?? "landscape"}
       />
     );
   }
