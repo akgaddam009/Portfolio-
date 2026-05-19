@@ -1,30 +1,69 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { AntdProvider } from "@/components/dashboard/AntdProvider";
+import { Inter, DM_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
+import Cursor from "@/components/Cursor";
+import AnalyticsClient from "@/components/AnalyticsClient";
+import RouteProgress from "@/components/RouteProgress";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dmMono = DM_Mono({
+  variable: "--font-dm-mono",
   subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  weight: "400",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
 });
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfd" },
+    { media: "(prefers-color-scheme: dark)",  color: "#000000" },
+  ],
+};
 
 export const metadata: Metadata = {
-  title: "Underwrite — AI copilot for credit underwriting",
+  title: "Arun Gaddam — Senior Product Designer",
   description:
-    "AI copilot for credit teams at manufacturing OEMs and supply-chain NBFCs. Drafts the proposal note, recommends a credit limit with audit-grade reasoning, and captures structured overrides.",
+    "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",
+  metadataBase: new URL("https://arungaddamux.vercel.app"),
+  alternates: {
+    canonical: "https://arungaddamux.vercel.app",
+  },
+  openGraph: {
+    title: "Arun Gaddam — Senior Product Designer",
+    description:
+      "I design the systems that enterprise teams depend on — turning complex workflows, ambiguous data, and organizational chaos into products people actually trust.",
+    type: "website",
+    url: "https://arungaddamux.vercel.app",
+    siteName: "Arun Gaddam",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Arun Gaddam — Senior Product Designer",
+    description:
+      "I design the systems that enterprise teams depend on — turning complex workflows, ambiguous data, and organizational chaos into products people actually trust.",
+    creator: "@akgaddam",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -33,15 +72,41 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
-    >
-      <body className="min-h-full bg-background text-foreground">
-        <AntdRegistry>
-          <AntdProvider>{children}</AntdProvider>
-        </AntdRegistry>
-        <Analytics />
+    <html lang="en" className={`${inter.variable} ${dmMono.variable} ${dmSans.variable}`} suppressHydrationWarning>
+      <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('theme');var h=new Date().getHours();var auto=(h>=18||h<6)?'dark':'light';document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:auto);}catch(e){document.documentElement.setAttribute('data-theme','light');}`,
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Person",
+              name: "Arun Gaddam",
+              url: "https://arungaddamux.vercel.app",
+              jobTitle: "Senior Product Designer",
+              description:
+                "Senior Product Designer specializing in enterprise SaaS — B2B AI tools, workflow platforms, and decision-support systems at scale.",
+              sameAs: [
+                "https://www.linkedin.com/in/akgaddam/",
+                "https://medium.com/@akgaddam",
+              ],
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Hyderabad",
+                addressCountry: "IN",
+              },
+            }),
+          }}
+        />
+        <a href="#main-content" className="skip-nav">Skip to content</a>
+        <Cursor />
+        <RouteProgress />
+        {children}
+        <AnalyticsClient />
       </body>
     </html>
   );
