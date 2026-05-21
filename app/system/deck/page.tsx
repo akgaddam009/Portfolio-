@@ -231,6 +231,7 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
               {isActive && (
                 <motion.span
                   layoutId="rail-indicator"
+                  data-rail-indicator
                   style={{
                     position: "absolute",
                     left: 0,
@@ -391,10 +392,7 @@ export default function DesignSystemDeck() {
   return (
     <>
       <style jsx global>{`
-        @media (max-width: 1023px) {
-          .deck-rail { display: none !important; }
-        }
-        /* Rail panel — UI-panel treatment, distinct from slide content. */
+        /* DESKTOP RAIL (≥ 1024px) — fixed left panel, full height. */
         .deck-rail {
           position: fixed;
           top: 0;
@@ -411,8 +409,6 @@ export default function DesignSystemDeck() {
         }
         .deck-rail-item:hover {
           background: var(--hover) !important;
-          /* Carve a 4px transparent gutter on each side so the hover fill
-             doesn't crash into the active indicator or the panel edge. */
           box-shadow: inset 4px 0 0 var(--chrome), inset -4px 0 0 var(--chrome);
         }
         .deck-rail-item[data-active="true"]:hover {
@@ -422,7 +418,73 @@ export default function DesignSystemDeck() {
         .deck-content {
           margin-left: 280px;
         }
+
+        /* MOBILE / TABLET (≤ 1023px) — rail becomes a horizontally scrolling
+           sticky chapter strip at the top. Same labels, same active indicator,
+           but laid out as a chiclet bar instead of a side panel. */
         @media (max-width: 1023px) {
+          .deck-rail {
+            /* Fixed (not sticky) so it always sits just below the top bar
+               regardless of scroll position. The top bar is ~62px tall;
+               rail sits at top: 64px with a 2px buffer line. */
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            bottom: auto;
+            width: 100%;
+            height: auto;
+            padding: var(--space-3) var(--space-4);
+            background: color-mix(in srgb, var(--chrome) 92%, transparent);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            overflow-y: hidden;
+            display: block;
+            white-space: nowrap;
+            scrollbar-width: none;
+          }
+          /* Slides need top padding to clear both top bar + fixed rail
+             (rail is ~64px tall on mobile). Override the desktop --space-11
+             top padding with a tighter value that still gives breathing room
+             below the rail. */
+          .deck-content > section {
+            padding-top: 152px !important;
+          }
+          .deck-rail::-webkit-scrollbar { display: none; }
+          /* Hide the desktop "Portfolio · Design system" header on mobile —
+             top bar already carries the page identity. */
+          .deck-rail > p:first-of-type { display: none; }
+          .deck-rail nav {
+            display: inline-flex !important;
+            flex-direction: row !important;
+            gap: var(--space-1);
+            align-items: stretch;
+          }
+          .deck-rail-item {
+            display: inline-flex !important;
+            width: auto !important;
+            min-width: 0;
+            min-height: 44px !important;
+            padding: 10px 12px !important;
+            white-space: nowrap;
+            flex-shrink: 0;
+          }
+          .deck-rail-item:hover {
+            box-shadow: none !important;
+          }
+          /* Flip the active indicator from a left vertical bar to a bottom
+             horizontal bar, fitting the row layout. */
+          .deck-rail-item [data-rail-indicator] {
+            top: auto !important;
+            bottom: 4px !important;
+            left: 12px !important;
+            right: 12px !important;
+            width: auto !important;
+            height: 2px !important;
+          }
           .deck-content { margin-left: 0; }
         }
       `}</style>
