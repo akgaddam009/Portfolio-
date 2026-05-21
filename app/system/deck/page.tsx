@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { motion, useScroll, useSpring, useReducedMotion } from "framer-motion";
 import ThemeToggle from "@/components/ThemeToggle";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { InlineChip } from "@/components/ui/InlineChip";
 import AsciiWater from "@/components/AsciiWater";
@@ -917,16 +916,11 @@ transition:    var(--dur-fast) var(--ease-expo);`}
               </Button>
             )}
             <Button asChild variant="inline">
-              <Link href="/system">Read as article</Link>
-            </Button>
-            <Button asChild variant="inline">
               <Link href="/">Back to portfolio</Link>
             </Button>
           </div>
         </Slide>
       </main>
-
-      <Footer />
     </>
   );
 }
