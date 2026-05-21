@@ -270,7 +270,26 @@ function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) 
               {group.items.map(item => {
                 const isActive = item.id === active;
                 return (
-                  <li key={item.id}>
+                  <li key={item.id} style={{ position: "relative" }}>
+                    {/* Sliding terracotta indicator on active item — Framer
+                        layoutId animates it between items. Sits on top of
+                        the static --border left rule that every item has. */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="rail-indicator"
+                        style={{
+                          position: "absolute",
+                          left: 0,
+                          top: 6,
+                          bottom: 6,
+                          width: 2,
+                          background: "var(--accent-warm)",
+                          borderRadius: 1,
+                          zIndex: 1,
+                        }}
+                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      />
+                    )}
                     <button
                       onClick={() => onJump(item.id as SlideId)}
                       style={{
@@ -282,12 +301,12 @@ function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) 
                         fontSize: "var(--text-body)",
                         color: isActive ? "var(--text)" : "var(--muted)",
                         fontWeight: isActive ? 500 : 400,
-                        borderLeft: `2px solid ${isActive ? "var(--text)" : "var(--border)"}`,
+                        borderLeft: "2px solid var(--border)",
                         background: "transparent",
                         cursor: "pointer",
                         lineHeight: 1.4,
                         letterSpacing: "-0.005em",
-                        transition: "color 180ms var(--ease-expo), border-color 180ms var(--ease-expo)",
+                        transition: "color 180ms var(--ease-expo)",
                       }}
                     >
                       {item.label}
@@ -313,18 +332,26 @@ export default function DesignSystemDeck() {
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
   const nextCaseStudy = caseStudies.find(c => c.slug === NEXT_AFTER_DECK_ORDER[0]);
 
+  // Scroll-spy. Tracks visible slides with their intersection ratio in a
+  // Map and picks the highest-ratio one as the active slide. Avoids the
+  // bug where `entries.forEach(setActive)` lets the last-fired entry win,
+  // which made the rail lag behind the actual current slide.
   useEffect(() => {
     const els = SLIDES.map(s => document.getElementById(s.id)).filter(Boolean) as HTMLElement[];
     if (els.length === 0) return;
+    const visible = new Map<string, number>();
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach(e => {
-          if (e.isIntersecting && e.intersectionRatio > 0.4) {
-            setActive(e.target.id as SlideId);
-          }
+          if (e.isIntersecting) visible.set(e.target.id, e.intersectionRatio);
+          else visible.delete(e.target.id);
         });
+        if (visible.size > 0) {
+          const top = [...visible.entries()].sort((a, b) => b[1] - a[1])[0][0];
+          setActive(top as SlideId);
+        }
       },
-      { threshold: [0.4, 0.6], rootMargin: "-15% 0px -50% 0px" }
+      { threshold: [0, 0.25, 0.5, 0.75, 1], rootMargin: "-25% 0px -25% 0px" }
     );
     els.forEach(el => obs.observe(el));
     return () => obs.disconnect();
@@ -458,7 +485,10 @@ export default function DesignSystemDeck() {
           flex-direction: column;
           gap: 16px;
         }
-        /* Mobile: single column, rail above content, same 16px gap. */
+        /* Mobile: single column, rail above content, same 16px gap.
+           Rail card on mobile drops the viewport-height stretch and
+           the sticky positioning — both ate the entire first fold
+           and pushed the deck content below 800px of nav. */
         @media (max-width: 1023px) {
           .deck-grid {
             grid-template-columns: 1fr;
@@ -468,6 +498,13 @@ export default function DesignSystemDeck() {
           .deck-rail {
             position: relative;
             top: auto;
+            min-height: 0;
+            padding: var(--space-5) var(--space-6);
+          }
+          .deck-panel {
+            /* Mobile cards step down to ~80vh so users see slide N + the
+               edge of slide N+1, signalling there's more to scroll. */
+            min-height: 80vh;
           }
         }
       `}</style>
