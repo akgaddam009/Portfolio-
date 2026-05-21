@@ -203,6 +203,239 @@ export default function DesignSystemPage() {
           </div>
         </section>
 
+        {/* Spacing scale */}
+        <section style={{ padding: "var(--space-7) 0", borderTop: "1px solid var(--border)" }}>
+          <div className="page-pad">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                letterSpacing: "0.1em", textTransform: "uppercase",
+                color: "var(--muted)", marginBottom: "12px",
+              }}>
+                Spacing scale
+              </p>
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                color: "var(--muted2)", marginBottom: "24px", maxWidth: "560px",
+              }}>
+                4-px base step. The 44-px stop is the WCAG 2.5.5 touch-target floor — every interactive element on this site hits or exceeds it.
+              </p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {([
+                  { token: "--space-1",  px: 4  },
+                  { token: "--space-2",  px: 8  },
+                  { token: "--space-3",  px: 12 },
+                  { token: "--space-4",  px: 16 },
+                  { token: "--space-5",  px: 20 },
+                  { token: "--space-6",  px: 24 },
+                  { token: "--space-7",  px: 32 },
+                  { token: "--space-8",  px: 44 },
+                  { token: "--space-9",  px: 48 },
+                  { token: "--space-10", px: 64 },
+                  { token: "--space-11", px: 96 },
+                ]).map(s => (
+                  <div key={s.token} style={{
+                    display: "grid", gridTemplateColumns: "120px 80px 1fr",
+                    gap: "16px", alignItems: "center",
+                  }}>
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                      color: "var(--muted)", margin: 0, letterSpacing: "0.02em",
+                    }}>
+                      {s.token}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                      color: "var(--text)", margin: 0,
+                    }}>
+                      {s.px}px
+                    </p>
+                    <div style={{
+                      height: "16px", width: `${s.px}px`, maxWidth: "100%",
+                      background: "var(--text)", borderRadius: "2px",
+                    }} />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Radius scale */}
+        <section style={{ padding: "var(--space-7) 0", borderTop: "1px solid var(--border)" }}>
+          <div className="page-pad">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                letterSpacing: "0.1em", textTransform: "uppercase",
+                color: "var(--muted)", marginBottom: "20px",
+              }}>
+                Radius scale
+              </p>
+
+              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+                {([
+                  { token: "--radius-xs",  px: 4,  use: "Focus ring" },
+                  { token: "--radius-sm",  px: 8,  use: "Small button" },
+                  { token: "--radius-md",  px: 12, use: "Card" },
+                  { token: "--radius-lg",  px: 16, use: "Hero media" },
+                  { token: "--radius-xl",  px: 24, use: "Feature media" },
+                ]).map(r => (
+                  <div key={r.token} style={{
+                    display: "flex", flexDirection: "column", gap: "10px",
+                    minWidth: "120px",
+                  }}>
+                    <div style={{
+                      width: "80px", height: "80px",
+                      borderRadius: `${r.px}px`,
+                      background: "var(--surface2)",
+                      border: "1px solid var(--border)",
+                    }} />
+                    <div>
+                      <p style={{
+                        fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                        color: "var(--text)", margin: 0, marginBottom: "2px",
+                      }}>
+                        {r.px}px
+                      </p>
+                      <p style={{
+                        fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                        color: "var(--muted)", margin: 0, letterSpacing: "0.02em",
+                      }}>
+                        {r.token}
+                      </p>
+                      <p style={{
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                        color: "var(--muted2)", margin: 0, marginTop: "4px",
+                      }}>
+                        {r.use}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Elevation / shadow */}
+        <section style={{ padding: "var(--space-7) 0", borderTop: "1px solid var(--border)" }}>
+          <div className="page-pad">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                letterSpacing: "0.1em", textTransform: "uppercase",
+                color: "var(--muted)", marginBottom: "20px",
+              }}>
+                Elevation
+              </p>
+
+              <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+                {([
+                  { token: "--card-shadow",       label: "Rest"  },
+                  { token: "--card-shadow-hover", label: "Hover" },
+                ]).map(e => (
+                  <div key={e.token} style={{
+                    display: "flex", flexDirection: "column", gap: "10px",
+                  }}>
+                    <div style={{
+                      width: "160px", height: "120px",
+                      borderRadius: "12px",
+                      background: "var(--surface)",
+                      boxShadow: `var(${e.token})`,
+                    }} />
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                      color: "var(--text)", margin: 0,
+                    }}>
+                      {e.label}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                      color: "var(--muted)", margin: 0, letterSpacing: "0.02em",
+                    }}>
+                      {e.token}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Motion */}
+        <section style={{ padding: "var(--space-7) 0", borderTop: "1px solid var(--border)" }}>
+          <div className="page-pad">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                letterSpacing: "0.1em", textTransform: "uppercase",
+                color: "var(--muted)", marginBottom: "12px",
+              }}>
+                Motion
+              </p>
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                color: "var(--muted2)", marginBottom: "24px", maxWidth: "560px",
+              }}>
+                One easing curve, two durations. <code style={{ fontFamily: "var(--font-mono)", background: "var(--surface2)", padding: "2px 6px", borderRadius: "4px" }}>cubic-bezier(0.22, 1, 0.36, 1)</code> — cinematic decel.
+                Quick interactions at 180ms; reveals and section transitions at 550ms.
+              </p>
+
+              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+                {([
+                  { dur: 0.18, label: "180ms — quick (hover, color shift)" },
+                  { dur: 0.55, label: "550ms — reveal (section entry, page transition)" },
+                ]).map(m => (
+                  <motion.div
+                    key={m.dur}
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, margin: "-10px" }}
+                    transition={{ duration: m.dur, ease: EASE, repeat: Infinity, repeatType: "reverse", repeatDelay: 1.5 }}
+                    style={{
+                      padding: "16px 20px",
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "12px",
+                      boxShadow: "var(--card-shadow)",
+                      minWidth: "240px",
+                    }}
+                  >
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                      color: "var(--text)", margin: 0,
+                    }}>
+                      {m.label}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
         {/* Button tiers */}
         <section style={{ padding: "var(--space-7) 0 var(--space-9)", borderTop: "1px solid var(--border)" }}>
           <div className="page-pad">
