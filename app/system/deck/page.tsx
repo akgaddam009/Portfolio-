@@ -7,6 +7,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { InlineChip } from "@/components/ui/InlineChip";
+import AsciiWater from "@/components/AsciiWater";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -108,6 +109,7 @@ function Slide({
   total,
   tint,
   children,
+  background,
   align = "center",
 }: {
   id: SlideId;
@@ -115,6 +117,9 @@ function Slide({
   total: number;
   tint?: "warm" | "cool" | "surface";
   children: React.ReactNode;
+  /** Optional full-bleed background layer (e.g. AsciiWater). Renders behind
+      the centered content column; pointer-events should be none. */
+  background?: React.ReactNode;
   align?: "start" | "center";
 }) {
   const bg =
@@ -136,9 +141,12 @@ function Slide({
         justifyContent: align === "center" ? "center" : "flex-start",
         padding: "120px 32px 80px",
         position: "relative",
+        overflow: "hidden",
         borderBottom: "1px solid var(--border)",
       }}
     >
+      {background}
+
       {/* Slide number — top-left */}
       <div style={{
         position: "absolute",
@@ -148,6 +156,7 @@ function Slide({
         fontSize: "var(--text-mono)",
         letterSpacing: "0.1em",
         color: "var(--muted)",
+        zIndex: 2,
       }}>
         {String(index).padStart(2, "0")} / {String(total).padStart(2, "0")}
       </div>
@@ -157,7 +166,7 @@ function Slide({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, margin: "-20%" }}
         transition={{ duration: 0.55, ease: EASE }}
-        style={{ width: "100%", maxWidth: 920, margin: "0 auto" }}
+        style={{ width: "100%", maxWidth: 920, margin: "0 auto", position: "relative", zIndex: 1 }}
       >
         {children}
       </motion.div>
@@ -434,7 +443,18 @@ export default function DesignSystemDeck() {
 
       <main className="deck-content">
         {/* 01 — Cover */}
-        <Slide id="cover" index={1} total={SLIDES.length} tint="warm">
+        <Slide
+          id="cover"
+          index={1}
+          total={SLIDES.length}
+          tint="warm"
+          background={
+            /* Signature moment: ASCII ripple sits behind the cover headline.
+               Reacts to cursor; flat under prefers-reduced-motion; quiet on
+               touch devices. Opacity kept low so it reads as texture. */
+            <AsciiWater opacity={0.32} fontSize={13} damping={0.982} />
+          }
+        >
           <Eyebrow>Portfolio · Design system</Eyebrow>
           <SlideTitle size="xl">
             Planned with{" "}
