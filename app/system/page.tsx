@@ -410,9 +410,9 @@ export default function DesignSystemPage() {
               letterSpacing: "-0.035em", color: "var(--text)",
               marginBottom: "32px", maxWidth: "880px",
             }}>
-              This portfolio design system was developed using planning in{" "}
-              <InlineChip label="Claude AI" tone="indigo" scale="match" />{" "}
-              and{" "}
+              Planned with{" "}
+              <InlineChip label="Claude AI" tone="indigo" scale="match" />.
+              Built with{" "}
               <InlineChip label="Claude Code" tone="violet" scale="match" />.
             </h1>
 
@@ -421,10 +421,9 @@ export default function DesignSystemPage() {
               lineHeight: 1.6, color: "var(--muted2)", marginBottom: "40px",
               fontWeight: 400, maxWidth: "680px", letterSpacing: "-0.005em",
             }}>
-              An opinionated, theme-aware system maintained as code. Every interface in this
-              portfolio renders from the tokens documented below. There is no Figma file. There
-              is no design-vs-engineering handoff. The site you are browsing <em>is</em> the
-              documentation.
+              No Figma file. No handoff. The site you’re looking at <em>is</em> the
+              documentation — every color, type ramp, and motion curve below is the same one
+              the live pages use.
             </p>
 
             <div style={{
@@ -479,22 +478,10 @@ export default function DesignSystemPage() {
           >
             <Prose>
               <Paragraph>
-                Most design systems exist as Figma libraries, downstream of the product. They
-                drift the moment they meet engineering. The components in the file stop matching
-                the components on screen, and over time the system becomes a fiction maintained
-                by whoever still cares.
+                Most design systems live in Figma. They drift the moment engineers touch them.
+                This one lives in the code — one CSS file, a handful of React components. If this
+                page renders, the system is correct.
               </Paragraph>
-              <Paragraph>
-                This system inverts that. It lives in the codebase as a single CSS file plus
-                a small set of React components. The site you are looking at right now is not a
-                showcase of the system — it <em>is</em> the system. Every color, every type
-                ramp, every motion curve is read from the same source the production pages use.
-                When this page renders correctly, the system is correct.
-              </Paragraph>
-              <Pullquote>
-                The site you are browsing is the documentation. When this page renders
-                correctly, the system is correct.
-              </Pullquote>
             </Prose>
           </Section>
 
@@ -502,30 +489,19 @@ export default function DesignSystemPage() {
           <Section
             id="why"
             number="02"
-            title="Why this system was created"
+            title="Why this exists"
             description="Drift was the problem. Code was the answer."
           >
             <Prose>
               <Paragraph>
-                Three portfolio iterations in, a pattern had emerged: each rebuild started by
-                redesigning the visual system. Colors I had picked carefully drifted into
-                slightly-different colors. Spacing decisions made for one section bled into
-                arbitrary spacing elsewhere. The same gray was hex-coded four ways across three
-                pages.
+                Three portfolio rebuilds in, the same gray was hex-coded four different ways.
+                Spacing wandered. Discipline wasn’t fixing it.
               </Paragraph>
               <Paragraph>
-                The system was, in a literal sense, a fiction. I had a mental model of "this
-                portfolio uses a calm gray and a warm beige and crisp Apple-inspired surfaces,"
-                but every page argued with that model in small ways. The fix could not be
-                discipline. The fix had to be structural.
-              </Paragraph>
-              <Paragraph>
-                So the rule became: <strong>nothing visual is allowed to exist outside the
-                token file.</strong> If a page uses a color, it references{" "}
-                <TokenPill token="var(--text)" />, not a hex. If a section uses spacing, it
-                references <TokenPill token="var(--space-7)" />, not 32px. The tokens are
-                opinions cast in CSS variables, and the components are the only legal way to
-                use them.
+                One rule fixed it: nothing visual lives outside the token file. Pages reference{" "}
+                <TokenPill token="var(--text)" />, not a hex. Sections reference{" "}
+                <TokenPill token="var(--space-7)" />, not 32px. Drift becomes impossible because
+                there’s only one place to drift from.
               </Paragraph>
             </Prose>
           </Section>
@@ -545,23 +521,23 @@ export default function DesignSystemPage() {
               {([
                 {
                   n: "01",
-                  title: "No primary by design",
-                  body: "Three button tiers, none dominant. The work is the hero. Visitors read, they don’t get pitched.",
+                  title: "No primary, on purpose",
+                  body: "Three button tiers, none dominant. The work is the hero — nobody’s getting pitched.",
                 },
                 {
                   n: "02",
                   title: "One easing curve",
-                  body: "Every transition uses cubic-bezier(0.22, 1, 0.36, 1). One motion vocabulary across the entire site.",
+                  body: "Every transition uses the same cubic-bezier. One motion language, everywhere.",
                 },
                 {
                   n: "03",
-                  title: "Maintained as code",
-                  body: "No Figma file. No handoff. Tokens live in globals.css. Drift is impossible because there’s only one source.",
+                  title: "Code, not Figma",
+                  body: "Tokens live in globals.css. One source means nothing to drift from.",
                 },
                 {
                   n: "04",
-                  title: "44px is the floor",
-                  body: "WCAG 2.5.5 touch-target compliance built into the spacing scale itself — not enforced by audit later.",
+                  title: "44px floor",
+                  body: "The touch-target minimum is a spacing token, so accessibility is baked in — not bolted on later.",
                 },
               ]).map(p => (
                 <div key={p.n} style={{
@@ -599,25 +575,18 @@ export default function DesignSystemPage() {
           <Section
             id="ai-workflow"
             number="04"
-            title="AI-assisted workflow"
+            title="How AI helped"
             description="Plan in Claude AI. Build in Claude Code. The plan is the contract."
           >
             <Prose>
               <Paragraph>
-                This portfolio was developed using a two-mode workflow. <strong>Claude AI</strong>
-                {" "}— the conversational interface — was the design partner. I used it for
-                research, principle synthesis, and writing plan documents that captured every
-                visual decision in prose before any code was written.{" "}
-                <strong>Claude Code</strong> — the agentic coding environment — was the build
-                partner. Each plan became a contract that Claude Code executed against the
-                codebase: tokens added, components scaffolded, pages composed.
+                Two modes, one workflow. <strong>Claude AI</strong> was the thinking partner —
+                research, principles, plan documents. <strong>Claude Code</strong> was the
+                builder — turning each plan into tokens, components, pages.
               </Paragraph>
               <Paragraph>
-                The discipline of the workflow is what made it work. The plan file is the
-                interface between the two modes. It is not a vibe or a sketch — it is a typed
-                specification of the change, written in plain English, that can be approved
-                before any line of code changes. When the build feels wrong, the conversation
-                returns to the plan, not the code.
+                The plan file is the contract. When something feels off, I go back to the plan,
+                not the code.
               </Paragraph>
             </Prose>
 
@@ -628,10 +597,10 @@ export default function DesignSystemPage() {
               marginTop: "32px",
             }}>
               {([
-                { step: "Plan",    tool: "Claude AI",   body: "Capture decisions as prose. Pin tradeoffs. Name files." },
-                { step: "Approve", tool: "Human",       body: "Read the plan. Push back. Lock the scope." },
-                { step: "Build",   tool: "Claude Code", body: "Execute against the plan. Run the dev server. Verify." },
-                { step: "Review",  tool: "Human",       body: "Open the browser. If wrong, return to plan." },
+                { step: "Plan",    tool: "Claude AI",   body: "Decisions as prose. Tradeoffs named. Files listed." },
+                { step: "Approve", tool: "Human",       body: "Read it. Push back. Lock the scope." },
+                { step: "Build",   tool: "Claude Code", body: "Execute the plan. Run the dev server. Verify." },
+                { step: "Review",  tool: "Human",       body: "Open the browser. Wrong? Back to the plan." },
               ]).map((s, i) => (
                 <div key={s.step} style={{
                   background: "var(--surface)",
@@ -667,29 +636,17 @@ export default function DesignSystemPage() {
           <Section
             id="planning"
             number="05"
-            title="Planning process"
+            title="Planning"
             description="Plan mode in Claude Code. Decisions before code."
           >
             <Prose>
               <Paragraph>
-                Claude Code has a dedicated <strong>plan mode</strong>. In plan mode, the agent
-                can read files, run searches, and propose plans — but it is structurally
-                prevented from writing to the codebase. The output is a single markdown plan
-                file describing what will change and why.
-              </Paragraph>
-              <Paragraph>
-                Every non-trivial change in this portfolio passed through a plan file. The plan
-                names the files it will touch. It explains the tradeoff between two options
-                considered. It states what is explicitly out of scope. Only after the plan is
-                approved does the agent enter build mode and start editing.
-              </Paragraph>
-              <Paragraph>
-                The plan is the artifact. The code follows from it. If the plan is wrong, the
-                code will be wrong — so the conversation that matters happens before any line
-                is written.
+                Claude Code has a <strong>plan mode</strong> that can read and search but can’t
+                write. The output is one markdown file: what changes, what doesn’t, and why.
+                Every non-trivial change here passed through one.
               </Paragraph>
               <Pullquote>
-                The plan is the artifact. The code follows from it.
+                The plan is the artifact. The code follows.
               </Pullquote>
             </Prose>
           </Section>
@@ -698,27 +655,19 @@ export default function DesignSystemPage() {
           <Section
             id="research"
             number="06"
-            title="Claude AI research workflow"
+            title="Research with Claude AI"
             description="Reference systems, principle synthesis, copywriting."
           >
             <Prose>
               <Paragraph>
-                Claude AI was used as a thinking partner during the design phase. The questions
-                were not "design this for me" — they were structural: how does Apple's light
-                theme avoid the flatness that most light themes suffer from? What is the
-                difference between Linear's motion language and Vercel's? What principle would
-                justify rejecting a primary CTA on a portfolio page?
+                I didn’t ask Claude to design things. I asked structural questions: why does
+                Apple’s light theme feel less flat than most? What separates Linear’s motion
+                language from Vercel’s? Why might a portfolio be better off without a primary
+                CTA?
               </Paragraph>
               <Paragraph>
-                The answers were used to write the principle documents that anchor this system:
-                no primary by design, one easing curve, maintained as code, 44px floor. Each
-                principle came out of a conversation, not an aesthetic preference, which is
-                why each principle has a reason attached to it rather than just a rule.
-              </Paragraph>
-              <Paragraph>
-                Claude AI also drafted copy for the case studies. Not final copy — first drafts
-                that gave a structure to react against. The voice was tuned by editing against
-                the drafts rather than starting from a blank page.
+                Those conversations became the four principles above. It also drafted first-pass
+                copy for case studies — a wall to push against, not the final word.
               </Paragraph>
             </Prose>
           </Section>
@@ -727,28 +676,19 @@ export default function DesignSystemPage() {
           <Section
             id="implementation"
             number="07"
-            title="Claude Code implementation workflow"
+            title="Building with Claude Code"
             description="Plan as contract. Agent as builder. Browser as verifier."
           >
             <Prose>
               <Paragraph>
-                Claude Code is the agentic environment that actually edited this codebase. Each
-                session began with reading the plan, then either modifying tokens in{" "}
-                <TokenPill token="globals.css" />, scaffolding a component in{" "}
-                <TokenPill token="components/ui/" />, or composing a new section in the page
-                file under <TokenPill token="app/" />.
+                Each session: read the plan, edit tokens in{" "}
+                <TokenPill token="globals.css" />, scaffold components in{" "}
+                <TokenPill token="components/ui/" />, compose pages under{" "}
+                <TokenPill token="app/" />. Verify in the browser. Commit.
               </Paragraph>
               <Paragraph>
-                The build loop was strict: edit, restart the dev server if needed, verify in
-                the browser, commit. The standing rule was that nothing got pushed to{" "}
-                <TokenPill token="main" /> without explicit approval. Local branches like{" "}
-                <TokenPill token="local/with-explorations" /> existed for in-progress work
-                that should not yet appear on the live site.
-              </Paragraph>
-              <Paragraph>
-                This document — including the prose you are reading right now — was built this
-                way. The plan named the sections, the agent rendered them, the result was
-                reviewed in the browser, edits returned to the plan.
+                Nothing reaches <TokenPill token="main" /> without approval. This page was built
+                the same way — plan, render, review, repeat.
               </Paragraph>
             </Prose>
           </Section>
