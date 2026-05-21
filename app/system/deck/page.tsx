@@ -41,6 +41,48 @@ const SLIDES = [
 
 type SlideId = typeof SLIDES[number]["id"];
 
+/* Grouped TOC structure — mirrors the article sidebar at
+   app/system/page.tsx:19. Group headers are mono caps, items are
+   body-font with a sliding left border for active state. */
+const TOC_GROUPS = [
+  {
+    group: "About",
+    items: [
+      { id: "cover",      label: "Cover" },
+      { id: "intro",      label: "Introduction" },
+      { id: "why",        label: "Why this exists" },
+    ],
+  },
+  {
+    group: "Principles",
+    items: [
+      { id: "philosophy", label: "Four principles" },
+      { id: "workflow",   label: "AI workflow" },
+    ],
+  },
+  {
+    group: "Tokens",
+    items: [
+      { id: "tokens",     label: "Tokens" },
+      { id: "without",    label: "Without tokens" },
+      { id: "with",       label: "With tokens" },
+    ],
+  },
+  {
+    group: "Components",
+    items: [
+      { id: "buttons",    label: "Buttons" },
+      { id: "chips",      label: "Chip tones" },
+    ],
+  },
+  {
+    group: "Wrap",
+    items: [
+      { id: "closer",     label: "Closer" },
+    ],
+  },
+] as const;
+
 const NEXT_AFTER_DECK_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage"];
 
 /* =========================================================================
@@ -207,106 +249,56 @@ function SlidePanel({
    ========================================================================= */
 
 function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) => void }) {
-  const currentIndex = SLIDES.findIndex(s => s.id === active);
   return (
     <aside className="deck-rail" aria-label="Deck navigation">
-      <div className="deck-rail-card">
-        <p style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: "var(--text-eyebrow)",
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
-          color: "var(--muted)",
-          margin: 0,
-          marginBottom: "var(--space-5)",
-        }}>
-          Portfolio · Design system
-        </p>
-
-        <nav style={{ position: "relative" }}>
-          {SLIDES.map(s => {
-            const isActive = s.id === active;
-            return (
-              <button
-                key={s.id}
-                onClick={() => onJump(s.id)}
-                className="deck-rail-item"
-                data-active={isActive}
-                style={{
-                  position: "relative",
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "12px 8px 12px 14px",
-                  minHeight: "44px",
-                  width: "100%",
-                  textAlign: "left",
-                  background: "transparent",
-                  border: "none",
-                  borderRadius: "var(--radius-xs)",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-body)",
-                  color: isActive ? "var(--text)" : "var(--muted)",
-                  fontWeight: isActive ? 500 : 400,
-                  lineHeight: 1.3,
-                  letterSpacing: "-0.005em",
-                  transition: "color var(--dur-base) var(--ease-expo), background var(--dur-fast) var(--ease-expo)",
-                }}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="rail-indicator"
-                    data-rail-indicator
-                    style={{
-                      position: "absolute",
-                      left: 0,
-                      top: 10,
-                      bottom: 10,
-                      width: 1.5,
-                      background: "var(--accent-warm)",
-                      borderRadius: 1,
-                    }}
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
-                {s.label}
-              </button>
-            );
-          })}
-        </nav>
-
-        <div style={{
-          marginTop: "var(--space-5)",
-          paddingTop: "var(--space-4)",
-          borderTop: "1px solid var(--border)",
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-        }}>
-          <span style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "var(--text-mono)",
-            color: "var(--muted)",
-            letterSpacing: "0.08em",
-          }}>
-            {String(currentIndex + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
-          </span>
-          <div style={{
-            flex: 1,
-            height: 2,
-            background: "var(--border)",
-            borderRadius: 1,
-            overflow: "hidden",
-          }}>
-            <div style={{
-              width: `${((currentIndex + 1) / SLIDES.length) * 100}%`,
-              height: "100%",
-              background: "var(--accent-warm)",
-              transition: "width 280ms var(--ease-expo)",
-            }} />
+      <nav>
+        {TOC_GROUPS.map((group, gi) => (
+          <div key={group.group} style={{ marginBottom: gi < TOC_GROUPS.length - 1 ? "24px" : 0 }}>
+            <p style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "var(--text-mono)",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "var(--text)",
+              fontWeight: 500,
+              margin: 0,
+              marginBottom: "10px",
+            }}>
+              {group.group}
+            </p>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {group.items.map(item => {
+                const isActive = item.id === active;
+                return (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => onJump(item.id as SlideId)}
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        textAlign: "left",
+                        padding: "6px 0 6px 12px",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-body)",
+                        color: isActive ? "var(--text)" : "var(--muted)",
+                        fontWeight: isActive ? 500 : 400,
+                        borderLeft: `2px solid ${isActive ? "var(--text)" : "var(--border)"}`,
+                        background: "transparent",
+                        cursor: "pointer",
+                        lineHeight: 1.4,
+                        letterSpacing: "-0.005em",
+                        transition: "color 180ms var(--ease-expo), border-color 180ms var(--ease-expo)",
+                      }}
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-        </div>
-      </div>
+        ))}
+      </nav>
     </aside>
   );
 }
@@ -418,14 +410,11 @@ export default function DesignSystemDeck() {
           top: 72px;
           align-self: start;
         }
-        /* Rail is flat — no card, no shadow, no border-radius. Sits
-           directly on the page chrome so the right-side slide panels
-           are the only floating surfaces. */
-        .deck-rail-card {
-          background: transparent;
-          padding: 0 8px 0 4px;
-          display: flex;
-          flex-direction: column;
+        /* Rail is flat — sits on the page chrome. Article-sidebar pattern
+           (app/system/page.tsx:230): body-font items with a sliding left
+           border. Hover lifts inactive items to --text colour. */
+        .deck-rail button:hover {
+          color: var(--text) !important;
         }
         /* Slide panels — landing's shadow tiers (active vs rest) plus
            the dark-mode dim-and-engage behaviour. Light mode never dims;
@@ -436,13 +425,6 @@ export default function DesignSystemDeck() {
         [data-theme="dark"] .deck-panel { box-shadow: ${PANEL_SHADOW_DARK}; opacity: 0.6; }
         [data-theme="dark"] .deck-panel.is-active,
         [data-theme="dark"] .deck-panel:hover { opacity: 1; box-shadow: ${PANEL_SHADOW_ACTIVE_DARK}; }
-        .deck-rail-item:hover {
-          background: var(--hover) !important;
-        }
-        .deck-rail-item[data-active="true"]:hover {
-          background: transparent !important;
-          box-shadow: none;
-        }
         /* Slide stack uses the same 16px gap as the landing panel rail
            so the vertical rhythm matches the horizontal one. */
         .deck-content {
@@ -460,9 +442,6 @@ export default function DesignSystemDeck() {
           .deck-rail {
             position: relative;
             top: auto;
-          }
-          .deck-rail-card {
-            padding: 16px 20px;
           }
         }
       `}</style>
