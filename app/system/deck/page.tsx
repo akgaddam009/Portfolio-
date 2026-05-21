@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { motion, useScroll, useSpring, useReducedMotion } from "framer-motion";
 import ThemeToggle from "@/components/ThemeToggle";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { InlineChip } from "@/components/ui/InlineChip";
 import AsciiWater from "@/components/AsciiWater";
+import { caseStudies } from "@/lib/caseStudies";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -293,10 +295,16 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
    PAGE
    ========================================================================= */
 
+// Mirrors the case-study Prev/Next order on CaseStudyDetail.tsx so the
+// deck's "next" CTA flows into the same first case study a visitor would
+// see if they jumped from the home page work index.
+const NEXT_AFTER_DECK_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage"];
+
 export default function DesignSystemDeck() {
   const [active, setActive] = useState<SlideId>("cover");
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
+  const nextCaseStudy = caseStudies.find(c => c.slug === NEXT_AFTER_DECK_ORDER[0]);
 
   // Scroll-spy via IntersectionObserver.
   useEffect(() => {
@@ -885,9 +893,10 @@ transition:    var(--dur-fast) var(--ease-expo);`}
           </div>
         </Slide>
 
-        {/* 12 — Closer */}
+        {/* 12 — Closer. Eyebrow dropped per feedback; the slide reads as
+            a closing manifesto. Primary CTA points to the first case study
+            so visitors flow from the design system into actual work. */}
         <Slide id="closer">
-          <Eyebrow>End of deck</Eyebrow>
           <SlideTitle size="xl">
             Don’t just design interfaces.
             <br />
@@ -898,9 +907,17 @@ transition:    var(--dur-fast) var(--ease-expo);`}
             display: "flex",
             gap: "var(--space-3)",
             flexWrap: "wrap",
+            alignItems: "center",
           }}>
+            {nextCaseStudy && (
+              <Button asChild variant="inline">
+                <Link href={`/work/${nextCaseStudy.slug}`}>
+                  Next: {nextCaseStudy.title} →
+                </Link>
+              </Button>
+            )}
             <Button asChild variant="inline">
-              <Link href="/system">Read as article →</Link>
+              <Link href="/system">Read as article</Link>
             </Button>
             <Button asChild variant="inline">
               <Link href="/">Back to portfolio</Link>
@@ -908,6 +925,8 @@ transition:    var(--dur-fast) var(--ease-expo);`}
           </div>
         </Slide>
       </main>
+
+      <Footer />
     </>
   );
 }
