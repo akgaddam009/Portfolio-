@@ -134,37 +134,56 @@ function Slide({
   align?: "start" | "center";
 }) {
   const reduced = useReducedMotion();
-  // Warm is a real warm wash (terracotta-tinted bg) so it actually reads
-  // different from --bg in light mode. Surface is the cooler card colour.
-  const bg =
-    tint === "warm"   ? "color-mix(in srgb, var(--accent-warm) 5%, var(--bg))"
-    : tint === "surface" ? "var(--surface)"
-    : "var(--bg)";
+  // The slide content now lives inside a floating panel (--surface bg,
+  // var(--radius-xl), --card-shadow) — same pattern the landing page uses
+  // for its About / Work / Career panels. Outer section is the canvas
+  // (--chrome) on which the panel floats. Tints colour the panel itself,
+  // not the canvas, so the surface variation reads as the card's mood.
+  const panelBg =
+    tint === "warm"   ? "color-mix(in srgb, var(--accent-warm) 5%, var(--surface))"
+    : tint === "surface" ? "var(--surface2)"
+    : "var(--surface)";
   return (
     <section
       id={id}
       data-slide={id}
       style={{
         minHeight: "100vh",
-        background: bg,
+        background: "var(--chrome)",
         display: "flex",
         flexDirection: "column",
         justifyContent: align === "center" ? "center" : "flex-start",
-        padding: "var(--space-11) var(--space-7) var(--space-10)",
+        padding: "var(--space-9) var(--space-7)",
         position: "relative",
         overflow: "hidden",
-        borderBottom: "1px solid var(--border)",
       }}
     >
       {background}
       <motion.div
+        className="deck-panel"
         initial={reduced ? false : { opacity: 0, y: 16 }}
         whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.5, ease: EASE }}
-        style={{ width: "100%", maxWidth: 920, margin: "0 auto", position: "relative", zIndex: 1 }}
+        style={{
+          width: "100%",
+          maxWidth: 1040,
+          margin: "0 auto",
+          position: "relative",
+          zIndex: 1,
+          background: panelBg,
+          borderRadius: "var(--radius-xl)",
+          boxShadow: "var(--card-shadow)",
+          padding: "var(--space-10) var(--space-9)",
+          /* Inner content sits at a tighter measure inside the wider panel. */
+          display: "flex",
+          flexDirection: "column",
+          alignItems: align === "center" ? "stretch" : "stretch",
+        }}
       >
-        {children}
+        <div style={{ maxWidth: 880, width: "100%", margin: align === "center" ? "0 auto" : "0" }}>
+          {children}
+        </div>
       </motion.div>
     </section>
   );
