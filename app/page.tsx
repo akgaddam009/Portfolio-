@@ -1204,11 +1204,15 @@ function WorkPanel() {
   // accessible via direct URL only -share with recruiters as needed.
   // Astra is hidden from the public surface; the route 404s.
   const CARD_ORDER = [
-    "planful-esm-tables", "apple-business-listings", "fancode-homepage", "astra",
+    "planful-esm-tables", "apple-business-listings", "fancode-homepage",
   ];
+  const EXPLORATION_ORDER = ["astra"];
   const COMING_SOON = new Set<string>();
 
   const allCards = CARD_ORDER
+    .map(slug => caseStudies.find(cs => cs.slug === slug))
+    .filter((cs): cs is NonNullable<typeof cs> => !!cs);
+  const explorationCards = EXPLORATION_ORDER
     .map(slug => caseStudies.find(cs => cs.slug === slug))
     .filter((cs): cs is NonNullable<typeof cs> => !!cs);
 
@@ -1393,12 +1397,83 @@ function WorkPanel() {
                 </CardWrapper>
               </motion.div>
             );
-          }).reduce<React.ReactNode[]>((acc, el, i) => {
-            acc.push(el);
-            if (allCards[i]?.slug === "astra") acc.push(<SystemFeatureCard key="system" />);
-            return acc;
-          }, [])}
+          })}
         </div>
+
+        {/* AI Exploration — separate section below the main work grid.
+            Astra (case study) + Portfolio Design Language (meta artifact).
+            Labelled distinctly so visitors read these as Claude-Code-built
+            explorations, not shipped client work. */}
+        {(explorationCards.length > 0 || true) && (
+          <div style={{ padding: "32px 0 16px" }}>
+            <p style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 400,
+              letterSpacing: "0.1em", textTransform: "uppercase",
+              color: "var(--muted)", margin: "0 0 12px 0",
+            }}>
+              AI Exploration
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {explorationCards.map((cs) => {
+                const href = `/work/${cs.slug}`;
+                return (
+                  <motion.div
+                    key={cs.slug}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    whileHover={{ y: -2 }}
+                    viewport={{ once: true, margin: "-20px" }}
+                    transition={{
+                      opacity: { duration: 0.5, ease: EASE },
+                      y: { type: "spring", stiffness: 320, damping: 28 },
+                    }}
+                  >
+                    <Link href={href}>
+                      <div className="work-card" style={{
+                        background: "var(--surface)",
+                        borderRadius: "16px",
+                        overflow: "hidden",
+                        boxShadow: "var(--card-shadow)",
+                        transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+                      >
+                        <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                          <WorkCardThumb
+                            src={WORK_THUMBS[cs.slug] || ""}
+                            poster={WORK_POSTERS[cs.slug]}
+                            height={200}
+                          />
+                        </div>
+                        <div style={{ padding: "12px 16px 16px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+                            <AccentChip label="AI Exploration" tone="violet" icon={Sparkles} />
+                          </div>
+                          <h3 style={{
+                            fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
+                            lineHeight: "22px", letterSpacing: 0,
+                            color: "var(--text)", marginBottom: "4px",
+                          }}>
+                            {cs.title}
+                          </h3>
+                          <p style={{
+                            fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
+                            lineHeight: 1.5, letterSpacing: 0,
+                            color: "var(--muted)", marginBottom: 0,
+                          }}>
+                            {cs.subtitle}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+              <SystemFeatureCard />
+            </div>
+          </div>
+        )}
 
         {/* Archived case studies — PDF links */}
         <div style={{ padding: "0 0 24px" }}>
