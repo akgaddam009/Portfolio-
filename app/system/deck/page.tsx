@@ -36,7 +36,6 @@ const SLIDES = [
   { id: "with",       label: "With tokens" },
   { id: "buttons",    label: "Buttons" },
   { id: "chips",      label: "Chip tones" },
-  { id: "closer",     label: "Closer" },
 ] as const;
 
 type SlideId = typeof SLIDES[number]["id"];
@@ -73,12 +72,6 @@ const TOC_GROUPS = [
     items: [
       { id: "buttons",    label: "Buttons" },
       { id: "chips",      label: "Chip tones" },
-    ],
-  },
-  {
-    group: "Wrap",
-    items: [
-      { id: "closer",     label: "Closer" },
     ],
   },
 ] as const;
@@ -353,24 +346,6 @@ function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) 
         }}>
           ↑↓ to jump · scroll snaps
         </p>
-        <Link
-          href="/system"
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "var(--text-body)",
-            color: "var(--muted)",
-            textDecoration: "none",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 4,
-            marginTop: "var(--space-2)",
-            transition: "color 180ms var(--ease-expo)",
-          }}
-          onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
-          onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
-        >
-          Read as article →
-        </Link>
       </div>
     </aside>
   );
@@ -1041,71 +1016,6 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                     </p>
                   </div>
                 ))}
-              </div>
-            </SlidePanel>
-
-            {/* 11 — Closer */}
-            <SlidePanel id="closer" isActive={active === "closer"}>
-              <Eyebrow>Continue</Eyebrow>
-              <div style={{
-                marginTop: "var(--space-7)",
-                display: "flex",
-                gap: "16px",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-                flexWrap: "wrap",
-              }}>
-                <Link
-                  href="/"
-                  aria-label="Back to portfolio"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "8px 16px",
-                    borderRadius: "8px",
-                    background: "var(--text)",
-                    color: "var(--bg)",
-                    textDecoration: "none",
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-caption)",
-                    fontWeight: 500,
-                    letterSpacing: "-0.01em",
-                    flexShrink: 0,
-                  }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M19 12H5M11 6l-6 6 6 6" />
-                  </svg>
-                  Back to portfolio
-                </Link>
-                {nextCaseStudy && (
-                  <Link
-                    href={`/work/${nextCaseStudy.slug}`}
-                    aria-label={`Next case study: ${nextCaseStudy.title}`}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "8px 16px",
-                      borderRadius: "8px",
-                      background: "var(--text)",
-                      color: "var(--bg)",
-                      textDecoration: "none",
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-caption)",
-                      fontWeight: 500,
-                      letterSpacing: "-0.01em",
-                      flexShrink: 0,
-                    }}
-                  >
-                    Next: {nextCaseStudy.title}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M5 12h14M13 6l6 6-6 6" />
-                    </svg>
-                  </Link>
-                )}
               </div>
             </SlidePanel>
 
