@@ -11,6 +11,16 @@ import { caseStudies } from "@/lib/caseStudies";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/* Shadow constants mirror the landing page exactly (app/page.tsx:2978).
+   Dark canvas is near-black so flat drops disappear — landing solves
+   this with deeper rgba shadows + a stronger active-vs-rest delta.
+   Inactive panels also dim to 0.6 in dark mode; hovering or becoming
+   active engages them back to full brightness. */
+const PANEL_SHADOW_LIGHT        = "0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06)";
+const PANEL_SHADOW_ACTIVE_LIGHT = "0 2px 4px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.10)";
+const PANEL_SHADOW_DARK         = "0 1px 2px rgba(0,0,0,0.40), 0 6px 24px rgba(0,0,0,0.35)";
+const PANEL_SHADOW_ACTIVE_DARK  = "0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(0,0,0,0.45)";
+
 /* =========================================================================
    DECK MANIFEST
    ========================================================================= */
@@ -120,44 +130,45 @@ function TokenPill({ token }: { token: string }) {
 
 function SlidePanel({
   id,
+  isActive,
   tint,
   children,
   background,
   align = "center",
 }: {
   id: SlideId;
+  isActive: boolean;
   tint?: "warm" | "surface";
   children: React.ReactNode;
   background?: React.ReactNode;
   align?: "start" | "center";
 }) {
   const reduced = useReducedMotion();
+  // Same bg as the landing panels — var(--bg). Tints layer on top.
   const bg =
-    tint === "warm"   ? "color-mix(in srgb, var(--accent-warm) 5%, var(--surface))"
-    : tint === "surface" ? "var(--surface2)"
-    : "var(--surface)";
+    tint === "warm"   ? "color-mix(in srgb, var(--accent-warm) 8%, var(--bg))"
+    : tint === "surface" ? "var(--surface)"
+    : "var(--bg)";
   return (
     <motion.section
       id={id}
       data-slide={id}
+      className={isActive ? "deck-panel is-active" : "deck-panel"}
       initial={reduced ? false : { opacity: 0, y: 16 }}
       whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.5, ease: EASE }}
       style={{
         background: bg,
-        borderRadius: "var(--radius-xl)",
-        boxShadow: "var(--card-shadow)",
+        borderRadius: "var(--radius-lg)",
         padding: "var(--space-7)",
         position: "relative",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
         justifyContent: align === "center" ? "center" : "flex-start",
-        /* Every panel locks to the same height so the deck rhythm is
-           consistent — no small/big/small/big. Falls back to a viewport-
-           proportional height on shorter screens. */
-        minHeight: "min(640px, calc(100vh - 88px))",
+        // Full-stretch — one card fills one viewport. 88px = nav 72 + gap 16.
+        minHeight: "calc(100vh - 88px)",
       }}
     >
       {background}
@@ -361,19 +372,33 @@ export default function DesignSystemDeck() {
           top: 72px;
           align-self: start;
         }
-        /* Rail card padding matches landing panel inner padding
-           (16px 24px from app/page.tsx:519 / :1318). */
+        /* Rail card — same as landing panels: --bg surface, --radius-lg,
+           two-tier shadow that intensifies in dark mode. */
         .deck-rail-card {
-          background: var(--surface);
+          background: var(--bg);
           border-radius: var(--radius-lg);
-          box-shadow: var(--card-shadow);
+          box-shadow: ${PANEL_SHADOW_LIGHT};
           padding: 16px 24px;
           display: flex;
           flex-direction: column;
         }
+        [data-theme="dark"] .deck-rail-card {
+          box-shadow: ${PANEL_SHADOW_DARK};
+        }
+        /* Slide panels — landing's shadow tiers (active vs rest) plus
+           the dark-mode dim-and-engage behaviour. Light mode never dims;
+           dark mode fades inactive panels to 0.6 and engages back to 1
+           on hover or active. */
+        .deck-panel { box-shadow: ${PANEL_SHADOW_LIGHT}; transition: box-shadow var(--dur-base) var(--ease-expo), opacity var(--dur-base) var(--ease-expo); }
+        .deck-panel.is-active { box-shadow: ${PANEL_SHADOW_ACTIVE_LIGHT}; }
+        [data-theme="dark"] .deck-panel { box-shadow: ${PANEL_SHADOW_DARK}; opacity: 0.6; }
+        [data-theme="dark"] .deck-panel.is-active,
+        [data-theme="dark"] .deck-panel:hover { opacity: 1; box-shadow: ${PANEL_SHADOW_ACTIVE_DARK}; }
         .deck-rail-item:hover {
           background: var(--hover) !important;
-          box-shadow: inset 4px 0 0 var(--surface), inset -4px 0 0 var(--surface);
+          /* Inset gutters use --bg (the rail card bg) so the hover fill
+             doesn't crash into the indicator or card edge. */
+          box-shadow: inset 4px 0 0 var(--bg), inset -4px 0 0 var(--bg);
         }
         .deck-rail-item[data-active="true"]:hover {
           background: transparent !important;
@@ -501,6 +526,7 @@ export default function DesignSystemDeck() {
             {/* 01 — Cover */}
             <SlidePanel
               id="cover"
+              isActive={active === "cover"}
               background={<AsciiWater opacity={0.45} fontSize={13} damping={0.982} />}
             >
               <Eyebrow track="cover">Portfolio · Design system</Eyebrow>
@@ -553,7 +579,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 02 — Introduction */}
-            <SlidePanel id="intro">
+            <SlidePanel id="intro" isActive={active === "intro"}>
               <Eyebrow>Introduction</Eyebrow>
               <SlideTitle>A working artifact, not a deliverable.</SlideTitle>
               <Lead>
@@ -564,7 +590,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 03 — Why */}
-            <SlidePanel id="why" tint="surface">
+            <SlidePanel id="why" isActive={active === "why"} tint="surface">
               <Eyebrow>Why this exists</Eyebrow>
               <SlideTitle>Drift was the problem. Code was the answer.</SlideTitle>
               <Lead>
@@ -575,7 +601,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 04 — Philosophy */}
-            <SlidePanel id="philosophy" align="start">
+            <SlidePanel id="philosophy" isActive={active === "philosophy"} align="start">
               <Eyebrow>Four principles</Eyebrow>
               <SlideTitle>The opinions that shape every decision.</SlideTitle>
               <div style={{
@@ -626,7 +652,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 05 — AI workflow */}
-            <SlidePanel id="workflow" tint="surface" align="start">
+            <SlidePanel id="workflow" isActive={active === "workflow"} tint="surface" align="start">
               <Eyebrow>AI-assisted workflow</Eyebrow>
               <SlideTitle>Plan in Claude AI. Build in Claude Code.</SlideTitle>
               <Lead>
@@ -681,7 +707,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 06 — Tokens spec */}
-            <SlidePanel id="tokens" align="start">
+            <SlidePanel id="tokens" isActive={active === "tokens"} align="start">
               <Eyebrow>Tokens</Eyebrow>
               <SlideTitle>Colors, type, spacing, motion — one CSS file.</SlideTitle>
               <Lead>
@@ -733,7 +759,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 07 — Without tokens */}
-            <SlidePanel id="without" tint="warm" align="start">
+            <SlidePanel id="without" isActive={active === "without"} tint="warm" align="start">
               <Eyebrow>Without tokens</Eyebrow>
               <SlideTitle>Decisions trapped in pixel literals.</SlideTitle>
               <Lead max={520}>
@@ -761,7 +787,7 @@ transition:    180ms cubic-bezier(0.22, 1, 0.36, 1);`}
             </SlidePanel>
 
             {/* 08 — With tokens */}
-            <SlidePanel id="with" align="start">
+            <SlidePanel id="with" isActive={active === "with"} align="start">
               <Eyebrow>With tokens</Eyebrow>
               <SlideTitle>Decisions named. Drift impossible.</SlideTitle>
               <Lead max={520}>
@@ -789,7 +815,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
             </SlidePanel>
 
             {/* 09 — Buttons */}
-            <SlidePanel id="buttons" tint="surface" align="start">
+            <SlidePanel id="buttons" isActive={active === "buttons"} tint="surface" align="start">
               <Eyebrow>Buttons</Eyebrow>
               <SlideTitle>Three tiers, no primary.</SlideTitle>
               <Lead>The work is the hero. None of these buttons is allowed to compete for attention.</Lead>
@@ -831,7 +857,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
             </SlidePanel>
 
             {/* 10 — Chip tones */}
-            <SlidePanel id="chips" align="start">
+            <SlidePanel id="chips" isActive={active === "chips"} align="start">
               <Eyebrow>Chip tones</Eyebrow>
               <SlideTitle>Six tones for inline emphasis.</SlideTitle>
               <div style={{
@@ -875,7 +901,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
             </SlidePanel>
 
             {/* 11 — Closer */}
-            <SlidePanel id="closer">
+            <SlidePanel id="closer" isActive={active === "closer"}>
               <Eyebrow>Continue</Eyebrow>
               <div style={{
                 marginTop: "var(--space-7)",
