@@ -194,7 +194,7 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
       </p>
 
       <nav style={{ position: "relative" }}>
-        {SLIDES.map((s, i) => {
+        {SLIDES.map(s => {
           const isActive = s.id === active;
           return (
             <button
@@ -204,11 +204,8 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
               data-active={isActive}
               style={{
                 position: "relative",
-                display: "grid",
-                gridTemplateColumns: "28px 1fr",
-                gap: 10,
-                alignItems: "baseline",
-                padding: "7px 8px 7px 12px",
+                display: "block",
+                padding: "8px 12px",
                 width: "100%",
                 textAlign: "left",
                 background: "transparent",
@@ -239,15 +236,7 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
                   transition={{ duration: 0.18, ease: EASE }}
                 />
               )}
-              <span style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "var(--text-mono)",
-                color: "var(--muted)",
-                letterSpacing: "0.08em",
-              }}>
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span>{s.label}</span>
+              {s.label}
             </button>
           );
         })}
@@ -409,9 +398,13 @@ export default function DesignSystemDeck() {
         }
         .deck-rail-item:hover {
           background: var(--hover) !important;
+          /* Carve a 4px transparent gutter on each side so the hover fill
+             doesn't crash into the active indicator or the panel edge. */
+          box-shadow: inset 4px 0 0 var(--chrome), inset -4px 0 0 var(--chrome);
         }
         .deck-rail-item[data-active="true"]:hover {
           background: transparent !important;
+          box-shadow: none;
         }
         .deck-content {
           margin-left: 280px;
