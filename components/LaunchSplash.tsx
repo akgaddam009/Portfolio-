@@ -103,16 +103,22 @@ export default function LaunchSplash() {
       window.addEventListener("pointerleave", onLeave);
     }
 
-    const SPRING = 0.06;
-    const FRICTION = 0.88;
+    const SPRING = 0.04;     // softer pull → no overshoot
+    const FRICTION = 0.82;   // higher damping → critical-damped feel
     const REPEL_R = 90;
+    const SETTLE_EPS = 0.05; // velocity below this + close to target = snap
 
     const fill = () =>
       getComputedStyle(document.documentElement).getPropertyValue("--text").trim() || "#1d1d1f";
 
     let raf = 0;
     const tick = () => {
-      ctx.clearRect(0, 0, W, H);
+      // Soft clear via low-alpha rect — gives a subtle motion blur during
+      // travel and lets settled particles render crisply. Reading --bg as
+      // a raw token works because `var(--bg)` resolves to a hex.
+      const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#ffffff";
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = fill();
 
       for (const p of particles) {
@@ -128,8 +134,8 @@ export default function LaunchSplash() {
           if (md2 < REPEL_R * REPEL_R) {
             const md = Math.sqrt(md2) || 1;
             const force = (REPEL_R - md) / REPEL_R;
-            p.vx += (mdx / md) * force * 6;
-            p.vy += (mdy / md) * force * 6;
+            p.vx += (mdx / md) * force * 4;
+            p.vy += (mdy / md) * force * 4;
           }
         }
 
@@ -138,7 +144,26 @@ export default function LaunchSplash() {
         p.x += p.vx;
         p.y += p.vy;
 
-        ctx.fillRect(p.x, p.y, 1.6, 1.6);
+        // Snap to target once nearly stationary so settled particles
+        // don't sub-pixel jitter against the canvas grid.
+        if (
+          Math.abs(p.vx) < SETTLE_EPS &&
+          Math.abs(p.vy) < SETTLE_EPS &&
+          Math.abs(dx) < 0.8 &&
+          Math.abs(dy) < 0.8
+        ) {
+          p.x = p.tx;
+          p.y = p.ty;
+          p.vx = 0;
+          p.vy = 0;
+        }
+
+        // Anti-aliased disc instead of a 1.6px square — smoother both in
+        // motion and at rest. Radius 1.3 keeps the visual weight similar
+        // to the old square sample size.
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.3, 0, Math.PI * 2);
+        ctx.fill();
       }
 
       raf = requestAnimationFrame(tick);
