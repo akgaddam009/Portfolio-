@@ -331,8 +331,7 @@ export default function DesignSystemDeck() {
     if (next) jumpTo(next.id);
   }, [active, jumpTo]);
 
-  // Keyboard nav stays — Arrow / PageUp/Down jump slides. Wheel snap dropped:
-  // variable-height stacked panels in the 80% column don't fit a snap model.
+  // Keyboard nav — Arrow / PageUp / PageDown jump slides.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
@@ -347,6 +346,36 @@ export default function DesignSystemDeck() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, [jumpBy]);
+
+  // Wheel-driven slide nav — one gesture = one slide jump. Slides are
+  // viewport-tall now (calc(100vh - 88px)), so one-scroll-per-slide makes
+  // sense as the dominant interaction. 600ms cooldown absorbs trackpad
+  // inertia. Disabled on touch (pointer:coarse) and reduced-motion.
+  useEffect(() => {
+    const fine = window.matchMedia("(pointer: fine)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!fine || reduced) return;
+
+    let lastJump = 0;
+    const COOLDOWN = 600;
+    const THRESHOLD = 8;
+
+    const onWheel = (e: WheelEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest(".deck-rail, pre, [data-scrollable]")) return;
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      if (Math.abs(e.deltaY) < THRESHOLD) return;
+
+      e.preventDefault();
+      const now = Date.now();
+      if (now - lastJump < COOLDOWN) return;
+      lastJump = now;
+      jumpBy(e.deltaY > 0 ? 1 : -1);
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
   }, [jumpBy]);
 
   return (
@@ -372,18 +401,14 @@ export default function DesignSystemDeck() {
           top: 72px;
           align-self: start;
         }
-        /* Rail card — same as landing panels: --bg surface, --radius-lg,
-           two-tier shadow that intensifies in dark mode. */
+        /* Rail is flat — no card, no shadow, no border-radius. Sits
+           directly on the page chrome so the right-side slide panels
+           are the only floating surfaces. */
         .deck-rail-card {
-          background: var(--bg);
-          border-radius: var(--radius-lg);
-          box-shadow: ${PANEL_SHADOW_LIGHT};
-          padding: 16px 24px;
+          background: transparent;
+          padding: 0 8px 0 4px;
           display: flex;
           flex-direction: column;
-        }
-        [data-theme="dark"] .deck-rail-card {
-          box-shadow: ${PANEL_SHADOW_DARK};
         }
         /* Slide panels — landing's shadow tiers (active vs rest) plus
            the dark-mode dim-and-engage behaviour. Light mode never dims;
@@ -396,9 +421,6 @@ export default function DesignSystemDeck() {
         [data-theme="dark"] .deck-panel:hover { opacity: 1; box-shadow: ${PANEL_SHADOW_ACTIVE_DARK}; }
         .deck-rail-item:hover {
           background: var(--hover) !important;
-          /* Inset gutters use --bg (the rail card bg) so the hover fill
-             doesn't crash into the indicator or card edge. */
-          box-shadow: inset 4px 0 0 var(--bg), inset -4px 0 0 var(--bg);
         }
         .deck-rail-item[data-active="true"]:hover {
           background: transparent !important;
