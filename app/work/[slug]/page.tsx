@@ -27,7 +27,6 @@ import { isUnlocked } from "@/lib/auth";
 const HIDDEN_SLUGS = new Set<string>([
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",
-  "astra",
 ]);
 
 /* Public hero media per confidential slug — mirrors the homepage WORK_THUMBS

@@ -1395,8 +1395,7 @@ function WorkPanel() {
             );
           }).reduce<React.ReactNode[]>((acc, el, i) => {
             acc.push(el);
-            // Portfolio Design Language card hidden for now — /system page still live
-            // if (allCards[i]?.slug === "astra") acc.push(<SystemFeatureCard key="system" />);
+            if (allCards[i]?.slug === "astra") acc.push(<SystemFeatureCard key="system" />);
             return acc;
           }, [])}
         </div>
@@ -2895,8 +2894,8 @@ function AiExplorationsPanel() {
             </motion.div>
           )}
 
-          {/* Portfolio Design Language. meta artifact — hidden for now
-          <SystemFeatureCard /> */}
+          {/* Portfolio Design Language — meta artifact card. */}
+          <SystemFeatureCard />
 
         </div>
       </div>

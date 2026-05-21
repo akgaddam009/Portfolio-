@@ -46,7 +46,6 @@ const GATED_PATH_PATTERNS = [
   /^\/images\/fancode\//i,
   /^\/images\/fancode-ftux\//i,
   /^\/images\/apple/i,
-  /^\/astra(\/|$)/i,
 ];
 
 /* Files inside gated folders that ARE referenced by the public
@@ -111,6 +110,5 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/images/:path*",
-    "/astra/:path*",
   ],
 };

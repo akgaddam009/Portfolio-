@@ -4,7 +4,6 @@ import { caseStudies } from "@/lib/caseStudies";
 const HIDDEN_SLUGS = new Set<string>([
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",
-  "astra",
 ]);
 
 export default function robots(): MetadataRoute.Robots {
@@ -17,9 +16,7 @@ export default function robots(): MetadataRoute.Robots {
           a gate
        3. If a crawler probes asset URLs directly, the proxy returns 404 */
   const disallowed: string[] = [
-    "/system/",
     "/ai/",
-    "/astra/",
     "/images/planful/",
     "/images/reputation/",
     "/images/zetwerk/",
