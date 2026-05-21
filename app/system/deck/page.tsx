@@ -63,7 +63,10 @@ function Eyebrow({
       fontSize: "var(--text-eyebrow)",
       letterSpacing: track === "cover" ? "0.12em" : "0.08em",
       textTransform: "uppercase",
-      color: "var(--muted)",
+      // --muted2 gives enough contrast to remain readable when the
+      // panel is dimmed to opacity 0.6 in dark mode (the dim multiplies
+      // through to child text).
+      color: "var(--muted2)",
       margin: 0,
       marginBottom: mb,
     }}>
@@ -72,14 +75,28 @@ function Eyebrow({
   );
 }
 
-function SlideTitle({ children, size = "lg" }: { children: React.ReactNode; size?: "lg" | "xl" }) {
+/* SlideTitle — two size tiers, two weight tiers. Cover hero uses xl/300.
+   Manifesto slides (intro, why, closer) use lg/300 — same scale as spec
+   slides but the lighter weight signals "principle / closing thought."
+   Spec slides (philosophy, workflow, tokens, without/with, buttons, chips)
+   use lg/500 — heading-weight to anchor the data below. */
+function SlideTitle({
+  children,
+  size = "lg",
+  weight = "spec",
+}: {
+  children: React.ReactNode;
+  size?: "lg" | "xl";
+  weight?: "spec" | "manifesto";
+}) {
   const isXl = size === "xl";
+  const isManifesto = weight === "manifesto";
   return (
     <h2 style={{
       fontFamily: "var(--font-body)",
       fontSize: isXl ? "clamp(32px, 5vw, 56px)" : "var(--text-display)",
-      fontWeight: isXl ? 300 : 500,
-      letterSpacing: isXl ? "-0.035em" : "-0.02em",
+      fontWeight: isXl || isManifesto ? 300 : 500,
+      letterSpacing: isXl || isManifesto ? "-0.025em" : "-0.02em",
       lineHeight: isXl ? 1.05 : 1.15,
       color: "var(--text)",
       margin: 0,
@@ -514,29 +531,9 @@ export default function DesignSystemDeck() {
           <ThemeToggle />
         </div>
 
-        {nextCaseStudy && (
-          <Link
-            href={`/work/${nextCaseStudy.slug}`}
-            aria-label={`Next case study: ${nextCaseStudy.title}`}
-            style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
-              letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
-              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface)",
-              display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
-              textDecoration: "none",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
-          >
-            Next case study
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z"/>
-            </svg>
-          </Link>
-        )}
+        {/* Right side intentionally empty — the closer slide carries the
+            Next case study CTA, so duplicating it in the top bar would
+            split the same affordance into two visual styles. */}
       </motion.header>
 
       <div className="deck-page">
@@ -559,7 +556,8 @@ export default function DesignSystemDeck() {
                 <InlineChip label="Claude Code" tone="violet" scale="match" />.
               </SlideTitle>
               <Lead max={620}>
-                No Figma file. No handoff. The site you’re looking at <em>is</em> the
+                No Figma file. No handoff. The site you’re looking at{" "}
+                <span style={{ color: "var(--text)", fontWeight: 500 }}>is</span> the
                 documentation — every color, type ramp, and motion curve below is the same one
                 the live pages use.
               </Lead>
@@ -603,7 +601,7 @@ export default function DesignSystemDeck() {
             {/* 02 — Introduction */}
             <SlidePanel id="intro" isActive={active === "intro"}>
               <Eyebrow>Introduction</Eyebrow>
-              <SlideTitle>A working artifact, not a deliverable.</SlideTitle>
+              <SlideTitle weight="manifesto">A working artifact, not a deliverable.</SlideTitle>
               <Lead>
                 Most design systems live in Figma. They drift the moment engineers touch them.
                 This one lives in the code — one CSS file, a handful of React components. If this
@@ -614,7 +612,7 @@ export default function DesignSystemDeck() {
             {/* 03 — Why */}
             <SlidePanel id="why" isActive={active === "why"} tint="surface">
               <Eyebrow>Why this exists</Eyebrow>
-              <SlideTitle>Drift was the problem. Code was the answer.</SlideTitle>
+              <SlideTitle weight="manifesto">Drift was the problem. Code was the answer.</SlideTitle>
               <Lead>
                 Three portfolio rebuilds in, the same gray was hex-coded four different ways.
                 Spacing wandered. One rule fixed it: nothing visual lives outside the token file.
@@ -664,7 +662,7 @@ export default function DesignSystemDeck() {
                     <p style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "var(--text-body)",
-                      color: "var(--muted2)",
+                      color: "var(--muted)",
                       margin: 0,
                       lineHeight: 1.6,
                     }}>{p.body}</p>
@@ -719,7 +717,7 @@ export default function DesignSystemDeck() {
                     <p style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "var(--text-body)",
-                      color: "var(--muted2)",
+                      color: "var(--muted)",
                       margin: 0,
                       lineHeight: 1.5,
                     }}>{s.body}</p>
@@ -768,8 +766,9 @@ export default function DesignSystemDeck() {
                     }} />
                     <p style={{
                       fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-body)",
+                      fontSize: "var(--text-title-sm)",
                       fontWeight: 500,
+                      letterSpacing: "-0.015em",
                       color: "var(--text)",
                       margin: 0,
                       marginBottom: 4,
@@ -864,8 +863,10 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                   }}>
                     <p style={{
                       fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-body-lg)",
-                      color: "var(--muted2)",
+                      fontSize: "var(--text-title-sm)",
+                      fontWeight: 500,
+                      letterSpacing: "-0.015em",
+                      color: "var(--text)",
                       margin: 0,
                     }}>
                       {row.label}
