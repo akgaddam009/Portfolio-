@@ -345,13 +345,12 @@ export default function DesignSystemDeck() {
           background: var(--chrome);
           min-height: 100vh;
         }
-        /* Spacing aligned with the landing page (app/page.tsx:3502+):
-           inter-panel gap 16px, container 24px sides, top padding clears
-           the fixed header. */
+        /* Full-stretch — no outer max-width, no side gutters. The grid
+           extends edge to edge so panels feel anchored to the viewport,
+           matching the landing page's flush horizontal-scroll feel. */
         .deck-grid {
-          max-width: 1440px;
-          margin: 0 auto;
-          padding: 72px 24px 24px;
+          margin: 0;
+          padding: 72px 0 16px;
           display: grid;
           grid-template-columns: 280px 1fr;
           gap: 16px;
