@@ -36,10 +36,9 @@ type SlideId = typeof SLIDES[number]["id"];
    PRIMITIVES
    ========================================================================= */
 
-/* Eyebrow — system mono caps. Sized up from --text-eyebrow (9px) to
-   --text-mono-lg (11px) for deck-context readability; color is --muted2
-   for AA-comfortable contrast on both --bg and --chrome. 0.08em default
-   tracking; 0.12em on the cover hero (matches the article hero eyebrow). */
+/* Eyebrow — system mono caps. Same treatment as the article (--system/page.tsx):
+   --text-eyebrow (9px), --muted, 0.08em default. Cover hero uses the article
+   hero's wider 0.12em treatment. */
 function Eyebrow({
   children,
   mb = 16,
@@ -52,10 +51,10 @@ function Eyebrow({
   return (
     <p style={{
       fontFamily: "var(--font-mono)",
-      fontSize: "var(--text-mono-lg)",
+      fontSize: "var(--text-eyebrow)",
       letterSpacing: track === "cover" ? "0.12em" : "0.08em",
       textTransform: "uppercase",
-      color: "var(--muted2)",
+      color: "var(--muted)",
       margin: 0,
       marginBottom: mb,
     }}>
@@ -64,17 +63,16 @@ function Eyebrow({
   );
 }
 
-/* SlideTitle — sized for deck context, not article. The article H2 uses
-   --text-display (clamps to 44px); slides need more presence because each
-   one fills a viewport and is read at arm's length.
-   - lg (inner slides): clamp(32px, 4.5vw, 52px), weight 500
-   - xl (cover / closer): clamp(40px, 6vw, 64px), weight 300, tighter track */
+/* SlideTitle — mapped to the existing display ladder, matching the article:
+   - lg (inner slides): --text-display, weight 500 — the section H2 treatment
+   - xl (cover / closer): clamp(32px, 5vw, 56px), weight 300 — same as the
+     article's hero clamp (app/system/page.tsx:434). No bespoke sizes. */
 function SlideTitle({ children, size = "lg" }: { children: React.ReactNode; size?: "lg" | "xl" }) {
   const isXl = size === "xl";
   return (
     <h2 style={{
       fontFamily: "var(--font-body)",
-      fontSize: isXl ? "clamp(40px, 6vw, 64px)" : "clamp(32px, 4.5vw, 52px)",
+      fontSize: isXl ? "clamp(32px, 5vw, 56px)" : "var(--text-display)",
       fontWeight: isXl ? 300 : 500,
       letterSpacing: isXl ? "-0.035em" : "-0.02em",
       lineHeight: isXl ? 1.05 : 1.15,
@@ -88,18 +86,18 @@ function SlideTitle({ children, size = "lg" }: { children: React.ReactNode; size
   );
 }
 
-/* Lead — one step up from the article (--text-title-sm 16 → --text-title 18)
-   so it reads as a presentation lead, not a body paragraph. */
-function Lead({ children, max = 620 }: { children: React.ReactNode; max?: number }) {
+/* Lead — same scale as the article's SectionDescription (--text-title-sm
+   at 16px). No bespoke deck-only sizing. */
+function Lead({ children, max = 580 }: { children: React.ReactNode; max?: number }) {
   return (
     <p style={{
       fontFamily: "var(--font-body)",
-      fontSize: "var(--text-title)",
-      lineHeight: 1.55,
+      fontSize: "var(--text-title-sm)",
+      lineHeight: 1.6,
       color: "var(--muted2)",
       maxWidth: max,
       margin: 0,
-      letterSpacing: "-0.01em",
+      letterSpacing: "-0.005em",
     }}>
       {children}
     </p>
@@ -600,10 +598,10 @@ export default function DesignSystemDeck() {
                 }}>{p.title}</p>
                 <p style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-body-lg)",
+                  fontSize: "var(--text-body)",
                   color: "var(--muted2)",
                   margin: 0,
-                  lineHeight: 1.6,
+                  lineHeight: 1.55,
                 }}>{p.body}</p>
               </div>
             ))}
@@ -655,10 +653,10 @@ export default function DesignSystemDeck() {
                 }}>{s.step}</p>
                 <p style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-body-lg)",
+                  fontSize: "var(--text-body)",
                   color: "var(--muted2)",
                   margin: 0,
-                  lineHeight: 1.6,
+                  lineHeight: 1.5,
                 }}>{s.body}</p>
               </div>
             ))}
@@ -705,7 +703,7 @@ export default function DesignSystemDeck() {
                 }} />
                 <p style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-body-lg)",
+                  fontSize: "var(--text-body)",
                   fontWeight: 500,
                   color: "var(--text)",
                   margin: 0,
@@ -901,13 +899,21 @@ transition:    var(--dur-fast) var(--ease-expo);`}
             <br />
             Design the system behind them.
           </SlideTitle>
+          {/* CTAs split to opposite edges of the content column. Back on the
+              left as the cancel / retreat path; next case study on the right
+              as the forward path. */}
           <div style={{
             marginTop: "var(--space-10)",
             display: "flex",
             gap: "var(--space-3)",
             flexWrap: "wrap",
             alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
           }}>
+            <Button asChild variant="inline">
+              <Link href="/">← Back to portfolio</Link>
+            </Button>
             {nextCaseStudy && (
               <Button asChild variant="inline">
                 <Link href={`/work/${nextCaseStudy.slug}`}>
@@ -915,9 +921,6 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                 </Link>
               </Button>
             )}
-            <Button asChild variant="inline">
-              <Link href="/">Back to portfolio</Link>
-            </Button>
           </div>
         </Slide>
       </main>
