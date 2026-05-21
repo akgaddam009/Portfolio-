@@ -35,8 +35,10 @@ type SlideId = typeof SLIDES[number]["id"];
    PRIMITIVES
    ========================================================================= */
 
-/* Eyebrow — system mono caps. 0.08em across the page; the cover hero
-   gets the wider 0.12em treatment the article uses on its hero eyebrow. */
+/* Eyebrow — system mono caps. Sized up from --text-eyebrow (9px) to
+   --text-mono-lg (11px) for deck-context readability; color is --muted2
+   for AA-comfortable contrast on both --bg and --chrome. 0.08em default
+   tracking; 0.12em on the cover hero (matches the article hero eyebrow). */
 function Eyebrow({
   children,
   mb = 16,
@@ -49,10 +51,10 @@ function Eyebrow({
   return (
     <p style={{
       fontFamily: "var(--font-mono)",
-      fontSize: "var(--text-eyebrow)",
+      fontSize: "var(--text-mono-lg)",
       letterSpacing: track === "cover" ? "0.12em" : "0.08em",
       textTransform: "uppercase",
-      color: "var(--muted)",
+      color: "var(--muted2)",
       margin: 0,
       marginBottom: mb,
     }}>
@@ -61,15 +63,17 @@ function Eyebrow({
   );
 }
 
-/* SlideTitle — two sizes mapped to the existing display ladder:
-   - lg: var(--text-display), weight 500, the section H2 treatment
-   - xl: matches the article's hero (clamp 32→56), weight 300, tighter */
+/* SlideTitle — sized for deck context, not article. The article H2 uses
+   --text-display (clamps to 44px); slides need more presence because each
+   one fills a viewport and is read at arm's length.
+   - lg (inner slides): clamp(32px, 4.5vw, 52px), weight 500
+   - xl (cover / closer): clamp(40px, 6vw, 64px), weight 300, tighter track */
 function SlideTitle({ children, size = "lg" }: { children: React.ReactNode; size?: "lg" | "xl" }) {
   const isXl = size === "xl";
   return (
     <h2 style={{
       fontFamily: "var(--font-body)",
-      fontSize: isXl ? "clamp(32px, 5vw, 56px)" : "var(--text-display)",
+      fontSize: isXl ? "clamp(40px, 6vw, 64px)" : "clamp(32px, 4.5vw, 52px)",
       fontWeight: isXl ? 300 : 500,
       letterSpacing: isXl ? "-0.035em" : "-0.02em",
       lineHeight: isXl ? 1.05 : 1.15,
@@ -83,16 +87,18 @@ function SlideTitle({ children, size = "lg" }: { children: React.ReactNode; size
   );
 }
 
-function Lead({ children, max = 580 }: { children: React.ReactNode; max?: number }) {
+/* Lead — one step up from the article (--text-title-sm 16 → --text-title 18)
+   so it reads as a presentation lead, not a body paragraph. */
+function Lead({ children, max = 620 }: { children: React.ReactNode; max?: number }) {
   return (
     <p style={{
       fontFamily: "var(--font-body)",
-      fontSize: "var(--text-title-sm)",
-      lineHeight: 1.6,
+      fontSize: "var(--text-title)",
+      lineHeight: 1.55,
       color: "var(--muted2)",
       maxWidth: max,
       margin: 0,
-      letterSpacing: "-0.005em",
+      letterSpacing: "-0.01em",
     }}>
       {children}
     </p>
@@ -173,37 +179,19 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
   const currentIndex = SLIDES.findIndex(s => s.id === active);
   return (
     <aside className="deck-rail" aria-label="Deck navigation">
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", marginBottom: "var(--space-6)" }}>
-        <Link
-          href="/"
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "var(--text-mono)",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "var(--muted)",
-            textDecoration: "none",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-          }}
-        >
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-          </svg>
-          Portfolio
-        </Link>
-        <p style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: "var(--text-eyebrow)",
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          color: "var(--muted)",
-          margin: 0,
-        }}>
-          Design system · Deck
-        </p>
-      </div>
+      {/* The Portfolio back-link lives in the top bar; rail only carries
+          the deck title so we don't duplicate the back-nav affordance. */}
+      <p style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: "var(--text-mono-lg)",
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+        color: "var(--muted2)",
+        margin: 0,
+        marginBottom: "var(--space-6)",
+      }}>
+        Design system · Deck
+      </p>
 
       <nav style={{ position: "relative" }}>
         {SLIDES.map((s, i) => {
@@ -609,7 +597,7 @@ export default function DesignSystemDeck() {
                 }}>{p.title}</p>
                 <p style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-body)",
+                  fontSize: "var(--text-body-lg)",
                   color: "var(--muted2)",
                   margin: 0,
                   lineHeight: 1.6,
@@ -664,7 +652,7 @@ export default function DesignSystemDeck() {
                 }}>{s.step}</p>
                 <p style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-body)",
+                  fontSize: "var(--text-body-lg)",
                   color: "var(--muted2)",
                   margin: 0,
                   lineHeight: 1.6,
@@ -714,7 +702,7 @@ export default function DesignSystemDeck() {
                 }} />
                 <p style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-body)",
+                  fontSize: "var(--text-body-lg)",
                   fontWeight: 500,
                   color: "var(--text)",
                   margin: 0,
