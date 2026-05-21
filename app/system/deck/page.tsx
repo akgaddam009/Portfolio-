@@ -148,16 +148,16 @@ function SlidePanel({
         background: bg,
         borderRadius: "var(--radius-xl)",
         boxShadow: "var(--card-shadow)",
-        /* Inner padding aligned with the landing panel rhythm
-           (16px 24px). Stepped up to var(--space-7) (32px) here because
-           the slide panels are full-column-width and carry display-scale
-           headlines — landing's 24px is too tight for the bigger type. */
         padding: "var(--space-7)",
         position: "relative",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
         justifyContent: align === "center" ? "center" : "flex-start",
+        /* Every panel locks to the same height so the deck rhythm is
+           consistent — no small/big/small/big. Falls back to a viewport-
+           proportional height on shorter screens. */
+        minHeight: "min(640px, calc(100vh - 88px))",
       }}
     >
       {background}
@@ -417,47 +417,81 @@ export default function DesignSystemDeck() {
         }}
       />
 
-      {/* Top bar — Back affordance matches the case study top bar. */}
-      <header style={{
-        position: "fixed",
-        top: 0, left: 0, right: 0,
-        zIndex: 40,
-        padding: "var(--space-4) var(--space-6)",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        pointerEvents: "none",
-      }}>
-        <Link
-          href="/#work"
-          className="cs-back-link"
-          style={{
-            pointerEvents: "auto",
-            fontFamily: "var(--font-mono)",
-            fontSize: "var(--text-mono)",
-            fontWeight: 400,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "var(--muted)",
-            padding: "8px 4px",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 4,
-            textDecoration: "none",
-            transition: "color 0.18s",
-          }}
-          onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
-          onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
-        >
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-          </svg>
-          Back
-        </Link>
-        <div style={{ pointerEvents: "auto" }}>
+      {/* Top nav — matches HomeNav and CaseStudyDetail header exactly.
+          Floating pill chips on transparent background, 8px from the top
+          edge, 64px tall, 24px sides. Left: Arun Gaddam wordmark +
+          ThemeToggle. Right: Next case study CTA (when one exists). */}
+      <motion.header
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE }}
+        style={{
+          position: "fixed",
+          top: "8px", left: 0, right: 0,
+          zIndex: 200,
+          height: "64px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 24px",
+          background: "transparent",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Link
+            href="/"
+            aria-label="Home. Arun Gaddam"
+            style={{
+              fontFamily: "var(--font-logo)",
+              fontSize: "var(--text-caption)",
+              fontWeight: 500,
+              color: "var(--text)",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              height: "44px",
+              padding: "0 14px",
+              borderRadius: "12px",
+              border: "none",
+              background: "var(--surface)",
+              boxShadow: "var(--card-shadow)",
+              display: "inline-flex",
+              alignItems: "center",
+              textDecoration: "none",
+              userSelect: "none",
+              transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+          >
+            Arun Gaddam
+          </Link>
           <ThemeToggle />
         </div>
-      </header>
+
+        {nextCaseStudy && (
+          <Link
+            href={`/work/${nextCaseStudy.slug}`}
+            aria-label={`Next case study: ${nextCaseStudy.title}`}
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              textDecoration: "none",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+          >
+            Next case study
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z"/>
+            </svg>
+          </Link>
+        )}
+      </motion.header>
 
       <div className="deck-page">
         <div className="deck-grid">
