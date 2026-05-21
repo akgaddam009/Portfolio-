@@ -57,7 +57,10 @@ export default function LaunchSplash() {
     /* Render text to an offscreen canvas (CSS pixels) and sample alpha
        at a regular grid to build the target-position list. */
     const text = "Arun Gaddam";
-    const fontSize = Math.min(W * 0.13, 200);
+    // 35% reduction — was Math.min(W * 0.13, 200). Smaller wordmark
+    // sits more comfortably inside the splash; particles don't crowd
+    // the viewport edges.
+    const fontSize = Math.min(W * 0.085, 130);
     const off = document.createElement("canvas");
     off.width = W;
     off.height = H;
