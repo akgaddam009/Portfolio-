@@ -219,8 +219,11 @@ function SlidePanel({
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-start",
-        // Full-stretch — one card fills one viewport. 88px = nav 72 + gap 16.
+        // Presentation centering: vertical + horizontal. Content block sits
+        // dead-center of the panel. Text inside the block stays left-aligned
+        // so paragraphs read naturally.
+        justifyContent: "center",
+        alignItems: "center",
         minHeight: "calc(100vh - 88px)",
       }}
     >
@@ -230,7 +233,6 @@ function SlidePanel({
         zIndex: 1,
         width: "100%",
         maxWidth: 880,
-        margin: "0",
       }}>
         {children}
       </div>
@@ -521,12 +523,13 @@ export default function DesignSystemDeck() {
         }
         /* Mobile: single column, rail above content, same 16px gap.
            Rail card on mobile drops the viewport-height stretch and
-           the sticky positioning — both ate the entire first fold
-           and pushed the deck content below 800px of nav. */
+           the sticky positioning. Inner grids collapse to a single
+           column so cards stay readable at narrow widths. Slide panel
+           padding tightens to leave more room for content. */
         @media (max-width: 1023px) {
           .deck-grid {
             grid-template-columns: 1fr;
-            padding-top: 64px;
+            padding: 64px 16px 16px;
             gap: 16px;
           }
           .deck-rail {
@@ -536,9 +539,20 @@ export default function DesignSystemDeck() {
             padding: var(--space-5) var(--space-6);
           }
           .deck-panel {
-            /* Mobile cards step down to ~80vh so users see slide N + the
-               edge of slide N+1, signalling there's more to scroll. */
             min-height: 80vh;
+            padding: var(--space-6) var(--space-5);
+          }
+          /* All inner grids inside slide panels collapse to a single
+             column on mobile. Keeps card widths comfortable, prevents
+             squashed cells. */
+          .deck-panel [style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+          }
+          /* Buttons demo row stacks (label above, button below) instead
+             of side-by-side 1fr 220px which crushes the label. */
+          .deck-panel-buttons-row {
+            grid-template-columns: 1fr !important;
+            gap: var(--space-3) !important;
           }
         }
       `}</style>
@@ -947,7 +961,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                   { variant: "inline" as const, label: "Inline — actions within content",      example: "Download CV" },
                   { variant: "tag"    as const, label: "Tag — metadata, lowest weight",         example: "UX · Product" },
                 ].map(row => (
-                  <div key={row.variant} style={{
+                  <div key={row.variant} className="deck-panel-buttons-row" style={{
                     display: "grid",
                     gridTemplateColumns: "1fr 220px",
                     gap: "var(--space-5)",
