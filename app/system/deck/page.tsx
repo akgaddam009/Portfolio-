@@ -133,8 +133,6 @@ function Slide({
       data-slide={id}
       style={{
         minHeight: "100vh",
-        scrollSnapAlign: "start",
-        scrollSnapStop: "always",
         background: bg,
         display: "flex",
         flexDirection: "column",
@@ -327,12 +325,6 @@ export default function DesignSystemDeck() {
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
 
-  // Activate scroll-snap on the document only while this page is mounted
-  // (so the rest of the site keeps normal scroll behaviour).
-  useEffect(() => {
-    document.documentElement.classList.add("deck-snap");
-    return () => document.documentElement.classList.remove("deck-snap");
-  }, []);
 
   // Scroll-spy via IntersectionObserver.
   useEffect(() => {
@@ -379,37 +371,69 @@ export default function DesignSystemDeck() {
     return () => window.removeEventListener("keydown", onKey);
   }, [jumpBy]);
 
+  // Wheel-driven slide nav — one gesture = one slide jump. We hijack the wheel
+  // event and call jumpBy() with a cooldown so trackpad inertia (which fires
+  // many tiny wheel ticks per gesture) doesn't fly through multiple slides.
+  // Skipped on coarse-pointer / reduced-motion (mobile + a11y → normal scroll).
+  useEffect(() => {
+    const fine = window.matchMedia("(pointer: fine)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!fine || reduced) return;
+
+    let lastJump = 0;
+    const COOLDOWN = 750; // ms; covers ~600ms smooth scroll + breath
+    const THRESHOLD = 8;  // ignore micro-wheel noise
+
+    const onWheel = (e: WheelEvent) => {
+      // Let the rail scroll naturally if it overflows.
+      const target = e.target as HTMLElement | null;
+      if (target?.closest(".deck-rail")) return;
+
+      // Horizontal-dominant scrolls (e.g. trackpad horizontal swipe) are not deck nav.
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      if (Math.abs(e.deltaY) < THRESHOLD) return;
+
+      e.preventDefault();
+      const now = Date.now();
+      if (now - lastJump < COOLDOWN) return;
+      lastJump = now;
+      jumpBy(e.deltaY > 0 ? 1 : -1);
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, [jumpBy]);
+
   return (
     <>
-      {/* Snap on html only while on this route. proximity = soft (lets the
-          user read past a snap point without fighting the browser). */}
+      {/* Mobile: hide the rail, let the page scroll normally as an article.
+          Snap classes are still defined for the case where we want to bring
+          back CSS snap as a fallback, but desktop nav is now wheel-hijacked. */}
       <style jsx global>{`
-        html.deck-snap, html.deck-snap body {
-          scroll-snap-type: y proximity;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          html.deck-snap, html.deck-snap body {
-            scroll-snap-type: none;
-          }
-        }
-        /* Mobile: hide the rail, let the page scroll normally as an article. */
         @media (max-width: 1023px) {
           .deck-rail { display: none !important; }
-          html.deck-snap, html.deck-snap body {
-            scroll-snap-type: none;
-          }
         }
+        /* Rail panel — clearly distinct from the slide content area. Uses
+           --chrome (warm off-white in light, pure black in dark) + a hairline
+           right border + a soft right shadow for depth. Reads as a UI panel,
+           not a floating overlay. */
         .deck-rail {
           position: fixed;
-          top: 96px;
-          left: 32px;
-          width: 240px;
-          max-height: calc(100vh - 140px);
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: 280px;
+          padding: 96px 24px 24px;
+          background: var(--chrome);
+          border-right: 1px solid var(--border);
+          box-shadow: 6px 0 24px -12px rgba(0, 0, 0, 0.05);
           overflow-y: auto;
           z-index: 9;
+          display: flex;
+          flex-direction: column;
         }
         .deck-content {
-          margin-left: 304px;
+          margin-left: 280px;
         }
         @media (max-width: 1023px) {
           .deck-content { margin-left: 0; }
@@ -442,12 +466,12 @@ export default function DesignSystemDeck() {
       <DeckRail active={active} onJump={jumpTo} />
 
       <main className="deck-content">
-        {/* 01 — Cover */}
+        {/* 01 — Cover. No tint so it sits on pure --bg (white in light, dark
+            panel in dark) and contrasts cleanly against the warm-gray rail. */}
         <Slide
           id="cover"
           index={1}
           total={SLIDES.length}
-          tint="warm"
           background={
             /* Signature moment: ASCII ripple sits behind the cover headline.
                Reacts to cursor; flat under prefers-reduced-motion; quiet on
