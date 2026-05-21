@@ -26,7 +26,6 @@ const PANEL_SHADOW_ACTIVE_DARK  = "0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(
    ========================================================================= */
 
 const SLIDES = [
-  { id: "cover",      label: "Cover" },
   { id: "intro",      label: "Introduction" },
   { id: "why",        label: "Why this exists" },
   { id: "philosophy", label: "Four principles" },
@@ -47,7 +46,6 @@ const TOC_GROUPS = [
   {
     group: "About",
     items: [
-      { id: "cover",      label: "Cover" },
       { id: "intro",      label: "Introduction" },
       { id: "why",        label: "Why this exists" },
     ],
@@ -358,7 +356,7 @@ function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) 
    ========================================================================= */
 
 export default function DesignSystemDeck() {
-  const [active, setActive] = useState<SlideId>("cover");
+  const [active, setActive] = useState<SlideId>("intro");
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
   const nextCaseStudy = caseStudies.find(c => c.slug === NEXT_AFTER_DECK_ORDER[0]);
@@ -654,15 +652,19 @@ export default function DesignSystemDeck() {
                 borderRadius: "var(--radius-lg)",
                 boxShadow: PANEL_SHADOW_LIGHT,
                 padding: "var(--space-7)",
-                minHeight: "calc(100vh - 88px)",
+                minHeight: "calc(100vh - 96px)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
                 position: "relative",
+                overflow: "hidden",
               }}
             >
-              <div style={{ width: "100%", maxWidth: 880 }}>
+              {/* Signature ASCII ripple — moved here from the removed
+                  cover slide so the hero keeps the textured background. */}
+              <AsciiWater opacity={0.4} fontSize={13} damping={0.982} />
+              <div style={{ width: "100%", maxWidth: 880, position: "relative", zIndex: 1 }}>
                 {/* Tags row — same chip pattern as case study hero
                     (CaseStudyDetail.tsx:442). */}
                 <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
@@ -752,63 +754,7 @@ export default function DesignSystemDeck() {
               </div>
             </motion.section>
 
-            {/* 01 — Cover */}
-            <SlidePanel
-              id="cover"
-              isActive={active === "cover"}
-              background={<AsciiWater opacity={0.45} fontSize={13} damping={0.982} />}
-            >
-              <Eyebrow track="cover">Portfolio · Design system</Eyebrow>
-              <SlideTitle size="xl">
-                Planned with{" "}
-                <InlineChip label="Claude AI" tone="indigo" scale="match" />.<br />
-                Built with{" "}
-                <InlineChip label="Claude Code" tone="violet" scale="match" />.
-              </SlideTitle>
-              <Lead max={620}>
-                No Figma file. No handoff. The site you’re looking at{" "}
-                <span style={{ color: "var(--text)", fontWeight: 500 }}>is</span> the
-                documentation — every color, type ramp, and motion curve below is the same one
-                the live pages use.
-              </Lead>
-              <div style={{
-                marginTop: "var(--space-10)",
-                paddingTop: "var(--space-6)",
-                borderTop: "1px solid var(--border)",
-                display: "flex",
-                gap: "var(--space-9)",
-                flexWrap: "wrap",
-              }}>
-                {[
-                  { label: "Slides",     value: String(SLIDES.length) },
-                  { label: "Tokens",     value: "60+" },
-                  { label: "Components", value: "8" },
-                  { label: "Workflow",   value: "Claude AI + Code" },
-                ].map(stat => (
-                  <div key={stat.label}>
-                    <p style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-eyebrow)",
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                      color: "var(--muted)",
-                      margin: 0,
-                      marginBottom: 4,
-                    }}>{stat.label}</p>
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-title)",
-                      fontWeight: 500,
-                      letterSpacing: "-0.015em",
-                      color: "var(--text)",
-                      margin: 0,
-                    }}>{stat.value}</p>
-                  </div>
-                ))}
-              </div>
-            </SlidePanel>
-
-            {/* 02 — Introduction */}
+            {/* 01 — Introduction */}
             <SlidePanel id="intro" isActive={active === "intro"}>
               <Eyebrow>Introduction</Eyebrow>
               <SlideTitle weight="manifesto">A working artifact, not a deliverable.</SlideTitle>
