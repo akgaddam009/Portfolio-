@@ -446,6 +446,7 @@ export const caseStudies: CaseStudy[] = [
       ],
     },
 
+    decisionsIntro: "Seven decisions, each one traceable back to the same tension: give the analyst speed without taking control away from the admin.",
     decisions: [
       /* 1. clearer copy: lead with the user benefit (familiar
          spreadsheet behaviour) instead of the vendor name. */

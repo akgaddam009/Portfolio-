@@ -26,6 +26,24 @@ const DECISION_ICONS: Record<string, React.FC<{ size?: number; strokeWidth?: num
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/* Props that make a div behave like a button for keyboard users — Enter / Space
+   triggers the same onClick used by mouse. Used on the zoom-on-click image
+   wrappers so screen-reader and keyboard navigators can open the lightbox. */
+function zoomTriggerProps(open: () => void, label = "Enlarge image"): React.HTMLAttributes<HTMLDivElement> {
+  return {
+    role: "button",
+    tabIndex: 0,
+    "aria-label": label,
+    onClick: open,
+    onKeyDown: (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        open();
+      }
+    },
+  };
+}
+
 // Rail entries are built at runtime by scanning the rendered DOM for
 // every element with a `data-nav-label` attribute. CsSection auto-tags
 // itself so every rendered section becomes an anchor target in the rail
@@ -161,27 +179,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           position: "fixed",
           top: 0, left: 0, right: 0,
           height: "1.5px",
-          background:
-            "linear-gradient(90deg, #06b6d4 0%, #6366f1 25%, #a855f7 50%, #ec4899 75%, #f59e0b 100%)",
-          backgroundSize: "300% 100%",
+          background: "var(--accent-warm)",
           transformOrigin: "left center",
           scaleX,
           zIndex: 300,
-          boxShadow: "0 0 8px rgba(99, 102, 241, 0.4)",
         }}
       />
-      <style>{`
-        .cs-scroll-progress {
-          animation: cs-progress-shift 6s linear infinite;
-        }
-        @keyframes cs-progress-shift {
-          0%   { background-position:   0% 50%; }
-          100% { background-position: 300% 50%; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .cs-scroll-progress { animation: none !important; }
-        }
-      `}</style>
 
       {/* ── Mobile responsive overrides ──────────────────────────────
           All case study page breakages fixed here via class-based CSS
@@ -436,7 +439,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               <motion.div variants={fadeUp} style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
                 {cs.tags.map(tag => (
-                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 8px", background: "var(--surface2)", color: "var(--muted)", borderRadius: "6px" }}>
+                  <span key={tag} style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 8px", background: "var(--surface2)", color: "var(--muted2)", borderRadius: "6px" }}>
                     {tag}
                   </span>
                 ))}
@@ -616,6 +619,20 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </div>
             </div>
           </motion.section>
+        )}
+
+        {cs.contribution && (
+          <div className="page-pad">
+            <CsSection label="My contribution" navLabel="Role">
+              <div style={{ maxWidth: "640px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                {cs.contribution.split(/\n\n+/).map((para, i) => (
+                  <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.7, letterSpacing: "-0.005em", color: "var(--muted2)", margin: 0 }}>
+                    {parseHighlights(para)}
+                  </p>
+                ))}
+              </div>
+            </CsSection>
+          </div>
         )}
 
         {/* Prototype Video used to render here (right after TLDR). Moved into the
@@ -1520,7 +1537,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             {f.image && (
                               <figure style={{ margin: 0, marginTop: "10px" }}>
                                 <div
-                                  onClick={() => setLightboxSrc(f.image!.src)}
+                                  {...zoomTriggerProps(() => setLightboxSrc(f.image!.src), `Enlarge: ${f.image.alt}`)}
                                   style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                                 >
                                   <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
@@ -1537,7 +1554,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                 {f.images.map((img, j) => (
                                   <figure key={j} style={{ margin: 0 }}>
                                     <div
-                                      onClick={() => setLightboxSrc(img.src)}
+                                      {...zoomTriggerProps(() => setLightboxSrc(img.src), `Enlarge: ${img.alt}`)}
                                       style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                                     >
                                       <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
@@ -1589,7 +1606,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       key={i}
                       whileHover={{ scale: 1.02, zIndex: 10 }}
                       transition={{ duration: 0.2 }}
-                      onClick={() => setLightboxSrc(img.src)}
+                      {...zoomTriggerProps(() => setLightboxSrc(img.src), `Enlarge: ${img.alt}`)}
                       style={{
                         cursor: "zoom-in",
                         display: "flex",
@@ -1841,12 +1858,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "9999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
+                        <h3 style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500, letterSpacing: "-0.015em", color: "var(--text)", margin: 0 }}>{d.title}</h3>
                         <DecisionBodyText>{d.body}</DecisionBodyText>
                         {d.image && (
                           <figure style={{ margin: 0, marginTop: "6px" }}>
                             <ScrollScaleMedia
                               onClick={() => setLightboxSrc(d.image!.src)}
+                              ariaLabel={`Enlarge: ${d.image.alt}`}
                               style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                             >
                               {/* Renders the image at its natural aspect ratio so both
@@ -1899,7 +1917,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       key={i}
                       whileHover={{ scale: 1.02, zIndex: 10 }}
                       transition={{ duration: 0.2 }}
-                      onClick={() => setLightboxSrc(img.src)}
+                      {...zoomTriggerProps(() => setLightboxSrc(img.src), `Enlarge: ${img.alt}`)}
                       style={{
                         cursor: "zoom-in",
                         display: "flex",
@@ -2215,13 +2233,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", color: "var(--muted)", background: "var(--surface2)", borderRadius: "9999px", padding: "3px 9px", marginTop: "2px", flexShrink: 0 }}>0{i + 1}</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1, minWidth: 0 }}>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--text)", margin: 0 }}>{d.title}</p>
+                        <h3 style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500, letterSpacing: "-0.015em", color: "var(--text)", margin: 0 }}>{d.title}</h3>
                         <DecisionBodyText>{d.body}</DecisionBodyText>
                         {/* Single image */}
                         {d.image && (
                           <figure style={{ margin: 0, marginTop: "6px" }}>
                             <ScrollScaleMedia
                               onClick={() => setLightboxSrc(d.image!.src)}
+                              ariaLabel={`Enlarge: ${d.image.alt}`}
                               style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                             >
                               <img
@@ -2258,7 +2277,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             {d.images.map((img, ii) => (
                               <figure key={ii} style={{ margin: 0 }}>
                                 <div
-                                  onClick={() => setLightboxSrc(img.src)}
+                                  {...zoomTriggerProps(() => setLightboxSrc(img.src), `Enlarge: ${img.alt}`)}
                                   style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
                                 >
                                   <img src={img.src} alt={img.alt} loading="lazy" decoding="async" style={{ width: "100%", display: "block" }} />
@@ -2903,16 +2922,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-
-            {/* "What I'd Do Differently" section hidden across all case studies. Data
-                preserved in cs.reflection in case we want to bring it back. */}
-            {false && cs.reflection && (
-              <CsSection label="What I'd Do Differently" className="exec-hide">
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.02em", color: "var(--text)", maxWidth: "580px" }}>
-                  {cs.reflection}
-                </p>
-              </CsSection>
-            )}
 
             {cs.references && cs.references.length > 0 && (
               <CsSection label={cs.sectionLabels?.references ?? "References"} className="exec-hide" hideFromNav>
@@ -4036,11 +4045,13 @@ function ScrollScaleMedia({
   className,
   style,
   onClick,
+  ariaLabel,
 }: {
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
   onClick?: () => void;
+  ariaLabel?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
@@ -4050,10 +4061,11 @@ function ScrollScaleMedia({
   });
   const smooth = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
   const scale = useTransform(smooth, [0, 0.5, 1], [0.92, 1.02, 0.95]);
+  const a11y = onClick ? zoomTriggerProps(onClick, ariaLabel ?? "Enlarge image") : {};
   /* prefers-reduced-motion: render the static layout, no transform. */
   if (reduced) {
     return (
-      <div ref={ref} className={className} onClick={onClick} style={style}>
+      <div ref={ref} className={className} {...a11y} style={style}>
         {children}
       </div>
     );
@@ -4062,7 +4074,7 @@ function ScrollScaleMedia({
     <motion.div
       ref={ref}
       className={className}
-      onClick={onClick}
+      {...a11y}
       style={{ ...style, scale, willChange: "transform" }}
     >
       {children}
@@ -4093,7 +4105,7 @@ function CsSection({ label, navLabel, children, id, className, hideFromNav }: { 
       transition={{ duration: 0.65, ease: EASE }}
       style={{ padding: "var(--space-9) 0" }}
     >
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "var(--space-7)", borderTop: "1px solid var(--border)", paddingTop: "var(--space-4)" }}>{label}</p>
+      <h2 style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0, marginBottom: "var(--space-7)", borderTop: "1px solid var(--border)", paddingTop: "var(--space-4)" }}>{label}</h2>
       {children}
     </motion.section>
   );
@@ -5152,6 +5164,9 @@ function LensLightbox({ src, onClose }: { src: string | null; onClose: () => voi
 
   return (
     <motion.div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Enlarged image with zoom lens"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -5289,6 +5304,9 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
   return (
     <motion.div
       className="cs-lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-label={isVideo ? "Enlarged video" : "Enlarged image"}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
