@@ -697,15 +697,13 @@ export default function DesignSystemPage() {
           <Section
             id="system"
             number="08"
-            title="System architecture overview"
-            description="Tokens at the base. Components above them. Patterns above components. Pages compose patterns."
+            title="Architecture"
+            description="Four layers. Each one only talks to the layer below."
           >
             <Prose>
               <Paragraph>
-                The system has four layers. Each layer depends only on the layer below it.
-                Pages never reach past components to touch tokens directly; components never
-                bypass tokens with hardcoded values. The layering is what makes theming and
-                refactors safe.
+                Pages never reach past components. Components never hardcode values. This
+                layering is what keeps theming and refactors boring.
               </Paragraph>
             </Prose>
 
