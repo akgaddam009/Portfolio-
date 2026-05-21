@@ -133,39 +133,56 @@ function Slide({
   align?: "start" | "center";
 }) {
   const reduced = useReducedMotion();
-  // Flat slide — the slide itself is the surface. No floating panel, no
-  // rounded corners, no shadow. Section bg carries the tint; content sits
-  // in a centered measure with normal padding. Same pattern as a presentation
-  // editor canvas.
-  const bg =
-    tint === "warm"   ? "color-mix(in srgb, var(--accent-warm) 5%, var(--bg))"
+  // The slide content now lives inside a floating panel (--surface bg,
+  // var(--radius-xl), --card-shadow) — same pattern the landing page uses
+  // for its About / Work / Career panels. Outer section is the canvas
+  // (--chrome) on which the panel floats. Tints colour the panel itself,
+  // not the canvas, so the surface variation reads as the card's mood.
+  const panelBg =
+    tint === "warm"   ? "color-mix(in srgb, var(--accent-warm) 5%, var(--surface))"
     : tint === "surface" ? "var(--surface2)"
-    : "var(--bg)";
+    : "var(--surface)";
   return (
     <section
       id={id}
       data-slide={id}
       style={{
         minHeight: "100vh",
-        background: bg,
+        background: "var(--chrome)",
         display: "flex",
         flexDirection: "column",
         justifyContent: align === "center" ? "center" : "flex-start",
-        padding: "var(--space-11) var(--space-7) var(--space-10)",
+        padding: "var(--space-9) var(--space-7)",
         position: "relative",
         overflow: "hidden",
-        borderBottom: "1px solid var(--border)",
       }}
     >
       {background}
       <motion.div
+        className="deck-panel"
         initial={reduced ? false : { opacity: 0, y: 16 }}
         whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.5, ease: EASE }}
-        style={{ width: "100%", maxWidth: 920, margin: "0 auto", position: "relative", zIndex: 1 }}
+        style={{
+          width: "100%",
+          maxWidth: 1040,
+          margin: "0 auto",
+          position: "relative",
+          zIndex: 1,
+          background: panelBg,
+          borderRadius: "var(--radius-xl)",
+          boxShadow: "var(--card-shadow)",
+          padding: "var(--space-10) var(--space-9)",
+          /* Inner content sits at a tighter measure inside the wider panel. */
+          display: "flex",
+          flexDirection: "column",
+          alignItems: align === "center" ? "stretch" : "stretch",
+        }}
       >
-        {children}
+        <div style={{ maxWidth: 880, width: "100%", margin: align === "center" ? "0 auto" : "0" }}>
+          {children}
+        </div>
       </motion.div>
     </section>
   );
@@ -179,28 +196,25 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
   const currentIndex = SLIDES.findIndex(s => s.id === active);
   return (
     <aside className="deck-rail" aria-label="Deck navigation">
-      {/* Quick-links card — same panel pattern as the slide content
-          and the home page panels. --surface bg, --radius-lg, card shadow.
-          Floats on the rail's --chrome canvas just like the slides float
-          on the page canvas. */}
-      <div className="deck-rail-card">
-        {/* Header label — small mono caps, same treatment as the article
-            sidebar group labels (app/system/page.tsx:220). */}
-        <p style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: "var(--text-eyebrow)",
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
-          color: "var(--muted)",
-          margin: 0,
-          marginBottom: "var(--space-5)",
-        }}>
-          Portfolio · Design system
-        </p>
+      {/* Header label — small mono caps, same treatment as the article
+          sidebar group labels (app/system/page.tsx:220). */}
+      <p style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: "var(--text-eyebrow)",
+        letterSpacing: "0.1em",
+        textTransform: "uppercase",
+        color: "var(--muted)",
+        margin: 0,
+        marginBottom: "var(--space-6)",
+      }}>
+        Portfolio · Design system
+      </p>
 
-        {/* Section nav — body font, matching the article sidebar
-            (app/system/page.tsx:237). */}
-        <nav style={{ position: "relative" }}>
+      {/* Section nav — body font, matching the article sidebar
+          (app/system/page.tsx:237). The article is the deck's sister page;
+          they share a type system. The case-study mono-caps rail is its
+          own pattern for its own context. */}
+      <nav style={{ position: "relative" }}>
         {SLIDES.map(s => {
           const isActive = s.id === active;
           return (
@@ -295,9 +309,8 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
         textTransform: "uppercase",
         lineHeight: 1.4,
       }}>
-          ↑↓ to jump · scroll snaps
-        </p>
-      </div>
+        ↑↓ to jump · scroll snaps
+      </p>
     </aside>
   );
 }
@@ -397,15 +410,14 @@ export default function DesignSystemDeck() {
   return (
     <>
       <style jsx global>{`
-        /* DESKTOP RAIL (≥ 1024px) — fixed left canvas with a floating
-           quick-links card. Same panel-on-chrome pattern as the slides. */
+        /* DESKTOP RAIL (≥ 1024px) — fixed left panel, full height. */
         .deck-rail {
           position: fixed;
           top: 0;
           left: 0;
           bottom: 0;
-          width: 296px;
-          padding: var(--space-11) var(--space-5) var(--space-5);
+          width: 280px;
+          padding: var(--space-11) var(--space-6) var(--space-6);
           background: var(--chrome);
           border-right: 1px solid var(--border);
           overflow-y: auto;
@@ -413,25 +425,16 @@ export default function DesignSystemDeck() {
           display: flex;
           flex-direction: column;
         }
-        .deck-rail-card {
-          background: var(--surface);
-          border-radius: var(--radius-lg);
-          box-shadow: var(--card-shadow);
-          padding: var(--space-6) var(--space-5);
-          display: flex;
-          flex-direction: column;
-        }
         .deck-rail-item:hover {
           background: var(--hover) !important;
-          /* Carve --surface gutters now that the card bg is --surface. */
-          box-shadow: inset 4px 0 0 var(--surface), inset -4px 0 0 var(--surface);
+          box-shadow: inset 4px 0 0 var(--chrome), inset -4px 0 0 var(--chrome);
         }
         .deck-rail-item[data-active="true"]:hover {
           background: transparent !important;
           box-shadow: none;
         }
         .deck-content {
-          margin-left: 296px;
+          margin-left: 280px;
         }
 
         /* MOBILE / TABLET (≤ 1023px) — rail becomes a horizontally scrolling
@@ -489,14 +492,6 @@ export default function DesignSystemDeck() {
           }
           .deck-rail-item:hover {
             box-shadow: none !important;
-          }
-          /* Card treatment off on mobile — the horizontal strip already
-             reads as a UI surface; no second panel needed. */
-          .deck-rail-card {
-            background: transparent;
-            box-shadow: none;
-            border-radius: 0;
-            padding: 0;
           }
           /* Flip the active indicator from a left vertical bar to a bottom
              horizontal bar, fitting the row layout. */
@@ -667,10 +662,10 @@ export default function DesignSystemDeck() {
               { n: "04", title: "44px floor",             body: "Touch-target minimum is a spacing token. Accessibility, baked in." },
             ].map(p => (
               <div key={p.n} style={{
-                background: "var(--surface2)",
+                background: "var(--surface)",
                 border: "1px solid var(--border)",
-                borderRadius: "var(--radius-md)",
-                padding: "var(--space-5)",
+                borderRadius: "var(--radius-lg)",
+                padding: "var(--space-6)",
               }}>
                 <p style={{
                   fontFamily: "var(--font-mono)",
@@ -721,7 +716,7 @@ export default function DesignSystemDeck() {
               { step: "Review",  tool: "Human",       body: "Open the browser. Wrong? Back to the plan." },
             ].map((s, i) => (
               <div key={s.step} style={{
-                background: "var(--surface2)",
+                background: "var(--bg)",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius-md)",
                 padding: "var(--space-5)",
@@ -781,10 +776,10 @@ export default function DesignSystemDeck() {
               { name: "Success", token: "--accent-success" },
             ].map(s => (
               <div key={s.token} style={{
-                background: "var(--surface2)",
+                background: "var(--surface)",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius-md)",
-                padding: "var(--space-4)",
+                padding: "var(--space-3)",
               }}>
                 <div style={{
                   width: "100%",
@@ -818,8 +813,8 @@ export default function DesignSystemDeck() {
           </Lead>
           <pre data-scrollable style={{
             marginTop: "var(--space-7)",
-            padding: "var(--space-5)",
-            background: "var(--surface2)",
+            padding: "var(--space-6)",
+            background: "var(--bg)",
             border: "1px solid var(--border)",
             borderRadius: "var(--radius-md)",
             fontFamily: "var(--font-mono)",
@@ -846,8 +841,8 @@ transition:    180ms cubic-bezier(0.22, 1, 0.36, 1);`}
           </Lead>
           <pre data-scrollable style={{
             marginTop: "var(--space-7)",
-            padding: "var(--space-5)",
-            background: "var(--surface2)",
+            padding: "var(--space-6)",
+            background: "var(--surface)",
             border: "1px solid var(--border)",
             borderRadius: "var(--radius-md)",
             fontFamily: "var(--font-mono)",
@@ -886,7 +881,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                 gap: "var(--space-6)",
                 alignItems: "center",
                 padding: "var(--space-5) var(--space-6)",
-                background: "var(--surface2)",
+                background: "var(--bg)",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius-md)",
               }}>
@@ -925,7 +920,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
               { tone: "sage",    label: "studio of one" },
             ] as const).map(c => (
               <div key={c.tone} style={{
-                background: "var(--surface2)",
+                background: "var(--surface)",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius-md)",
                 padding: "var(--space-5)",
@@ -950,10 +945,15 @@ transition:    var(--dur-fast) var(--ease-expo);`}
           </div>
         </Slide>
 
-        {/* 11 — Closer. Bare next/prev nav, no manifesto. The deck flows
-            naturally into the first case study or back to the portfolio. */}
+        {/* 11 — Closer. Eyebrow dropped per feedback; the slide reads as
+            a closing manifesto. Primary CTA points to the first case study
+            so visitors flow from the design system into actual work. */}
         <Slide id="closer">
-          <Eyebrow>Continue</Eyebrow>
+          <SlideTitle size="xl">
+            Don’t just design interfaces.
+            <br />
+            Design the system behind them.
+          </SlideTitle>
           {/* Closer CTAs — exact same dark-pill pattern as the case-study
               Prev/Next (CaseStudyDetail.tsx:2974). Same 14×14 stroke arrows,
               same padding, same typography. Split to opposite edges so back
