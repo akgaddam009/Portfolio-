@@ -996,7 +996,7 @@ function WorkCardThumb({
               className="work-thumb"
               src={src}
               autoPlay loop muted playsInline
-              preload="none"
+              preload="auto"
               aria-hidden="true"
               onCanPlay={() => setReady(true)}
               style={{
