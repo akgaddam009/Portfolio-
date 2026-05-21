@@ -4,6 +4,7 @@ import "./globals.css";
 import Cursor from "@/components/Cursor";
 import AnalyticsClient from "@/components/AnalyticsClient";
 import RouteProgress from "@/components/RouteProgress";
+import LaunchSplash from "@/components/LaunchSplash";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -106,6 +107,7 @@ export default function RootLayout({
         <Cursor />
         <RouteProgress />
         {children}
+        <LaunchSplash />
         <AnalyticsClient />
       </body>
     </html>

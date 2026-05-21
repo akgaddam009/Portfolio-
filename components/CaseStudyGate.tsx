@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { unlock } from "@/app/actions/unlock";
 import VideoBlock from "@/components/ui/VideoBlock";
+import AsciiWater, { type AsciiWaterHandle } from "@/components/AsciiWater";
 
 /* Standalone gate component for confidential case studies.
 
@@ -52,6 +53,7 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
   const [pwError, setPwError] = useState<null | "wrong" | "rate-limited" | "config">(null);
   const [retryInSec, setRetryInSec] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
+  const waterRef = useRef<AsciiWaterHandle>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +61,8 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
     setRetryInSec(null);
     const fd = new FormData();
     fd.set("password", pwInput);
+    // Strong central drop on submit — surface "responds" to the action.
+    waterRef.current?.impulse(0.5, 0.5, 18);
     startTransition(async () => {
       const result = await unlock(fd);
       if (result.ok) {
@@ -71,6 +75,10 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
           setRetryInSec(result.retryInSec);
         }
         setPwInput("");
+        // Sharper jolt for a wrong password — three quick impulses.
+        waterRef.current?.impulse(0.45, 0.55, 10);
+        waterRef.current?.impulse(0.55, 0.45, 10);
+        waterRef.current?.impulse(0.5, 0.5, 14);
       }
     });
   };
@@ -198,9 +206,18 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
           </section>
         )}
 
-        {/* Gate card */}
-        <div style={{ padding: "var(--space-10) 0 120px" }}>
-          <div className="page-pad">
+        {/* Gate card. Wrapped in a positioned context so the ASCII ripple
+            sits behind the card as a tactile background. Ripple reacts to
+            cursor, keystrokes in the password input, and submit clicks. */}
+        <div style={{ padding: "var(--space-10) 0 120px", position: "relative", overflow: "hidden" }}>
+          <AsciiWater
+            ref={waterRef}
+            opacity={0.32}
+            fontSize={13}
+            damping={0.984}
+            colorVar="--muted2"
+          />
+          <div className="page-pad" style={{ position: "relative", zIndex: 1 }}>
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -309,8 +326,13 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
                   name="password"
                   value={pwInput}
                   onChange={(e) => {
+                    const prev = pwInput.length;
+                    const next = e.target.value.length;
                     setPwInput(e.target.value);
                     setPwError(null);
+                    // Tiny ripple per keystroke on insertion — random spot so
+                    // the surface flickers in response. Deletion doesn't fire.
+                    if (next > prev) waterRef.current?.impulse(undefined, undefined, 4);
                   }}
                   placeholder="Enter password"
                   autoComplete="off"
