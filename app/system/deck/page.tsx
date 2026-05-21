@@ -26,7 +26,6 @@ const SLIDES = [
   { id: "with",       label: "With tokens" },
   { id: "buttons",    label: "Buttons" },
   { id: "chips",      label: "Chip tones" },
-  { id: "quote",      label: "Plan as artifact" },
   { id: "closer",     label: "Closer" },
 ] as const;
 
@@ -946,40 +945,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
           </div>
         </Slide>
 
-        {/* 11 — Pull quote — matches the system Pullquote (border-left var(--text),
-            no italic). Sized up because the deck makes this a moment slide. */}
-        <Slide id="quote" tint="warm">
-          <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "left" }}>
-            <Eyebrow>Planning</Eyebrow>
-            <blockquote style={{
-              margin: 0,
-              borderLeft: "2px solid var(--text)",
-              paddingLeft: "var(--space-6)",
-              fontFamily: "var(--font-body)",
-              fontSize: "clamp(28px, 4vw, 44px)",
-              fontWeight: 400,
-              lineHeight: 1.2,
-              letterSpacing: "-0.025em",
-              color: "var(--text)",
-            }}>
-              The plan is the artifact.<br />
-              The code follows.
-            </blockquote>
-            <p style={{
-              marginTop: "var(--space-6)",
-              marginLeft: "calc(var(--space-6) + 2px)",
-              fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-eyebrow)",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "var(--muted)",
-            }}>
-              Working principle · Claude Code plan mode
-            </p>
-          </div>
-        </Slide>
-
-        {/* 12 — Closer. Eyebrow dropped per feedback; the slide reads as
+        {/* 11 — Closer. Eyebrow dropped per feedback; the slide reads as
             a closing manifesto. Primary CTA points to the first case study
             so visitors flow from the design system into actual work. */}
         <Slide id="closer">
