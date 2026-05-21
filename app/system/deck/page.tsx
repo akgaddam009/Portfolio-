@@ -345,12 +345,12 @@ export default function DesignSystemDeck() {
           background: var(--chrome);
           min-height: 100vh;
         }
-        /* Full-stretch — no outer max-width, no side gutters. The grid
-           extends edge to edge so panels feel anchored to the viewport,
-           matching the landing page's flush horizontal-scroll feel. */
+        /* Symmetric 24px gutters mirror the landing page's left-side
+           container padding (app/page.tsx:3516). 16px gap between rail
+           and content matches the inter-panel gap on landing. */
         .deck-grid {
           margin: 0;
-          padding: 72px 0 16px;
+          padding: 72px 24px 24px;
           display: grid;
           grid-template-columns: 280px 1fr;
           gap: 16px;
