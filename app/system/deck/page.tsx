@@ -358,16 +358,19 @@ export default function DesignSystemDeck() {
   }, [jumpBy]);
 
   // Wheel-driven slide nav — one gesture = one slide jump. Slides are
-  // viewport-tall now (calc(100vh - 88px)), so one-scroll-per-slide makes
-  // sense as the dominant interaction. 600ms cooldown absorbs trackpad
-  // inertia. Disabled on touch (pointer:coarse) and reduced-motion.
+  // viewport-tall (calc(100vh - 88px)), so one-scroll-per-slide is the
+  // dominant interaction. 900ms cooldown fully absorbs the smooth-scroll
+  // animation (~600-700ms on most browsers) so a second wheel tick during
+  // the animation doesn't get queued and cause a double-jump glitch.
+  // Disabled on touch (pointer:coarse) and reduced-motion.
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!fine || reduced) return;
 
     let lastJump = 0;
-    const COOLDOWN = 600;
+    let scrollDeadline = 0;
+    const COOLDOWN = 900;
     const THRESHOLD = 8;
 
     const onWheel = (e: WheelEvent) => {
@@ -376,10 +379,18 @@ export default function DesignSystemDeck() {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       if (Math.abs(e.deltaY) < THRESHOLD) return;
 
+      // Always prevent default so the native scroll never fights the
+      // programmatic smooth scroll — that fight is the glitchy feel.
       e.preventDefault();
+
       const now = Date.now();
+      // Two gates: cooldown since last jump AND no jump while smooth
+      // scroll is still in flight. Together they make every wheel tick
+      // after a jump a no-op until the jump fully lands.
+      if (now < scrollDeadline) return;
       if (now - lastJump < COOLDOWN) return;
       lastJump = now;
+      scrollDeadline = now + COOLDOWN;
       jumpBy(e.deltaY > 0 ? 1 : -1);
     };
 
@@ -405,22 +416,37 @@ export default function DesignSystemDeck() {
           gap: 16px;
           align-items: start;
         }
+        /* Rail panel — full-stretch matching the slide panels. Same
+           landing card shell (--bg + --radius-lg + shadow tiers) so it
+           reads as a sibling of the right-side content panels, not a
+           floating flyer above them. Height locked to calc(100vh - 88px)
+           and sticky so it stays in view while content scrolls. */
         .deck-rail {
           position: sticky;
           top: 72px;
           align-self: start;
+          background: var(--bg);
+          border-radius: var(--radius-lg);
+          padding: var(--space-7);
+          min-height: calc(100vh - 88px);
+          box-shadow: ${PANEL_SHADOW_LIGHT};
+          display: flex;
+          flex-direction: column;
         }
-        /* Rail is flat — sits on the page chrome. Article-sidebar pattern
-           (app/system/page.tsx:230): body-font items with a sliding left
-           border. Hover lifts inactive items to --text colour. */
+        [data-theme="dark"] .deck-rail {
+          box-shadow: ${PANEL_SHADOW_DARK};
+        }
         .deck-rail button:hover {
           color: var(--text) !important;
         }
         /* Slide panels — landing's shadow tiers (active vs rest) plus
            the dark-mode dim-and-engage behaviour. Light mode never dims;
            dark mode fades inactive panels to 0.6 and engages back to 1
-           on hover or active. */
-        .deck-panel { box-shadow: ${PANEL_SHADOW_LIGHT}; transition: box-shadow var(--dur-base) var(--ease-expo), opacity var(--dur-base) var(--ease-expo); }
+           on hover or active. scroll-margin-top leaves room for the
+           fixed top bar (~72px) so scrollIntoView lands the slide below
+           it instead of behind it — fixes the "scrolls past, snaps back"
+           glitch when jumping with the wheel handler. */
+        .deck-panel { box-shadow: ${PANEL_SHADOW_LIGHT}; transition: box-shadow var(--dur-base) var(--ease-expo), opacity var(--dur-base) var(--ease-expo); scroll-margin-top: 72px; }
         .deck-panel.is-active { box-shadow: ${PANEL_SHADOW_ACTIVE_LIGHT}; }
         [data-theme="dark"] .deck-panel { box-shadow: ${PANEL_SHADOW_DARK}; opacity: 0.6; }
         [data-theme="dark"] .deck-panel.is-active,
