@@ -249,9 +249,10 @@ function SlidePanel({
    ========================================================================= */
 
 function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) => void }) {
+  const currentIndex = SLIDES.findIndex(s => s.id === active);
   return (
     <aside className="deck-rail" aria-label="Deck navigation">
-      <nav>
+      <nav style={{ flex: 1 }}>
         {TOC_GROUPS.map((group, gi) => (
           <div key={group.group} style={{ marginBottom: gi < TOC_GROUPS.length - 1 ? "24px" : 0 }}>
             <p style={{
@@ -270,43 +271,27 @@ function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) 
               {group.items.map(item => {
                 const isActive = item.id === active;
                 return (
-                  <li key={item.id} style={{ position: "relative" }}>
-                    {/* Sliding terracotta indicator on active item — Framer
-                        layoutId animates it between items. Sits on top of
-                        the static --border left rule that every item has. */}
-                    {isActive && (
-                      <motion.span
-                        layoutId="rail-indicator"
-                        style={{
-                          position: "absolute",
-                          left: 0,
-                          top: 6,
-                          bottom: 6,
-                          width: 2,
-                          background: "var(--accent-warm)",
-                          borderRadius: 1,
-                          zIndex: 1,
-                        }}
-                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                      />
-                    )}
+                  <li key={item.id}>
                     <button
                       onClick={() => onJump(item.id as SlideId)}
                       style={{
                         display: "block",
                         width: "100%",
                         textAlign: "left",
-                        padding: "6px 0 6px 12px",
+                        padding: "8px 0 8px 14px",
                         fontFamily: "var(--font-body)",
                         fontSize: "var(--text-body)",
                         color: isActive ? "var(--text)" : "var(--muted)",
                         fontWeight: isActive ? 500 : 400,
-                        borderLeft: "2px solid var(--border)",
+                        // Border switches colour on active — exact same
+                        // pattern as the article sidebar
+                        // (app/system/page.tsx:241). No second indicator.
+                        borderLeft: `2px solid ${isActive ? "var(--text)" : "var(--border)"}`,
                         background: "transparent",
                         cursor: "pointer",
                         lineHeight: 1.4,
                         letterSpacing: "-0.005em",
-                        transition: "color 180ms var(--ease-expo)",
+                        transition: "color 180ms var(--ease-expo), border-color 180ms var(--ease-expo)",
                       }}
                     >
                       {item.label}
@@ -318,6 +303,72 @@ function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) 
           </div>
         ))}
       </nav>
+
+      {/* Rail footer — balances the tall card by anchoring something
+          at the bottom. Slide counter + progress + escape hatch back
+          to the long-form article. Pushes to the bottom via the
+          flex: 1 on the nav above. */}
+      <div style={{
+        marginTop: "var(--space-7)",
+        paddingTop: "var(--space-5)",
+        borderTop: "1px solid var(--border)",
+        display: "flex",
+        flexDirection: "column",
+        gap: "var(--space-3)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "var(--text-mono)",
+            color: "var(--muted)",
+            letterSpacing: "0.08em",
+          }}>
+            {String(currentIndex + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
+          </span>
+          <div style={{
+            flex: 1,
+            height: 2,
+            background: "var(--border)",
+            borderRadius: 1,
+            overflow: "hidden",
+          }}>
+            <div style={{
+              width: `${((currentIndex + 1) / SLIDES.length) * 100}%`,
+              height: "100%",
+              background: "var(--accent-warm)",
+              transition: "width 280ms var(--ease-expo)",
+            }} />
+          </div>
+        </div>
+        <p style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: "var(--text-eyebrow)",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "var(--muted)",
+          margin: 0,
+        }}>
+          ↑↓ to jump · scroll snaps
+        </p>
+        <Link
+          href="/system"
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "var(--text-body)",
+            color: "var(--muted)",
+            textDecoration: "none",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            marginTop: "var(--space-2)",
+            transition: "color 180ms var(--ease-expo)",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
+          onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
+        >
+          Read as article →
+        </Link>
+      </div>
     </aside>
   );
 }
@@ -573,9 +624,29 @@ export default function DesignSystemDeck() {
           <ThemeToggle />
         </div>
 
-        {/* Right side intentionally empty — the closer slide carries the
-            Next case study CTA, so duplicating it in the top bar would
-            split the same affordance into two visual styles. */}
+        {nextCaseStudy && (
+          <Link
+            href={`/work/${nextCaseStudy.slug}`}
+            aria-label={`Next case study: ${nextCaseStudy.title}`}
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              border: "1px solid var(--border)", background: "var(--surface)",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              textDecoration: "none",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+          >
+            Next case study
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z"/>
+            </svg>
+          </Link>
+        )}
       </motion.header>
 
       <div className="deck-page">
