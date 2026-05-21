@@ -274,24 +274,26 @@ function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) 
                   <li key={item.id}>
                     <button
                       onClick={() => onJump(item.id as SlideId)}
+                      className="deck-rail-link"
+                      data-active={isActive}
                       style={{
                         display: "block",
                         width: "100%",
                         textAlign: "left",
-                        padding: "8px 0 8px 14px",
+                        // Pill treatment — active gets a filled --surface2
+                        // background, hover gets --hover; no left border.
+                        padding: "8px 12px",
+                        borderRadius: "var(--radius-sm)",
                         fontFamily: "var(--font-body)",
                         fontSize: "var(--text-body)",
                         color: isActive ? "var(--text)" : "var(--muted)",
                         fontWeight: isActive ? 500 : 400,
-                        // Border switches colour on active — exact same
-                        // pattern as the article sidebar
-                        // (app/system/page.tsx:241). No second indicator.
-                        borderLeft: `2px solid ${isActive ? "var(--text)" : "var(--border)"}`,
-                        background: "transparent",
+                        background: isActive ? "var(--surface2)" : "transparent",
+                        border: "none",
                         cursor: "pointer",
                         lineHeight: 1.4,
                         letterSpacing: "-0.005em",
-                        transition: "color 180ms var(--ease-expo), border-color 180ms var(--ease-expo)",
+                        transition: "color 180ms var(--ease-expo), background 180ms var(--ease-expo)",
                       }}
                     >
                       {item.label}
@@ -514,8 +516,13 @@ export default function DesignSystemDeck() {
         [data-theme="dark"] .deck-rail {
           box-shadow: ${PANEL_SHADOW_DARK};
         }
-        .deck-rail button:hover {
+        /* Rail item — Vercel-menu pill. Active = --surface2 fill, hover
+           on inactive = --hover. Active state isn't double-signalled. */
+        .deck-rail-link:hover {
           color: var(--text) !important;
+        }
+        .deck-rail-link:not([data-active="true"]):hover {
+          background: var(--hover) !important;
         }
         /* Slide panels — landing's shadow tiers (active vs rest) plus
            the dark-mode dim-and-engage behaviour. Light mode never dims;
