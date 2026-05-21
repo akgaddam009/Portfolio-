@@ -686,10 +686,13 @@ export default function DesignSystemDeck() {
 
                 <h1 style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "clamp(32px, 5vw, 56px)",
+                  // 35% reduction from clamp(32px, 5vw, 56px) → settles
+                  // around 21–36px so the hero headline doesn't dominate
+                  // the panel and matches the article's hero scale.
+                  fontSize: "clamp(21px, 3.25vw, 36px)",
                   fontWeight: 300,
-                  lineHeight: 1.1,
-                  letterSpacing: "-0.035em",
+                  lineHeight: 1.15,
+                  letterSpacing: "-0.025em",
                   color: "var(--text)",
                   margin: 0,
                   marginBottom: "16px",
