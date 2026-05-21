@@ -434,8 +434,9 @@ export default function DesignSystemDeck() {
         }}
       />
 
-      {/* Top bar — Portfolio link + ThemeToggle. Mirrors the article header
-          so mobile users (rail hidden) still have a back path. */}
+      {/* Top bar — Back link matches the CaseStudyDetail "Back" affordance
+          (mono caps, 8/4 padding, 4px gap, --muted → --text on hover,
+          cs-back-link class for 44px touch target). */}
       <header style={{
         position: "fixed",
         top: 0, left: 0, right: 0,
@@ -447,20 +448,22 @@ export default function DesignSystemDeck() {
         pointerEvents: "none",
       }}>
         <Link
-          href="/"
+          href="/#work"
+          className="cs-back-link"
           style={{
             pointerEvents: "auto",
             fontFamily: "var(--font-mono)",
             fontSize: "var(--text-mono)",
+            fontWeight: 400,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: "var(--muted)",
             padding: "8px 4px",
             display: "inline-flex",
             alignItems: "center",
-            gap: 6,
+            gap: 4,
             textDecoration: "none",
-            transition: "color var(--dur-fast) var(--ease-expo)",
+            transition: "color 0.18s",
           }}
           onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
           onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
@@ -468,7 +471,7 @@ export default function DesignSystemDeck() {
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
           </svg>
-          Portfolio
+          Back
         </Link>
         <div style={{ pointerEvents: "auto" }}>
           <ThemeToggle />
