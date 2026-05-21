@@ -178,20 +178,23 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
   const currentIndex = SLIDES.findIndex(s => s.id === active);
   return (
     <aside className="deck-rail" aria-label="Deck navigation">
-      {/* The Portfolio back-link lives in the top bar; rail only carries
-          the deck title so we don't duplicate the back-nav affordance. */}
+      {/* Mirrors the case-study rail header: small mono caps label above
+          the section nav so visitors know what document they're navigating. */}
       <p style={{
         fontFamily: "var(--font-mono)",
-        fontSize: "var(--text-mono-lg)",
+        fontSize: "var(--text-mono)",
         letterSpacing: "0.08em",
         textTransform: "uppercase",
-        color: "var(--muted2)",
+        color: "var(--muted)",
         margin: 0,
         marginBottom: "var(--space-6)",
       }}>
-        Design system · Deck
+        Portfolio · Design system
       </p>
 
+      {/* Section nav — mono caps, 44px touch target. Same typographic
+          treatment + interaction model as cs-rail (CaseStudyDetail.tsx:715).
+          Sliding terracotta indicator via Framer layoutId. */}
       <nav style={{ position: "relative" }}>
         {SLIDES.map(s => {
           const isActive = s.id === active;
@@ -203,21 +206,26 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
               data-active={isActive}
               style={{
                 position: "relative",
-                display: "block",
-                padding: "8px 12px",
+                display: "flex",
+                alignItems: "center",
+                /* 14px top/bottom + ~13px line-height hits the 44px WCAG
+                   2.5.5 floor — matches cs-rail. */
+                padding: "14px 8px 14px 16px",
+                minHeight: "44px",
                 width: "100%",
                 textAlign: "left",
                 background: "transparent",
                 border: "none",
                 borderRadius: "var(--radius-xs)",
                 cursor: "pointer",
-                fontFamily: "var(--font-body)",
-                fontSize: "var(--text-body)",
-                color: isActive ? "var(--text)" : "var(--muted)",
-                fontWeight: isActive ? 500 : 400,
+                fontFamily: "var(--font-mono)",
+                fontSize: "var(--text-mono)",
+                fontWeight: 400,
                 lineHeight: 1.3,
-                transition: "color var(--dur-fast) var(--ease-expo), background var(--dur-fast) var(--ease-expo)",
-                letterSpacing: "-0.005em",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: isActive ? "var(--text)" : "var(--muted)",
+                transition: "color var(--dur-base) var(--ease-expo), background var(--dur-fast) var(--ease-expo)",
               }}
             >
               {isActive && (
@@ -226,13 +234,13 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
                   style={{
                     position: "absolute",
                     left: 0,
-                    top: 4,
-                    bottom: 4,
+                    top: 14,
+                    bottom: 14,
                     width: 1.5,
                     background: "var(--accent-warm)",
                     borderRadius: 1,
                   }}
-                  transition={{ duration: 0.18, ease: EASE }}
+                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
               {s.label}
@@ -899,27 +907,68 @@ transition:    var(--dur-fast) var(--ease-expo);`}
             <br />
             Design the system behind them.
           </SlideTitle>
-          {/* CTAs split to opposite edges of the content column. Back on the
-              left as the cancel / retreat path; next case study on the right
-              as the forward path. */}
+          {/* Closer CTAs — exact same dark-pill pattern as the case-study
+              Prev/Next (CaseStudyDetail.tsx:2974). Same 14×14 stroke arrows,
+              same padding, same typography. Split to opposite edges so back
+              reads as retreat and next as forward. */}
           <div style={{
             marginTop: "var(--space-10)",
             display: "flex",
-            gap: "var(--space-3)",
-            flexWrap: "wrap",
+            gap: "16px",
             alignItems: "center",
             justifyContent: "space-between",
             width: "100%",
+            flexWrap: "wrap",
           }}>
-            <Button asChild variant="inline">
-              <Link href="/">← Back to portfolio</Link>
-            </Button>
+            <Link
+              href="/"
+              aria-label="Back to portfolio"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "8px 16px",
+                borderRadius: "8px",
+                background: "var(--text)",
+                color: "var(--bg)",
+                textDecoration: "none",
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-caption)",
+                fontWeight: 500,
+                letterSpacing: "-0.01em",
+                flexShrink: 0,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M19 12H5M11 6l-6 6 6 6" />
+              </svg>
+              Back to portfolio
+            </Link>
             {nextCaseStudy && (
-              <Button asChild variant="inline">
-                <Link href={`/work/${nextCaseStudy.slug}`}>
-                  Next: {nextCaseStudy.title} →
-                </Link>
-              </Button>
+              <Link
+                href={`/work/${nextCaseStudy.slug}`}
+                aria-label={`Next case study: ${nextCaseStudy.title}`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  background: "var(--text)",
+                  color: "var(--bg)",
+                  textDecoration: "none",
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-caption)",
+                  fontWeight: 500,
+                  letterSpacing: "-0.01em",
+                  flexShrink: 0,
+                }}
+              >
+                Next: {nextCaseStudy.title}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
             )}
           </div>
         </Slide>
