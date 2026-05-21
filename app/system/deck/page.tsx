@@ -415,46 +415,11 @@ export default function DesignSystemDeck() {
     return () => window.removeEventListener("keydown", onKey);
   }, [jumpBy]);
 
-  // Wheel-driven slide nav — one gesture = one slide jump. Slides are
-  // viewport-tall (calc(100vh - 88px)), so one-scroll-per-slide is the
-  // dominant interaction. 900ms cooldown fully absorbs the smooth-scroll
-  // animation (~600-700ms on most browsers) so a second wheel tick during
-  // the animation doesn't get queued and cause a double-jump glitch.
-  // Disabled on touch (pointer:coarse) and reduced-motion.
-  useEffect(() => {
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!fine || reduced) return;
-
-    let lastJump = 0;
-    let scrollDeadline = 0;
-    const COOLDOWN = 900;
-    const THRESHOLD = 8;
-
-    const onWheel = (e: WheelEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (target?.closest(".deck-rail, pre, [data-scrollable]")) return;
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-      if (Math.abs(e.deltaY) < THRESHOLD) return;
-
-      // Always prevent default so the native scroll never fights the
-      // programmatic smooth scroll — that fight is the glitchy feel.
-      e.preventDefault();
-
-      const now = Date.now();
-      // Two gates: cooldown since last jump AND no jump while smooth
-      // scroll is still in flight. Together they make every wheel tick
-      // after a jump a no-op until the jump fully lands.
-      if (now < scrollDeadline) return;
-      if (now - lastJump < COOLDOWN) return;
-      lastJump = now;
-      scrollDeadline = now + COOLDOWN;
-      jumpBy(e.deltaY > 0 ? 1 : -1);
-    };
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    return () => window.removeEventListener("wheel", onWheel);
-  }, [jumpBy]);
+  // Wheel hijack dropped — CSS scroll-snap: y proximity (set in styles
+  // below) gives a smoother, browser-native snap behaviour. Users scroll
+  // freely; the browser eases to the nearest panel when scroll settles.
+  // Keyboard arrows still jump via the handler above. No JS-driven
+  // smooth-scroll fighting native wheel input = no glitch.
 
   return (
     <>
@@ -463,6 +428,15 @@ export default function DesignSystemDeck() {
           background: var(--chrome);
           min-height: 100vh;
         }
+        /* CSS scroll-snap — proximity mode lets users scroll freely and
+           softly eases to the nearest panel when the gesture ends. No
+           browser-vs-JS fight, no cooldown timer. Disabled under
+           reduced-motion (native handling). */
+        html { scroll-snap-type: y proximity; scroll-padding-top: 80px; }
+        @media (prefers-reduced-motion: reduce) {
+          html { scroll-snap-type: none; }
+        }
+        .deck-panel, .deck-hero-panel { scroll-snap-align: start; }
         /* Container spacing mirrors the landing page rhythm:
            - paddingTop 80px = 72px header clearance + 8px top breathing
              (landing has paddingTop 72 on main + padding-top 8 on the
@@ -658,6 +632,120 @@ export default function DesignSystemDeck() {
           <RailPanel active={active} onJump={jumpTo} />
 
           <main className="deck-content">
+
+            {/* Hero header panel — mirrors the case-study-detail page hero
+                (CaseStudyDetail.tsx:413). Tags + title + subtitle sit in
+                their own panel before the deck slides start. Reads as
+                "this is what this page is about" before the visitor
+                begins the deck proper. */}
+            <motion.section
+              className="deck-hero-panel"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE }}
+              style={{
+                background: "var(--bg)",
+                borderRadius: "var(--radius-lg)",
+                boxShadow: PANEL_SHADOW_LIGHT,
+                padding: "var(--space-7)",
+                minHeight: "calc(100vh - 88px)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "relative",
+              }}
+            >
+              <div style={{ width: "100%", maxWidth: 880 }}>
+                {/* Tags row — same chip pattern as case study hero
+                    (CaseStudyDetail.tsx:442). */}
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
+                  {["Design system", "Portfolio", "Internal tool"].map(tag => (
+                    <span key={tag} style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-eyebrow)",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      padding: "4px 8px",
+                      background: "var(--surface2)",
+                      color: "var(--muted2)",
+                      borderRadius: "6px",
+                    }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <h1 style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "clamp(32px, 5vw, 56px)",
+                  fontWeight: 300,
+                  lineHeight: 1.1,
+                  letterSpacing: "-0.035em",
+                  color: "var(--text)",
+                  margin: 0,
+                  marginBottom: "16px",
+                }}>
+                  Planned with{" "}
+                  <InlineChip label="Claude AI" tone="indigo" scale="match" />.<br />
+                  Built with{" "}
+                  <InlineChip label="Claude Code" tone="violet" scale="match" />.
+                </h1>
+
+                <p style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-body-lg)",
+                  lineHeight: 1.65,
+                  color: "var(--muted)",
+                  maxWidth: 520,
+                  margin: 0,
+                  marginBottom: "32px",
+                }}>
+                  An opinionated, token-driven design system maintained as code.
+                  No Figma file. The site you’re looking at is the documentation.
+                </p>
+
+                {/* Role / Stack / Year meta grid — case study detail
+                    pattern (CaseStudyDetail.tsx:463). */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+                  gap: "16px",
+                  alignItems: "start",
+                  maxWidth: 640,
+                }}>
+                  {[
+                    { label: "Role",     value: "Design + build" },
+                    { label: "Stack",    value: "Next.js · Tailwind · CSS vars" },
+                    { label: "Workflow", value: "Claude AI + Code" },
+                  ].map(item => (
+                    <div key={item.label} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <p style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "var(--text-eyebrow)",
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        color: "var(--muted)",
+                        margin: 0,
+                      }}>
+                        {item.label}
+                      </p>
+                      <p style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-body)",
+                        fontWeight: 400,
+                        color: "var(--text)",
+                        lineHeight: 1.4,
+                        margin: 0,
+                      }}>
+                        {item.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.section>
 
             {/* 01 — Cover */}
             <SlidePanel
