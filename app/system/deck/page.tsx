@@ -463,12 +463,17 @@ export default function DesignSystemDeck() {
           background: var(--chrome);
           min-height: 100vh;
         }
-        /* Symmetric 24px gutters mirror the landing page's left-side
-           container padding (app/page.tsx:3516). 16px gap between rail
-           and content matches the inter-panel gap on landing. */
+        /* Container spacing mirrors the landing page rhythm:
+           - paddingTop 80px = 72px header clearance + 8px top breathing
+             (landing has paddingTop 72 on main + padding-top 8 on the
+             container at app/page.tsx:3502 + :3516 — same cumulative 80px)
+           - paddingBottom 16px (matches landing :3516 bottom)
+           - 24px sides (matches landing's left gutter, applied both sides
+             since vertical layouts can't go asymmetric like horizontal scroll)
+           - 16px inter-panel gap (matches landing :3512). */
         .deck-grid {
           margin: 0;
-          padding: 72px 24px 24px;
+          padding: 80px 24px 16px;
           display: grid;
           grid-template-columns: 280px 1fr;
           gap: 16px;
@@ -529,7 +534,9 @@ export default function DesignSystemDeck() {
         @media (max-width: 1023px) {
           .deck-grid {
             grid-template-columns: 1fr;
-            padding: 64px 16px 16px;
+            /* Mobile top: 72px (one step below desktop's 80px). 16px
+               sides + bottom match the landing rhythm. */
+            padding: 72px 16px 16px;
             gap: 16px;
           }
           .deck-rail {
