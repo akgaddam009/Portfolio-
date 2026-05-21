@@ -28,14 +28,16 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 /* Props that make a div behave like a button for keyboard users — Enter / Space
    triggers the same onClick used by mouse. Used on the zoom-on-click image
-   wrappers so screen-reader and keyboard navigators can open the lightbox. */
-function zoomTriggerProps(open: () => void, label = "Enlarge image"): React.HTMLAttributes<HTMLDivElement> {
+   wrappers so screen-reader and keyboard navigators can open the lightbox.
+   Narrow return type so the props are compatible with both plain divs and
+   motion.div (whose onDrag signature differs from React.HTMLAttributes). */
+function zoomTriggerProps(open: () => void, label = "Enlarge image") {
   return {
-    role: "button",
+    role: "button" as const,
     tabIndex: 0,
     "aria-label": label,
     onClick: open,
-    onKeyDown: (e) => {
+    onKeyDown: (e: React.KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         open();
