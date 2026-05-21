@@ -20,14 +20,6 @@ const SHORT_FORM_SLUGS: Record<string, { paragraphs: string[]; builtWith: string
     builtWith: "Built solo in 6–8 hours with Claude Code",
     media: { src: "/images/astra/overview.mp4" },
   },
-  "apple-business-listings": {
-    paragraphs: [
-      "A self-directed rebuild of the Reputation.com Business Listings dashboard — the project I shipped in 2024 to bring Apple Maps performance data into the same view as Google and Facebook.",
-      "I recreated the core dashboard surface as a working prototype to see how quickly I could go from spec to interactive screen using Claude Code. Same information architecture, same metrics grouping, same density principles I shipped in production.",
-    ],
-    builtWith: "Rebuilt in 1–2 hours with Claude Code",
-    media: { src: "/images/reputation/after.mp4" },
-  },
 };
 
 /* Slugs that are completely hidden from the public — no static page is
