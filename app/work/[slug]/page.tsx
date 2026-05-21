@@ -3,7 +3,32 @@ import type { Metadata } from "next";
 import { getCaseStudy, caseStudies } from "@/lib/caseStudies";
 import CaseStudyDetail from "@/components/CaseStudyDetail";
 import CaseStudyGate from "@/components/CaseStudyGate";
+import CaseStudyShortForm from "@/components/CaseStudyShortForm";
 import { isUnlocked } from "@/lib/auth";
+
+/* Slugs that render the minimal short-form layout instead of the full
+   CaseStudyDetail narrative. These are exploration-style builds — quick
+   Claude Code proofs of concept — that don't need the full multi-section
+   case study treatment. */
+const SHORT_FORM_SLUGS: Record<string, { paragraphs: string[]; builtWith: string; media?: { src: string } }> = {
+  "astra": {
+    paragraphs: [
+      "Astra is an exploration of what AI-assisted contract review could look like inside a B2B SaaS workflow — covering the parts where the model is confident, and the parts where it isn't.",
+      "Two flows: an AI-led first pass that surfaces clause-level risks and recommended edits, and an approval flow for the human reviewer to accept, reject, or escalate each suggestion.",
+      "Designed and built end-to-end as a working prototype, not a Figma file — the prototype runs, the flows are clickable, the AI suggestions are real.",
+    ],
+    builtWith: "Built solo in 6–8 hours with Claude Code",
+    media: { src: "/images/astra/overview.mp4" },
+  },
+  "apple-business-listings": {
+    paragraphs: [
+      "A self-directed rebuild of the Reputation.com Business Listings dashboard — the project I shipped in 2024 to bring Apple Maps performance data into the same view as Google and Facebook.",
+      "I recreated the core dashboard surface as a working prototype to see how quickly I could go from spec to interactive screen using Claude Code. Same information architecture, same metrics grouping, same density principles I shipped in production.",
+    ],
+    builtWith: "Rebuilt in 1–2 hours with Claude Code",
+    media: { src: "/images/reputation/after.mp4" },
+  },
+};
 
 /* Slugs that are completely hidden from the public — no static page is
    generated, no metadata, no route. Anyone visiting these URLs gets a
@@ -141,6 +166,21 @@ export default async function CaseStudyPage({
   if (HIDDEN_SLUGS.has(slug)) notFound();
   const cs = getCaseStudy(slug);
   if (!cs) notFound();
+
+  /* Short-form layout for exploration-style builds — skips the gate
+     and the full narrative, renders the minimal template instead. */
+  if (SHORT_FORM_SLUGS[slug]) {
+    const sf = SHORT_FORM_SLUGS[slug];
+    return (
+      <CaseStudyShortForm
+        title={cs.title}
+        tags={cs.tags ?? []}
+        paragraphs={sf.paragraphs}
+        builtWith={sf.builtWith}
+        media={sf.media}
+      />
+    );
+  }
 
   /* Server-side gate. If the case study is confidential and the visitor
      doesn't have a valid unlock cookie, render ONLY the gate component
