@@ -148,10 +148,13 @@ function SlidePanel({
         background: bg,
         borderRadius: "var(--radius-xl)",
         boxShadow: "var(--card-shadow)",
-        padding: "var(--space-10) var(--space-9)",
+        /* Inner padding aligned with the landing panel rhythm
+           (16px 24px). Stepped up to var(--space-7) (32px) here because
+           the slide panels are full-column-width and carry display-scale
+           headlines — landing's 24px is too tight for the bigger type. */
+        padding: "var(--space-7)",
         position: "relative",
         overflow: "hidden",
-        minHeight: "min(720px, calc(100vh - 96px))",
         display: "flex",
         flexDirection: "column",
         justifyContent: align === "center" ? "center" : "flex-start",
@@ -342,25 +345,30 @@ export default function DesignSystemDeck() {
           background: var(--chrome);
           min-height: 100vh;
         }
+        /* Spacing aligned with the landing page (app/page.tsx:3502+):
+           inter-panel gap 16px, container 24px sides, top padding clears
+           the fixed header. */
         .deck-grid {
           max-width: 1440px;
           margin: 0 auto;
-          padding: 80px var(--space-6) var(--space-10);
+          padding: 72px 24px 24px;
           display: grid;
           grid-template-columns: 280px 1fr;
-          gap: var(--space-6);
+          gap: 16px;
           align-items: start;
         }
         .deck-rail {
           position: sticky;
-          top: 80px;
+          top: 72px;
           align-self: start;
         }
+        /* Rail card padding matches landing panel inner padding
+           (16px 24px from app/page.tsx:519 / :1318). */
         .deck-rail-card {
           background: var(--surface);
           border-radius: var(--radius-lg);
           box-shadow: var(--card-shadow);
-          padding: var(--space-6) var(--space-5);
+          padding: 16px 24px;
           display: flex;
           flex-direction: column;
         }
@@ -372,24 +380,26 @@ export default function DesignSystemDeck() {
           background: transparent !important;
           box-shadow: none;
         }
+        /* Slide stack uses the same 16px gap as the landing panel rail
+           so the vertical rhythm matches the horizontal one. */
         .deck-content {
           display: flex;
           flex-direction: column;
-          gap: var(--space-7);
+          gap: 16px;
         }
-        /* Mobile / tablet: stack the grid, rail above content. */
+        /* Mobile: single column, rail above content, same 16px gap. */
         @media (max-width: 1023px) {
           .deck-grid {
             grid-template-columns: 1fr;
-            padding-top: 72px;
-            gap: var(--space-5);
+            padding-top: 64px;
+            gap: 16px;
           }
           .deck-rail {
             position: relative;
             top: auto;
           }
           .deck-rail-card {
-            padding: var(--space-5);
+            padding: 16px 20px;
           }
         }
       `}</style>
