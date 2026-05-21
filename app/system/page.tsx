@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -169,11 +170,94 @@ export default function DesignSystemPage() {
 
               <p style={{
                 fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
+                lineHeight: 1.7, color: "var(--muted2)", marginBottom: "16px",
+              }}>
+                An opinionated system. No primary buttons. One easing curve. Maintained as code,
+                not Figma. Every page in this portfolio renders from the tokens below — the site
+                you&apos;re browsing <em>is</em> the documentation.
+              </p>
+
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                 lineHeight: 1.7, color: "var(--muted2)",
               }}>
-                Tokens, type, components, and motion — maintained as code, not Figma.
-                Every value on this page is live from <code style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-body)", background: "var(--surface2)", padding: "2px 6px", borderRadius: "4px" }}>globals.css</code>.
+                There is no design-vs-engineering handoff. Pin every visual decision to a CSS
+                variable in <code style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-body)", background: "var(--surface2)", padding: "2px 6px", borderRadius: "4px" }}>globals.css</code>, and drift dies.
               </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ── Principles ── */}
+        <section style={{ padding: "var(--space-7) 0", borderTop: "1px solid var(--border)" }}>
+          <div className="page-pad">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              <SectionLabel>Principles</SectionLabel>
+              <SectionDescription>
+                Four opinions that shape every decision below.
+              </SectionDescription>
+
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                gap: "16px",
+              }}>
+                {([
+                  {
+                    n: "01",
+                    title: "No primary by design",
+                    body: "Three button tiers, none dominant. The work is the hero. Visitors read, they don’t get pitched.",
+                  },
+                  {
+                    n: "02",
+                    title: "One easing curve",
+                    body: "Every transition uses cubic-bezier(0.22, 1, 0.36, 1). One motion vocabulary across the entire site.",
+                  },
+                  {
+                    n: "03",
+                    title: "Maintained as code",
+                    body: "No Figma file. No handoff. Tokens live in globals.css. Drift is impossible because there’s only one source.",
+                  },
+                  {
+                    n: "04",
+                    title: "44px is the floor",
+                    body: "WCAG 2.5.5 touch-target compliance built into the spacing scale itself — not enforced by audit later.",
+                  },
+                ]).map(p => (
+                  <div key={p.n} style={{
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "12px",
+                    padding: "24px",
+                  }}>
+                    <p style={{
+                      fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                      letterSpacing: "0.08em",
+                      color: "var(--muted)", margin: 0, marginBottom: "16px",
+                    }}>
+                      {p.n}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)",
+                      fontWeight: 500, letterSpacing: "-0.015em",
+                      color: "var(--text)", margin: 0, marginBottom: "8px",
+                    }}>
+                      {p.title}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                      color: "var(--muted2)", margin: 0, lineHeight: 1.6,
+                    }}>
+                      {p.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </motion.div>
           </div>
         </section>
@@ -430,6 +514,93 @@ export default function DesignSystemPage() {
           </div>
         </section>
 
+        {/* ── Chip tones ── */}
+        <section style={{ padding: "var(--space-7) 0", borderTop: "1px solid var(--border)" }}>
+          <div className="page-pad">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              <SectionLabel>Chip tones — inline emphasis</SectionLabel>
+              <SectionDescription>
+                Six tones for highlighting phrases inside prose and headings. Each tone signals
+                a different semantic role. Two visual variants: <strong>chip</strong> (rounded
+                pill, tinted text) for noun phrases, and <strong>strip</strong> (rectangular
+                highlight, body text color) for multi-word emphasis.
+              </SectionDescription>
+
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                gap: "12px",
+              }}>
+                {([
+                  { tone: "indigo",  use: "Default emphasis · concept",     example: "AI copilot" },
+                  { tone: "teal",    use: "Process · methodology",          example: "research-led" },
+                  { tone: "amber",   use: "Caution · qualifier",            example: "ambiguous" },
+                  { tone: "violet",  use: "Insight · principle",            example: "first principles" },
+                  { tone: "emerald", use: "Outcome · positive metric",      example: "68% adoption" },
+                  { tone: "sage",    use: "Decorative · soft highlight",    example: "studio of one" },
+                ] as { tone: ChipTone; use: string; example: string }[]).map(t => (
+                  <div key={t.tone} style={{
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "12px",
+                    padding: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                  }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <div>
+                        <p style={{
+                          fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                          letterSpacing: "0.06em", textTransform: "uppercase",
+                          color: "var(--muted)", margin: 0, marginBottom: "8px",
+                        }}>
+                          Chip
+                        </p>
+                        <div>
+                          <InlineChip label={t.example} tone={t.tone} scale="match" />
+                        </div>
+                      </div>
+                      <div>
+                        <p style={{
+                          fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                          letterSpacing: "0.06em", textTransform: "uppercase",
+                          color: "var(--muted)", margin: 0, marginBottom: "8px",
+                        }}>
+                          Strip
+                        </p>
+                        <div>
+                          <InlineChip label={t.example} tone={t.tone} scale="match" variant="strip" />
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ paddingTop: "12px", borderTop: "1px solid var(--border)" }}>
+                      <p style={{
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                        fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: "4px",
+                        textTransform: "capitalize",
+                      }}>
+                        {t.tone}
+                      </p>
+                      <p style={{
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                        color: "var(--muted2)", margin: 0, lineHeight: 1.5,
+                      }}>
+                        {t.use}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
         {/* ── Cards ── */}
         <section style={{ padding: "var(--space-7) 0", borderTop: "1px solid var(--border)" }}>
           <div className="page-pad">
@@ -548,6 +719,120 @@ export default function DesignSystemPage() {
                   />
                 </div>
               </PreviewBox>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ── Patterns ── */}
+        <section style={{ padding: "var(--space-7) 0", borderTop: "1px solid var(--border)" }}>
+          <div className="page-pad">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              <SectionLabel>Patterns — components in composition</SectionLabel>
+              <SectionDescription>
+                A real work card from the homepage, built entirely from the tokens and
+                components above. Each annotation maps to a piece earlier in this doc.
+              </SectionDescription>
+
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "minmax(280px, 1fr) minmax(280px, 360px)",
+                gap: "32px",
+                alignItems: "start",
+              }}>
+                {/* Composed card */}
+                <PreviewBox style={{ padding: "40px", justifyContent: "center" }}>
+                  <div style={{
+                    width: "100%", maxWidth: "360px",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                    boxShadow: "var(--card-shadow)",
+                    overflow: "hidden",
+                  }}>
+                    <div style={{
+                      width: "100%", aspectRatio: "16/9",
+                      background: "linear-gradient(135deg, var(--surface2) 0%, var(--chrome) 100%)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <span style={{
+                        fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                        color: "var(--muted)", letterSpacing: "0.08em", textTransform: "uppercase",
+                      }}>
+                        Hero media
+                      </span>
+                    </div>
+                    <div style={{ padding: "20px" }}>
+                      <div style={{ display: "flex", gap: "6px", marginBottom: "12px", flexWrap: "wrap" }}>
+                        <Badge>Enterprise SaaS</Badge>
+                        <Badge>Fintech</Badge>
+                      </div>
+                      <p style={{
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)",
+                        fontWeight: 500, letterSpacing: "-0.015em",
+                        color: "var(--text)", margin: 0, marginBottom: "8px",
+                        lineHeight: 1.3,
+                      }}>
+                        Composing tables for{" "}
+                        <InlineChip label="financial planning" tone="indigo" scale="match" />{" "}
+                        at scale
+                      </p>
+                      <p style={{
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                        color: "var(--muted2)", margin: 0, lineHeight: 1.55,
+                      }}>
+                        Rebuilt a 12-year-old ESM grid used by 500+ enterprise customers — from
+                        5,000ms render to 200ms.
+                      </p>
+                    </div>
+                  </div>
+                </PreviewBox>
+
+                {/* Anatomy */}
+                <div style={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "12px",
+                  padding: "20px 24px",
+                }}>
+                  <p style={{
+                    fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                    letterSpacing: "0.08em", textTransform: "uppercase",
+                    color: "var(--muted)", margin: 0, marginBottom: "16px",
+                  }}>
+                    Anatomy
+                  </p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                    {([
+                      { label: "Container",  tokens: ["--surface", "--radius-md", "--card-shadow"] },
+                      { label: "Border",     tokens: ["--border", "1.5px solid"] },
+                      { label: "Tags",       tokens: ["<Badge>", "--text-eyebrow"] },
+                      { label: "Title",      tokens: ["--text-title-sm", "weight 500", "-0.015em"] },
+                      { label: "Highlight",  tokens: ["<InlineChip tone=\"indigo\">"] },
+                      { label: "Summary",    tokens: ["--text-body", "--muted2"] },
+                    ]).map((row, i, arr) => (
+                      <div key={row.label} style={{
+                        paddingBottom: i < arr.length - 1 ? "14px" : 0,
+                        borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none",
+                      }}>
+                        <p style={{
+                          fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                          fontWeight: 500, color: "var(--text)", margin: 0, marginBottom: "6px",
+                        }}>
+                          {row.label}
+                        </p>
+                        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                          {row.tokens.map(t => <TokenPill key={t} token={t} />)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </section>
