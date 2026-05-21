@@ -460,12 +460,17 @@ export default function DesignSystemDeck() {
            and sticky so it stays in view while content scrolls. */
         .deck-rail {
           position: sticky;
-          top: 72px;
+          /* 80px matches the grid's padding-top so the gap between the
+             top bar's bottom edge (72px) and the rail top stays a
+             consistent 8px whether the page is at scroll 0 or scrolled
+             past. Was 72px, which made the rail butt against the top
+             bar once scrolled — that's the spacing the user flagged. */
+          top: 80px;
           align-self: start;
           background: var(--bg);
           border-radius: var(--radius-lg);
           padding: var(--space-7);
-          min-height: calc(100vh - 88px);
+          min-height: calc(100vh - 96px);
           box-shadow: ${PANEL_SHADOW_LIGHT};
           display: flex;
           flex-direction: column;
