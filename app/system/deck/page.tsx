@@ -2,17 +2,16 @@
 
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll, useSpring, useReducedMotion } from "framer-motion";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { InlineChip } from "@/components/ui/InlineChip";
 import AsciiWater from "@/components/AsciiWater";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 /* =========================================================================
-   DECK MANIFEST — single source for slides + rail labels
+   DECK MANIFEST
    ========================================================================= */
 
 const SLIDES = [
@@ -36,12 +35,22 @@ type SlideId = typeof SLIDES[number]["id"];
    PRIMITIVES
    ========================================================================= */
 
-function Eyebrow({ children, mb = 16 }: { children: React.ReactNode; mb?: number }) {
+/* Eyebrow — system mono caps. 0.08em across the page; the cover hero
+   gets the wider 0.12em treatment the article uses on its hero eyebrow. */
+function Eyebrow({
+  children,
+  mb = 16,
+  track = "default",
+}: {
+  children: React.ReactNode;
+  mb?: number;
+  track?: "default" | "cover";
+}) {
   return (
     <p style={{
       fontFamily: "var(--font-mono)",
       fontSize: "var(--text-eyebrow)",
-      letterSpacing: "0.12em",
+      letterSpacing: track === "cover" ? "0.12em" : "0.08em",
       textTransform: "uppercase",
       color: "var(--muted)",
       margin: 0,
@@ -52,18 +61,21 @@ function Eyebrow({ children, mb = 16 }: { children: React.ReactNode; mb?: number
   );
 }
 
+/* SlideTitle — two sizes mapped to the existing display ladder:
+   - lg: var(--text-display), weight 500, the section H2 treatment
+   - xl: matches the article's hero (clamp 32→56), weight 300, tighter */
 function SlideTitle({ children, size = "lg" }: { children: React.ReactNode; size?: "lg" | "xl" }) {
-  const fontSize = size === "xl" ? "clamp(40px, 6vw, 72px)" : "clamp(32px, 4.5vw, 52px)";
+  const isXl = size === "xl";
   return (
     <h2 style={{
       fontFamily: "var(--font-body)",
-      fontSize,
-      fontWeight: 300,
-      letterSpacing: "-0.035em",
-      lineHeight: 1.05,
+      fontSize: isXl ? "clamp(32px, 5vw, 56px)" : "var(--text-display)",
+      fontWeight: isXl ? 300 : 500,
+      letterSpacing: isXl ? "-0.035em" : "-0.02em",
+      lineHeight: isXl ? 1.05 : 1.15,
       color: "var(--text)",
       margin: 0,
-      marginBottom: 24,
+      marginBottom: "var(--space-6)",
       maxWidth: 880,
     }}>
       {children}
@@ -76,7 +88,7 @@ function Lead({ children, max = 580 }: { children: React.ReactNode; max?: number
     <p style={{
       fontFamily: "var(--font-body)",
       fontSize: "var(--text-title-sm)",
-      lineHeight: 1.55,
+      lineHeight: 1.6,
       color: "var(--muted2)",
       maxWidth: max,
       margin: 0,
@@ -95,7 +107,7 @@ function TokenPill({ token }: { token: string }) {
       color: "var(--muted2)",
       background: "var(--surface2)",
       padding: "3px 8px",
-      borderRadius: 6,
+      borderRadius: "var(--radius-xs)",
       letterSpacing: "0.02em",
     }}>
       {token}
@@ -105,26 +117,22 @@ function TokenPill({ token }: { token: string }) {
 
 function Slide({
   id,
-  index,
-  total,
   tint,
   children,
   background,
   align = "center",
 }: {
   id: SlideId;
-  index: number;
-  total: number;
-  tint?: "warm" | "cool" | "surface";
+  tint?: "warm" | "surface";
   children: React.ReactNode;
-  /** Optional full-bleed background layer (e.g. AsciiWater). Renders behind
-      the centered content column; pointer-events should be none. */
   background?: React.ReactNode;
   align?: "start" | "center";
 }) {
+  const reduced = useReducedMotion();
+  // Warm is a real warm wash (terracotta-tinted bg) so it actually reads
+  // different from --bg in light mode. Surface is the cooler card colour.
   const bg =
-    tint === "warm"    ? "var(--chrome)"
-    : tint === "cool"  ? "var(--surface2)"
+    tint === "warm"   ? "color-mix(in srgb, var(--accent-warm) 5%, var(--bg))"
     : tint === "surface" ? "var(--surface)"
     : "var(--bg)";
   return (
@@ -137,33 +145,18 @@ function Slide({
         display: "flex",
         flexDirection: "column",
         justifyContent: align === "center" ? "center" : "flex-start",
-        padding: "120px 32px 80px",
+        padding: "var(--space-11) var(--space-7) var(--space-10)",
         position: "relative",
         overflow: "hidden",
         borderBottom: "1px solid var(--border)",
       }}
     >
       {background}
-
-      {/* Slide number — top-left */}
-      <div style={{
-        position: "absolute",
-        top: 96,
-        left: 32,
-        fontFamily: "var(--font-mono)",
-        fontSize: "var(--text-mono)",
-        letterSpacing: "0.1em",
-        color: "var(--muted)",
-        zIndex: 2,
-      }}>
-        {String(index).padStart(2, "0")} / {String(total).padStart(2, "0")}
-      </div>
-
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, margin: "-20%" }}
-        transition={{ duration: 0.55, ease: EASE }}
+        initial={reduced ? false : { opacity: 0, y: 16 }}
+        whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.5, ease: EASE }}
         style={{ width: "100%", maxWidth: 920, margin: "0 auto", position: "relative", zIndex: 1 }}
       >
         {children}
@@ -180,7 +173,7 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
   const currentIndex = SLIDES.findIndex(s => s.id === active);
   return (
     <aside className="deck-rail" aria-label="Deck navigation">
-      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 24 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", marginBottom: "var(--space-6)" }}>
         <Link
           href="/"
           style={{
@@ -203,7 +196,7 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
         <p style={{
           fontFamily: "var(--font-mono)",
           fontSize: "var(--text-eyebrow)",
-          letterSpacing: "0.1em",
+          letterSpacing: "0.08em",
           textTransform: "uppercase",
           color: "var(--muted)",
           margin: 0,
@@ -219,24 +212,27 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
             <button
               key={s.id}
               onClick={() => onJump(s.id)}
+              className="deck-rail-item"
+              data-active={isActive}
               style={{
                 position: "relative",
                 display: "grid",
                 gridTemplateColumns: "28px 1fr",
                 gap: 10,
                 alignItems: "baseline",
-                padding: "7px 0 7px 12px",
+                padding: "7px 8px 7px 12px",
                 width: "100%",
                 textAlign: "left",
                 background: "transparent",
                 border: "none",
+                borderRadius: "var(--radius-xs)",
                 cursor: "pointer",
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-body)",
                 color: isActive ? "var(--text)" : "var(--muted)",
                 fontWeight: isActive ? 500 : 400,
                 lineHeight: 1.3,
-                transition: "color 180ms var(--ease-expo)",
+                transition: "color var(--dur-fast) var(--ease-expo), background var(--dur-fast) var(--ease-expo)",
                 letterSpacing: "-0.005em",
               }}
             >
@@ -252,14 +248,14 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
                     background: "var(--accent-warm)",
                     borderRadius: 1,
                   }}
-                  transition={{ duration: 0.25, ease: EASE }}
+                  transition={{ duration: 0.18, ease: EASE }}
                 />
               )}
               <span style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: "var(--text-mono)",
                 color: "var(--muted)",
-                letterSpacing: "0.06em",
+                letterSpacing: "0.08em",
               }}>
                 {String(i + 1).padStart(2, "0")}
               </span>
@@ -270,8 +266,8 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
       </nav>
 
       <div style={{
-        marginTop: 24,
-        paddingTop: 16,
+        marginTop: "var(--space-6)",
+        paddingTop: "var(--space-4)",
         borderTop: "1px solid var(--border)",
         display: "flex",
         alignItems: "center",
@@ -281,7 +277,7 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
           fontFamily: "var(--font-mono)",
           fontSize: "var(--text-mono)",
           color: "var(--muted)",
-          letterSpacing: "0.06em",
+          letterSpacing: "0.08em",
         }}>
           {String(currentIndex + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
         </span>
@@ -302,15 +298,15 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
       </div>
 
       <p style={{
-        marginTop: 16,
+        marginTop: "var(--space-4)",
         fontFamily: "var(--font-mono)",
         fontSize: "var(--text-eyebrow)",
         color: "var(--muted)",
-        letterSpacing: "0.06em",
+        letterSpacing: "0.08em",
         textTransform: "uppercase",
         lineHeight: 1.4,
       }}>
-        ↑↓ to jump · scroll to read
+        ↑↓ to jump · scroll snaps
       </p>
     </aside>
   );
@@ -324,7 +320,6 @@ export default function DesignSystemDeck() {
   const [active, setActive] = useState<SlideId>("cover");
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
-
 
   // Scroll-spy via IntersectionObserver.
   useEffect(() => {
@@ -354,10 +349,13 @@ export default function DesignSystemDeck() {
     if (next) jumpTo(next.id);
   }, [active, jumpTo]);
 
-  // Keyboard navigation — Arrow / PageUp/Down jump slides.
+  // Keyboard nav. Skip when typing or when a button / link has focus so
+  // Space activates the focused control instead of jumping a slide.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
+      const isControl = tag === "INPUT" || tag === "TEXTAREA" || tag === "BUTTON" || tag === "A";
+      if (isControl && e.key === " ") return;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
         e.preventDefault();
@@ -371,25 +369,21 @@ export default function DesignSystemDeck() {
     return () => window.removeEventListener("keydown", onKey);
   }, [jumpBy]);
 
-  // Wheel-driven slide nav — one gesture = one slide jump. We hijack the wheel
-  // event and call jumpBy() with a cooldown so trackpad inertia (which fires
-  // many tiny wheel ticks per gesture) doesn't fly through multiple slides.
-  // Skipped on coarse-pointer / reduced-motion (mobile + a11y → normal scroll).
+  // Wheel-driven slide nav — one gesture = one slide jump. 550ms cooldown
+  // covers smooth-scroll + a beat of breath. Skipped over the rail and
+  // anything scrollable (e.g. <pre> code blocks) so inner content can scroll.
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!fine || reduced) return;
 
     let lastJump = 0;
-    const COOLDOWN = 750; // ms; covers ~600ms smooth scroll + breath
-    const THRESHOLD = 8;  // ignore micro-wheel noise
+    const COOLDOWN = 550;
+    const THRESHOLD = 8;
 
     const onWheel = (e: WheelEvent) => {
-      // Let the rail scroll naturally if it overflows.
       const target = e.target as HTMLElement | null;
-      if (target?.closest(".deck-rail")) return;
-
-      // Horizontal-dominant scrolls (e.g. trackpad horizontal swipe) are not deck nav.
+      if (target?.closest(".deck-rail, pre, [data-scrollable]")) return;
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       if (Math.abs(e.deltaY) < THRESHOLD) return;
 
@@ -406,31 +400,30 @@ export default function DesignSystemDeck() {
 
   return (
     <>
-      {/* Mobile: hide the rail, let the page scroll normally as an article.
-          Snap classes are still defined for the case where we want to bring
-          back CSS snap as a fallback, but desktop nav is now wheel-hijacked. */}
       <style jsx global>{`
         @media (max-width: 1023px) {
           .deck-rail { display: none !important; }
         }
-        /* Rail panel — clearly distinct from the slide content area. Uses
-           --chrome (warm off-white in light, pure black in dark) + a hairline
-           right border + a soft right shadow for depth. Reads as a UI panel,
-           not a floating overlay. */
+        /* Rail panel — UI-panel treatment, distinct from slide content. */
         .deck-rail {
           position: fixed;
           top: 0;
           left: 0;
           bottom: 0;
           width: 280px;
-          padding: 96px 24px 24px;
+          padding: var(--space-11) var(--space-6) var(--space-6);
           background: var(--chrome);
           border-right: 1px solid var(--border);
-          box-shadow: 6px 0 24px -12px rgba(0, 0, 0, 0.05);
           overflow-y: auto;
           z-index: 9;
           display: flex;
           flex-direction: column;
+        }
+        .deck-rail-item:hover {
+          background: var(--hover) !important;
+        }
+        .deck-rail-item[data-active="true"]:hover {
+          background: transparent !important;
         }
         .deck-content {
           margin-left: 280px;
@@ -440,7 +433,7 @@ export default function DesignSystemDeck() {
         }
       `}</style>
 
-      {/* Top progress bar — thin, warm accent, themes correctly. */}
+      {/* Top progress bar — thin, themes via --accent-warm. */}
       <motion.div
         style={{
           position: "fixed",
@@ -453,33 +446,58 @@ export default function DesignSystemDeck() {
         }}
       />
 
-      {/* Top bar */}
+      {/* Top bar — Portfolio link + ThemeToggle. Mirrors the article header
+          so mobile users (rail hidden) still have a back path. */}
       <header style={{
         position: "fixed",
-        top: 0, right: 0,
+        top: 0, left: 0, right: 0,
         zIndex: 40,
-        padding: "16px 24px",
+        padding: "var(--space-4) var(--space-6)",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        pointerEvents: "none",
       }}>
-        <ThemeToggle />
+        <Link
+          href="/"
+          style={{
+            pointerEvents: "auto",
+            fontFamily: "var(--font-mono)",
+            fontSize: "var(--text-mono)",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+            padding: "8px 4px",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            textDecoration: "none",
+            transition: "color var(--dur-fast) var(--ease-expo)",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
+          onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
+        >
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          </svg>
+          Portfolio
+        </Link>
+        <div style={{ pointerEvents: "auto" }}>
+          <ThemeToggle />
+        </div>
       </header>
 
       <DeckRail active={active} onJump={jumpTo} />
 
       <main className="deck-content">
-        {/* 01 — Cover. No tint so it sits on pure --bg (white in light, dark
-            panel in dark) and contrasts cleanly against the warm-gray rail. */}
+        {/* 01 — Cover */}
         <Slide
           id="cover"
-          index={1}
-          total={SLIDES.length}
           background={
-            /* Signature moment: ASCII ripple sits behind the cover headline.
-               Reacts to cursor; flat under prefers-reduced-motion; quiet on
-               touch devices. Opacity kept low so it reads as texture. */
-            <AsciiWater opacity={0.32} fontSize={13} damping={0.982} />
+            <AsciiWater opacity={0.5} fontSize={13} damping={0.982} />
           }
         >
-          <Eyebrow>Portfolio · Design system</Eyebrow>
+          <Eyebrow track="cover">Portfolio · Design system</Eyebrow>
           <SlideTitle size="xl">
             Planned with{" "}
             <InlineChip label="Claude AI" tone="indigo" scale="match" />.<br />
@@ -492,11 +510,11 @@ export default function DesignSystemDeck() {
             the live pages use.
           </Lead>
           <div style={{
-            marginTop: 56,
-            paddingTop: 24,
+            marginTop: "var(--space-10)",
+            paddingTop: "var(--space-6)",
             borderTop: "1px solid var(--border)",
             display: "flex",
-            gap: 40,
+            gap: "var(--space-9)",
             flexWrap: "wrap",
           }}>
             {[
@@ -509,7 +527,7 @@ export default function DesignSystemDeck() {
                 <p style={{
                   fontFamily: "var(--font-mono)",
                   fontSize: "var(--text-eyebrow)",
-                  letterSpacing: "0.1em",
+                  letterSpacing: "0.08em",
                   textTransform: "uppercase",
                   color: "var(--muted)",
                   margin: 0,
@@ -528,8 +546,8 @@ export default function DesignSystemDeck() {
           </div>
         </Slide>
 
-        {/* 02 — Introduction (manifesto) */}
-        <Slide id="intro" index={2} total={SLIDES.length}>
+        {/* 02 — Introduction */}
+        <Slide id="intro">
           <Eyebrow>Introduction</Eyebrow>
           <SlideTitle>A working artifact, not a deliverable.</SlideTitle>
           <Lead>
@@ -539,8 +557,8 @@ export default function DesignSystemDeck() {
           </Lead>
         </Slide>
 
-        {/* 03 — Why (manifesto) */}
-        <Slide id="why" index={3} total={SLIDES.length} tint="surface">
+        {/* 03 — Why */}
+        <Slide id="why" tint="surface">
           <Eyebrow>Why this exists</Eyebrow>
           <SlideTitle>Drift was the problem. Code was the answer.</SlideTitle>
           <Lead>
@@ -550,15 +568,15 @@ export default function DesignSystemDeck() {
           </Lead>
         </Slide>
 
-        {/* 04 — Philosophy (grid) */}
-        <Slide id="philosophy" index={4} total={SLIDES.length} align="start">
+        {/* 04 — Philosophy */}
+        <Slide id="philosophy" align="start">
           <Eyebrow>Four principles</Eyebrow>
           <SlideTitle>The opinions that shape every decision.</SlideTitle>
           <div style={{
-            marginTop: 40,
+            marginTop: "var(--space-9)",
             display: "grid",
             gridTemplateColumns: "repeat(2, 1fr)",
-            gap: 16,
+            gap: "var(--space-4)",
           }}>
             {[
               { n: "01", title: "No primary, on purpose", body: "Three button tiers, none dominant. The work is the hero." },
@@ -569,8 +587,8 @@ export default function DesignSystemDeck() {
               <div key={p.n} style={{
                 background: "var(--surface)",
                 border: "1px solid var(--border)",
-                borderRadius: 16,
-                padding: 24,
+                borderRadius: "var(--radius-lg)",
+                padding: "var(--space-6)",
               }}>
                 <p style={{
                   fontFamily: "var(--font-mono)",
@@ -578,7 +596,7 @@ export default function DesignSystemDeck() {
                   color: "var(--muted)",
                   letterSpacing: "0.08em",
                   margin: 0,
-                  marginBottom: 16,
+                  marginBottom: "var(--space-4)",
                 }}>{p.n}</p>
                 <p style={{
                   fontFamily: "var(--font-body)",
@@ -594,25 +612,25 @@ export default function DesignSystemDeck() {
                   fontSize: "var(--text-body)",
                   color: "var(--muted2)",
                   margin: 0,
-                  lineHeight: 1.55,
+                  lineHeight: 1.6,
                 }}>{p.body}</p>
               </div>
             ))}
           </div>
         </Slide>
 
-        {/* 05 — AI workflow (map) */}
-        <Slide id="workflow" index={5} total={SLIDES.length} tint="surface" align="start">
+        {/* 05 — AI workflow */}
+        <Slide id="workflow" tint="surface" align="start">
           <Eyebrow>AI-assisted workflow</Eyebrow>
           <SlideTitle>Plan in Claude AI. Build in Claude Code.</SlideTitle>
           <Lead>
             Two modes, one loop. The plan file is the contract between them.
           </Lead>
           <div style={{
-            marginTop: 40,
+            marginTop: "var(--space-9)",
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
-            gap: 12,
+            gap: "var(--space-3)",
           }}>
             {[
               { step: "Plan",    tool: "Claude AI",   body: "Decisions as prose. Tradeoffs named." },
@@ -623,8 +641,8 @@ export default function DesignSystemDeck() {
               <div key={s.step} style={{
                 background: "var(--bg)",
                 border: "1px solid var(--border)",
-                borderRadius: 12,
-                padding: 20,
+                borderRadius: "var(--radius-md)",
+                padding: "var(--space-5)",
               }}>
                 <p style={{
                   fontFamily: "var(--font-mono)",
@@ -632,7 +650,7 @@ export default function DesignSystemDeck() {
                   color: "var(--muted)",
                   letterSpacing: "0.08em",
                   margin: 0,
-                  marginBottom: 12,
+                  marginBottom: "var(--space-3)",
                 }}>
                   {String(i + 1).padStart(2, "0")} · {s.tool}
                 </p>
@@ -649,15 +667,15 @@ export default function DesignSystemDeck() {
                   fontSize: "var(--text-body)",
                   color: "var(--muted2)",
                   margin: 0,
-                  lineHeight: 1.5,
+                  lineHeight: 1.6,
                 }}>{s.body}</p>
               </div>
             ))}
           </div>
         </Slide>
 
-        {/* 06 — Tokens chapter cover (spec) */}
-        <Slide id="tokens" index={6} total={SLIDES.length}>
+        {/* 06 — Tokens spec */}
+        <Slide id="tokens">
           <Eyebrow>Tokens</Eyebrow>
           <SlideTitle>Colors, type, spacing, motion — one CSS file.</SlideTitle>
           <Lead>
@@ -665,10 +683,10 @@ export default function DesignSystemDeck() {
             Components read tokens. Pages read components. Nothing reads hexes.
           </Lead>
           <div style={{
-            marginTop: 48,
+            marginTop: "var(--space-9)",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-            gap: 12,
+            gap: "var(--space-3)",
           }}>
             {[
               { name: "Canvas",  token: "--bg" },
@@ -683,16 +701,16 @@ export default function DesignSystemDeck() {
               <div key={s.token} style={{
                 background: "var(--surface)",
                 border: "1px solid var(--border)",
-                borderRadius: 12,
-                padding: 12,
+                borderRadius: "var(--radius-md)",
+                padding: "var(--space-3)",
               }}>
                 <div style={{
                   width: "100%",
                   aspectRatio: "5 / 3",
-                  borderRadius: 8,
+                  borderRadius: "var(--radius-sm)",
                   background: `var(${s.token})`,
                   border: "1px solid var(--border)",
-                  marginBottom: 10,
+                  marginBottom: "var(--space-3)",
                 }} />
                 <p style={{
                   fontFamily: "var(--font-body)",
@@ -700,6 +718,7 @@ export default function DesignSystemDeck() {
                   fontWeight: 500,
                   color: "var(--text)",
                   margin: 0,
+                  marginBottom: 4,
                 }}>{s.name}</p>
                 <TokenPill token={s.token} />
               </div>
@@ -707,20 +726,20 @@ export default function DesignSystemDeck() {
           </div>
         </Slide>
 
-        {/* 07 — Without tokens (comparison: half 1) */}
-        <Slide id="without" index={7} total={SLIDES.length} tint="cool">
+        {/* 07 — Without tokens */}
+        <Slide id="without" tint="warm">
           <Eyebrow>Without tokens</Eyebrow>
           <SlideTitle>Decisions trapped in pixel literals.</SlideTitle>
           <Lead max={520}>
             Every value is independent. A theme change is a search-and-replace. Drift is one
             careless paste away.
           </Lead>
-          <pre style={{
-            marginTop: 32,
-            padding: 24,
+          <pre data-scrollable style={{
+            marginTop: "var(--space-7)",
+            padding: "var(--space-6)",
             background: "var(--bg)",
             border: "1px solid var(--border)",
-            borderRadius: 12,
+            borderRadius: "var(--radius-md)",
             fontFamily: "var(--font-mono)",
             fontSize: "var(--text-mono-lg)",
             lineHeight: 1.75,
@@ -736,19 +755,19 @@ transition:    180ms cubic-bezier(0.22, 1, 0.36, 1);`}
         </Slide>
 
         {/* 08 — With tokens */}
-        <Slide id="with" index={8} total={SLIDES.length}>
+        <Slide id="with">
           <Eyebrow>With tokens</Eyebrow>
           <SlideTitle>Decisions named. Drift impossible.</SlideTitle>
           <Lead max={520}>
             Every value is a reference. A theme change is one variable redefinition. There is
             only one place to change anything.
           </Lead>
-          <pre style={{
-            marginTop: 32,
-            padding: 24,
+          <pre data-scrollable style={{
+            marginTop: "var(--space-7)",
+            padding: "var(--space-6)",
             background: "var(--surface)",
             border: "1px solid var(--border)",
-            borderRadius: 12,
+            borderRadius: "var(--radius-md)",
             fontFamily: "var(--font-mono)",
             fontSize: "var(--text-mono-lg)",
             lineHeight: 1.75,
@@ -763,16 +782,16 @@ transition:    var(--dur-fast) var(--ease-expo);`}
           </pre>
         </Slide>
 
-        {/* 09 — Buttons (demo) */}
-        <Slide id="buttons" index={9} total={SLIDES.length} tint="surface" align="start">
+        {/* 09 — Buttons */}
+        <Slide id="buttons" tint="surface" align="start">
           <Eyebrow>Buttons</Eyebrow>
           <SlideTitle>Three tiers, no primary.</SlideTitle>
           <Lead>The work is the hero. None of these buttons is allowed to compete for attention.</Lead>
           <div style={{
-            marginTop: 48,
+            marginTop: "var(--space-9)",
             display: "grid",
             gridTemplateColumns: "1fr",
-            gap: 16,
+            gap: "var(--space-4)",
           }}>
             {[
               { variant: "chrome" as const, label: "Chrome — page-level chrome, elevated", example: "Contact" },
@@ -782,12 +801,12 @@ transition:    var(--dur-fast) var(--ease-expo);`}
               <div key={row.variant} style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 240px",
-                gap: 24,
+                gap: "var(--space-6)",
                 alignItems: "center",
-                padding: "20px 24px",
+                padding: "var(--space-5) var(--space-6)",
                 background: "var(--bg)",
                 border: "1px solid var(--border)",
-                borderRadius: 12,
+                borderRadius: "var(--radius-md)",
               }}>
                 <p style={{
                   fontFamily: "var(--font-body)",
@@ -805,15 +824,15 @@ transition:    var(--dur-fast) var(--ease-expo);`}
           </div>
         </Slide>
 
-        {/* 10 — Chip tones (demo grid) */}
-        <Slide id="chips" index={10} total={SLIDES.length} align="start">
+        {/* 10 — Chip tones */}
+        <Slide id="chips" align="start">
           <Eyebrow>Chip tones</Eyebrow>
           <SlideTitle>Six tones for inline emphasis.</SlideTitle>
           <div style={{
-            marginTop: 40,
+            marginTop: "var(--space-9)",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: 12,
+            gap: "var(--space-3)",
           }}>
             {([
               { tone: "indigo",  label: "AI copilot" },
@@ -826,11 +845,11 @@ transition:    var(--dur-fast) var(--ease-expo);`}
               <div key={c.tone} style={{
                 background: "var(--surface)",
                 border: "1px solid var(--border)",
-                borderRadius: 12,
-                padding: 20,
+                borderRadius: "var(--radius-md)",
+                padding: "var(--space-5)",
                 display: "flex",
                 flexDirection: "column",
-                gap: 12,
+                gap: "var(--space-3)",
                 alignItems: "flex-start",
               }}>
                 <InlineChip label={c.label} tone={c.tone} scale="match" />
@@ -838,7 +857,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                   fontFamily: "var(--font-mono)",
                   fontSize: "var(--text-mono)",
                   color: "var(--muted)",
-                  letterSpacing: "0.06em",
+                  letterSpacing: "0.08em",
                   textTransform: "uppercase",
                   margin: 0,
                 }}>
@@ -849,31 +868,31 @@ transition:    var(--dur-fast) var(--ease-expo);`}
           </div>
         </Slide>
 
-        {/* 11 — Pull quote */}
-        <Slide id="quote" index={11} total={SLIDES.length} tint="warm">
+        {/* 11 — Pull quote — matches the system Pullquote (border-left var(--text),
+            no italic). Sized up because the deck makes this a moment slide. */}
+        <Slide id="quote" tint="warm">
           <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "left" }}>
             <Eyebrow>Planning</Eyebrow>
             <blockquote style={{
               margin: 0,
-              borderLeft: "2px solid var(--accent-warm)",
-              paddingLeft: 24,
+              borderLeft: "2px solid var(--text)",
+              paddingLeft: "var(--space-6)",
               fontFamily: "var(--font-body)",
               fontSize: "clamp(28px, 4vw, 44px)",
-              fontWeight: 300,
+              fontWeight: 400,
               lineHeight: 1.2,
               letterSpacing: "-0.025em",
               color: "var(--text)",
-              fontStyle: "italic",
             }}>
               The plan is the artifact.<br />
               The code follows.
             </blockquote>
             <p style={{
-              marginTop: 24,
-              marginLeft: 26,
+              marginTop: "var(--space-6)",
+              marginLeft: "calc(var(--space-6) + 2px)",
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-eyebrow)",
-              letterSpacing: "0.1em",
+              letterSpacing: "0.08em",
               textTransform: "uppercase",
               color: "var(--muted)",
             }}>
@@ -883,7 +902,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
         </Slide>
 
         {/* 12 — Closer */}
-        <Slide id="closer" index={12} total={SLIDES.length}>
+        <Slide id="closer">
           <Eyebrow>End of deck</Eyebrow>
           <SlideTitle size="xl">
             Don’t just design interfaces.
@@ -891,17 +910,17 @@ transition:    var(--dur-fast) var(--ease-expo);`}
             Design the system behind them.
           </SlideTitle>
           <div style={{
-            marginTop: 56,
+            marginTop: "var(--space-10)",
             display: "flex",
-            gap: 12,
+            gap: "var(--space-3)",
             flexWrap: "wrap",
           }}>
-            <Link href="/system" style={{ textDecoration: "none" }}>
-              <Button variant="inline">Read as article →</Button>
-            </Link>
-            <Link href="/" style={{ textDecoration: "none" }}>
-              <Button variant="tag">Back to portfolio</Button>
-            </Link>
+            <Button asChild variant="inline">
+              <Link href="/system">Read as article →</Link>
+            </Button>
+            <Button asChild variant="inline">
+              <Link href="/">Back to portfolio</Link>
+            </Button>
           </div>
         </Slide>
       </main>

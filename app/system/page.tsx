@@ -377,29 +377,9 @@ export default function DesignSystemPage() {
             Portfolio
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Link
-              href="/system/deck"
-              style={{
-                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
-                letterSpacing: "0.08em", textTransform: "uppercase",
-                color: "var(--muted)", padding: "8px 12px",
-                display: "inline-flex", alignItems: "center", gap: "6px",
-                textDecoration: "none",
-                border: "1px solid var(--border)",
-                borderRadius: "8px",
-                transition: "color 0.18s, border-color 0.18s",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.color = "var(--text)";
-                e.currentTarget.style.borderColor = "var(--text)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.color = "var(--muted)";
-                e.currentTarget.style.borderColor = "var(--border)";
-              }}
-            >
-              View as deck →
-            </Link>
+            <Button asChild variant="inline">
+              <Link href="/system/deck">View as deck →</Link>
+            </Button>
             <ThemeToggle />
           </div>
         </div>
