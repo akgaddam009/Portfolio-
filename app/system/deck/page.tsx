@@ -178,12 +178,12 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
   const currentIndex = SLIDES.findIndex(s => s.id === active);
   return (
     <aside className="deck-rail" aria-label="Deck navigation">
-      {/* Mirrors the case-study rail header: small mono caps label above
-          the section nav so visitors know what document they're navigating. */}
+      {/* Header label — small mono caps, same treatment as the article
+          sidebar group labels (app/system/page.tsx:220). */}
       <p style={{
         fontFamily: "var(--font-mono)",
-        fontSize: "var(--text-mono)",
-        letterSpacing: "0.08em",
+        fontSize: "var(--text-eyebrow)",
+        letterSpacing: "0.1em",
         textTransform: "uppercase",
         color: "var(--muted)",
         margin: 0,
@@ -192,9 +192,10 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
         Portfolio · Design system
       </p>
 
-      {/* Section nav — mono caps, 44px touch target. Same typographic
-          treatment + interaction model as cs-rail (CaseStudyDetail.tsx:715).
-          Sliding terracotta indicator via Framer layoutId. */}
+      {/* Section nav — body font, matching the article sidebar
+          (app/system/page.tsx:237). The article is the deck's sister page;
+          they share a type system. The case-study mono-caps rail is its
+          own pattern for its own context. */}
       <nav style={{ position: "relative" }}>
         {SLIDES.map(s => {
           const isActive = s.id === active;
@@ -208,8 +209,8 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
                 position: "relative",
                 display: "flex",
                 alignItems: "center",
-                /* 14px top/bottom + ~13px line-height hits the 44px WCAG
-                   2.5.5 floor — matches cs-rail. */
+                /* 14px padding + ~17px line-height hits the 44px WCAG 2.5.5
+                   floor. Matches the system's --space-8 = 44px touch token. */
                 padding: "14px 8px 14px 16px",
                 minHeight: "44px",
                 width: "100%",
@@ -218,13 +219,12 @@ function DeckRail({ active, onJump }: { active: SlideId; onJump: (id: SlideId) =
                 border: "none",
                 borderRadius: "var(--radius-xs)",
                 cursor: "pointer",
-                fontFamily: "var(--font-mono)",
-                fontSize: "var(--text-mono)",
-                fontWeight: 400,
-                lineHeight: 1.3,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-body)",
                 color: isActive ? "var(--text)" : "var(--muted)",
+                fontWeight: isActive ? 500 : 400,
+                lineHeight: 1.3,
+                letterSpacing: "-0.005em",
                 transition: "color var(--dur-base) var(--ease-expo), background var(--dur-fast) var(--ease-expo)",
               }}
             >
