@@ -1117,7 +1117,7 @@ function SystemFeatureCard() {
           {/* Body */}
           <div style={{ padding: "12px 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
-              <AccentChip label="AI Experiments" tone="violet" icon={Sparkles} />
+              <AccentChip label="AI Exploration" tone="violet" icon={Sparkles} />
               {["Design Language", "Built with Claude"].map(tag => (
                 <WorkChip key={tag} label={tag} />
               ))}
