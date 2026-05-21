@@ -10,17 +10,7 @@ import { isUnlocked } from "@/lib/auth";
    CaseStudyDetail narrative. These are exploration-style builds — quick
    Claude Code proofs of concept — that don't need the full multi-section
    case study treatment. */
-const SHORT_FORM_SLUGS: Record<string, { paragraphs: string[]; builtWith: string; media?: { src: string } }> = {
-  "astra": {
-    paragraphs: [
-      "Astra is an exploration of what AI-assisted contract review could look like inside a B2B SaaS workflow — covering the parts where the model is confident, and the parts where it isn't.",
-      "Two flows: an AI-led first pass that surfaces clause-level risks and recommended edits, and an approval flow for the human reviewer to accept, reject, or escalate each suggestion.",
-      "Designed and built end-to-end as a working prototype, not a Figma file — the prototype runs, the flows are clickable, the AI suggestions are real.",
-    ],
-    builtWith: "Built solo in 6–8 hours with Claude Code",
-    media: { src: "/images/astra/overview.mp4" },
-  },
-};
+const SHORT_FORM_SLUGS: Record<string, { paragraphs: string[]; builtWith: string; media?: { src: string } }> = {};
 
 /* Slugs that are completely hidden from the public — no static page is
    generated, no metadata, no route. Anyone visiting these URLs gets a
