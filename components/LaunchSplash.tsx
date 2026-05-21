@@ -1,28 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
-/* Launch splash — single typographic moment, premium-portfolio rhythm.
+/* Launch splash — particle-typography "Arun Gaddam" that assembles from
+   random positions, reacts to cursor, then dismisses. Shown once per
+   session (sessionStorage flag) so it doesn't reappear on every nav.
 
-   - "Arun Gaddam" reveals character-by-character via stagger + clip mask
-   - A hairline draws underneath during the hold
-   - Sub-line ("Senior Product Designer") fades in after the name lands
-   - Whole composition lifts and fades on exit
-   - Once per session (sessionStorage); reduced-motion shortens timings
-   - No canvas, no particles — just typography + motion */
-
-const NAME = "Arun Gaddam";
-const SUBTITLE = "Senior Product Designer";
-
-const EASE = [0.22, 1, 0.36, 1] as const;
-const EASE_OUT = [0.4, 0, 0.2, 1] as const;
-
+   - Targets sampled from an offscreen canvas at CSS pixel resolution
+   - Particles spring toward targets with friction + cursor repel field
+   - Auto-dismisses after ~3s (or on click) with a soft fade
+   - prefers-reduced-motion: particles snap to position, no repel, faster fade
+   - Theme-aware via --text and --bg tokens */
 export default function LaunchSplash() {
   const [show, setShow] = useState(true);
-  const [exiting, setExiting] = useState(false);
-  const reduced = useReducedMotion();
+  const [fading, setFading] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Once-per-session gating. SSR renders the splash; on client, if the
+  // session flag is already set, hide immediately (single frame of flash
+  // on subsequent loads is acceptable).
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem("launch-splash-seen")) {
@@ -30,140 +26,171 @@ export default function LaunchSplash() {
       return;
     }
     sessionStorage.setItem("launch-splash-seen", "1");
-
-    const hold = reduced ? 600 : 1500;     // total visible time after reveal
-    const exitMs = reduced ? 300 : 750;
-
-    // Reveal completes ~1100ms after mount; then hold; then begin exit.
-    const t1 = setTimeout(() => setExiting(true), 1100 + hold);
-    const t2 = setTimeout(() => setShow(false),  1100 + hold + exitMs);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hold = reduced ? 1200 : 2400;
+    const fadeMs = 600;
+    const t1 = setTimeout(() => setFading(true), hold);
+    const t2 = setTimeout(() => setShow(false), hold + fadeMs);
     return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [reduced]);
+  }, []);
+
+  // Particle simulation. Runs while `show` is true.
+  useEffect(() => {
+    if (!show) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width = `${W}px`;
+    canvas.style.height = `${H}px`;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+
+    /* Render text to an offscreen canvas (CSS pixels) and sample alpha
+       at a regular grid to build the target-position list. */
+    const text = "Arun Gaddam";
+    const fontSize = Math.min(W * 0.13, 200);
+    const off = document.createElement("canvas");
+    off.width = W;
+    off.height = H;
+    const octx = off.getContext("2d");
+    if (!octx) return;
+    octx.fillStyle = "#000";
+    octx.font = `400 ${fontSize}px Inter, system-ui, sans-serif`;
+    octx.textAlign = "center";
+    octx.textBaseline = "middle";
+    octx.fillText(text, W / 2, H / 2);
+    const data = octx.getImageData(0, 0, W, H).data;
+
+    const step = W < 600 ? 5 : 4;
+    type P = { x: number; y: number; vx: number; vy: number; tx: number; ty: number };
+    const particles: P[] = [];
+    for (let y = 0; y < H; y += step) {
+      for (let x = 0; x < W; x += step) {
+        if (data[(y * W + x) * 4 + 3] > 128) {
+          particles.push({
+            x: reduced ? x : Math.random() * W,
+            y: reduced ? y : Math.random() * H,
+            vx: 0,
+            vy: 0,
+            tx: x,
+            ty: y,
+          });
+        }
+      }
+    }
+
+    /* Cursor repel field. Only relevant when motion isn't reduced. */
+    const mouse = { x: -9999, y: -9999 };
+    const onMove = (e: PointerEvent) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    };
+    const onLeave = () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    };
+    if (!reduced) {
+      window.addEventListener("pointermove", onMove, { passive: true });
+      window.addEventListener("pointerleave", onLeave);
+    }
+
+    const SPRING = 0.06;
+    const FRICTION = 0.88;
+    const REPEL_R = 90;
+
+    const fill = () =>
+      getComputedStyle(document.documentElement).getPropertyValue("--text").trim() || "#1d1d1f";
+
+    let raf = 0;
+    const tick = () => {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = fill();
+
+      for (const p of particles) {
+        const dx = p.tx - p.x;
+        const dy = p.ty - p.y;
+        p.vx += dx * SPRING;
+        p.vy += dy * SPRING;
+
+        if (!reduced) {
+          const mdx = p.x - mouse.x;
+          const mdy = p.y - mouse.y;
+          const md2 = mdx * mdx + mdy * mdy;
+          if (md2 < REPEL_R * REPEL_R) {
+            const md = Math.sqrt(md2) || 1;
+            const force = (REPEL_R - md) / REPEL_R;
+            p.vx += (mdx / md) * force * 6;
+            p.vy += (mdy / md) * force * 6;
+          }
+        }
+
+        p.vx *= FRICTION;
+        p.vy *= FRICTION;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        ctx.fillRect(p.x, p.y, 1.6, 1.6);
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerleave", onLeave);
+    };
+  }, [show]);
 
   if (!show) return null;
 
-  // Character reveal — stagger each glyph in. Spaces preserved via a
-  // non-animating <span> so layout doesn't collapse.
-  const chars = NAME.split("");
-
   return (
-    <motion.div
+    <div
       role="presentation"
-      onClick={() => setExiting(true)}
-      initial={false}
-      animate={exiting ? "exit" : "shown"}
-      variants={{
-        shown: { opacity: 1, y: 0 },
-        exit:  { opacity: 0, y: -16, transition: { duration: reduced ? 0.3 : 0.7, ease: EASE_OUT } },
-      }}
+      onClick={() => setFading(true)}
       style={{
         position: "fixed",
         inset: 0,
         zIndex: 9999,
         background: "var(--bg)",
+        opacity: fading ? 0 : 1,
+        transition: "opacity 600ms cubic-bezier(0.22, 1, 0.36, 1)",
+        cursor: "pointer",
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        cursor: "pointer",
-        gap: "var(--space-5)",
       }}
       aria-label="Arun Gaddam"
     >
-      <h1
+      <canvas ref={canvasRef} aria-hidden="true" style={{ display: "block" }} />
+      {/* Skip-tag at the bottom for keyboard users and curiosity */}
+      <p
         style={{
-          /* Match the wordmark used in the nav and case-study top bar:
-             DM Sans, uppercase, weight 500, 0.06em tracking. Same font
-             family, same letter-form treatment — just sized up for splash. */
-          fontFamily: "var(--font-logo)",
-          fontSize: "clamp(38px, 7vw, 84px)",
-          fontWeight: 500,
-          letterSpacing: "0.06em",
-          textTransform: "uppercase",
-          lineHeight: 1.05,
-          color: "var(--text)",
-          margin: 0,
-          position: "relative",
-          display: "inline-block",
-          /* Clip the bottom slightly so the character rise stays masked. */
-          paddingBottom: "0.12em",
-        }}
-      >
-        {chars.map((c, i) => {
-          if (c === " ") {
-            return (
-              <span key={i} style={{ display: "inline-block", width: "0.32em" }} aria-hidden="true">
-                &nbsp;
-              </span>
-            );
-          }
-          return (
-            <span
-              key={i}
-              style={{
-                display: "inline-block",
-                /* Each character is masked inside its own clip box so the
-                   y-rise reveals from below, like type lifting off the
-                   baseline rather than fading in place. */
-                overflow: "hidden",
-                verticalAlign: "bottom",
-              }}
-              aria-hidden="true"
-            >
-              <motion.span
-                style={{ display: "inline-block" }}
-                initial={reduced ? { y: 0, opacity: 1 } : { y: "110%", opacity: 0 }}
-                animate={{ y: "0%", opacity: 1 }}
-                transition={{
-                  delay: reduced ? 0 : 0.08 + i * 0.045,
-                  duration: reduced ? 0.2 : 0.8,
-                  ease: EASE,
-                }}
-              >
-                {c}
-              </motion.span>
-            </span>
-          );
-        })}
-      </h1>
-
-      {/* Hairline that draws in from centre once the name has landed.
-          Quiet signature element — gives the moment a punctuation point. */}
-      <motion.div
-        initial={reduced ? { scaleX: 1, opacity: 0.5 } : { scaleX: 0, opacity: 0 }}
-        animate={{ scaleX: 1, opacity: 1 }}
-        transition={{
-          delay: reduced ? 0 : 0.95,
-          duration: reduced ? 0.2 : 0.7,
-          ease: EASE,
-        }}
-        style={{
-          width: 56,
-          height: 1,
-          background: "var(--accent-warm)",
-          transformOrigin: "center",
-        }}
-      />
-
-      <motion.p
-        initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: reduced ? 0 : 1.05,
-          duration: reduced ? 0.2 : 0.6,
-          ease: EASE,
-        }}
-        style={{
+          position: "absolute",
+          bottom: 32,
+          left: "50%",
+          transform: "translateX(-50%)",
           fontFamily: "var(--font-mono)",
-          fontSize: "var(--text-mono-lg)",
+          fontSize: "var(--text-mono)",
           letterSpacing: "0.12em",
           textTransform: "uppercase",
-          color: "var(--muted2)",
+          color: "var(--muted)",
           margin: 0,
+          opacity: 0.7,
         }}
       >
-        {SUBTITLE}
-      </motion.p>
-    </motion.div>
+        Click to enter
+      </p>
+    </div>
   );
 }
