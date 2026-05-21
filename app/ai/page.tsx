@@ -5,6 +5,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "@/components/ui/Icon";
+import AsciiWater from "@/components/AsciiWater";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -121,9 +122,12 @@ export default function AIArticlePage() {
 
       <main style={{ paddingTop: "52px" }}>
 
-        {/* Hero */}
-        <section style={{ padding: "64px 0 48px", borderBottom: "1px solid var(--border)" }}>
-          <div className="page-pad">
+        {/* Hero — ASCII ripple sits behind the headline as a generative
+            texture. Fits the page thesis (AI-built artifact) and gives the
+            otherwise-quiet hero a sense of substrate. */}
+        <section style={{ padding: "64px 0 48px", borderBottom: "1px solid var(--border)", position: "relative", overflow: "hidden" }}>
+          <AsciiWater opacity={0.35} fontSize={13} damping={0.984} colorVar="--muted2" />
+          <div className="page-pad" style={{ position: "relative", zIndex: 1 }}>
             <motion.div variants={container} initial="hidden" animate="show">
 
               <motion.div variants={fadeUp}>
