@@ -324,7 +324,11 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
                     letterSpacing: "-0.01em",
                     color: "var(--text)",
                     background: "var(--bg)",
-                    border: `1.5px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
+                    // Soften the error border: mix system red toward the warm
+                    // brand accent so it reads as "wrong" without breaking the
+                    // warm palette. Apple systemRed against terracotta felt
+                    // surgical / out-of-system.
+                    border: `1.5px solid ${pwError ? "color-mix(in srgb, var(--accent-error) 55%, var(--accent-warm) 45%)" : "var(--border)"}`,
                     borderRadius: "10px",
                     padding: "11px 14px",
                     outline: "none",
@@ -353,7 +357,10 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
                       style={{
                         fontFamily: "var(--font-mono)",
                         fontSize: "var(--text-mono)",
-                        color: "var(--accent-error)",
+                        // Message uses --muted2 instead of bright systemRed.
+                        // The softened border already signals "wrong"; the
+                        // message just carries the detail. Quieter, in-system.
+                        color: "var(--muted2)",
                         letterSpacing: "0.04em",
                         marginBottom: "10px",
                         textAlign: "left",
