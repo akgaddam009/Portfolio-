@@ -72,13 +72,14 @@ export default function LaunchSplash() {
     >
       <h1
         style={{
-          fontFamily: "var(--font-body)",
-          /* Display scale matching the home hero's premium tier; tracking
-             pulled in tight (-0.04em) so the name reads as a wordmark, not
-             a paragraph. */
-          fontSize: "clamp(44px, 8vw, 96px)",
-          fontWeight: 300,
-          letterSpacing: "-0.04em",
+          /* Match the wordmark used in the nav and case-study top bar:
+             DM Sans, uppercase, weight 500, 0.06em tracking. Same font
+             family, same letter-form treatment — just sized up for splash. */
+          fontFamily: "var(--font-logo)",
+          fontSize: "clamp(38px, 7vw, 84px)",
+          fontWeight: 500,
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
           lineHeight: 1.05,
           color: "var(--text)",
           margin: 0,
