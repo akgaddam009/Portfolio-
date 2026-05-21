@@ -7,6 +7,7 @@ const BASE_URL = "https://arungaddamux.vercel.app";
 const HIDDEN_SLUGS = new Set<string>([
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",
+  "astra",
 ]);
 
 export default function sitemap(): MetadataRoute.Sitemap {

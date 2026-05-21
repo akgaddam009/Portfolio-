@@ -1206,7 +1206,7 @@ function WorkPanel() {
   const CARD_ORDER = [
     "planful-esm-tables", "apple-business-listings", "fancode-homepage",
   ];
-  const EXPLORATION_ORDER = ["astra"];
+  const EXPLORATION_ORDER: string[] = [];
   const COMING_SOON = new Set<string>();
 
   const allCards = CARD_ORDER
@@ -1400,19 +1400,9 @@ function WorkPanel() {
           })}
         </div>
 
-        {/* AI Exploration — separate section below the main work grid.
-            Astra (case study) + Portfolio Design Language (meta artifact).
-            Labelled distinctly so visitors read these as Claude-Code-built
-            explorations, not shipped client work. */}
-        {(explorationCards.length > 0 || true) && (
+        {/* AI Exploration section — hidden for now. */}
+        {explorationCards.length > 0 && (
           <div style={{ padding: "32px 0 16px" }}>
-            <p style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 400,
-              letterSpacing: "0.1em", textTransform: "uppercase",
-              color: "var(--muted)", margin: "0 0 12px 0",
-            }}>
-              AI Exploration
-            </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {explorationCards.map((cs) => {
                 const href = `/work/${cs.slug}`;
@@ -2969,8 +2959,8 @@ function AiExplorationsPanel() {
             </motion.div>
           )}
 
-          {/* Portfolio Design Language — meta artifact card. */}
-          <SystemFeatureCard />
+          {/* Portfolio Design Language — hidden for now. */}
+          {/* <SystemFeatureCard /> */}
 
         </div>
       </div>
