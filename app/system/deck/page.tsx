@@ -193,15 +193,16 @@ function SlidePanel({
   tint,
   children,
   background,
-  align = "center",
 }: {
   id: SlideId;
   isActive: boolean;
   tint?: "warm" | "surface";
   children: React.ReactNode;
   background?: React.ReactNode;
-  align?: "start" | "center";
 }) {
+  // All slides top-align their content for consistency. Vertical centering
+  // on sparse slides left big dead bands of empty space top + bottom; the
+  // hop between centered and top-aligned slides read as a layout bug.
   const reduced = useReducedMotion();
   // Same bg as the landing panels — var(--bg). Tints layer on top.
   const bg =
@@ -225,7 +226,7 @@ function SlidePanel({
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        justifyContent: align === "center" ? "center" : "flex-start",
+        justifyContent: "flex-start",
         // Full-stretch — one card fills one viewport. 88px = nav 72 + gap 16.
         minHeight: "calc(100vh - 88px)",
       }}
@@ -236,7 +237,7 @@ function SlidePanel({
         zIndex: 1,
         width: "100%",
         maxWidth: 880,
-        margin: align === "center" ? "0 auto" : "0",
+        margin: "0",
       }}>
         {children}
       </div>
@@ -741,7 +742,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 04 — Philosophy */}
-            <SlidePanel id="philosophy" isActive={active === "philosophy"} align="start">
+            <SlidePanel id="philosophy" isActive={active === "philosophy"}>
               <Eyebrow>Four principles</Eyebrow>
               <SlideTitle>The opinions that shape every decision.</SlideTitle>
               <div style={{
@@ -792,7 +793,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 05 — AI workflow */}
-            <SlidePanel id="workflow" isActive={active === "workflow"} tint="surface" align="start">
+            <SlidePanel id="workflow" isActive={active === "workflow"} tint="surface">
               <Eyebrow>AI-assisted workflow</Eyebrow>
               <SlideTitle>Plan in Claude AI. Build in Claude Code.</SlideTitle>
               <Lead>
@@ -847,7 +848,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 06 — Tokens spec */}
-            <SlidePanel id="tokens" isActive={active === "tokens"} align="start">
+            <SlidePanel id="tokens" isActive={active === "tokens"}>
               <Eyebrow>Tokens</Eyebrow>
               <SlideTitle>Colors, type, spacing, motion — one CSS file.</SlideTitle>
               <Lead>
@@ -900,7 +901,7 @@ export default function DesignSystemDeck() {
             </SlidePanel>
 
             {/* 07 — Without tokens */}
-            <SlidePanel id="without" isActive={active === "without"} tint="warm" align="start">
+            <SlidePanel id="without" isActive={active === "without"} tint="warm">
               <Eyebrow>Without tokens</Eyebrow>
               <SlideTitle>Decisions trapped in pixel literals.</SlideTitle>
               <Lead max={520}>
@@ -928,7 +929,7 @@ transition:    180ms cubic-bezier(0.22, 1, 0.36, 1);`}
             </SlidePanel>
 
             {/* 08 — With tokens */}
-            <SlidePanel id="with" isActive={active === "with"} align="start">
+            <SlidePanel id="with" isActive={active === "with"}>
               <Eyebrow>With tokens</Eyebrow>
               <SlideTitle>Decisions named. Drift impossible.</SlideTitle>
               <Lead max={520}>
@@ -956,7 +957,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
             </SlidePanel>
 
             {/* 09 — Buttons */}
-            <SlidePanel id="buttons" isActive={active === "buttons"} tint="surface" align="start">
+            <SlidePanel id="buttons" isActive={active === "buttons"} tint="surface">
               <Eyebrow>Buttons</Eyebrow>
               <SlideTitle>Three tiers, no primary.</SlideTitle>
               <Lead>The work is the hero. None of these buttons is allowed to compete for attention.</Lead>
@@ -1000,7 +1001,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
             </SlidePanel>
 
             {/* 10 — Chip tones */}
-            <SlidePanel id="chips" isActive={active === "chips"} align="start">
+            <SlidePanel id="chips" isActive={active === "chips"}>
               <Eyebrow>Chip tones</Eyebrow>
               <SlideTitle>Six tones for inline emphasis.</SlideTitle>
               <div style={{
