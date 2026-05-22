@@ -1348,13 +1348,12 @@ function WorkPanel() {
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
                     {/* Thumbnail */}
-                    <div style={{ position: "relative", height: "220px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                    <div style={{ position: "relative", height: "220px", overflow: "hidden", padding: "12px 12px 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         <WorkCardThumb
                           src={WORK_THUMBS[cs.slug]}
                           poster={WORK_POSTERS[cs.slug]}
                           height={220}
-                          borderRadius="16px 16px 0 0"
                         />
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
