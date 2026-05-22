@@ -1920,7 +1920,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   max height and centered so they don't stretch to fill
                                   the full card width (lightbox shows full size).
                                   Sizes bumped ~30% so images read clearly across viewports. */}
-                              <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 325 : 587} compact={d.image.compact} />
+                              <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 228 : 587} compact={d.image.compact} />
                             </ScrollScaleMedia>
                             {d.image.caption && (
                               <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
