@@ -65,7 +65,7 @@ export type CaseStudy = {
     sub?: string;
   };
   problem: string;
-  problemBreakdown?: { points: string[]; richPoints?: { title: string; bullets: string[] }[]; impact?: string };
+  problemBreakdown?: { points: string[]; keyPoints?: string[]; richPoints?: { title: string; bullets: string[] }[]; impact?: string };
   problemImage?: CaseStudyImage;
   insight?: string;
   insightImage?: CaseStudyImage;
@@ -1192,13 +1192,15 @@ export const caseStudies: CaseStudy[] = [
       "At 493% year over year growth, Zetwerk's delivery process was producing 800+ challans a month. Eight people, 500+ suppliers, multiple Indian languages, all on paper, handwritten, reconciled through spreadsheets and email.\n\n==On the surface, the failure looked like delays and compliance risk. Underneath, it was structural.==",
 
     problemBreakdown: {
+      keyPoints: [
+        "8 employees tied up in challan creation for 800+ monthly requests",
+        "Compliance risk: delayed or inaccurate tax filings due to missing data",
+      ],
       points: [
         "Manual data entry prone to errors and typos",
         "No real-time visibility into delivery or inventory status",
         "Paper challans in multiple languages, hard to standardise",
         "Slow, error prone communication across warehouse, quality, and logistics teams",
-        "8 employees tied up in challan creation for 800+ monthly requests",
-        "Compliance risk: delayed or inaccurate tax filings due to missing data",
       ],
       impact:
         "Zetwerk's ~493% YoY growth outpaced its manual delivery processes, creating operational bottlenecks and compliance risks across a 500+ supplier network.",

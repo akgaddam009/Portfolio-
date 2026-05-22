@@ -543,14 +543,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         {cs.metrics && cs.metrics.length > 0 && (
           <div style={{ background: "var(--surface2)", padding: "var(--space-7) 0" }}>
             <div className="page-pad">
-              <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
+              <div style={{ display: "flex", gap: "32px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (
                   <div key={m.label} style={{
                     /* When there's only one metric, let it breathe across the full
-                       row instead of clamping body text into a 320px column that
-                       orphans words like "week." onto their own line. */
+                       row. Otherwise, basis 200px lets 3 metrics fit on one row at
+                       the rendered case-study width without orphaning the 3rd. */
                     maxWidth: m.body ? (cs.metrics!.length === 1 ? "560px" : "320px") : undefined,
-                    flex: m.body ? "1 1 280px" : undefined,
+                    flex: m.body ? "1 1 200px" : undefined,
                   }}>
                     {/* Eyebrow — always rendered as mono caps */}
                     <p style={{
@@ -1069,15 +1069,40 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <svg key={4} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 1h6l4 4v10H4z"/><polyline points="10 1 10 5 14 5"/><line x1="6" y1="9" x2="10" y2="13"/><line x1="10" y1="9" x2="6" y2="13"/></svg>,
                       <svg key={5} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 1L1 14h14L8 1z"/><line x1="8" y1="6" x2="8" y2="9"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>,
                     ];
+                    const keyPoints = cs.problemBreakdown!.keyPoints;
+                    const hasKeyPoints = keyPoints && keyPoints.length > 0;
                     return (
-                      <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                        {cs.problemBreakdown!.points.map((point, i) => (
-                          <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
-                            <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{problemIcons[i]}</div>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{point}</p>
+                      <>
+                        {hasKeyPoints && (
+                          <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+                            {keyPoints!.map((point, i) => (
+                              <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "12px", padding: "20px 22px" }}>
+                                <div style={{ color: "var(--accent-warm)", marginBottom: "12px" }}>{problemIcons[i + 4]}</div>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, lineHeight: 1.45, letterSpacing: "-0.015em", color: "var(--text)" }}>{point}</p>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        )}
+                        {hasKeyPoints ? (
+                          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
+                            {cs.problemBreakdown!.points.map((point, i) => (
+                              <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: "12px", fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
+                                <span aria-hidden="true" style={{ flexShrink: 0, marginTop: "7px", width: "3px", height: "3px", borderRadius: "50%", background: "var(--muted)" }} />
+                                <span>{point}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                            {cs.problemBreakdown!.points.map((point, i) => (
+                              <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
+                                <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{problemIcons[i]}</div>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{point}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
                     );
                   })()}
                   <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}>

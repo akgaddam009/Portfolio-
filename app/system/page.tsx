@@ -517,7 +517,7 @@ export default function DesignSystemPage() {
           >
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gridTemplateColumns: "repeat(2, 1fr)",
               gap: "16px",
             }}>
               {([
