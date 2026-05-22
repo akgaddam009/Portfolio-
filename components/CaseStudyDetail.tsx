@@ -286,8 +286,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           .cs-2col {
             grid-template-columns: 1fr !important;
           }
-          /* Tighten the top spacing above the back link on mobile */
-          .cs-main { padding-top: 32px !important; }
+          /* Top spacing above the back link on mobile — leaves room
+             between the floating top nav and the back link without
+             reclaiming the full desktop padding. */
+          .cs-main { padding-top: 96px !important; }
           .cs-hero-section { padding: var(--space-6) 0 var(--space-7) !important; }
           /* Before/After hero pair stays side-by-side on mobile (kept narrow). */
           .cs-2col-keep {

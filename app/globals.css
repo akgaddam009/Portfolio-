@@ -682,17 +682,6 @@ a { color: inherit; text-decoration: none; }
     min-height: 720px;
   }
 
-  /* About panel: center-align the text block below the portrait on mobile. */
-  .about-panel-body > * + * {
-    text-align: center;
-  }
-  .about-panel-body > * + * p,
-  .about-panel-body > * + * h1 {
-    text-align: center;
-  }
-  .about-panel-body > div[style*="flex-wrap"] {
-    justify-content: center;
-  }
 }
 
 /* ─── Film grain overlay ─────────────────────────────── */
