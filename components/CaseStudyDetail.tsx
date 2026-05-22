@@ -360,7 +360,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           background: "transparent",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <Link
             href="/"
             aria-label="Home. Arun Gaddam"
