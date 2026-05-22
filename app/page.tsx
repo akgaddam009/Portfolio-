@@ -516,7 +516,7 @@ function AboutPanel() {
   return (
     <div>
       <PanelHeader label="About me" />
-      <div style={{ padding: "16px 24px 48px" }}>
+      <div className="about-panel-body" style={{ padding: "16px 24px 48px" }}>
 
         {/* Portrait. illustration by default, real photo on hover */}
         <motion.div
@@ -1351,12 +1351,13 @@ function WorkPanel() {
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
                     {/* Thumbnail */}
-                    <div style={{ position: "relative", height: "220px", overflow: "hidden", padding: "12px 12px 0" }}>
+                    <div style={{ position: "relative", height: "220px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         <WorkCardThumb
                           src={WORK_THUMBS[cs.slug]}
                           poster={WORK_POSTERS[cs.slug]}
                           height={220}
+                          borderRadius="16px 16px 0 0"
                         />
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
@@ -2689,7 +2690,7 @@ function ContactPanel() {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE, delay: 0.16 }}
-          style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "24px" }}
+          style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "56px" }}
         >
           {/* Contact CTAs — matched to the case study detail page back-link
               pattern: same padding, height (44px), 8px radius, surface fill,

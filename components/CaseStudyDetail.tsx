@@ -286,6 +286,27 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           .cs-2col {
             grid-template-columns: 1fr !important;
           }
+          /* Tighten the top spacing above the back link on mobile */
+          .cs-main { padding-top: 32px !important; }
+          .cs-hero-section { padding: var(--space-6) 0 var(--space-7) !important; }
+          /* Before/After hero pair stays side-by-side on mobile (kept narrow). */
+          .cs-2col-keep {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+          }
+          /* "Existing dashboard" vs "Design goal" split card — stack on mobile */
+          .cs-existing-vs-goal {
+            grid-template-columns: 1fr !important;
+            gap: 1px !important;
+          }
+          /* ESM vs OLAP diagram — stack on mobile so the cell labels don't clip */
+          .cs-esm-olap {
+            grid-template-columns: 1fr !important;
+          }
+          .cs-esm-olap > div:first-child {
+            border-right: none !important;
+            border-bottom: 1px solid var(--border);
+          }
           /* Planful ESM outcomes side-by-side tiles */
           .cs-flex-tiles {
             flex-direction: column !important;
@@ -438,11 +459,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         )}
       </motion.header>
 
-      <main style={{ paddingTop: "80px" }}>
+      <main className="cs-main" style={{ paddingTop: "80px" }}>
 
         {/* Hero */}
         <section
           id={cs.slug === "fancode-homepage" ? "ch-cover" : undefined}
+          className="cs-hero-section"
           style={{ padding: "var(--space-9) 0" }}
         >
           <div className="page-pad">
@@ -528,7 +550,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             style={{ padding: "var(--space-9) 0" }}
           >
             <div className="page-pad">
-              <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+              <div className="cs-2col-keep" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 {([
                   { label: "Before", src: cs.outcomesCompare.before },
                   { label: "After",  src: cs.outcomesCompare.after  },
@@ -660,19 +682,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </motion.section>
         )}
 
-        {cs.contribution && (
-          <div className="page-pad">
-            <CsSection label="My contribution" navLabel="Role">
-              <div style={{ maxWidth: "640px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                {cs.contribution.split(/\n\n+/).map((para, i) => (
-                  <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.7, letterSpacing: "-0.005em", color: "var(--muted2)", margin: 0 }}>
-                    {parseHighlights(para)}
-                  </p>
-                ))}
-              </div>
-            </CsSection>
-          </div>
-        )}
+        {/* "My contribution" section removed — Role (already in the hero
+            meta block) covers the same ground. */}
 
         {/* Prototype Video used to render here (right after TLDR). Moved into the
             new "Final Design" section after Decisions so the storytelling flows:
@@ -861,9 +872,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
                     ESM vs OLAP data model (two different types of data)
                   </p>
-                  <div style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
+                  <div className="cs-esm-olap" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
                     {/* ESM — Tabular */}
-                    <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
+                    <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
                         ESM · Tabular
                       </span>
@@ -895,7 +906,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
 
                     {/* OLAP — Multi-dimensional */}
-                    <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
                         OLAP · Multi-dimensional
                       </span>
@@ -1645,7 +1656,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
                                 </div>
                                 {f.image.caption && (
-                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                                  <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                     {f.image.caption}
                                   </figcaption>
                                 )}
@@ -1664,7 +1675,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                     </div>
                                   ))}
                                 </div>
-                                <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                                <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                   {f.images.map(img => img.caption).filter(Boolean).join(" + ")}
                                 </figcaption>
                               </figure>
@@ -1976,7 +1987,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
                             </ScrollScaleMedia>
                             {d.image.caption && (
-                              <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                              <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                 {d.image.caption}
                               </figcaption>
                             )}
@@ -2351,7 +2362,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               />
                             </ScrollScaleMedia>
                             {d.image.caption && (
-                              <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
+                              <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                 {d.image.caption}
                               </figcaption>
                             )}
@@ -2364,7 +2375,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               <figure key={vi} style={{ margin: 0 }}>
                                 <VideoBlock src={v.src} appType={cs.type} chromeUrl={chromeUrl} />
                                 {v.caption && (
-                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
+                                  <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                     {v.caption}
                                   </figcaption>
                                 )}
@@ -2384,7 +2395,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   <img src={img.src} alt={img.alt} loading="lazy" decoding="async" style={{ width: "100%", display: "block" }} />
                                 </div>
                                 {img.caption && (
-                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
+                                  <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                     {img.caption}
                                   </figcaption>
                                 )}
@@ -3345,10 +3356,9 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
       </div>
       {!isEmpty && image?.caption && (
         <figcaption style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: "var(--text-eyebrow)",
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
+          fontFamily: "var(--font-body)",
+          fontSize: "var(--text-caption)",
+          letterSpacing: "-0.005em",
           color: "var(--muted)",
           marginTop: "10px",
           textAlign: "center",
@@ -3788,7 +3798,7 @@ function ProblemCardsBlock({
               onClick={onOpenImage ? () => onOpenImage(card.image!.src) : undefined}
               style={{
                 marginTop: "16px",
-                borderRadius: "8px",
+                borderRadius: "12px",
                 overflow: "hidden",
                 cursor: onOpenImage ? "zoom-in" : undefined,
               }}
@@ -3800,8 +3810,8 @@ function ProblemCardsBlock({
               />
               {card.image.caption && (
                 <p style={{
-                  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
-                  letterSpacing: "0.08em", textTransform: "uppercase",
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
+                  letterSpacing: "-0.005em",
                   color: "var(--muted)", textAlign: "center",
                   padding: "10px 0 0",
                   margin: 0,
@@ -3995,6 +4005,7 @@ function AppleChallengeBlock({ text }: { text: string }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.65, ease: EASE }}
+          className="cs-existing-vs-goal"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
