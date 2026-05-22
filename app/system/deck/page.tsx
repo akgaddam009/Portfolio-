@@ -26,15 +26,19 @@ const PANEL_SHADOW_ACTIVE_DARK  = "0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(
    ========================================================================= */
 
 const SLIDES = [
-  { id: "intro",      label: "Introduction" },
-  { id: "why",        label: "Why this exists" },
-  { id: "philosophy", label: "Four principles" },
-  { id: "workflow",   label: "AI workflow" },
-  { id: "tokens",     label: "Tokens" },
-  { id: "without",    label: "Without tokens" },
-  { id: "with",       label: "With tokens" },
-  { id: "buttons",    label: "Buttons" },
-  { id: "chips",      label: "Chip tones" },
+  { id: "intro",       label: "Introduction" },
+  { id: "why",         label: "Why this exists" },
+  { id: "philosophy",  label: "Four principles" },
+  { id: "workflow",    label: "AI workflow" },
+  { id: "tokens",      label: "Tokens" },
+  { id: "without",     label: "Without tokens" },
+  { id: "with",        label: "With tokens" },
+  { id: "responsive",  label: "Breakpoints" },
+  { id: "navigation",  label: "Top navigation" },
+  { id: "grids",       label: "Grids" },
+  { id: "buttons",     label: "Buttons" },
+  { id: "chips",       label: "Chip tones" },
+  { id: "splash",      label: "Launch splash" },
 ] as const;
 
 type SlideId = typeof SLIDES[number]["id"];
@@ -66,10 +70,19 @@ const TOC_GROUPS = [
     ],
   },
   {
+    group: "Layout",
+    items: [
+      { id: "responsive", label: "Breakpoints" },
+      { id: "navigation", label: "Top navigation" },
+      { id: "grids",      label: "Grids" },
+    ],
+  },
+  {
     group: "Components",
     items: [
       { id: "buttons",    label: "Buttons" },
       { id: "chips",      label: "Chip tones" },
+      { id: "splash",     label: "Launch splash" },
     ],
   },
 ] as const;
@@ -994,6 +1007,197 @@ transition:    var(--dur-fast) var(--ease-expo);`}
               </pre>
             </SlidePanel>
 
+            {/* — Layout group ─────────────────────────────────────────── */}
+
+            {/* Responsive breakpoints */}
+            <SlidePanel id="responsive" isActive={active === "responsive"}>
+              <Eyebrow>Responsive</Eyebrow>
+              <SlideTitle>Three breakpoints, one system.</SlideTitle>
+              <Lead>
+                Mobile-first. Tokens scale; only layout shifts. Each breakpoint
+                changes what fits, not what things look like.
+              </Lead>
+              <div style={{
+                marginTop: "var(--space-7)",
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "var(--space-4)",
+              }}>
+                {[
+                  {
+                    range: "≤ 640px",
+                    label: "Mobile",
+                    body: "Single column. Top-stacked nav. Tighter paddings. Inner grids collapse to one column.",
+                  },
+                  {
+                    range: "641–1023px",
+                    label: "Tablet",
+                    body: "Single column with the case-study rail hidden. Slide panels stay full-width.",
+                  },
+                  {
+                    range: "≥ 1024px",
+                    label: "Desktop",
+                    body: "Two-column layout: 280px rail + content. Full feature surface; all grids expand.",
+                  },
+                ].map(b => (
+                  <div key={b.range} style={{
+                    background: "var(--surface2)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                    padding: "var(--space-5)",
+                  }}>
+                    <p style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-mono)",
+                      color: "var(--muted)",
+                      letterSpacing: "0.08em",
+                      margin: 0,
+                      marginBottom: "var(--space-3)",
+                    }}>{b.range}</p>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-title-sm)",
+                      fontWeight: 500,
+                      letterSpacing: "-0.015em",
+                      color: "var(--text)",
+                      margin: 0,
+                      marginBottom: 8,
+                    }}>{b.label}</p>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body)",
+                      color: "var(--muted)",
+                      margin: 0,
+                      lineHeight: 1.6,
+                    }}>{b.body}</p>
+                  </div>
+                ))}
+              </div>
+            </SlidePanel>
+
+            {/* Top navigation */}
+            <SlidePanel id="navigation" isActive={active === "navigation"} tint="surface">
+              <Eyebrow>Navigation</Eyebrow>
+              <SlideTitle>Floating pill chips, every page.</SlideTitle>
+              <Lead>
+                One nav pattern across home, case study, deck, and gate. Top: 8px
+                from the viewport. 64px tall. 24px side gutter.
+              </Lead>
+              <div style={{
+                marginTop: "var(--space-7)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-4)",
+              }}>
+                {[
+                  { token: "position: fixed; top: 8px", body: "Floats above content, 8px breathing room from the viewport edge." },
+                  { token: "height: 64px",              body: "Same height across all routes so the page chrome is consistent." },
+                  { token: "padding: 0 24px",           body: "Side gutter matches the landing-page container gutter." },
+                  { token: "Wordmark pill",             body: "--font-logo, uppercase, 0.06em, --surface bg, --card-shadow, 12px radius, 44px touch target." },
+                  { token: "Action pill (right)",       body: "Outlined --surface + 1px --border, mono caps. Used for Next case study / View as deck." },
+                ].map(row => (
+                  <div key={row.token} style={{
+                    display: "grid",
+                    gridTemplateColumns: "200px 1fr",
+                    gap: "var(--space-5)",
+                    alignItems: "baseline",
+                    padding: "var(--space-4) var(--space-5)",
+                    background: "var(--bg)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                  }}>
+                    <code style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-mono)",
+                      color: "var(--muted2)",
+                      letterSpacing: "0.02em",
+                    }}>
+                      {row.token}
+                    </code>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body)",
+                      color: "var(--muted)",
+                      margin: 0,
+                      lineHeight: 1.55,
+                    }}>{row.body}</p>
+                  </div>
+                ))}
+              </div>
+            </SlidePanel>
+
+            {/* Grids */}
+            <SlidePanel id="grids" isActive={active === "grids"}>
+              <Eyebrow>Grids</Eyebrow>
+              <SlideTitle>Three column patterns power the system.</SlideTitle>
+              <Lead>
+                16px gap between top-level panels — matches the landing-page
+                horizontal rhythm. 24px outer gutter. 880px max content
+                width inside each panel.
+              </Lead>
+              <div style={{
+                marginTop: "var(--space-7)",
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "var(--space-4)",
+              }}>
+                {[
+                  {
+                    name: "2 × 2",
+                    spec: "grid-template-columns: repeat(2, 1fr)",
+                    uses: "Philosophy principles, paired comparisons.",
+                  },
+                  {
+                    name: "4-col stepwise",
+                    spec: "grid-template-columns: repeat(4, 1fr)",
+                    uses: "Workflow steps, sequential meta strips.",
+                  },
+                  {
+                    name: "Auto-fit chiclet",
+                    spec: "auto-fit, minmax(180px, 1fr)",
+                    uses: "Tokens swatches, chip tones, badges.",
+                  },
+                ].map(g => (
+                  <div key={g.name} style={{
+                    background: "var(--surface2)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                    padding: "var(--space-5)",
+                  }}>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-title-sm)",
+                      fontWeight: 500,
+                      letterSpacing: "-0.015em",
+                      color: "var(--text)",
+                      margin: 0,
+                      marginBottom: "var(--space-3)",
+                    }}>{g.name}</p>
+                    <code style={{
+                      display: "block",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-mono)",
+                      color: "var(--muted2)",
+                      background: "var(--bg)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "var(--radius-xs)",
+                      padding: "6px 8px",
+                      marginBottom: "var(--space-3)",
+                      overflow: "auto",
+                      whiteSpace: "nowrap",
+                    }}>{g.spec}</code>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body)",
+                      color: "var(--muted)",
+                      margin: 0,
+                      lineHeight: 1.55,
+                    }}>{g.uses}</p>
+                  </div>
+                ))}
+              </div>
+            </SlidePanel>
+
             {/* 09 — Buttons */}
             <SlidePanel id="buttons" isActive={active === "buttons"} tint="surface">
               <Eyebrow>Buttons</Eyebrow>
@@ -1077,6 +1281,61 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                     }}>
                       {c.tone}
                     </p>
+                  </div>
+                ))}
+              </div>
+            </SlidePanel>
+
+            {/* Launch splash */}
+            <SlidePanel id="splash" isActive={active === "splash"}>
+              <Eyebrow>Launch splash</Eyebrow>
+              <SlideTitle weight="manifesto">A signature, once per session.</SlideTitle>
+              <Lead>
+                Particle &ldquo;Arun Gaddam&rdquo; assembles on first visit. Skipped under
+                reduced-motion. Dismisses on any key or click. Modal dialog
+                with focus trap; never seen on a return visit.
+              </Lead>
+              <div style={{
+                marginTop: "var(--space-7)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-3)",
+              }}>
+                {[
+                  { label: "Gate",         body: "sessionStorage[launch-splash-seen] — set on first paint, never reappears in the same session." },
+                  { label: "Motion",       body: "Particles spring from random positions to the wordmark glyphs. SPRING 0.04, FRICTION 0.82 — critically damped." },
+                  { label: "Auto-dismiss", body: "Hold 2.4s, fade 600ms. Hold drops to 1.2s under prefers-reduced-motion." },
+                  { label: "Dismiss",      body: "Click anywhere · Escape · Enter · Space all close immediately." },
+                  { label: "A11y",         body: "role=dialog, aria-modal=true, aria-label=\"Arun Gaddam\". body[inert] while visible so focus stays inside." },
+                  { label: "Theme",        body: "fillStyle reads --text + --bg via getComputedStyle. Particles flip with the active theme." },
+                ].map(row => (
+                  <div key={row.label} style={{
+                    display: "grid",
+                    gridTemplateColumns: "140px 1fr",
+                    gap: "var(--space-5)",
+                    alignItems: "baseline",
+                    padding: "var(--space-4) var(--space-5)",
+                    background: "var(--surface2)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                  }}>
+                    <p style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-mono)",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      color: "var(--muted)",
+                      margin: 0,
+                    }}>
+                      {row.label}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body)",
+                      color: "var(--muted)",
+                      margin: 0,
+                      lineHeight: 1.55,
+                    }}>{row.body}</p>
                   </div>
                 ))}
               </div>
