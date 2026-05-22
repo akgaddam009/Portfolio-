@@ -3296,12 +3296,24 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
             </span>
           </div>
         ) : (
-          <div style={image?.displayHeight ? { height: image.displayHeight, overflow: "hidden" } : undefined}>
+          <div style={{
+            position: "relative",
+            width: "100%",
+            /* Reserve vertical space matching the image's final size so
+               the shimmer acts as a layout placeholder instead of a
+               300px-tall stub that collapses the panel during load.
+               If the data specifies displayHeight use it exactly;
+               otherwise default to a 16:10 aspect ratio so the
+               container takes a reasonable portion of the page width
+               regardless of when the image actually loads. */
+            ...(image?.displayHeight
+              ? { height: image.displayHeight, overflow: "hidden" }
+              : { aspectRatio: "16 / 10" }),
+          }}>
             {!loaded && (
-              <Shimmer
-                height={image?.displayHeight ?? 300}
-                borderRadius="0"
-              />
+              <div style={{ position: "absolute", inset: 0 }}>
+                <Shimmer height="100%" borderRadius="0" />
+              </div>
             )}
             <img
               src={image!.src}
@@ -3311,10 +3323,12 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
               onError={() => setErrored(true)}
               style={{
                 width: "100%",
-                display: loaded ? "block" : "none",
+                height: "100%",
+                display: "block",
                 objectFit: image?.displayHeight ? "cover" : "contain",
                 objectPosition: image?.objectPosition ?? "center center",
-                height: image?.displayHeight ? "100%" : undefined,
+                opacity: loaded ? 1 : 0,
+                transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             />
           </div>
@@ -4830,7 +4844,15 @@ function DesignApproachImage({ src, alt, maxHeight = 360, compact = false }: { s
     if (imgRef.current?.complete) setLoaded(true);
   }, [src]);
   return (
-    <div style={{ position: "relative", width: "100%", minHeight: loaded ? undefined : "120px" }}>
+    <div style={{
+      position: "relative",
+      width: "100%",
+      /* Reserve the eventual maxHeight (not 120px) during load so the
+         shimmer matches the final image size instead of compressing the
+         panel. Once loaded, minHeight clears and the image takes its
+         natural height inside the maxHeight cap. */
+      minHeight: loaded ? undefined : `${maxHeight}px`,
+    }}>
       {!loaded && (
         <div style={{ position: "absolute", inset: 0 }}>
           <Shimmer height="100%" borderRadius="0" />
@@ -4871,8 +4893,14 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
   if (isMobile) {
     return (
       <div style={{ display: "flex", justifyContent: "center", background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}>
-        <div style={{ position: "relative", width: "100%", maxWidth: "320px" }}>
-          {!ready && <Shimmer height={480} borderRadius="12px" />}
+        {/* Reserve mobile-phone aspect ratio (~9/19.5) so the shimmer
+            sits at the eventual video's height, not a 480px stub. */}
+        <div style={{ position: "relative", width: "100%", maxWidth: "320px", aspectRatio: "9 / 19.5" }}>
+          {!ready && (
+            <div style={{ position: "absolute", inset: 0 }}>
+              <Shimmer height="100%" borderRadius="12px" />
+            </div>
+          )}
           <video
             src={src}
             autoPlay
@@ -4881,7 +4909,15 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
             playsInline
             preload="none"
             onCanPlay={() => setReady(true)}
-            style={{ maxHeight: "640px", maxWidth: "100%", display: ready ? "block" : "none", borderRadius: "12px", background: "#0a0a0a" }}
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover",
+              borderRadius: "12px",
+              background: "#0a0a0a",
+              opacity: ready ? 1 : 0,
+              transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
           />
         </div>
       </div>
@@ -4909,19 +4945,34 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
           </span>
         </div>
       </div>
-      {/* Shimmer shown until video is ready to play */}
-      {!ready && <Shimmer height={400} borderRadius="0" />}
-      {/* Video */}
-      <video
-        src={src}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="none"
-        onCanPlay={() => setReady(true)}
-        style={{ width: "100%", display: ready ? "block" : "none", maxHeight: "520px", objectFit: "contain", background: "var(--surface)" }}
-      />
+      {/* Video well — reserves a 16:9 aspect-ratio box so the shimmer
+          sits at the eventual video's height. Without this the panel
+          collapsed to ~400px during load and then expanded once the
+          video started playing. */}
+      <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9", background: "var(--surface)" }}>
+        {!ready && (
+          <div style={{ position: "absolute", inset: 0 }}>
+            <Shimmer height="100%" borderRadius="0" />
+          </div>
+        )}
+        <video
+          src={src}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="none"
+          onCanPlay={() => setReady(true)}
+          style={{
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "contain",
+            background: "var(--surface)",
+            opacity: ready ? 1 : 0,
+            transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        />
+      </div>
     </div>
   );
 }
