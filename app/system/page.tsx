@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
+import { PaintedLadySpecimen } from "@/components/PaintedLady";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -21,6 +22,7 @@ const TOC = [
     group: "About",
     items: [
       { id: "introduction",   label: "Introduction" },
+      { id: "origin",         label: "Origin" },
       { id: "why",            label: "Why this system" },
       { id: "philosophy",     label: "Design philosophy" },
     ],
@@ -38,6 +40,7 @@ const TOC = [
     group: "Architecture",
     items: [
       { id: "system",         label: "System overview" },
+      { id: "source",         label: "Source" },
       { id: "tokens",         label: "Tokens" },
       { id: "components",     label: "Components" },
       { id: "patterns",       label: "Patterns" },
@@ -377,9 +380,6 @@ export default function DesignSystemPage() {
             Portfolio
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Button asChild variant="inline">
-              <Link href="/system/deck">View as deck →</Link>
-            </Button>
             <ThemeToggle />
           </div>
         </div>
@@ -490,10 +490,36 @@ export default function DesignSystemPage() {
             </Prose>
           </Section>
 
-          {/* 02 — Why this system was created */}
+          {/* 02 — Origin: the cocoon fable */}
+          <Section
+            id="origin"
+            number="02"
+            title="Origin"
+            description="The struggle is the system."
+          >
+            <Prose>
+              <Paragraph>
+                A man once cut open a cocoon to help the butterfly escape. The butterfly
+                emerged easily — but its wings stayed shriveled, its body swollen. It never
+                flew. The pressure of breaking out was the fluid the wings needed.
+              </Paragraph>
+              <Paragraph>
+                I learned design without a degree, without a mentor, without a Figma file
+                handed down. Every component on this site is the result of struggling through
+                the wrong abstraction before finding the right one. Every token is a hex I
+                chose four times before settling. The discipline you see here isn’t
+                preference — it’s what the work left behind.
+              </Paragraph>
+              <Pullquote>
+                If I had been shown the answer, the wings would have stayed soft.
+              </Pullquote>
+            </Prose>
+          </Section>
+
+          {/* 03 — Why this system was created */}
           <Section
             id="why"
-            number="02"
+            number="03"
             title="Why this exists"
             description="Drift was the problem. Code was the answer."
           >
@@ -514,7 +540,7 @@ export default function DesignSystemPage() {
           {/* 03 — Design philosophy */}
           <Section
             id="philosophy"
-            number="03"
+            number="04"
             title="Design philosophy"
             description="Four opinions that shape every decision below."
           >
@@ -579,7 +605,7 @@ export default function DesignSystemPage() {
           {/* 04 — AI-assisted workflow */}
           <Section
             id="ai-workflow"
-            number="04"
+            number="05"
             title="How AI helped"
             description="Plan in Claude AI. Build in Claude Code. The plan is the contract."
           >
@@ -640,7 +666,7 @@ export default function DesignSystemPage() {
           {/* 05 — Planning process */}
           <Section
             id="planning"
-            number="05"
+            number="06"
             title="Planning"
             description="Plan mode in Claude Code. Decisions before code."
           >
@@ -659,7 +685,7 @@ export default function DesignSystemPage() {
           {/* 06 — Claude AI research workflow */}
           <Section
             id="research"
-            number="06"
+            number="07"
             title="Research with Claude AI"
             description="Reference systems, principle synthesis, copywriting."
           >
@@ -680,7 +706,7 @@ export default function DesignSystemPage() {
           {/* 07 — Claude Code implementation workflow */}
           <Section
             id="implementation"
-            number="07"
+            number="08"
             title="Building with Claude Code"
             description="Plan as contract. Agent as builder. Browser as verifier."
           >
@@ -701,7 +727,7 @@ export default function DesignSystemPage() {
           {/* 08 — System architecture overview */}
           <Section
             id="system"
-            number="08"
+            number="09"
             title="Architecture"
             description="Four layers. Each one only talks to the layer below."
           >
@@ -758,10 +784,147 @@ export default function DesignSystemPage() {
             </div>
           </Section>
 
-          {/* 09 — Tokens */}
+          {/* 10 — Source: the specimen the palette was sampled from */}
+          <Section
+            id="source"
+            number="10"
+            title="Source"
+            description="The palette was not invented. It was sampled."
+          >
+            <Prose>
+              <Paragraph>
+                Years of iteration produced a restricted set of pigments — terracotta accent,
+                ink, two greys, paper. The same set, by accident, composes the wings of a
+                Painted Lady (<em>Vanessa cardui</em>): a butterfly that migrates across
+                continents over multiple generations, with no individual completing the round
+                trip. The match between its restraint and the system’s is what made it worth
+                keeping.
+              </Paragraph>
+              <Paragraph>
+                Five pigments earned a place in the token system. One was kept in the drawer.
+                The constraint is in what was left out.
+              </Paragraph>
+            </Prose>
+
+            {/* Specimen plate + caption */}
+            <div style={{
+              marginTop: "40px",
+              display: "grid",
+              gridTemplateColumns: "minmax(280px, 420px) 1fr",
+              gap: "48px",
+              alignItems: "center",
+            }} className="ds-source-plate">
+              <div style={{
+                background: "var(--bg)",
+                border: "1px solid var(--border)",
+                borderRadius: "12px",
+                padding: "32px 24px",
+                display: "flex",
+                justifyContent: "center",
+              }}>
+                <PaintedLadySpecimen width={340} showAnnotations={false} />
+              </div>
+              <div>
+                <p style={{
+                  fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                  letterSpacing: "0.22em", textTransform: "uppercase",
+                  color: "var(--muted)", margin: 0, marginBottom: "12px",
+                }}>
+                  Plate · 01
+                </p>
+                <p style={{
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)",
+                  lineHeight: 1.5, color: "var(--text)", margin: 0, marginBottom: "16px",
+                  letterSpacing: "-0.005em", fontStyle: "italic",
+                }}>
+                  Vanessa cardui
+                </p>
+                <p style={{
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                  lineHeight: 1.65, color: "var(--muted)", margin: 0, maxWidth: 440,
+                }}>
+                  The Painted Lady is famous for a migration no single butterfly completes —
+                  it takes multiple generations to make the round trip. The system was
+                  likewise built across many failed iterations; no single pass produced it.
+                </p>
+              </div>
+            </div>
+
+            {/* Wing → Token map */}
+            <div style={{ marginTop: "56px" }}>
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                letterSpacing: "0.08em", textTransform: "uppercase",
+                color: "var(--muted)", margin: 0, marginBottom: "16px",
+              }}>
+                Wing → token map
+              </p>
+              <div style={{ borderTop: "1px solid var(--border)" }}>
+                {[
+                  { swatch: "#d17b53", hex: "#D17B53", token: "--accent-warm", zone: "Forewing terracotta wash",       role: "Action · the single chromatic note" },
+                  { swatch: "#1d1d1f", hex: "#1D1D1F", token: "--text",        zone: "Wing margin (deep brown-black)", role: "Primary type · ink" },
+                  { swatch: "#424245", hex: "#424245", token: "--muted2",      zone: "Body and antennae",              role: "Tertiary type · captions" },
+                  { swatch: "#6e6e73", hex: "#6E6E73", token: "--muted",       zone: "Wing veins / smoky bands",       role: "Secondary type · supporting prose" },
+                  { swatch: "#ffffff", hex: "#FFFFFF", token: "--bg",          zone: "Submarginal white pupils",       role: "Paper · the surface everything floats on" },
+                  { swatch: "#f5e9d3", hex: "#F5E9D3", token: "—",             zone: "Cream patch near body",          role: "Reserved · in the drawer, absent from the system", reserved: true },
+                ].map((row) => (
+                  <div
+                    key={row.hex}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "auto 1.3fr 1fr 1.6fr",
+                      columnGap: "32px",
+                      alignItems: "center",
+                      padding: "16px 0",
+                      borderBottom: "1px solid var(--border)",
+                    }}
+                    className="ds-wing-row"
+                  >
+                    <span style={{
+                      display: "inline-block",
+                      width: 28,
+                      height: 28,
+                      background: row.swatch,
+                      border: "1px solid var(--border)",
+                      borderRadius: "4px",
+                      opacity: row.reserved ? 0.45 : 1,
+                    }} />
+                    <div style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body)",
+                      color: row.reserved ? "var(--muted)" : "var(--text)",
+                      fontStyle: row.reserved ? "italic" : "normal",
+                    }}>
+                      {row.zone}
+                    </div>
+                    <div style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-mono)",
+                      letterSpacing: "0.04em",
+                      color: row.reserved ? "var(--muted)" : "var(--muted2)",
+                    }}>
+                      <div>{row.hex}</div>
+                      <div style={{ color: "var(--muted)", marginTop: 2 }}>{row.token}</div>
+                    </div>
+                    <div style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body)",
+                      lineHeight: 1.5,
+                      color: "var(--muted)",
+                      fontStyle: row.reserved ? "italic" : "normal",
+                    }}>
+                      {row.role}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Section>
+
+          {/* 11 — Tokens */}
           <Section
             id="tokens"
-            number="09"
+            number="11"
             title="Token architecture"
             description="Colors, typography, spacing, radius, and motion — the entire visual vocabulary in a single CSS file."
           >
@@ -1062,7 +1225,7 @@ export default function DesignSystemPage() {
           {/* 10 — Components */}
           <Section
             id="components"
-            number="10"
+            number="12"
             title="Component architecture"
             description="Atomic UI built on tokens. Buttons, badges, chips, cards, inputs."
           >
@@ -1344,7 +1507,7 @@ export default function DesignSystemPage() {
           {/* 11 — Patterns */}
           <Section
             id="patterns"
-            number="11"
+            number="13"
             title="Patterns"
             description="Components composed into the work card pattern used across the homepage."
           >
@@ -1445,7 +1608,7 @@ export default function DesignSystemPage() {
           {/* 12 — Accessibility */}
           <Section
             id="accessibility"
-            number="12"
+            number="14"
             title="Accessibility philosophy"
             description="Accessibility is a token, not an audit."
           >
@@ -1477,7 +1640,7 @@ export default function DesignSystemPage() {
           {/* 13 — Governance */}
           <Section
             id="governance"
-            number="13"
+            number="15"
             title="Governance principles"
             description="Three rules that keep the system from rotting."
           >
@@ -1535,7 +1698,7 @@ export default function DesignSystemPage() {
           {/* 14 — Future scalability */}
           <Section
             id="future"
-            number="14"
+            number="16"
             title="Future scalability vision"
             description="What this system would need to grow into a multi-product design language."
           >
@@ -1584,6 +1747,10 @@ export default function DesignSystemPage() {
       <style jsx global>{`
         @media (max-width: 1023px) {
           .ds-sidebar { display: none; }
+          .ds-source-plate { grid-template-columns: 1fr !important; gap: 32px !important; }
+          .ds-wing-row { grid-template-columns: auto 1fr !important; row-gap: 4px; }
+          .ds-wing-row > :nth-child(3),
+          .ds-wing-row > :nth-child(4) { grid-column: 2; }
         }
       `}</style>
     </>
