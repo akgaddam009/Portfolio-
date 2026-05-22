@@ -42,7 +42,7 @@ export default function ThemeToggle() {
 
   // Render a placeholder on SSR so layout doesn't shift
   if (!mounted) {
-    return <div style={{ width: "52px", height: "44px", flexShrink: 0 }} />;
+    return <div style={{ width: "44px", height: "44px", flexShrink: 0 }} />;
   }
 
   return (
@@ -53,7 +53,7 @@ export default function ThemeToggle() {
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       title={dark ? "Switch to light mode" : "Switch to dark mode"}
       style={{
-        width: "52px",
+        width: "44px",
         height: "44px",
         borderRadius: "12px",
         border: "none",
