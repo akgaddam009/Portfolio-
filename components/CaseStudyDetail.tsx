@@ -1586,9 +1586,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               <figure style={{ margin: 0, marginTop: "10px" }}>
                                 <div
                                   {...zoomTriggerProps(() => setLightboxSrc(f.image!.src), `Enlarge: ${f.image.alt}`)}
-                                  style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                  style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--surface)", padding: "16px", cursor: "zoom-in" }}
                                 >
-                                  <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
+                                  <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={365} />
                                 </div>
                                 {f.image.caption && (
                                   <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
@@ -1599,14 +1599,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             )}
                             {f.images && f.images.length > 0 && (
                               <figure style={{ margin: "10px 0 0 0" }}>
-                                <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", display: "grid", gridTemplateColumns: `repeat(${f.images.length}, 1fr)` }}>
+                                <div style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--surface)", padding: "16px", display: "grid", gridTemplateColumns: `repeat(${f.images.length}, 1fr)`, gap: "16px" }}>
                                   {f.images.map((img, j) => (
                                     <div
                                       key={j}
                                       {...zoomTriggerProps(() => setLightboxSrc(img.src), `Enlarge: ${img.alt}`)}
-                                      style={{ cursor: "zoom-in", borderRight: j < f.images!.length - 1 ? "1px solid var(--border)" : "none" }}
+                                      style={{ cursor: "zoom-in" }}
                                     >
-                                      <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
+                                      <DesignApproachImage src={img.src} alt={img.alt} maxHeight={285} />
                                     </div>
                                   ))}
                                 </div>
@@ -1912,14 +1912,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             <ScrollScaleMedia
                               onClick={() => setLightboxSrc(d.image!.src)}
                               ariaLabel={`Enlarge: ${d.image.alt}`}
-                              style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                              style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--surface)", padding: "16px", cursor: "zoom-in" }}
                             >
                               {/* Renders the image at its natural aspect ratio so both
                                   wide screenshots and tall flow diagrams display fully
                                   without crop. `compact` images are capped at a shorter
                                   max height and centered so they don't stretch to fill
-                                  the full card width (lightbox shows full size). */}
-                              <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
+                                  the full card width (lightbox shows full size).
+                                  Sizes bumped ~30% so images read clearly across viewports. */}
+                              <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 260 : 470} compact={d.image.compact} />
                             </ScrollScaleMedia>
                             {d.image.caption && (
                               <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
