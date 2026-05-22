@@ -27,6 +27,7 @@ const PANEL_SHADOW_ACTIVE_DARK  = "0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(
 
 const SLIDES = [
   { id: "intro",       label: "Introduction" },
+  { id: "origin",      label: "Origin" },
   { id: "why",         label: "Why this exists" },
   { id: "philosophy",  label: "Four principles" },
   { id: "workflow",    label: "AI workflow" },
@@ -51,6 +52,7 @@ const TOC_GROUPS = [
     group: "About",
     items: [
       { id: "intro",      label: "Introduction" },
+      { id: "origin",     label: "Origin" },
       { id: "why",        label: "Why this exists" },
     ],
   },
@@ -1139,6 +1141,85 @@ export default function DesignSystemDeck() {
                   CSS file, a handful of React components. If this page
                   renders, the system is correct.
                 </p>
+              </div>
+            </HeroSlide>
+
+            {/* 02 — Origin — manifesto chapter. The cocoon fable retold in
+                first person as the philosophical foundation for why this
+                system looks the way it does. Signature moment, HeroSlide,
+                editorial typography, no card chrome. */}
+            <HeroSlide id="origin" isActive={active === "origin"} align="start">
+              <div style={{ maxWidth: 720, margin: "0 auto" }}>
+                <p style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "var(--text-mono)",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--muted2)",
+                  margin: 0,
+                  marginBottom: "var(--space-9)",
+                }}>
+                  02 · Origin
+                </p>
+                <h2 style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "clamp(40px, 5.6vw, 72px)",
+                  fontWeight: 300,
+                  lineHeight: 1.05,
+                  letterSpacing: "-0.035em",
+                  color: "var(--text)",
+                  margin: 0,
+                  marginBottom: "var(--space-10)",
+                }}>
+                  The struggle is the system.
+                </h2>
+
+                <div style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--space-5)",
+                }}>
+                  <p style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "var(--text-title-sm)",
+                    lineHeight: 1.7,
+                    letterSpacing: "-0.005em",
+                    color: "var(--muted2)",
+                    margin: 0,
+                  }}>
+                    A man once cut open a cocoon to help the butterfly escape.
+                    The butterfly emerged easily — but its wings stayed shriveled,
+                    its body swollen. It never flew. The pressure of breaking
+                    out was the fluid the wings needed.
+                  </p>
+                  <p style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "var(--text-title-sm)",
+                    lineHeight: 1.7,
+                    letterSpacing: "-0.005em",
+                    color: "var(--muted)",
+                    margin: 0,
+                  }}>
+                    I learned design without a degree, without a mentor, without
+                    a Figma file handed down. Every component on this site is the
+                    result of struggling through the wrong abstraction before
+                    finding the right one. Every token is a hex I chose four
+                    times before settling. The discipline you see here isn’t
+                    preference — it’s what the work left behind.
+                  </p>
+                  <p style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "var(--text-title-sm)",
+                    fontWeight: 500,
+                    lineHeight: 1.5,
+                    letterSpacing: "-0.01em",
+                    color: "var(--text)",
+                    margin: 0,
+                    marginTop: "var(--space-4)",
+                  }}>
+                    If I had been shown the answer, the wings would have stayed soft.
+                  </p>
+                </div>
               </div>
             </HeroSlide>
 
