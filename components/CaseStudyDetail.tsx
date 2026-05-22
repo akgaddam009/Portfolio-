@@ -1652,23 +1652,22 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               </figure>
                             )}
                             {f.images && f.images.length > 0 && (
-                              <div style={{ marginTop: "10px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px" }}>
-                                {f.images.map((img, j) => (
-                                  <figure key={j} style={{ margin: 0 }}>
+                              <figure style={{ margin: "10px 0 0 0" }}>
+                                <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", display: "grid", gridTemplateColumns: `repeat(${f.images.length}, 1fr)` }}>
+                                  {f.images.map((img, j) => (
                                     <div
+                                      key={j}
                                       {...zoomTriggerProps(() => setLightboxSrc(img.src), `Enlarge: ${img.alt}`)}
-                                      style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                      style={{ cursor: "zoom-in", borderRight: j < f.images!.length - 1 ? "1px solid var(--border)" : "none" }}
                                     >
                                       <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
                                     </div>
-                                    {img.caption && (
-                                      <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
-                                        {img.caption}
-                                      </figcaption>
-                                    )}
-                                  </figure>
-                                ))}
-                              </div>
+                                  ))}
+                                </div>
+                                <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                                  {f.images.map(img => img.caption).filter(Boolean).join(" + ")}
+                                </figcaption>
+                              </figure>
                             )}
                           </div>
                         </div>
