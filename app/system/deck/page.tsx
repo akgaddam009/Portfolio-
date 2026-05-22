@@ -12,6 +12,23 @@ import { caseStudies } from "@/lib/caseStudies";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/* Reveal choreography — shared motion config for the slide primitives.
+   Each primitive sets its own delay via `staggerIndex` so eyebrow → title
+   → lead emerge in sequence as the slide enters view. Restrained: 12px
+   rise, 700ms, no overshoot. Respects prefers-reduced-motion. */
+const REVEAL_Y = 12;
+const REVEAL_DURATION = 0.7;
+const REVEAL_VIEWPORT = { once: true, margin: "0px 0px -10% 0px" } as const;
+function revealProps(delay: number, reduced: boolean) {
+  if (reduced) return { initial: false as const };
+  return {
+    initial: { opacity: 0, y: REVEAL_Y },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: REVEAL_VIEWPORT,
+    transition: { duration: REVEAL_DURATION, ease: EASE, delay },
+  };
+}
+
 /* Shadow constants mirror the landing page exactly (app/page.tsx:2978).
    Dark canvas is near-black so flat drops disappear — landing solves
    this with deeper rgba shadows + a stronger active-vs-rest delta.
@@ -122,8 +139,11 @@ function Eyebrow({
   mb?: number;
   track?: "default" | "cover";
 }) {
+  const reduced = useReducedMotion() ?? false;
   return (
-    <p style={{
+    <motion.p
+      {...revealProps(0, reduced)}
+      style={{
       fontFamily: "var(--font-mono)",
       fontSize: "var(--text-eyebrow)",
       letterSpacing: track === "cover" ? "0.12em" : "0.08em",
@@ -136,7 +156,7 @@ function Eyebrow({
       marginBottom: mb,
     }}>
       {children}
-    </p>
+    </motion.p>
   );
 }
 
@@ -156,8 +176,11 @@ function SlideTitle({
 }) {
   const isXl = size === "xl";
   const isManifesto = weight === "manifesto";
+  const reduced = useReducedMotion() ?? false;
   return (
-    <h2 style={{
+    <motion.h2
+      {...revealProps(0.10, reduced)}
+      style={{
       fontFamily: "var(--font-body)",
       fontSize: isXl ? "clamp(32px, 5vw, 56px)" : "var(--text-display)",
       fontWeight: isXl || isManifesto ? 300 : 500,
@@ -169,7 +192,7 @@ function SlideTitle({
       maxWidth: 880,
     }}>
       {children}
-    </h2>
+    </motion.h2>
   );
 }
 
@@ -185,8 +208,11 @@ function ChapterHeading({
   numeral: string;
   title: string;
 }) {
+  const reduced = useReducedMotion() ?? false;
   return (
-    <div style={{
+    <motion.div
+      {...revealProps(0, reduced)}
+      style={{
       marginBottom: "var(--space-9)",
       paddingBottom: "var(--space-5)",
       borderBottom: "1px solid var(--border)",
@@ -213,13 +239,16 @@ function ChapterHeading({
       }}>
         {title}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
 function Lead({ children, max = 580 }: { children: React.ReactNode; max?: number }) {
+  const reduced = useReducedMotion() ?? false;
   return (
-    <p style={{
+    <motion.p
+      {...revealProps(0.20, reduced)}
+      style={{
       fontFamily: "var(--font-body)",
       fontSize: "var(--text-title-sm)",
       lineHeight: 1.6,
@@ -229,7 +258,7 @@ function Lead({ children, max = 580 }: { children: React.ReactNode; max?: number
       letterSpacing: "-0.005em",
     }}>
       {children}
-    </p>
+    </motion.p>
   );
 }
 
@@ -281,9 +310,9 @@ function SlidePanel({
       id={id}
       data-slide={id}
       className={isActive ? "deck-panel is-active" : "deck-panel"}
-      initial={reduced ? false : { opacity: 0, y: 16 }}
-      whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
+      initial={reduced ? false : { opacity: 0 }}
+      whileInView={reduced ? undefined : { opacity: 1 }}
+      viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.5, ease: EASE }}
       style={{
         background: bg,
@@ -338,9 +367,9 @@ function HeroSlide({
       id={id}
       data-slide={id}
       className={isActive ? "deck-panel deck-hero is-active" : "deck-panel deck-hero"}
-      initial={reduced ? false : { opacity: 0, y: 16 }}
-      whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
+      initial={reduced ? false : { opacity: 0 }}
+      whileInView={reduced ? undefined : { opacity: 1 }}
+      viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6, ease: EASE }}
       style={{
         background: "var(--chrome)",
