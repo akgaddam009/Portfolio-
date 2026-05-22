@@ -556,7 +556,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             style={{ padding: "var(--space-9) 0" }}
           >
             <div className="page-pad">
-              <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} />
+              <VideoBlock src={cs.contextVideo} appType={cs.type} chromeUrl={chromeUrl} dark={cs.slug === "apple-business-listings"} />
             </div>
           </motion.section>
         ) : cs.videoPlaceholder ? (
@@ -4442,7 +4442,7 @@ function DesignApproachImage({ src, alt, maxHeight = 360, compact = false }: { s
   );
 }
 
-function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string; chromeUrl?: string }) {
+function VideoBlock({ src, appType, chromeUrl, dark }: { src: string; appType?: string; chromeUrl?: string; dark?: boolean }) {
   // Mobile case studies skip the macOS browser chrome — it's misleading for an
   // app prototype. Detect on the case-study `type` string (e.g. "Consumer Mobile App").
   const isMobile = !!appType && /mobile/i.test(appType);
@@ -4450,6 +4450,8 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
   // chromeUrl is passed — but we always want to pass one to keep it accurate per case.
   const urlLabel = chromeUrl || "app.example.com";
   const [ready, setReady] = useState(false);
+  const panelBg = dark ? "#0f1115" : "var(--chrome)";
+  const videoBg = dark ? "#0f1115" : "var(--surface)";
 
   if (isMobile) {
     return (
@@ -4486,9 +4488,9 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
   }
 
   return (
-    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--chrome)", boxShadow: "var(--card-shadow)" }}>
+    <div style={{ borderRadius: "16px", overflow: "hidden", background: panelBg, boxShadow: "var(--card-shadow)" }}>
       {/* macOS chrome bar */}
-      <div style={{ position: "relative", height: "38px", background: "var(--chrome)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ position: "relative", height: "38px", background: panelBg, borderBottom: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         {/* Traffic lights — positioned absolute so URL bar truly centres */}
         <div style={{ position: "absolute", left: "14px", display: "flex", alignItems: "center", gap: "6px" }}>
           {["#ff5f57", "#febc2e", "#28c840"].map((c, i) => (
@@ -4510,7 +4512,7 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
           sits at the eventual video's height. Without this the panel
           collapsed to ~400px during load and then expanded once the
           video started playing. */}
-      <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9", background: "var(--surface)" }}>
+      <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9", background: videoBg }}>
         {!ready && (
           <div style={{ position: "absolute", inset: 0 }}>
             <Shimmer height="100%" borderRadius="0" />
@@ -4528,7 +4530,7 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
             position: "absolute", inset: 0,
             width: "100%", height: "100%",
             objectFit: "contain",
-            background: "var(--surface)",
+            background: videoBg,
             opacity: ready ? 1 : 0,
             transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
           }}
