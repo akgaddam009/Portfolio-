@@ -251,6 +251,289 @@ function SlidePanel({
   );
 }
 
+/* HeroSlide — "signature moment" panel. Strips the card chrome
+   (--bg + radius + shadow) and lets content stage on the canvas
+   itself. Used for the 3 unforgettable frames: opening manifesto,
+   token wall, breakpoint diorama. Same min-height + scroll-snap as
+   regular slides so the rhythm stays. */
+function HeroSlide({
+  id,
+  isActive,
+  children,
+  background,
+  align = "center",
+}: {
+  id: SlideId;
+  isActive: boolean;
+  children: React.ReactNode;
+  background?: React.ReactNode;
+  align?: "center" | "start";
+}) {
+  const reduced = useReducedMotion();
+  return (
+    <motion.section
+      id={id}
+      data-slide={id}
+      className={isActive ? "deck-panel deck-hero is-active" : "deck-panel deck-hero"}
+      initial={reduced ? false : { opacity: 0, y: 16 }}
+      whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, ease: EASE }}
+      style={{
+        background: "var(--chrome)",
+        borderRadius: 0,
+        padding: "var(--space-11) var(--space-9)",
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: align === "center" ? "center" : "flex-start",
+        alignItems: "center",
+        minHeight: "calc(100vh - 88px)",
+        boxShadow: "none",
+      }}
+    >
+      {background}
+      <div style={{
+        position: "relative",
+        zIndex: 1,
+        width: "100%",
+      }}>
+        {children}
+      </div>
+    </motion.section>
+  );
+}
+
+/* BreakpointDiorama — one oversized device frame that morphs between the
+   three breakpoints. Auto-cycles every 2.4s; users can click a step button
+   to lock a specific size. Pixel number sits next to the frame as a
+   co-equal display element. */
+function BreakpointDiorama() {
+  const STEPS = [
+    { id: "mobile",  label: "Mobile",  px: 390,  rangeLabel: "≤ 640px",   render: "stack" as const },
+    { id: "tablet",  label: "Tablet",  px: 768,  rangeLabel: "641–1023",  render: "stack-wide" as const },
+    { id: "desktop", label: "Desktop", px: 1280, rangeLabel: "≥ 1024px",  render: "split" as const },
+  ];
+  const [active, setActive] = useState(0);
+  const [locked, setLocked] = useState(false);
+
+  useEffect(() => {
+    if (locked) return;
+    const id = setInterval(() => setActive(a => (a + 1) % STEPS.length), 2400);
+    return () => clearInterval(id);
+  }, [locked, STEPS.length]);
+
+  const step = STEPS[active];
+  // Visual width clamps the device proportional to the slide stage but
+  // keeps the "390 vs 1280" feel visible.
+  const widthPct = step.id === "mobile" ? 18 : step.id === "tablet" ? 38 : 72;
+
+  return (
+    <div style={{ maxWidth: 1240, margin: "0 auto", width: "100%" }}>
+      <p style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: "var(--text-mono)",
+        letterSpacing: "0.14em",
+        textTransform: "uppercase",
+        color: "var(--muted2)",
+        margin: 0,
+        marginBottom: "var(--space-9)",
+      }}>
+        08 · Responsive diorama
+      </p>
+
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "minmax(280px, 1fr) 2.4fr",
+        gap: "var(--space-11)",
+        alignItems: "center",
+      }}>
+        {/* Left: editorial copy + pixel number */}
+        <div>
+          <h2 style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "clamp(36px, 5vw, 64px)",
+            fontWeight: 300,
+            lineHeight: 1.02,
+            letterSpacing: "-0.035em",
+            color: "var(--text)",
+            margin: 0,
+            marginBottom: "var(--space-7)",
+          }}>
+            Three breakpoints.<br />
+            One system.
+          </h2>
+          <div style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "clamp(56px, 8vw, 120px)",
+            fontWeight: 400,
+            lineHeight: 1,
+            letterSpacing: "-0.04em",
+            color: "var(--accent-warm)",
+            marginBottom: "var(--space-4)",
+            fontVariantNumeric: "tabular-nums",
+          }}>
+            {step.px}
+            <span style={{ fontSize: "0.45em", color: "var(--muted)", marginLeft: 8 }}>px</span>
+          </div>
+          <p style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "var(--text-mono-lg)",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "var(--muted2)",
+            margin: 0,
+            marginBottom: "var(--space-7)",
+          }}>
+            {step.label} · {step.rangeLabel}
+          </p>
+
+          {/* Step buttons — click to lock */}
+          <div style={{ display: "flex", gap: 6 }}>
+            {STEPS.map((s, i) => (
+              <button
+                key={s.id}
+                onClick={() => { setActive(i); setLocked(true); }}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "var(--text-mono)",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  padding: "8px 12px",
+                  borderRadius: 8,
+                  border: i === active ? "1px solid var(--text)" : "1px solid var(--border)",
+                  background: i === active ? "var(--surface)" : "transparent",
+                  color: i === active ? "var(--text)" : "var(--muted)",
+                  cursor: "pointer",
+                  transition: "all 180ms var(--ease-expo)",
+                }}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: morphing device frame */}
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: 420,
+        }}>
+          <motion.div
+            animate={{
+              width: `${widthPct}%`,
+            }}
+            transition={{ duration: 0.6, ease: EASE }}
+            style={{
+              aspectRatio: step.id === "mobile" ? "9/16" : step.id === "tablet" ? "3/4" : "16/10",
+              background: "var(--bg)",
+              border: "1px solid var(--border)",
+              borderRadius: 12,
+              padding: 12,
+              boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
+              display: "flex",
+              flexDirection: step.render === "split" ? "row" : "column",
+              gap: 8,
+              overflow: "hidden",
+            }}
+          >
+            {step.render === "split" ? (
+              <>
+                <div style={{
+                  width: "20%",
+                  background: "var(--surface2)",
+                  borderRadius: 6,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 6,
+                  padding: 10,
+                }}>
+                  {[1,2,3,4,5].map(i => (
+                    <div key={i} style={{ height: 6, background: "var(--border)", borderRadius: 3, width: i % 2 ? "100%" : "70%" }} />
+                  ))}
+                </div>
+                <div style={{
+                  flex: 1,
+                  background: "var(--surface2)",
+                  borderRadius: 6,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  padding: 16,
+                }}>
+                  <div style={{ height: 12, background: "var(--border)", borderRadius: 4, width: "60%" }} />
+                  <div style={{ height: 8, background: "var(--border)", borderRadius: 4, opacity: 0.6 }} />
+                  <div style={{ height: 8, background: "var(--border)", borderRadius: 4, opacity: 0.6, width: "85%" }} />
+                  <div style={{ flex: 1, background: "var(--bg)", borderRadius: 4, marginTop: 8, border: "1px solid var(--border)" }} />
+                </div>
+              </>
+            ) : step.render === "stack-wide" ? (
+              <>
+                <div style={{
+                  height: 28,
+                  background: "var(--surface2)",
+                  borderRadius: 6,
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "0 10px",
+                  gap: 6,
+                }}>
+                  <div style={{ width: 14, height: 14, background: "var(--border)", borderRadius: 3 }} />
+                  <div style={{ width: 14, height: 14, background: "var(--border)", borderRadius: 3 }} />
+                </div>
+                <div style={{
+                  flex: 1,
+                  background: "var(--surface2)",
+                  borderRadius: 6,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 6,
+                  padding: 14,
+                }}>
+                  <div style={{ height: 10, background: "var(--border)", borderRadius: 4, width: "70%" }} />
+                  <div style={{ height: 6, background: "var(--border)", borderRadius: 4, opacity: 0.5 }} />
+                  <div style={{ flex: 1, background: "var(--bg)", borderRadius: 4, marginTop: 6, border: "1px solid var(--border)" }} />
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{
+                  height: 18,
+                  background: "var(--surface2)",
+                  borderRadius: 4,
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "0 6px",
+                  gap: 4,
+                }}>
+                  <div style={{ width: 8, height: 8, background: "var(--border)", borderRadius: 2 }} />
+                </div>
+                <div style={{ height: 8, background: "var(--surface2)", borderRadius: 3 }} />
+                <div style={{
+                  flex: 1,
+                  background: "var(--surface2)",
+                  borderRadius: 4,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 4,
+                  padding: 8,
+                }}>
+                  <div style={{ height: 8, background: "var(--border)", borderRadius: 3, width: "80%" }} />
+                  <div style={{ height: 4, background: "var(--border)", borderRadius: 2, opacity: 0.5 }} />
+                  <div style={{ flex: 1, background: "var(--bg)", borderRadius: 3, marginTop: 4, border: "1px solid var(--border)" }} />
+                </div>
+              </>
+            )}
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* =========================================================================
    RAIL PANEL — sticky quick-links card in the 20% column.
    ========================================================================= */
@@ -509,6 +792,48 @@ export default function DesignSystemDeck() {
         [data-theme="dark"] .deck-panel { box-shadow: ${PANEL_SHADOW_DARK}; opacity: 0.6; }
         [data-theme="dark"] .deck-panel.is-active,
         [data-theme="dark"] .deck-panel:hover { opacity: 1; box-shadow: ${PANEL_SHADOW_ACTIVE_DARK}; }
+        /* Hero slides override the panel chrome — no shadow, no card.
+           The canvas IS the stage. Active opacity dim still applies in
+           dark mode so the rhythm carries through. */
+        .deck-hero, .deck-hero.is-active { box-shadow: none !important; }
+        [data-theme="dark"] .deck-hero { box-shadow: none !important; }
+        [data-theme="dark"] .deck-hero.is-active,
+        [data-theme="dark"] .deck-hero:hover { box-shadow: none !important; }
+
+        /* Token wall — 4 cols on desktop, 2 on tablet, 1 on mobile.
+           Each block is a tall rectangle; caption sits at the bottom
+           on a thin --surface bar so the color reads cleanly above. */
+        .token-wall {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0;
+          width: 100%;
+        }
+        .token-block {
+          position: relative;
+          aspect-ratio: 5 / 6;
+          transition: transform 280ms var(--ease-expo);
+          cursor: default;
+        }
+        .token-block:hover { transform: translateY(-4px); z-index: 1; }
+        .token-block-caption {
+          position: absolute;
+          left: 0; right: 0; bottom: 0;
+          padding: 12px 14px;
+          background: color-mix(in srgb, var(--surface) 92%, transparent);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+        @media (max-width: 1023px) {
+          .token-wall { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 640px) {
+          .token-wall { grid-template-columns: 1fr; }
+          .token-block { aspect-ratio: 5 / 3; }
+        }
         /* Slide stack uses the same 16px gap as the landing panel rail
            so the vertical rhythm matches the horizontal one. */
         .deck-content {
@@ -770,16 +1095,52 @@ export default function DesignSystemDeck() {
               </div>
             </motion.section>
 
-            {/* 01 — Introduction */}
-            <SlidePanel id="intro" isActive={active === "intro"}>
-              <Eyebrow>Introduction</Eyebrow>
-              <SlideTitle weight="manifesto">A working artifact, not a deliverable.</SlideTitle>
-              <Lead>
-                Most design systems live in Figma. They drift the moment engineers touch them.
-                This one lives in the code — one CSS file, a handful of React components. If this
-                page renders, the system is correct.
-              </Lead>
-            </SlidePanel>
+            {/* 01 — Introduction — HERO MANIFESTO. Full canvas. Single
+                sentence at display-manifesto scale (clamp 56-96). Tiny
+                structural label above; one supporting line below. The
+                composition is the moment; no card, no shadow, no clutter. */}
+            <HeroSlide id="intro" isActive={active === "intro"}>
+              <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+                <p style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "var(--text-mono)",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--muted2)",
+                  margin: 0,
+                  marginBottom: "var(--space-9)",
+                }}>
+                  01 · Manifesto
+                </p>
+                <h2 style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "clamp(48px, 7vw, 96px)",
+                  fontWeight: 300,
+                  lineHeight: 1.02,
+                  letterSpacing: "-0.04em",
+                  color: "var(--text)",
+                  margin: 0,
+                  marginBottom: "var(--space-10)",
+                }}>
+                  A working artifact,<br />
+                  not a deliverable.
+                </h2>
+                <p style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-lead)",
+                  lineHeight: 1.6,
+                  letterSpacing: "-0.005em",
+                  color: "var(--muted)",
+                  margin: 0,
+                  maxWidth: 520,
+                }}>
+                  Most design systems live in Figma. They drift the moment
+                  engineers touch them. This one lives in the code — one
+                  CSS file, a handful of React components. If this page
+                  renders, the system is correct.
+                </p>
+              </div>
+            </HeroSlide>
 
             {/* 03 — Why */}
             <SlidePanel id="why" isActive={active === "why"} tint="surface">
@@ -898,58 +1259,74 @@ export default function DesignSystemDeck() {
               </div>
             </SlidePanel>
 
-            {/* 06 — Tokens spec */}
-            <SlidePanel id="tokens" isActive={active === "tokens"}>
-              <Eyebrow>Tokens</Eyebrow>
-              <SlideTitle>Colors, type, spacing, motion — one CSS file.</SlideTitle>
-              <Lead>
-                The token file is the only place visual decisions are allowed to live.
-                Components read tokens. Pages read components. Nothing reads hexes.
-              </Lead>
-              <div style={{
-                marginTop: "var(--space-7)",
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-                gap: "var(--space-3)",
-              }}>
-                {[
-                  { name: "Canvas",  token: "--bg" },
-                  { name: "Surface", token: "--surface" },
-                  { name: "Chrome",  token: "--chrome" },
-                  { name: "Text",    token: "--text" },
-                  { name: "Muted",   token: "--muted" },
-                  { name: "Border", token: "--border" },
-                  { name: "Warm",   token: "--accent-warm" },
-                  { name: "Success", token: "--accent-success" },
-                ].map(s => (
-                  <div key={s.token} style={{
-                    background: "var(--surface2)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "var(--space-4)",
-                  }}>
-                    <div style={{
-                      width: "100%",
-                      aspectRatio: "5 / 3",
-                      borderRadius: "var(--radius-sm)",
+            {/* 06 — Tokens — TOKEN WALL. Full-bleed grid of bare color
+                blocks. No card chrome around each swatch — the color IS
+                the surface. Mono-caps captions hang on each block. The
+                wall reads as a single composition, not eight cards. */}
+            <HeroSlide id="tokens" isActive={active === "tokens"} align="start">
+              <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%" }}>
+                <p style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "var(--text-mono)",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--muted2)",
+                  margin: 0,
+                  marginBottom: "var(--space-5)",
+                }}>
+                  06 · Token wall
+                </p>
+                <h2 style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "clamp(36px, 5.2vw, 64px)",
+                  fontWeight: 300,
+                  lineHeight: 1.05,
+                  letterSpacing: "-0.035em",
+                  color: "var(--text)",
+                  margin: 0,
+                  marginBottom: "var(--space-9)",
+                  maxWidth: 720,
+                }}>
+                  The whole palette,<br />
+                  one source.
+                </h2>
+                <div className="token-wall">
+                  {[
+                    { name: "Canvas",  token: "--bg" },
+                    { name: "Surface", token: "--surface" },
+                    { name: "Chrome",  token: "--chrome" },
+                    { name: "Text",    token: "--text" },
+                    { name: "Muted",   token: "--muted" },
+                    { name: "Border",  token: "--border" },
+                    { name: "Warm",    token: "--accent-warm" },
+                    { name: "Success", token: "--accent-success" },
+                  ].map(s => (
+                    <div key={s.token} className="token-block" style={{
                       background: `var(${s.token})`,
-                      border: "1px solid var(--border)",
-                      marginBottom: "var(--space-3)",
-                    }} />
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-title-sm)",
-                      fontWeight: 500,
-                      letterSpacing: "-0.015em",
-                      color: "var(--text)",
-                      margin: 0,
-                      marginBottom: 4,
-                    }}>{s.name}</p>
-                    <TokenPill token={s.token} />
-                  </div>
-                ))}
+                      // Outline only on light-on-light (--bg, --surface, --chrome) so the
+                      // block edge is visible. Other tokens are dark enough to self-define.
+                      boxShadow: "inset 0 0 0 1px var(--border)",
+                    }}>
+                      <div className="token-block-caption">
+                        <span style={{
+                          fontFamily: "var(--font-body)",
+                          fontSize: "var(--text-body-lg)",
+                          fontWeight: 500,
+                          letterSpacing: "-0.015em",
+                          color: "var(--text)",
+                        }}>{s.name}</span>
+                        <code style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "var(--text-mono)",
+                          color: "var(--muted)",
+                          letterSpacing: "0.04em",
+                        }}>{s.token}</code>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </SlidePanel>
+            </HeroSlide>
 
             {/* 07 — Without tokens */}
             <SlidePanel id="without" isActive={active === "without"} tint="warm">
@@ -1009,124 +1386,13 @@ transition:    var(--dur-fast) var(--ease-expo);`}
 
             {/* — Layout group ─────────────────────────────────────────── */}
 
-            {/* Responsive breakpoints — three live device mockups showing the
-                actual layout at each width. Each mock renders a tiny rail +
-                content grid (or stacked single column) at the scaled-down
-                proportion the breakpoint dictates. */}
-            <SlidePanel id="responsive" isActive={active === "responsive"}>
-              <Eyebrow>Responsive</Eyebrow>
-              <SlideTitle>Three breakpoints, one system.</SlideTitle>
-              <Lead>
-                Mobile-first. Tokens scale; only layout shifts. Each breakpoint
-                changes what fits, not what things look like.
-              </Lead>
-              <div style={{
-                marginTop: "var(--space-7)",
-                display: "grid",
-                gridTemplateColumns: "1fr 1.4fr 2fr",
-                gap: "var(--space-5)",
-                alignItems: "end",
-              }}>
-                {[
-                  {
-                    range: "≤ 640px",
-                    label: "Mobile",
-                    width: 120,
-                    height: 200,
-                    render: "stack-tight",
-                  },
-                  {
-                    range: "641–1023px",
-                    label: "Tablet",
-                    width: 200,
-                    height: 200,
-                    render: "stack",
-                  },
-                  {
-                    range: "≥ 1024px",
-                    label: "Desktop",
-                    width: 320,
-                    height: 200,
-                    render: "split",
-                  },
-                ].map(b => (
-                  <div key={b.range} style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: "var(--space-3)",
-                  }}>
-                    {/* Device frame */}
-                    <div style={{
-                      width: b.width,
-                      height: b.height,
-                      background: "var(--bg)",
-                      border: "1px solid var(--border)",
-                      borderRadius: 8,
-                      padding: 6,
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                      display: "flex",
-                      flexDirection: b.render === "split" ? "row" : "column",
-                      gap: 4,
-                    }}>
-                      {b.render === "split" ? (
-                        <>
-                          {/* Rail */}
-                          <div style={{
-                            width: "22%",
-                            background: "var(--surface2)",
-                            borderRadius: 4,
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 3,
-                            padding: 5,
-                          }}>
-                            {[1,2,3,4].map(i => <div key={i} style={{ height: 4, background: "var(--border)", borderRadius: 2 }} />)}
-                          </div>
-                          {/* Content */}
-                          <div style={{
-                            flex: 1,
-                            background: "var(--surface2)",
-                            borderRadius: 4,
-                          }} />
-                        </>
-                      ) : b.render === "stack" ? (
-                        <>
-                          <div style={{ height: 18, background: "var(--surface2)", borderRadius: 3, display: "flex", gap: 3, padding: 3 }}>
-                            <div style={{ width: 8, height: 8, background: "var(--border)", borderRadius: 2 }} />
-                            <div style={{ width: 8, height: 8, background: "var(--border)", borderRadius: 2 }} />
-                          </div>
-                          <div style={{ flex: 1, background: "var(--surface2)", borderRadius: 4 }} />
-                        </>
-                      ) : (
-                        <>
-                          <div style={{ height: 14, background: "var(--surface2)", borderRadius: 3 }} />
-                          <div style={{ height: 14, background: "var(--surface2)", borderRadius: 3 }} />
-                          <div style={{ flex: 1, background: "var(--surface2)", borderRadius: 4 }} />
-                        </>
-                      )}
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      <p style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: "var(--text-title-sm)",
-                        fontWeight: 500,
-                        color: "var(--text)",
-                        margin: 0,
-                        marginBottom: 2,
-                      }}>{b.label}</p>
-                      <p style={{
-                        fontFamily: "var(--font-mono)",
-                        fontSize: "var(--text-mono)",
-                        color: "var(--muted)",
-                        letterSpacing: "0.04em",
-                        margin: 0,
-                      }}>{b.range}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </SlidePanel>
+            {/* Responsive — DIORAMA. One oversized device frame that
+                morphs between three breakpoints. Reads as a single stage,
+                not three small mockups. The pixel number is a co-equal
+                typographic element next to the device. */}
+            <HeroSlide id="responsive" isActive={active === "responsive"}>
+              <BreakpointDiorama />
+            </HeroSlide>
 
             {/* Top navigation — live preview of the actual nav. The pills
                 use the exact same styles as the real header so what you
