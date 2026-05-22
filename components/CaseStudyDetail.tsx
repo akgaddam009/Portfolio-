@@ -140,10 +140,39 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
     onScroll();
 
     raf = requestAnimationFrame(() => {
-      // Scan the rendered DOM for every section tagged with data-nav-label.
-      // Every CsSection gets one automatically (with an auto-generated id
-      // when none is passed) so the rail lists every section the case
-      // study renders — no hardcoded whitelist.
+      /* Fancode-only chapter rail: skip the DOM scan and use a fixed
+         6-entry list. Anchors point at the hero, the kept Chapter III
+         cover, the Result section's promoted metric, and three
+         CsSection wrappers given explicit ids. Labels are
+         project-keyed — pulled from the data field copy rather than
+         generic essay headings. */
+      if (cs.slug === "fancode-homepage") {
+        const FANCODE_RAIL: NavSection[] = [
+          { id: "ch-cover",      label: "I — Cover" },
+          { id: "ch-contest",    label: "II — The Contest" },
+          { id: "ch-insight",    label: "III — Mental model" },
+          { id: "ch-design",     label: "IV — The strategy" },
+          { id: "ch-result",     label: "V — 15-20% lift" },
+          { id: "ch-reflection", label: "VI — Reflection" },
+        ];
+        setNavSections(FANCODE_RAIL);
+
+        FANCODE_RAIL.forEach(({ id }) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const obs = new IntersectionObserver(
+            ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+            { rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.5, 1] }
+          );
+          obs.observe(el);
+          observers.push(obs);
+        });
+        return;
+      }
+
+      // Default behaviour: scan the rendered DOM for every section tagged
+      // with data-nav-label. Every CsSection gets one automatically so
+      // the rail lists every section the case study renders.
       const tagged = Array.from(document.querySelectorAll<HTMLElement>("[data-nav-label]"));
       const existing: NavSection[] = tagged
         .filter(el => el.id)
@@ -411,7 +440,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
       <main style={{ paddingTop: "80px" }}>
 
         {/* Hero */}
-        <section style={{ padding: "var(--space-9) 0" }}>
+        <section
+          id={cs.slug === "fancode-homepage" ? "ch-cover" : undefined}
+          style={{ padding: "var(--space-9) 0" }}
+        >
           <div className="page-pad">
             <motion.div variants={container} initial="hidden" animate="show">
               {/* Back affordance — plain-text CTA pattern matching the About
@@ -920,9 +952,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             </CsSection>
 
+
             {/* ── Context Section (optional named section between Overview and Problem) ── */}
             {cs.contextSection && (
-              <CsSection label={cs.contextSection.title}>
+              <CsSection label={cs.contextSection.title} id={cs.slug === "fancode-homepage" ? "ch-contest" : undefined}>
                 {/* Hero stat — large number above the cards */}
                 {cs.contextSection.stat && (
                   <motion.div
@@ -1532,6 +1565,27 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
+            {/* Full-bleed divider before Chapter III — the "before" state
+                of the homepage, setting up the insight. Fancode only. */}
+            {cs.slug === "fancode-homepage" && (
+              <FullBleedDivider
+                src="/images/fancode/earlier-homepage.jpg"
+                alt="The original FanCode homepage, organised by content format rather than user mental model"
+                kind="image"
+                caption="The homepage before the redesign"
+              />
+            )}
+
+            {/* Chapter III inline heading — Insight. A quiet section
+                header at body type scale, not a viewport-tall cover. */}
+            {cs.slug === "fancode-homepage" && (
+              <ChapterHeading
+                id="ch-insight"
+                eyebrow="III"
+                title="The mental model shift"
+              />
+            )}
+
             {/* ── Discovery & Research ── */}
             {cs.discoverySection && (
               <CsSection label="Discovery & Research">
@@ -1832,7 +1886,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* ── Design Strategy ── */}
             {cs.designStrategy && (
-              <CsSection label="Design Strategy">
+              <CsSection label="Design Strategy" id={cs.slug === "fancode-homepage" ? "ch-design" : undefined}>
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -2553,7 +2607,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            <CsSection label={cs.sectionLabels?.outcomes ?? "Result"} navLabel={cs.navLabels?.outcomes} id="outcomes">
+            <CsSection label={cs.sectionLabels?.outcomes ?? "Result"} navLabel={cs.navLabels?.outcomes} id={cs.slug === "fancode-homepage" ? "ch-result" : "outcomes"}>
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
 
                 {/* ── FanCode Homepage — structured result block ── */}
@@ -2840,6 +2894,19 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </div>
             </CsSection>
 
+            {/* Full-bleed divider after the Result chapter — the shipped
+                "after" state, looped silently. Placed AFTER the metrics
+                so it doesn't spoil the punchline. Fancode only. */}
+            {cs.slug === "fancode-homepage" && (
+              <FullBleedDivider
+                src="/images/fancode/fancode-homepage-after.mp4"
+                alt="The new FanCode homepage after the redesign, organised around tournaments, teams, and players"
+                kind="video"
+                poster="/images/fancode/new-homepage.jpg"
+                caption="The homepage after the redesign"
+              />
+            )}
+
             {/* ── Lesson — closing reflection for non-FanCode case studies.
                 cs.lesson is a plain string; FanCode uses cs.learnings instead.
                 First paragraph gets the featured callout treatment (matches
@@ -2873,7 +2940,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 fancode-homepage; other case studies had this section
                 intentionally removed earlier in the design pass. ── */}
             {cs.slug === "fancode-homepage" && cs.learnings && (
-              <CsSection label={cs.sectionLabels?.lesson ?? "Learnings"}>
+              <CsSection label={cs.sectionLabels?.lesson ?? "Learnings"} id="ch-reflection">
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -4135,6 +4202,235 @@ function CsSection({ label, navLabel, children, id, className, hideFromNav }: { 
       <h2 style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", margin: 0, marginBottom: "var(--space-7)", borderTop: "1px solid var(--border)", paddingTop: "var(--space-4)" }}>{label}</h2>
       {children}
     </motion.section>
+  );
+}
+
+/* ChapterCover — viewport-height chapter delimiter panel used in
+   Direction A layout (Chapter Deck). Currently scoped to
+   fancode-homepage. Per-chapter background tone makes the chapter
+   boundary unmistakable; huge numeral + display-scale title create
+   the cinematic break. */
+type ChapterTone = "warm" | "neutral" | "cool" | "surface2" | "chrome";
+const CHAPTER_TONE_BG: Record<ChapterTone, string> = {
+  warm:     "color-mix(in srgb, var(--accent-warm) 6%, var(--bg))",
+  neutral:  "var(--bg)",
+  cool:     "var(--chrome)",
+  surface2: "var(--surface2)",
+  chrome:   "var(--surface)",
+};
+function ChapterCover({
+  id,
+  numeral,
+  title,
+  thesis,
+  tone = "neutral",
+}: {
+  id?: string;
+  numeral: string;
+  title: string;
+  thesis?: string;
+  tone?: ChapterTone;
+}) {
+  return (
+    <section id={id} style={{
+      background: CHAPTER_TONE_BG[tone],
+      minHeight: "min(90vh, 760px)",
+      display: "flex",
+      alignItems: "center",
+      borderTop: "1px solid var(--border)",
+      borderBottom: "1px solid var(--border)",
+      padding: "120px 0",
+      scrollMarginTop: "80px",
+      /* Escape the parent .page-pad column (680px) so the tone paints
+         edge-to-edge. Without this, the chapter cover background only
+         spans the centered content column. */
+      width: "100vw",
+      marginLeft: "calc(50% - 50vw)",
+    }}>
+      <div className="page-pad" style={{ width: "100%" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-120px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "minmax(160px, 0.4fr) 1fr",
+            columnGap: "48px",
+            alignItems: "center",
+            maxWidth: "1200px",
+          }}
+          className="chapter-cover-grid"
+        >
+          <p style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "clamp(120px, 18vw, 260px)",
+            fontWeight: 300,
+            letterSpacing: "-0.06em",
+            lineHeight: 0.85,
+            color: "var(--text)",
+            margin: 0,
+            opacity: 0.92,
+          }}>
+            {numeral}
+          </p>
+          <div>
+            <p style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "var(--text-mono)",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              margin: 0, marginBottom: "16px",
+            }}>
+              Chapter {numeral}
+            </p>
+            <h2 style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "clamp(40px, 6.5vw, 88px)",
+              fontWeight: 300,
+              letterSpacing: "-0.04em",
+              lineHeight: 1,
+              color: "var(--text)",
+              margin: 0, marginBottom: thesis ? "28px" : 0,
+              maxWidth: "640px",
+            }}>
+              {title}
+            </h2>
+            {thesis && (
+              <p style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-title-sm)",
+                lineHeight: 1.55,
+                letterSpacing: "-0.01em",
+                color: "var(--muted2)",
+                margin: 0,
+                maxWidth: "520px",
+              }}>
+                {thesis}
+              </p>
+            )}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ChapterHeading — quiet inline chapter section header. A mono eyebrow
+   sits above an h2-scale title and a hairline rule. Sits inside
+   .page-pad alongside the rest of the case-study content; nothing
+   viewport-tall. Currently scoped to fancode-homepage. */
+function ChapterHeading({ id, eyebrow, title }: { id: string; eyebrow: string; title: string }) {
+  return (
+    <section id={id} style={{ padding: "64px 0 8px", scrollMarginTop: "80px" }}>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        style={{ borderTop: "1px solid var(--border)", paddingTop: "32px", maxWidth: "640px" }}
+      >
+        <p style={{
+          fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+          letterSpacing: "0.22em", textTransform: "uppercase",
+          color: "var(--muted)", margin: 0, marginBottom: "12px",
+        }}>
+          Chapter {eyebrow}
+        </p>
+        <h2 style={{
+          fontFamily: "var(--font-body)",
+          fontSize: "var(--text-title-lg)", fontWeight: 500,
+          letterSpacing: "-0.025em", lineHeight: 1.15,
+          color: "var(--text)", margin: 0,
+        }}>
+          {title}
+        </h2>
+      </motion.div>
+    </section>
+  );
+}
+
+/* FullBleedDivider — 100vw image or video slab used as a chapter
+   separator between prose sections. Currently scoped to
+   fancode-homepage. Escapes the parent .page-pad column the same way
+   ChapterCover does. */
+function FullBleedDivider({
+  src,
+  alt,
+  kind,
+  caption,
+  poster,
+}: {
+  src: string;
+  alt: string;
+  kind: "image" | "video";
+  caption?: string;
+  poster?: string;
+}) {
+  return (
+    <div style={{
+      width: "100vw",
+      marginLeft: "calc(50% - 50vw)",
+      marginTop: "0",
+      marginBottom: "0",
+      borderTop: "1px solid var(--border)",
+      borderBottom: "1px solid var(--border)",
+      background: "var(--surface)",
+    }}>
+      <div style={{
+        height: "clamp(420px, 60vh, 720px)",
+        width: "100%",
+        overflow: "hidden",
+        position: "relative",
+      }}>
+        {kind === "image" ? (
+          // Plain img — these are large hero artifacts already in /public.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
+            }}
+          />
+        ) : (
+          <video
+            src={src}
+            poster={poster}
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-label={alt}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
+            }}
+          />
+        )}
+      </div>
+      {caption && (
+        <div className="page-pad" style={{ padding: "12px 0 20px" }}>
+          <p style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "var(--text-mono)",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+            margin: 0,
+          }}>
+            {caption}
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
