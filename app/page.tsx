@@ -516,7 +516,7 @@ function AboutPanel() {
   return (
     <div>
       <PanelHeader label="About me" />
-      <div style={{ padding: "16px 24px 48px" }}>
+      <div className="about-panel-body" style={{ padding: "16px 24px 48px" }}>
 
         {/* Portrait. illustration by default, real photo on hover */}
         <motion.div
@@ -976,21 +976,18 @@ function WorkCardThumb({
     <div ref={containerRef} style={{ position: "relative", width: "100%", height: "100%" }}>
       {isVideo ? (
         <>
-          {/* Poster: fades out once the video reports canplay */}
-          {poster && (
-            <img
-              src={poster}
-              alt="" aria-hidden="true"
-              loading="lazy" decoding="async"
-              style={{
-                ...coverStyle,
-                opacity: ready ? 0 : 1,
-                transition: "opacity 0.4s ease",
-                zIndex: 1,
-              }}
-            />
+          {/* Shimmer skeleton while the video buffers. No poster image —
+              the video plays as-is once canplay fires. */}
+          {!ready && (
+            <div style={{
+              position: "absolute", inset: 0,
+              borderRadius,
+              background: "linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%)",
+              backgroundSize: "400% 100%",
+              animation: "shimmer 1.4s ease infinite",
+              zIndex: 1,
+            }} />
           )}
-          {/* Video: plays on desktop AND mobile (muted + playsInline). */}
           {inView && (
             <video
               className="work-thumb"
@@ -1010,7 +1007,7 @@ function WorkCardThumb({
         </>
       ) : (
         <>
-          {/* Shimmer only for static images (videos use the poster instead) */}
+          {/* Shimmer skeleton until the image fires onLoad. */}
           {!ready && (
             <div style={{
               position: "absolute", inset: 0,
@@ -1106,11 +1103,12 @@ function SystemFeatureCard() {
           {/* Thumbnail. auto-playing screen recording of the portfolio's
               design language in motion. Muted + looped, mirrors the case
               study video thumbnail pattern. */}
-          <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+          <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
             <WorkCardThumb
               src="/images/system/portfolio-design-language.mp4"
               poster="/images/system/cover.png"
               height={200}
+              borderRadius="16px 16px 0 0"
             />
           </div>
 
@@ -1204,9 +1202,9 @@ function WorkPanel() {
   // accessible via direct URL only -share with recruiters as needed.
   // Astra is hidden from the public surface; the route 404s.
   const CARD_ORDER = [
-    "planful-esm-tables", "apple-business-listings", "fancode-homepage",
+    "apple-business-listings", "planful-esm-tables", "fancode-homepage",
   ];
-  const EXPLORATION_ORDER: string[] = [];
+  const EXPLORATION_ORDER = ["astra"];
   const COMING_SOON = new Set<string>();
 
   const allCards = CARD_ORDER
@@ -1351,12 +1349,13 @@ function WorkPanel() {
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
                     {/* Thumbnail */}
-                    <div style={{ position: "relative", height: "220px", overflow: "hidden", padding: "12px 12px 0" }}>
+                    <div style={{ position: "relative", height: "220px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         <WorkCardThumb
                           src={WORK_THUMBS[cs.slug]}
                           poster={WORK_POSTERS[cs.slug]}
                           height={220}
+                          borderRadius="16px 16px 0 0"
                         />
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
@@ -1400,9 +1399,16 @@ function WorkPanel() {
           })}
         </div>
 
-        {/* AI Exploration section — hidden for now. */}
+        {/* AI Exploration — separate section below the main work grid. */}
         {explorationCards.length > 0 && (
           <div style={{ padding: "32px 0 16px" }}>
+            <p style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 400,
+              letterSpacing: "0.1em", textTransform: "uppercase",
+              color: "var(--muted)", margin: "0 0 12px 0",
+            }}>
+              AI Exploration
+            </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {explorationCards.map((cs) => {
                 const href = `/work/${cs.slug}`;
@@ -1429,11 +1435,12 @@ function WorkPanel() {
                       onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                       onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                       >
-                        <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                        <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                           <WorkCardThumb
                             src={WORK_THUMBS[cs.slug] || ""}
                             poster={WORK_POSTERS[cs.slug]}
                             height={200}
+                            borderRadius="16px 16px 0 0"
                           />
                         </div>
                         <div style={{ padding: "12px 16px 16px" }}>
@@ -2682,7 +2689,7 @@ function ContactPanel() {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE, delay: 0.16 }}
-          style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "24px" }}
+          style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "56px" }}
         >
           {/* Contact CTAs — matched to the case study detail page back-link
               pattern: same padding, height (44px), 8px radius, surface fill,
@@ -2929,12 +2936,13 @@ function AiExplorationsPanel() {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                 >
-                  <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                  <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                     {WORK_THUMBS[astra.slug] ? (
                       <WorkCardThumb
                         src={WORK_THUMBS[astra.slug]}
                         poster={WORK_POSTERS[astra.slug]}
                         height={200}
+                        borderRadius="16px 16px 0 0"
                       />
                     ) : (
                       <MeshThumbnail index={0} type={astra.type} confidential={astra.confidential} />
@@ -2959,8 +2967,8 @@ function AiExplorationsPanel() {
             </motion.div>
           )}
 
-          {/* Portfolio Design Language — hidden for now. */}
-          {/* <SystemFeatureCard /> */}
+          {/* Portfolio Design Language — meta artifact card. */}
+          <SystemFeatureCard />
 
         </div>
       </div>

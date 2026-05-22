@@ -4,7 +4,6 @@ import { caseStudies } from "@/lib/caseStudies";
 const HIDDEN_SLUGS = new Set<string>([
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",
-  "astra",
 ]);
 
 export default function robots(): MetadataRoute.Robots {

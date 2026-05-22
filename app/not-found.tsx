@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import AsciiWater from "@/components/AsciiWater";
+import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
@@ -60,21 +61,9 @@ export default function NotFound() {
         >
           The link might be broken, or the page may have moved.
         </p>
-        <Link
-          href="/"
-          style={{
-            marginTop: "var(--space-2)",
-            padding: "10px 24px",
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "8px",
-            color: "var(--text)",
-            fontSize: "var(--text-body)",
-            textDecoration: "none",
-          }}
-        >
-          ← Back to portfolio
-        </Link>
+        <Button asChild variant="inline" style={{ marginTop: "var(--space-2)" }}>
+          <Link href="/">← Back to portfolio</Link>
+        </Button>
       </div>
     </div>
   );

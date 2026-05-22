@@ -671,6 +671,7 @@ a { color: inherit; text-decoration: none; }
   .panel:has(#career-panel-container) {
     min-height: 720px;
   }
+
 }
 
 /* ─── Film grain overlay ─────────────────────────────── */

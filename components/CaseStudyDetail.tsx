@@ -71,12 +71,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Prev/Next sequencing on case study pages mirrors the order visitors see
   // when browsing the portfolio. Hidden slugs (zetwerk-*) are kept out of the
   // sequence entirely — never reached via Prev/Next.
-  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage"];
+  const NAV_ORDER = ["apple-business-listings", "planful-esm-tables", "fancode-homepage"];
   const navList = NAV_ORDER
     .map(slug => caseStudies.find(c => c.slug === slug))
     .filter((c): c is NonNullable<typeof c> => !!c);
   const currentIndex = navList.findIndex(c => c.slug === cs.slug);
-  const next = currentIndex >= 0 && currentIndex < navList.length - 1 ? navList[currentIndex + 1] : null;
+  // Wrap around: the last case study links to the first one so the
+  // Next case study button stays active everywhere (no half-readable
+  // disabled state at the end of the sequence).
+  const next = currentIndex >= 0 ? navList[(currentIndex + 1) % navList.length] : null;
   const prev = currentIndex > 0 ? navList[currentIndex - 1] : null;
 
   // Scroll progress bar
@@ -256,6 +259,34 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           .cs-2col {
             grid-template-columns: 1fr !important;
           }
+          /* Top spacing above the back link on mobile — leaves room
+             between the floating top nav and the back link without
+             reclaiming the full desktop padding. */
+          .cs-main { padding-top: 96px !important; }
+          .cs-hero-section { padding: var(--space-6) 0 var(--space-7) !important; }
+          /* Before/After hero pair stays side-by-side on mobile (kept narrow). */
+          .cs-2col-keep {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+          }
+          /* "Existing dashboard" vs "Design goal" split card — stack on mobile */
+          .cs-existing-vs-goal {
+            grid-template-columns: 1fr !important;
+            gap: 1px !important;
+          }
+          /* OutcomesImage inner well — ignore the desktop width cap so
+             the final-design screenshot fills the panel on mobile. */
+          .outcomes-image-well {
+            width: 100% !important;
+          }
+          /* ESM vs OLAP diagram — stack on mobile so the cell labels don't clip */
+          .cs-esm-olap {
+            grid-template-columns: 1fr !important;
+          }
+          .cs-esm-olap > div:first-child {
+            border-right: none !important;
+            border-bottom: 1px solid var(--border);
+          }
           /* Planful ESM outcomes side-by-side tiles */
           .cs-flex-tiles {
             flex-direction: column !important;
@@ -361,9 +392,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           {/* PortfolioChat (Quick guide) removed from case study top nav. */}
         </div>
 
-        {/* Next case study CTA — outlined-box pattern matching the homepage
-            Contact panel LinkedIn button. Disabled state drops opacity and
-            removes hover. */}
+        {/* Next case study CTA — exact match to the contact-panel
+            buttons on the landing page (Copy email, LinkedIn, CV):
+            mono caps, var(--text) at rest, 1px border, surface bg,
+            8px radius. Hover lifts color → text, bg → surface2,
+            adds card-shadow. Disabled drops opacity. */}
         {next ? (
           <Link
             href={`/work/${next.slug}`}
@@ -371,15 +404,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
+              color: "var(--text)",
               padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
               border: "1px solid var(--border)", background: "var(--surface)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
               textDecoration: "none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={e => { e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             Next case study
             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -392,7 +425,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
+              color: "var(--text)",
               padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
               border: "1px solid var(--border)", background: "var(--surface)",
               display: "inline-flex", alignItems: "center", gap: "6px",
@@ -408,10 +441,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         )}
       </motion.header>
 
-      <main style={{ paddingTop: "80px" }}>
+      <main className="cs-main" style={{ paddingTop: "80px" }}>
 
         {/* Hero */}
-        <section style={{ padding: "var(--space-9) 0" }}>
+        <section className="cs-hero-section" style={{ padding: "var(--space-9) 0" }}>
           <div className="page-pad">
             <motion.div variants={container} initial="hidden" animate="show">
               {/* Back affordance — plain-text CTA pattern matching the About
@@ -495,15 +528,19 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             style={{ padding: "var(--space-9) 0" }}
           >
             <div className="page-pad">
-              <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+              <div className="cs-2col-keep" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 {([
                   { label: "Before", src: cs.outcomesCompare.before },
                   { label: "After",  src: cs.outcomesCompare.after  },
                 ] as const).map(({ label, src }) => (
                   <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
-                    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
-                      <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
+                    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)", position: "relative", aspectRatio: "9 / 19.5" }}>
+                      <video
+                        src={src}
+                        autoPlay loop muted playsInline preload="auto"
+                        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      />
                     </div>
                   </div>
                 ))}
@@ -543,14 +580,14 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
         {cs.metrics && cs.metrics.length > 0 && (
           <div style={{ background: "var(--surface2)", padding: "var(--space-7) 0" }}>
             <div className="page-pad">
-              <div style={{ display: "flex", gap: "40px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
+              <div style={{ display: "flex", gap: "32px", rowGap: "28px", flexWrap: "wrap", alignItems: "flex-start" }}>
                 {cs.metrics.map(m => (
                   <div key={m.label} style={{
                     /* When there's only one metric, let it breathe across the full
-                       row instead of clamping body text into a 320px column that
-                       orphans words like "week." onto their own line. */
+                       row. Otherwise, basis 200px lets 3 metrics fit on one row at
+                       the rendered case-study width without orphaning the 3rd. */
                     maxWidth: m.body ? (cs.metrics!.length === 1 ? "560px" : "320px") : undefined,
-                    flex: m.body ? "1 1 280px" : undefined,
+                    flex: m.body ? "1 1 200px" : undefined,
                   }}>
                     {/* Eyebrow — always rendered as mono caps */}
                     <p style={{
@@ -623,19 +660,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           </motion.section>
         )}
 
-        {cs.contribution && (
-          <div className="page-pad">
-            <CsSection label="My contribution" navLabel="Role">
-              <div style={{ maxWidth: "640px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                {cs.contribution.split(/\n\n+/).map((para, i) => (
-                  <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", lineHeight: 1.7, letterSpacing: "-0.005em", color: "var(--muted2)", margin: 0 }}>
-                    {parseHighlights(para)}
-                  </p>
-                ))}
-              </div>
-            </CsSection>
-          </div>
-        )}
+        {/* "My contribution" section removed — Role (already in the hero
+            meta block) covers the same ground. */}
 
         {/* Prototype Video used to render here (right after TLDR). Moved into the
             new "Final Design" section after Decisions so the storytelling flows:
@@ -808,9 +834,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
                     ESM vs OLAP data model (two different types of data)
                   </p>
-                  <div style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
+                  <div className="cs-esm-olap" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
                     {/* ESM — Tabular */}
-                    <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
+                    <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
                         ESM · Tabular
                       </span>
@@ -842,7 +868,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
 
                     {/* OLAP — Multi-dimensional */}
-                    <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
                         OLAP · Multi-dimensional
                       </span>
@@ -1069,15 +1095,40 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                       <svg key={4} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 1h6l4 4v10H4z"/><polyline points="10 1 10 5 14 5"/><line x1="6" y1="9" x2="10" y2="13"/><line x1="10" y1="9" x2="6" y2="13"/></svg>,
                       <svg key={5} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 1L1 14h14L8 1z"/><line x1="8" y1="6" x2="8" y2="9"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>,
                     ];
+                    const keyPoints = cs.problemBreakdown!.keyPoints;
+                    const hasKeyPoints = keyPoints && keyPoints.length > 0;
                     return (
-                      <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                        {cs.problemBreakdown!.points.map((point, i) => (
-                          <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
-                            <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{problemIcons[i]}</div>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{point}</p>
+                      <>
+                        {hasKeyPoints && (
+                          <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+                            {keyPoints!.map((point, i) => (
+                              <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "12px", padding: "20px 22px" }}>
+                                <div style={{ color: "var(--accent-warm)", marginBottom: "12px" }}>{problemIcons[i + 4]}</div>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 500, lineHeight: 1.45, letterSpacing: "-0.015em", color: "var(--text)" }}>{point}</p>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        )}
+                        {hasKeyPoints ? (
+                          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
+                            {cs.problemBreakdown!.points.map((point, i) => (
+                              <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: "12px", fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>
+                                <span aria-hidden="true" style={{ flexShrink: 0, marginTop: "7px", width: "3px", height: "3px", borderRadius: "50%", background: "var(--muted)" }} />
+                                <span>{point}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                            {cs.problemBreakdown!.points.map((point, i) => (
+                              <div key={i} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px" }}>
+                                <div style={{ color: "var(--muted)", marginBottom: "8px" }}>{problemIcons[i]}</div>
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, letterSpacing: "-0.01em", color: "var(--muted2)" }}>{point}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
                     );
                   })()}
                   <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}>
@@ -1540,35 +1591,34 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               <figure style={{ margin: 0, marginTop: "10px" }}>
                                 <div
                                   {...zoomTriggerProps(() => setLightboxSrc(f.image!.src), `Enlarge: ${f.image.alt}`)}
-                                  style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                  style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--surface2)", padding: "20px", cursor: "zoom-in" }}
                                 >
-                                  <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={280} />
+                                  <DesignApproachImage src={f.image.src} alt={f.image.alt} maxHeight={456} />
                                 </div>
                                 {f.image.caption && (
-                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                                  <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                     {f.image.caption}
                                   </figcaption>
                                 )}
                               </figure>
                             )}
                             {f.images && f.images.length > 0 && (
-                              <div style={{ marginTop: "10px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px" }}>
-                                {f.images.map((img, j) => (
-                                  <figure key={j} style={{ margin: 0 }}>
+                              <figure style={{ margin: "10px 0 0 0" }}>
+                                <div style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--surface2)", padding: "20px", display: "grid", gridTemplateColumns: `repeat(${f.images.length}, 1fr)`, gap: "16px" }}>
+                                  {f.images.map((img, j) => (
                                     <div
+                                      key={j}
                                       {...zoomTriggerProps(() => setLightboxSrc(img.src), `Enlarge: ${img.alt}`)}
-                                      style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                                      style={{ cursor: "zoom-in" }}
                                     >
-                                      <DesignApproachImage src={img.src} alt={img.alt} maxHeight={220} />
+                                      <DesignApproachImage src={img.src} alt={img.alt} maxHeight={356} />
                                     </div>
-                                    {img.caption && (
-                                      <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
-                                        {img.caption}
-                                      </figcaption>
-                                    )}
-                                  </figure>
-                                ))}
-                              </div>
+                                  ))}
+                                </div>
+                                <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                                  {f.images.map(img => img.caption).filter(Boolean).join(" + ")}
+                                </figcaption>
+                              </figure>
                             )}
                           </div>
                         </div>
@@ -1867,17 +1917,18 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                             <ScrollScaleMedia
                               onClick={() => setLightboxSrc(d.image!.src)}
                               ariaLabel={`Enlarge: ${d.image.alt}`}
-                              style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)", cursor: "zoom-in" }}
+                              style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", background: "var(--surface2)", padding: "20px", cursor: "zoom-in" }}
                             >
                               {/* Renders the image at its natural aspect ratio so both
                                   wide screenshots and tall flow diagrams display fully
                                   without crop. `compact` images are capped at a shorter
                                   max height and centered so they don't stretch to fill
-                                  the full card width (lightbox shows full size). */}
-                              <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 200 : 360} compact={d.image.compact} />
+                                  the full card width (lightbox shows full size).
+                                  Sizes bumped ~30% so images read clearly across viewports. */}
+                              <DesignApproachImage src={d.image.src} alt={d.image.alt} maxHeight={d.image.compact ? 228 : 587} compact={d.image.compact} />
                             </ScrollScaleMedia>
                             {d.image.caption && (
-                              <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
+                              <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                 {d.image.caption}
                               </figcaption>
                             )}
@@ -2252,7 +2303,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               />
                             </ScrollScaleMedia>
                             {d.image.caption && (
-                              <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
+                              <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                 {d.image.caption}
                               </figcaption>
                             )}
@@ -2265,7 +2316,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               <figure key={vi} style={{ margin: 0 }}>
                                 <VideoBlock src={v.src} appType={cs.type} chromeUrl={chromeUrl} />
                                 {v.caption && (
-                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
+                                  <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                     {v.caption}
                                   </figcaption>
                                 )}
@@ -2285,7 +2336,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                                   <img src={img.src} alt={img.alt} loading="lazy" decoding="async" style={{ width: "100%", display: "block" }} />
                                 </div>
                                 {img.caption && (
-                                  <figcaption style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", color: "var(--muted)", marginTop: "10px", textAlign: "center", textTransform: "uppercase" }}>
+                                  <figcaption style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", marginTop: "10px", textAlign: "center" }}>
                                     {img.caption}
                                   </figcaption>
                                 )}
@@ -2431,7 +2482,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
                       <ScrollScaleMedia style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
-                        <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
+                        <div style={{ position: "relative", width: "100%", aspectRatio: "9 / 19.5" }}>
+                          <video
+                            src={src}
+                            autoPlay loop muted playsInline preload="auto"
+                            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                          />
+                        </div>
                       </ScrollScaleMedia>
                     </div>
                   ))}
@@ -3187,12 +3244,24 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
             </span>
           </div>
         ) : (
-          <div style={image?.displayHeight ? { height: image.displayHeight, overflow: "hidden" } : undefined}>
+          <div style={{
+            position: "relative",
+            width: "100%",
+            /* Reserve vertical space matching the image's final size so
+               the shimmer acts as a layout placeholder instead of a
+               300px-tall stub that collapses the panel during load.
+               If the data specifies displayHeight use it exactly;
+               otherwise default to a 16:10 aspect ratio so the
+               container takes a reasonable portion of the page width
+               regardless of when the image actually loads. */
+            ...(image?.displayHeight
+              ? { height: image.displayHeight, overflow: "hidden" }
+              : { aspectRatio: "16 / 10" }),
+          }}>
             {!loaded && (
-              <Shimmer
-                height={image?.displayHeight ?? 300}
-                borderRadius="0"
-              />
+              <div style={{ position: "absolute", inset: 0 }}>
+                <Shimmer height="100%" borderRadius="0" />
+              </div>
             )}
             <img
               src={image!.src}
@@ -3202,10 +3271,12 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
               onError={() => setErrored(true)}
               style={{
                 width: "100%",
-                display: loaded ? "block" : "none",
+                height: "100%",
+                display: "block",
                 objectFit: image?.displayHeight ? "cover" : "contain",
                 objectPosition: image?.objectPosition ?? "center center",
-                height: image?.displayHeight ? "100%" : undefined,
+                opacity: loaded ? 1 : 0,
+                transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             />
           </div>
@@ -3213,10 +3284,9 @@ function ImageBlock({ image, placeholder, onOpen }: { image?: CaseStudyImage; pl
       </div>
       {!isEmpty && image?.caption && (
         <figcaption style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: "var(--text-eyebrow)",
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
+          fontFamily: "var(--font-body)",
+          fontSize: "var(--text-caption)",
+          letterSpacing: "-0.005em",
           color: "var(--muted)",
           marginTop: "10px",
           textAlign: "center",
@@ -3656,7 +3726,7 @@ function ProblemCardsBlock({
               onClick={onOpenImage ? () => onOpenImage(card.image!.src) : undefined}
               style={{
                 marginTop: "16px",
-                borderRadius: "8px",
+                borderRadius: "12px",
                 overflow: "hidden",
                 cursor: onOpenImage ? "zoom-in" : undefined,
               }}
@@ -3668,8 +3738,8 @@ function ProblemCardsBlock({
               />
               {card.image.caption && (
                 <p style={{
-                  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
-                  letterSpacing: "0.08em", textTransform: "uppercase",
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
+                  letterSpacing: "-0.005em",
                   color: "var(--muted)", textAlign: "center",
                   padding: "10px 0 0",
                   margin: 0,
@@ -3863,6 +3933,7 @@ function AppleChallengeBlock({ text }: { text: string }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.65, ease: EASE }}
+          className="cs-existing-vs-goal"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -4258,28 +4329,39 @@ function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt:
           position: "relative",
         }}
       >
-        {!loaded && (
-          <div style={{ position: "absolute", inset: "12px", width: width ?? "100%", margin: "0 auto" }}>
-            <Shimmer height="100%" borderRadius="8px" />
-          </div>
-        )}
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          decoding="async"
-          onLoad={() => setLoaded(true)}
-          style={{
-            width: width ?? "100%",
-            display: "block",
-            borderRadius: "8px",
-            opacity: loaded ? 1 : 0,
-            margin: "0 auto",
-          }}
-        />
+        {/* Inner well reserves a 16:10 aspect ratio so the shimmer fills
+            the eventual image footprint instead of collapsing the panel
+            to a 24px stub during load. On mobile the explicit width
+            cap is ignored — narrow viewports need every pixel. */}
+        <div
+          className="outcomes-image-well"
+          style={{ position: "relative", width: width ?? "100%", aspectRatio: "16 / 10", margin: "0 auto" }}
+        >
+          {!loaded && (
+            <div style={{ position: "absolute", inset: 0 }}>
+              <Shimmer height="100%" borderRadius="8px" />
+            </div>
+          )}
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setLoaded(true)}
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "contain",
+              borderRadius: "8px",
+              opacity: loaded ? 1 : 0,
+              transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+              display: "block",
+            }}
+          />
+        </div>
       </div>
       {loaded && caption && (
-        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", paddingTop: "10px", textAlign: "center", margin: 0 }}>
           {caption}
         </p>
       )}
@@ -4323,7 +4405,15 @@ function DesignApproachImage({ src, alt, maxHeight = 360, compact = false }: { s
     if (imgRef.current?.complete) setLoaded(true);
   }, [src]);
   return (
-    <div style={{ position: "relative", width: "100%", minHeight: loaded ? undefined : "120px" }}>
+    <div style={{
+      position: "relative",
+      width: "100%",
+      /* Reserve the eventual maxHeight (not 120px) during load so the
+         shimmer matches the final image size instead of compressing the
+         panel. Once loaded, minHeight clears and the image takes its
+         natural height inside the maxHeight cap. */
+      minHeight: loaded ? undefined : `${maxHeight}px`,
+    }}>
       {!loaded && (
         <div style={{ position: "absolute", inset: 0 }}>
           <Shimmer height="100%" borderRadius="0" />
@@ -4364,8 +4454,14 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
   if (isMobile) {
     return (
       <div style={{ display: "flex", justifyContent: "center", background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}>
-        <div style={{ position: "relative", width: "100%", maxWidth: "320px" }}>
-          {!ready && <Shimmer height={480} borderRadius="12px" />}
+        {/* Reserve mobile-phone aspect ratio (~9/19.5) so the shimmer
+            sits at the eventual video's height, not a 480px stub. */}
+        <div style={{ position: "relative", width: "100%", maxWidth: "320px", aspectRatio: "9 / 19.5" }}>
+          {!ready && (
+            <div style={{ position: "absolute", inset: 0 }}>
+              <Shimmer height="100%" borderRadius="12px" />
+            </div>
+          )}
           <video
             src={src}
             autoPlay
@@ -4374,7 +4470,15 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
             playsInline
             preload="none"
             onCanPlay={() => setReady(true)}
-            style={{ maxHeight: "640px", maxWidth: "100%", display: ready ? "block" : "none", borderRadius: "12px", background: "#0a0a0a" }}
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover",
+              borderRadius: "12px",
+              background: "#0a0a0a",
+              opacity: ready ? 1 : 0,
+              transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
           />
         </div>
       </div>
@@ -4402,19 +4506,34 @@ function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string
           </span>
         </div>
       </div>
-      {/* Shimmer shown until video is ready to play */}
-      {!ready && <Shimmer height={400} borderRadius="0" />}
-      {/* Video */}
-      <video
-        src={src}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="none"
-        onCanPlay={() => setReady(true)}
-        style={{ width: "100%", display: ready ? "block" : "none", maxHeight: "520px", objectFit: "contain", background: "var(--surface)" }}
-      />
+      {/* Video well — reserves a 16:9 aspect-ratio box so the shimmer
+          sits at the eventual video's height. Without this the panel
+          collapsed to ~400px during load and then expanded once the
+          video started playing. */}
+      <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9", background: "var(--surface)" }}>
+        {!ready && (
+          <div style={{ position: "absolute", inset: 0 }}>
+            <Shimmer height="100%" borderRadius="0" />
+          </div>
+        )}
+        <video
+          src={src}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="none"
+          onCanPlay={() => setReady(true)}
+          style={{
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "contain",
+            background: "var(--surface)",
+            opacity: ready ? 1 : 0,
+            transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        />
+      </div>
     </div>
   );
 }

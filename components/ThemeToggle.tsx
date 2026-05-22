@@ -42,7 +42,7 @@ export default function ThemeToggle() {
 
   // Render a placeholder on SSR so layout doesn't shift
   if (!mounted) {
-    return <div style={{ width: "32px", height: "32px", flexShrink: 0 }} />;
+    return <div style={{ width: "44px", height: "44px", flexShrink: 0 }} />;
   }
 
   return (

@@ -60,7 +60,10 @@ awesome-design-md-main.zip
 
 # Local dev scaffolding — not part of the deployed site
 .agents/
-.claude/
+# Ignore .claude/ contents but keep project-level skills checked in
+.claude/*
+!.claude/skills/
+!.claude/skills/**
 skills-lock.json
 writer.md
 

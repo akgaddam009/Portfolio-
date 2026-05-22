@@ -182,7 +182,10 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
                 {cover.kind === "single" ? (
                   <VideoBlock src={cover.src} appType={cover.appType} chromeUrl={cover.chromeUrl} />
                 ) : (
-                  // Before / After pair — mirrors outcomesCompare from CaseStudyDetail
+                  // Before / After pair — mirrors outcomesCompare from CaseStudyDetail.
+                  // Each video well reserves a mobile-phone aspect ratio so the
+                  // panel keeps its final size while the video loads instead of
+                  // collapsing to 0 height during the network fetch.
                   <div className="cs-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                     {([
                       { label: "Before", src: cover.before },
@@ -190,11 +193,24 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
                     ] as const).map(({ label, src }) => (
                       <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
-                        <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                        <div style={{
+                          borderRadius: "16px",
+                          overflow: "hidden",
+                          background: "var(--surface2)",
+                          border: "1px solid var(--border)",
+                          aspectRatio: "9 / 19.5",
+                          width: "100%",
+                          position: "relative",
+                        }}>
                           <video
                             src={src}
                             autoPlay loop muted playsInline preload="auto"
-                            style={{ width: "100%", display: "block" }}
+                            style={{
+                              position: "absolute", inset: 0,
+                              width: "100%", height: "100%",
+                              objectFit: "cover",
+                              display: "block",
+                            }}
                           />
                         </div>
                       </div>

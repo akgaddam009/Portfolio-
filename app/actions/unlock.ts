@@ -84,12 +84,14 @@ export async function unlock(formData: FormData): Promise<UnlockResult> {
     }
   }
 
-  const submitted = String(formData.get("password") ?? "");
+  // Trim leading/trailing whitespace so a copy-paste or autofill with
+  // an accidental space doesn't read as a wrong password.
+  const submitted = String(formData.get("password") ?? "").trim();
   // Empty submissions are wrong without even consulting the env var, so
   // dev defaults aren't exercised by accident.
   if (!submitted) return { ok: false, error: "wrong" };
 
-  const target = expected ?? "Nothing@123$"; // dev-only fallback
+  const target = (expected ?? "Nothing@123$").trim(); // dev-only fallback
   if (!safeEqual(submitted, target)) return { ok: false, error: "wrong" };
 
   const store = await cookies();
