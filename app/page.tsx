@@ -124,7 +124,7 @@ function HomeNav({
       }}
     >
       {/* Name + theme toggle */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         <Link
           href="/"
           aria-label="Home. Arun Gaddam"
