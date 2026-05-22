@@ -7,16 +7,23 @@
 
    Important: this version renders the video unconditionally with
    preload="auto" — no image fallback, no swap. Mobile and web both
-   get the same auto-playing muted loop the moment the page mounts. */
+   get the same auto-playing muted loop the moment the page mounts.
+
+   The container reserves an aspect ratio so the panel doesn't
+   collapse while the video is loading; the video crossfades in
+   once metadata is ready. */
+
+import { useState } from "react";
 
 export default function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string; chromeUrl?: string }) {
   const isMobile = !!appType && /mobile/i.test(appType);
   const urlLabel = chromeUrl || "app.example.com";
+  const [ready, setReady] = useState(false);
 
   if (isMobile) {
     return (
       <div style={{ display: "flex", justifyContent: "center", background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}>
-        <div style={{ position: "relative", width: "100%", maxWidth: "320px" }}>
+        <div style={{ position: "relative", width: "100%", maxWidth: "320px", aspectRatio: "9 / 19.5", background: "#0a0a0a", borderRadius: "12px", overflow: "hidden" }}>
           <video
             src={src}
             autoPlay
@@ -24,7 +31,15 @@ export default function VideoBlock({ src, appType, chromeUrl }: { src: string; a
             muted
             playsInline
             preload="auto"
-            style={{ maxHeight: "640px", maxWidth: "100%", display: "block", borderRadius: "12px", background: "#0a0a0a" }}
+            onCanPlay={() => setReady(true)}
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover",
+              background: "#0a0a0a",
+              opacity: ready ? 1 : 0,
+              transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
           />
         </div>
       </div>
@@ -49,15 +64,25 @@ export default function VideoBlock({ src, appType, chromeUrl }: { src: string; a
           </span>
         </div>
       </div>
-      <video
-        src={src}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        style={{ width: "100%", display: "block", maxHeight: "520px", objectFit: "contain", background: "var(--surface)" }}
-      />
+      <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9", background: "var(--surface)" }}>
+        <video
+          src={src}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          onCanPlay={() => setReady(true)}
+          style={{
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "contain",
+            background: "var(--surface)",
+            opacity: ready ? 1 : 0,
+            transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        />
+      </div>
     </div>
   );
 }

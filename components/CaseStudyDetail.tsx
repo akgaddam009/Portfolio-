@@ -535,8 +535,12 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 ] as const).map(({ label, src }) => (
                   <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
-                    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
-                      <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
+                    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)", position: "relative", aspectRatio: "9 / 19.5" }}>
+                      <video
+                        src={src}
+                        autoPlay loop muted playsInline preload="auto"
+                        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      />
                     </div>
                   </div>
                 ))}
@@ -2527,7 +2531,13 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
                       <ScrollScaleMedia style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
-                        <video src={src} autoPlay loop muted playsInline style={{ width: "100%", display: "block" }} />
+                        <div style={{ position: "relative", width: "100%", aspectRatio: "9 / 19.5" }}>
+                          <video
+                            src={src}
+                            autoPlay loop muted playsInline preload="auto"
+                            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                          />
+                        </div>
                       </ScrollScaleMedia>
                     </div>
                   ))}
@@ -4779,25 +4789,32 @@ function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt:
           position: "relative",
         }}
       >
-        {!loaded && (
-          <div style={{ position: "absolute", inset: "12px", width: width ?? "100%", margin: "0 auto" }}>
-            <Shimmer height="100%" borderRadius="8px" />
-          </div>
-        )}
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          decoding="async"
-          onLoad={() => setLoaded(true)}
-          style={{
-            width: width ?? "100%",
-            display: "block",
-            borderRadius: "8px",
-            opacity: loaded ? 1 : 0,
-            margin: "0 auto",
-          }}
-        />
+        {/* Inner well reserves a 16:10 aspect ratio so the shimmer fills
+            the eventual image footprint instead of collapsing the panel
+            to a 24px stub during load. */}
+        <div style={{ position: "relative", width: width ?? "100%", aspectRatio: "16 / 10", margin: "0 auto" }}>
+          {!loaded && (
+            <div style={{ position: "absolute", inset: 0 }}>
+              <Shimmer height="100%" borderRadius="8px" />
+            </div>
+          )}
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setLoaded(true)}
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "contain",
+              borderRadius: "8px",
+              opacity: loaded ? 1 : 0,
+              transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+              display: "block",
+            }}
+          />
+        </div>
       </div>
       {loaded && caption && (
         <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
