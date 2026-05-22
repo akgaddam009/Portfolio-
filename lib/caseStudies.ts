@@ -1150,6 +1150,295 @@ export const caseStudies: CaseStudy[] = [
     reflection:
       "The hypothesis was validated. Organising content around user mental models (tournaments, teams, trending moments) rather than content formats gave users a reason to scroll. The lift was measurable, sustained, and tied directly to the structural changes.\n\nWhat I'd do differently: instrument the team level signals from day one. The Coverage Cards captured interest at the surface, but I never measured whether Karan-shaped users (the fantasy player who defaulted to Cricbuzz) opened the competitor less after the redesign. That was the metric the brief actually asked for.\n\nFollow-up work the foundation made possible: a personalisation engine running on actual behaviour, sport-level customisation as cricket only stops being the constraint, dynamic content ranking rather than static, and ongoing A/B tests on layout patterns to keep the system learning.",
   },
+
+  /* ── #LAB FanCode Homepage — visual art-direction sandbox ──
+     Local-only duplicate of #06 used to experiment with cinematic
+     layout moves (full-bleed media, display-scale metric, asymmetric
+     decisions grid) without touching the live Fancode case study.
+     Confidentiality is dropped so the gate doesn't sit between us and
+     iteration. Reachable only by direct URL /work/fancode-homepage-lab;
+     not added to the homepage CARD_ORDER list. Delete this block to
+     remove the sandbox entirely. */
+  {
+    slug: "fancode-homepage-lab",
+    number: "LAB",
+    title: "Rethink FanCode Sports app Homepage",
+    titleHighlights: { "Homepage": "indigo" },
+    subtitle: "How a mental model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15 - 20%.",
+    cardImpact: "15 - 20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",
+    company: "FanCode",
+    type: "Consumer Mobile App · Sports & Streaming",
+    role: "UX Manager",
+    timeline: "30 days · 2022",
+    team: "Product, Data Science, Content, Engineering, CEO",
+    tags: ["Consumer Mobile", "Sports", "Information Architecture", "Mental Model Design", "Component Systems", "Content Strategy"],
+    heroLabel: "Real Work",
+
+    metrics: [
+      { value: ">90% drop-off", label: "Before", body: "Below the 1st fold of the homepage, over 90% of users dropped off." },
+      { value: "↑ ~15 - 20%", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15 - 20% across user cohorts." },
+    ],
+
+    summary: "",
+
+    contextVideo: "/images/fancode/fancode-homepage-before.mp4",
+
+    contextStats: [
+      { stat: "~50M+ users", label: "FanCode is India's premier live sports streaming platform, part of the Dream Sports group." },
+    ],
+
+    appStoreLinks: {
+      android: "https://play.google.com/store/apps/details?id=com.dream11sportsguru&hl=en_IN",
+      ios:     "https://apps.apple.com/in/app/fancode-live-cricket-scores/id1406379831",
+    },
+
+    contextSection: {
+      title: "Context",
+      intro: "The homepage was created once and reused. It became a shared billboard where every team competed for the same limited real estate.",
+      cards: [
+        {
+          tag:  "The Contest",
+          body: "The first fold was constantly contested. Any team that wanted discovery, adoption, or visibility pushed for prime placement.",
+        },
+        {
+          tag:  "The Paradox",
+          body: "It was the only reliable discovery surface in the product, so the pressure was relentless, and the space was finite.",
+        },
+      ],
+    },
+
+    problemStat: {
+      stat:  "90%",
+      label: "of users dropped off after the first fold.",
+    },
+
+    problem: "",
+
+    insight: "The FanCode homepage was organised around what we could produce. It needed to be organised around how users think. Sports fans follow tournaments, teams, and players. Not content formats. Restructuring around that mental model was the single most important design decision of this project.",
+
+    coreInsight: {
+      heading: "The mental model shift",
+      body: [
+        "Users don't follow content. They follow tournaments, teams, and players. Every research signal pointed to the same root cause: the homepage was organised around what we could produce, not how fans think.",
+        "A fan following the IPL doesn't think in formats. They think in one question: show me everything about IPL right now. The new homepage had to mirror that, not the editorial workflow behind it.",
+      ],
+      beforeAfter: {
+        before: {
+          header: "How the homepage was organised",
+          items: [
+            "News & updates",
+            "Video",
+            "Multi-sport blocks",
+            "Sport specific blocks",
+          ],
+          footnote: "Organised by content format",
+        },
+        after: {
+          header: "How users actually think",
+          items: [
+            "Tournaments",
+            "Teams",
+            "Players",
+          ],
+          footnote: "Organised by sports entity",
+        },
+      },
+    },
+
+    discoverySection: {
+      intro: "Inputs that shaped the strategy",
+      findings: [
+        {
+          title: "The first fold turf war",
+          body: "Every team competed for the same strip of real estate with no one accountable for the page's coherence.",
+          image: {
+            src: "/images/fancode/ux-review-current-homepage.jpg",
+            alt: "UX review of the current first fold",
+            caption: "UX review · first fold",
+          },
+        },
+        {
+          title: "Content organised for operations, not users",
+          body: "Sections were sorted by content type (news, scores, videos), not by what a sports fan actually looks for.",
+          image: {
+            src: "/images/fancode/overall-homepage.jpg",
+            alt: "UX review of overall homepage",
+            caption: "UX review of overall homepage",
+          },
+        },
+        {
+          title: "Tournament discovery was broken",
+          body: "If a tournament wasn't featured in the first fold, users had no reliable way to find it.",
+        },
+        {
+          title: "The page felt stale",
+          body: "Some sections hadn't changed in weeks, a serious trust problem for a platform built on real time sport.",
+          images: [
+            { src: "/images/fancode/competitive-analysis.jpg",                                      alt: "Competitive analysis",           caption: "Competitive analysis"         },
+            { src: "/images/fancode/competitive-analysis-deep-dive.jpg", alt: "Competitive analysis deep dive", caption: "Deep dive into the problem"   },
+          ],
+        },
+      ],
+    },
+
+
+    designStrategy: {
+      heading: "The strategic bets before a single screen was designed",
+      principles: [
+        {
+          title: "Align to the user's mental model",
+          body: "Organise around sports, tournaments, teams, and players, not content formats. The page should feel built for how fans think, not how we operate internally.",
+        },
+        {
+          title: "Design for scalability and daily content freshness",
+          body: "Build a reusable component that can be populated with any story. The structural pattern stays consistent; the content makes it feel new every day.",
+        },
+        {
+          title: "Create multiple journey entry points",
+          body: "Every section below the fold should deep link into specific parts of the app. The homepage becomes a multi-lane launchpad, not a single gateway.",
+        },
+      ],
+    },
+
+    designApproach: {
+      intro: "The redesign was built on four interconnected structural decisions. Each one addressed a specific failure mode that the discovery work had surfaced.",
+      decisions: [
+        {
+          title: "The reusable contextual component",
+          body: "Built a single Coverage Card that could be populated with any sport, tournament, team, or player story. The structural pattern was fixed; the content logic was configurable. This meant the page could feel fresh every day without requiring a design change.",
+          image: {
+            src: "/images/fancode/reusable-contextual-component.jpg",
+            alt: "Reusable Coverage Card component, populated with multiple story types",
+            caption: "Reusable Coverage Card component",
+          },
+        },
+        {
+          title: "Scroll rhythm: pattern, break, pattern",
+          body: "The page alternates between contextual content blocks and pattern breaks: Quick Singles (a visual cricket snapshot) and the Tournaments discovery browser. The breaks prevent the scroll from feeling like a feed, and give users a reason to keep going.",
+          image: {
+            src: "/images/fancode/new-homepage-seamless-flow.jpg",
+            alt: "Concept design, seamless pattern flow",
+            caption: "Seamless design pattern flow",
+          },
+        },
+        {
+          title: "Deep linking throughout and personalisation for new and returning users",
+          body: "Every component links directly into the relevant part of the app, not to a listing page, but to the actual sport, tournament, or team feed. The homepage becomes an entry point, not a destination. The same architecture supports personalised rails (Continue Watching, Recommended For You) that adapt for new versus returning users. The IA and content strategy underpinning this ensured every section had a clear ownership, a content type, and a hierarchy, so the page scaled without becoming chaotic.",
+          image: {
+            src: "/images/fancode/new-homepage-first-return-users.jpg",
+            alt: "Concept design, personalisation states for first-time and returning users",
+            caption: "Personalisation concepts for new and returning users",
+          },
+        },
+        {
+          title: "A dedicated tournament discovery block",
+          body: "A scrollable row of all active tournaments, positioned in the below fold section. Directly addresses the discovery gap the data surfaced: if a tournament wasn't in the first fold, users couldn't find it.",
+          image: {
+            src: "/images/fancode/tour-collection.jpg",
+            alt: "Tournament collection discovery block",
+            caption: "Tournament discovery block",
+            compact: true,
+          },
+        },
+      ],
+    },
+
+    canvasBoards: [],
+
+    homepageLayout: {
+      intro: "The first fold remained unchanged. It was performing well and carried strong broadcast rights value. Everything below it was restructured.",
+      firstFold: [
+        { label: "Nudge cards + Live broadcast highlights" },
+      ],
+      belowFold: [
+        { label: "Detailed coverage block (top live or upcoming story)", type: "content" },
+        { label: "\"What's Hot Right Now\": trending sport/tournament component", type: "content" },
+        { label: "Contextual coverage card (e.g. IPL, team match day, player story)", type: "content" },
+        { label: "Pattern break: \"Quick Singles\", visual cricket snapshot", type: "break" },
+        { label: "Contextual coverage card (continued)", type: "content" },
+        { label: "Pattern break: Tournaments discovery browser", type: "break" },
+        { label: "Additional sport specific blocks (football, motorsport, etc.)", type: "content" },
+      ],
+    },
+
+    contribution:
+      "With multiple teams, product and design leadership, and the CEO all invested in the homepage, alignment was as important as the design work itself. I ran a structured workshop where I presented the redesign across four distinct user states, not just the final happy path:\n\n1. First-time user. How does the homepage feel on day one? What signals trust, surfaces the product's value immediately, and drives initial activation?\n2. Returning user, no personalisation. The baseline experience for most users. Content led, editorially curated, always fresh through the Coverage Card system.\n3. Returning user, partial personalisation. Continue Watching and Recommended for You active. The page begins to recognise you and reflect your history.\n4. Returning user, full personalisation. The future state. Homepage fully tailored to followed sports, teams, and players. Built into the architecture today; shipped in a future sprint.\n\nPresenting all four states together did two things. It gave stakeholders a coherent long term vision: this wasn't a one off visual refresh, it was a platform with room to grow. And it gave every team a clear picture of how their content would surface across each state, ==substantially reducing the internal competition for the first fold==. The system now had multiple discovery surfaces. There was room for everyone.",
+
+    contributionArtifacts: [
+      "Cross functional research synthesis",
+      "Strategy alignment with CEO + leadership",
+      "IA + content strategy",
+    ],
+
+    outcomesCompare: {
+      before: "/images/fancode/fancode-homepage-before.mp4",
+      after:  "/images/fancode/fancode-homepage-after.mp4",
+    },
+
+    beforeAfterImages: {
+      before: { src: "/images/fancode/earlier-homepage.jpg", label: "Earlier homepage" },
+      after:  { src: "/images/fancode/overall-homepage.jpg", label: "Redesigned homepage"  },
+    },
+
+    resultSection: {
+      heading: "What the data showed",
+      intro: "The redesign was validated through a staged A/B rollout, starting with under 5% of users, monitoring engagement and retention metrics week on week, then expanding to 10%, and eventually rolling out to 100% of the user base as the numbers held.",
+      metrics: [
+        { value: "15 - 20%", label: "lift in engagement below the first fold" },
+        { icon: true, label: "homepage adoption: more users entering multiple app journeys from home" },
+      ],
+      body: "",
+      rollout: [
+        { value: "<5%", label: "Initial A/B test" },
+        { value: "10%", label: "Expanded rollout" },
+        { value: "100%", label: "Full production" },
+      ],
+    },
+
+    keyDecisions: [
+      {
+        title: "Cricket first, built to expand",
+        subtitle: "Architecture decision",
+        body: "99% cricket audience. New sports slot in as content blocks, no structural rebuild needed.",
+        tags: ["Architecture", "Scalability"],
+      },
+      {
+        title: "Partial over full personalisation",
+        subtitle: "Scope decision",
+        body: "Scoped to \"Continue Watching\" and \"Recommended For You.\" Follow buttons seed the system for future use.",
+        tags: ["Personalisation", "Scoping"],
+      },
+      {
+        title: "The \"too simple\" challenge",
+        subtitle: "Stakeholder pushback",
+        body: "Stakeholders pushed back on uniformity. The counter: Instagram and YouTube both do this. Predictable structure moves attention to content.",
+        tags: ["Stakeholder Management"],
+      },
+      {
+        title: "Stakeholder alignment",
+        subtitle: "Alignment as a design deliverable",
+        body: "Mapped five personalisation states in one workshop. Leadership saw the full picture. Approval followed.",
+        tags: ["Workshop", "Alignment"],
+      },
+    ],
+
+    outcomes: [
+      "Shipped through a staged A/B rollout: starting at sub-5% of users, validating week on week before expanding to 10%, then 25%, then full rollout. At each stage, the hypothesis was validated before proceeding.",
+      "15 - 20% increase in engagement below the 1st fold of the homepage, sustained post launch across cohorts. Directly tied to the structural changes in the redesign.",
+      "Homepage adoption broadened: the Coverage Cards, Tournaments Explorer, and partial personalisation rails created multiple distinct entry points into the app's core experiences. The homepage stopped being a single gateway. It became a multi lane on ramp into the product.",
+    ],
+
+    learnings: {
+      northStar: "The hardest design problems are rarely visual. They're structural.",
+      items: [
+        "Reorganise around how users think, not what you can produce. The mental model shift was the real design decision; every visual choice followed from it.",
+        "Understand your constraints deeply, ship what moves the needle today, and design with tomorrow already in mind.",
+      ],
+    },
+
+    reflection:
+      "The hypothesis was validated. Organising content around user mental models (tournaments, teams, trending moments) rather than content formats gave users a reason to scroll. The lift was measurable, sustained, and tied directly to the structural changes.\n\nWhat I'd do differently: instrument the team level signals from day one. The Coverage Cards captured interest at the surface, but I never measured whether Karan-shaped users (the fantasy player who defaulted to Cricbuzz) opened the competitor less after the redesign. That was the metric the brief actually asked for.\n\nFollow-up work the foundation made possible: a personalisation engine running on actual behaviour, sport-level customisation as cricket only stops being the constraint, dynamic content ranking rather than static, and ongoing A/B tests on layout patterns to keep the system learning.",
+  },
   {
     slug: "zetwerk-dc",
     number: "03",
