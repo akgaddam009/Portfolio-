@@ -180,11 +180,43 @@ export default function LaunchSplash() {
     };
   }, [show]);
 
+  // Body inert while the splash is up — keeps focus inside the overlay
+  // and prevents AT from reading the underlying page that's visually
+  // covered. Cleared on dismiss or unmount.
+  useEffect(() => {
+    if (!show || fading) return;
+    const body = document.body;
+    body.setAttribute("inert", "");
+    body.setAttribute("aria-hidden", "true");
+    return () => {
+      body.removeAttribute("inert");
+      body.removeAttribute("aria-hidden");
+    };
+  }, [show, fading]);
+
+  // Keyboard dismiss — Escape, Enter, or Space all close the splash.
+  // Keyboard users were stuck waiting the auto-fade before this.
+  useEffect(() => {
+    if (!show || fading) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setFading(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [show, fading]);
+
   if (!show) return null;
 
   return (
     <div
-      role="presentation"
+      // Real dialog semantics so screen readers announce "Arun Gaddam"
+      // instead of nothing (role="presentation" used to strip it).
+      role="dialog"
+      aria-modal="true"
+      aria-label="Arun Gaddam"
       onClick={() => setFading(true)}
       style={{
         position: "fixed",
@@ -198,10 +230,9 @@ export default function LaunchSplash() {
         alignItems: "center",
         justifyContent: "center",
       }}
-      aria-label="Arun Gaddam"
     >
       <canvas ref={canvasRef} aria-hidden="true" style={{ display: "block" }} />
-      {/* Skip-tag at the bottom for keyboard users and curiosity */}
+      {/* Hint for keyboard + click users alike. */}
       <p
         style={{
           position: "absolute",
@@ -217,7 +248,7 @@ export default function LaunchSplash() {
           opacity: 0.7,
         }}
       >
-        Click to enter
+        Press any key or click to enter
       </p>
     </div>
   );
