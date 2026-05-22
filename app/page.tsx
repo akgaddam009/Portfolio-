@@ -3028,7 +3028,6 @@ const STORY_WORK: { title: string; slug: string | null }[] = [
   { title: "Reputation.com · Senior UX Designer · 2024–2025", slug: "apple-business-listings" },
   { title: "Zetwerk · Senior Product Designer · 2022–2023", slug: null },
   { title: "FanCode · Manager UX Designer · 2020–2022", slug: "fancode-homepage" },
-  { title: "Astra · Solo build · 2025", slug: "astra" },
 ];
 
 /* Two testimonials, picked for the "simplify complexity" thesis -one
