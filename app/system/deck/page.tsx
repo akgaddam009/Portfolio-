@@ -1009,7 +1009,10 @@ transition:    var(--dur-fast) var(--ease-expo);`}
 
             {/* — Layout group ─────────────────────────────────────────── */}
 
-            {/* Responsive breakpoints */}
+            {/* Responsive breakpoints — three live device mockups showing the
+                actual layout at each width. Each mock renders a tiny rail +
+                content grid (or stacked single column) at the scaled-down
+                proportion the breakpoint dictates. */}
             <SlidePanel id="responsive" isActive={active === "responsive"}>
               <Eyebrow>Responsive</Eyebrow>
               <SlideTitle>Three breakpoints, one system.</SlideTitle>
@@ -1020,120 +1023,252 @@ transition:    var(--dur-fast) var(--ease-expo);`}
               <div style={{
                 marginTop: "var(--space-7)",
                 display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "var(--space-4)",
+                gridTemplateColumns: "1fr 1.4fr 2fr",
+                gap: "var(--space-5)",
+                alignItems: "end",
               }}>
                 {[
                   {
                     range: "≤ 640px",
                     label: "Mobile",
-                    body: "Single column. Top-stacked nav. Tighter paddings. Inner grids collapse to one column.",
+                    width: 120,
+                    height: 200,
+                    render: "stack-tight",
                   },
                   {
                     range: "641–1023px",
                     label: "Tablet",
-                    body: "Single column with the case-study rail hidden. Slide panels stay full-width.",
+                    width: 200,
+                    height: 200,
+                    render: "stack",
                   },
                   {
                     range: "≥ 1024px",
                     label: "Desktop",
-                    body: "Two-column layout: 280px rail + content. Full feature surface; all grids expand.",
+                    width: 320,
+                    height: 200,
+                    render: "split",
                   },
                 ].map(b => (
                   <div key={b.range} style={{
-                    background: "var(--surface2)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "var(--space-5)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "var(--space-3)",
                   }}>
-                    <p style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-mono)",
-                      color: "var(--muted)",
-                      letterSpacing: "0.08em",
-                      margin: 0,
-                      marginBottom: "var(--space-3)",
-                    }}>{b.range}</p>
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-title-sm)",
-                      fontWeight: 500,
-                      letterSpacing: "-0.015em",
-                      color: "var(--text)",
-                      margin: 0,
-                      marginBottom: 8,
-                    }}>{b.label}</p>
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-body)",
-                      color: "var(--muted)",
-                      margin: 0,
-                      lineHeight: 1.6,
-                    }}>{b.body}</p>
+                    {/* Device frame */}
+                    <div style={{
+                      width: b.width,
+                      height: b.height,
+                      background: "var(--bg)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 8,
+                      padding: 6,
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                      display: "flex",
+                      flexDirection: b.render === "split" ? "row" : "column",
+                      gap: 4,
+                    }}>
+                      {b.render === "split" ? (
+                        <>
+                          {/* Rail */}
+                          <div style={{
+                            width: "22%",
+                            background: "var(--surface2)",
+                            borderRadius: 4,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 3,
+                            padding: 5,
+                          }}>
+                            {[1,2,3,4].map(i => <div key={i} style={{ height: 4, background: "var(--border)", borderRadius: 2 }} />)}
+                          </div>
+                          {/* Content */}
+                          <div style={{
+                            flex: 1,
+                            background: "var(--surface2)",
+                            borderRadius: 4,
+                          }} />
+                        </>
+                      ) : b.render === "stack" ? (
+                        <>
+                          <div style={{ height: 18, background: "var(--surface2)", borderRadius: 3, display: "flex", gap: 3, padding: 3 }}>
+                            <div style={{ width: 8, height: 8, background: "var(--border)", borderRadius: 2 }} />
+                            <div style={{ width: 8, height: 8, background: "var(--border)", borderRadius: 2 }} />
+                          </div>
+                          <div style={{ flex: 1, background: "var(--surface2)", borderRadius: 4 }} />
+                        </>
+                      ) : (
+                        <>
+                          <div style={{ height: 14, background: "var(--surface2)", borderRadius: 3 }} />
+                          <div style={{ height: 14, background: "var(--surface2)", borderRadius: 3 }} />
+                          <div style={{ flex: 1, background: "var(--surface2)", borderRadius: 4 }} />
+                        </>
+                      )}
+                    </div>
+                    <div style={{ textAlign: "center" }}>
+                      <p style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-title-sm)",
+                        fontWeight: 500,
+                        color: "var(--text)",
+                        margin: 0,
+                        marginBottom: 2,
+                      }}>{b.label}</p>
+                      <p style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "var(--text-mono)",
+                        color: "var(--muted)",
+                        letterSpacing: "0.04em",
+                        margin: 0,
+                      }}>{b.range}</p>
+                    </div>
                   </div>
                 ))}
               </div>
             </SlidePanel>
 
-            {/* Top navigation */}
+            {/* Top navigation — live preview of the actual nav. The pills
+                use the exact same styles as the real header so what you
+                see here is what every page renders at the top. */}
             <SlidePanel id="navigation" isActive={active === "navigation"} tint="surface">
               <Eyebrow>Navigation</Eyebrow>
               <SlideTitle>Floating pill chips, every page.</SlideTitle>
               <Lead>
-                One nav pattern across home, case study, deck, and gate. Top: 8px
-                from the viewport. 64px tall. 24px side gutter.
+                One nav pattern across home, case study, deck, and gate.
+                Floating pills on a transparent bar. 8px from the viewport.
               </Lead>
+
+              {/* Live nav preview inside a mini browser frame */}
               <div style={{
                 marginTop: "var(--space-7)",
+                background: "var(--bg)",
+                border: "1px solid var(--border)",
+                borderRadius: 10,
+                overflow: "hidden",
+                position: "relative",
+                height: 220,
+              }}>
+                {/* Faux page content behind the nav */}
+                <div style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(180deg, var(--bg) 0%, var(--surface2) 100%)",
+                }} />
+                {/* Real nav pills, scaled in */}
+                <div style={{
+                  position: "absolute",
+                  top: 12, left: 16, right: 16,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <span style={{
+                      fontFamily: "var(--font-logo)",
+                      fontSize: "var(--text-caption)",
+                      fontWeight: 500,
+                      color: "var(--text)",
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      height: 36,
+                      padding: "0 14px",
+                      borderRadius: 10,
+                      background: "var(--surface)",
+                      boxShadow: "var(--card-shadow)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                    }}>
+                      Arun Gaddam
+                    </span>
+                    <span style={{
+                      height: 36, width: 36,
+                      borderRadius: 10,
+                      background: "var(--surface)",
+                      boxShadow: "var(--card-shadow)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ color: "var(--text)" }}><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/><line x1="5" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="19" y2="12"/></svg>
+                    </span>
+                  </div>
+                  <span style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "var(--text-mono)",
+                    fontWeight: 400,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    color: "var(--muted)",
+                    padding: "8px 12px",
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}>
+                    Next case study →
+                  </span>
+                </div>
+
+                {/* Faux content lines below the nav */}
+                <div style={{
+                  position: "absolute",
+                  top: 80, left: 16, right: 16,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                }}>
+                  <div style={{ height: 12, width: "60%", background: "var(--border)", borderRadius: 4, opacity: 0.6 }} />
+                  <div style={{ height: 8, width: "80%", background: "var(--border)", borderRadius: 4, opacity: 0.4 }} />
+                  <div style={{ height: 8, width: "70%", background: "var(--border)", borderRadius: 4, opacity: 0.4 }} />
+                </div>
+              </div>
+
+              {/* Minimal annotation strip */}
+              <div style={{
+                marginTop: "var(--space-4)",
                 display: "flex",
-                flexDirection: "column",
-                gap: "var(--space-4)",
+                gap: "var(--space-5)",
+                flexWrap: "wrap",
               }}>
                 {[
-                  { token: "position: fixed; top: 8px", body: "Floats above content, 8px breathing room from the viewport edge." },
-                  { token: "height: 64px",              body: "Same height across all routes so the page chrome is consistent." },
-                  { token: "padding: 0 24px",           body: "Side gutter matches the landing-page container gutter." },
-                  { token: "Wordmark pill",             body: "--font-logo, uppercase, 0.06em, --surface bg, --card-shadow, 12px radius, 44px touch target." },
-                  { token: "Action pill (right)",       body: "Outlined --surface + 1px --border, mono caps. Used for Next case study / View as deck." },
-                ].map(row => (
-                  <div key={row.token} style={{
-                    display: "grid",
-                    gridTemplateColumns: "200px 1fr",
-                    gap: "var(--space-5)",
-                    alignItems: "baseline",
-                    padding: "var(--space-4) var(--space-5)",
-                    background: "var(--bg)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius-md)",
-                  }}>
-                    <code style={{
+                  { k: "Wordmark", v: "DM Sans · 0.06em" },
+                  { k: "Pills",    v: "--surface + --card-shadow" },
+                  { k: "Height",   v: "64px" },
+                  { k: "Top",      v: "8px from viewport" },
+                ].map(m => (
+                  <div key={m.k}>
+                    <p style={{
                       fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-mono)",
-                      color: "var(--muted2)",
-                      letterSpacing: "0.02em",
-                    }}>
-                      {row.token}
-                    </code>
+                      fontSize: "var(--text-eyebrow)",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      color: "var(--muted)",
+                      margin: 0,
+                      marginBottom: 2,
+                    }}>{m.k}</p>
                     <p style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "var(--text-body)",
-                      color: "var(--muted)",
+                      color: "var(--text)",
                       margin: 0,
-                      lineHeight: 1.55,
-                    }}>{row.body}</p>
+                    }}>{m.v}</p>
                   </div>
                 ))}
               </div>
             </SlidePanel>
 
-            {/* Grids */}
+            {/* Grids — three live grid demos. Each card renders an actual
+                grid with placeholder cells so the layout pattern is visible,
+                with the spec + use case beneath. */}
             <SlidePanel id="grids" isActive={active === "grids"}>
               <Eyebrow>Grids</Eyebrow>
               <SlideTitle>Three column patterns power the system.</SlideTitle>
               <Lead>
-                16px gap between top-level panels — matches the landing-page
-                horizontal rhythm. 24px outer gutter. 880px max content
-                width inside each panel.
+                16px gap between top-level panels. 24px outer gutter.
+                880px max content width inside each panel.
               </Lead>
               <div style={{
                 marginTop: "var(--space-7)",
@@ -1144,18 +1279,27 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                 {[
                   {
                     name: "2 × 2",
-                    spec: "grid-template-columns: repeat(2, 1fr)",
+                    spec: "repeat(2, 1fr)",
                     uses: "Philosophy principles, paired comparisons.",
+                    grid: <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8, height: 88 }}>
+                      {[1,2,3,4].map(i => <div key={i} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 6 }} />)}
+                    </div>,
                   },
                   {
-                    name: "4-col stepwise",
-                    spec: "grid-template-columns: repeat(4, 1fr)",
-                    uses: "Workflow steps, sequential meta strips.",
+                    name: "4-col",
+                    spec: "repeat(4, 1fr)",
+                    uses: "Workflow steps, sequential strips.",
+                    grid: <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6, height: 88 }}>
+                      {[1,2,3,4].map(i => <div key={i} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 6 }} />)}
+                    </div>,
                   },
                   {
-                    name: "Auto-fit chiclet",
-                    spec: "auto-fit, minmax(180px, 1fr)",
-                    uses: "Tokens swatches, chip tones, badges.",
+                    name: "Auto-fit",
+                    spec: "minmax(60px, 1fr)",
+                    uses: "Swatches, chips, badges.",
+                    grid: <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(60px, 1fr))", gap: 6, height: 88 }}>
+                      {[1,2,3,4,5,6].map(i => <div key={i} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 6 }} />)}
+                    </div>,
                   },
                 ].map(g => (
                   <div key={g.name} style={{
@@ -1164,6 +1308,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                     borderRadius: "var(--radius-md)",
                     padding: "var(--space-5)",
                   }}>
+                    {g.grid}
                     <p style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "var(--text-title-sm)",
@@ -1171,20 +1316,19 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                       letterSpacing: "-0.015em",
                       color: "var(--text)",
                       margin: 0,
-                      marginBottom: "var(--space-3)",
+                      marginTop: "var(--space-4)",
+                      marginBottom: 6,
                     }}>{g.name}</p>
                     <code style={{
-                      display: "block",
+                      display: "inline-block",
                       fontFamily: "var(--font-mono)",
                       fontSize: "var(--text-mono)",
                       color: "var(--muted2)",
                       background: "var(--bg)",
                       border: "1px solid var(--border)",
                       borderRadius: "var(--radius-xs)",
-                      padding: "6px 8px",
+                      padding: "3px 6px",
                       marginBottom: "var(--space-3)",
-                      overflow: "auto",
-                      whiteSpace: "nowrap",
                     }}>{g.spec}</code>
                     <p style={{
                       fontFamily: "var(--font-body)",
@@ -1286,56 +1430,95 @@ transition:    var(--dur-fast) var(--ease-expo);`}
               </div>
             </SlidePanel>
 
-            {/* Launch splash */}
+            {/* Launch splash — preview of the actual splash composition.
+                The wordmark + hint render inline at the splash's real type
+                treatment so visitors see what shows on first visit instead
+                of reading a description of it. */}
             <SlidePanel id="splash" isActive={active === "splash"}>
               <Eyebrow>Launch splash</Eyebrow>
               <SlideTitle weight="manifesto">A signature, once per session.</SlideTitle>
               <Lead>
-                Particle &ldquo;Arun Gaddam&rdquo; assembles on first visit. Skipped under
-                reduced-motion. Dismisses on any key or click. Modal dialog
-                with focus trap; never seen on a return visit.
+                A particle &ldquo;Arun Gaddam&rdquo; wordmark assembles on first visit.
+                Dismisses on any key or click. Never seen on a return visit.
               </Lead>
+
+              {/* Live splash preview — mini viewport mockup */}
               <div style={{
                 marginTop: "var(--space-7)",
+                background: "var(--bg)",
+                border: "1px solid var(--border)",
+                borderRadius: 10,
+                height: 280,
+                position: "relative",
+                overflow: "hidden",
                 display: "flex",
-                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+                <h3 style={{
+                  fontFamily: "var(--font-logo)",
+                  fontSize: "clamp(28px, 4vw, 56px)",
+                  fontWeight: 500,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  color: "var(--text)",
+                  margin: 0,
+                }}>
+                  Arun Gaddam
+                </h3>
+                <p style={{
+                  position: "absolute",
+                  bottom: 18,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "var(--text-mono)",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "var(--muted)",
+                  margin: 0,
+                  opacity: 0.7,
+                }}>
+                  Press any key or click to enter
+                </p>
+              </div>
+
+              {/* Spec strip — compact */}
+              <div style={{
+                marginTop: "var(--space-4)",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
                 gap: "var(--space-3)",
               }}>
                 {[
-                  { label: "Gate",         body: "sessionStorage[launch-splash-seen] — set on first paint, never reappears in the same session." },
-                  { label: "Motion",       body: "Particles spring from random positions to the wordmark glyphs. SPRING 0.04, FRICTION 0.82 — critically damped." },
-                  { label: "Auto-dismiss", body: "Hold 2.4s, fade 600ms. Hold drops to 1.2s under prefers-reduced-motion." },
-                  { label: "Dismiss",      body: "Click anywhere · Escape · Enter · Space all close immediately." },
-                  { label: "A11y",         body: "role=dialog, aria-modal=true, aria-label=\"Arun Gaddam\". body[inert] while visible so focus stays inside." },
-                  { label: "Theme",        body: "fillStyle reads --text + --bg via getComputedStyle. Particles flip with the active theme." },
-                ].map(row => (
-                  <div key={row.label} style={{
-                    display: "grid",
-                    gridTemplateColumns: "140px 1fr",
-                    gap: "var(--space-5)",
-                    alignItems: "baseline",
-                    padding: "var(--space-4) var(--space-5)",
+                  { k: "Gate",     v: "Once per session" },
+                  { k: "Hold",     v: "2.4s · 1.2s reduced" },
+                  { k: "Fade",     v: "600ms" },
+                  { k: "Dismiss",  v: "Key · Click" },
+                  { k: "Role",     v: "dialog · aria-modal" },
+                  { k: "Focus",    v: "body[inert] trap" },
+                ].map(m => (
+                  <div key={m.k} style={{
+                    padding: "var(--space-3) var(--space-4)",
                     background: "var(--surface2)",
                     border: "1px solid var(--border)",
                     borderRadius: "var(--radius-md)",
                   }}>
                     <p style={{
                       fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-mono)",
+                      fontSize: "var(--text-eyebrow)",
                       letterSpacing: "0.08em",
                       textTransform: "uppercase",
                       color: "var(--muted)",
                       margin: 0,
-                    }}>
-                      {row.label}
-                    </p>
+                      marginBottom: 2,
+                    }}>{m.k}</p>
                     <p style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "var(--text-body)",
-                      color: "var(--muted)",
+                      color: "var(--text)",
                       margin: 0,
-                      lineHeight: 1.55,
-                    }}>{row.body}</p>
+                    }}>{m.v}</p>
                   </div>
                 ))}
               </div>
