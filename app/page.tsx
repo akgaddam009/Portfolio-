@@ -976,21 +976,18 @@ function WorkCardThumb({
     <div ref={containerRef} style={{ position: "relative", width: "100%", height: "100%" }}>
       {isVideo ? (
         <>
-          {/* Poster: fades out once the video reports canplay */}
-          {poster && (
-            <img
-              src={poster}
-              alt="" aria-hidden="true"
-              loading="lazy" decoding="async"
-              style={{
-                ...coverStyle,
-                opacity: ready ? 0 : 1,
-                transition: "opacity 0.4s ease",
-                zIndex: 1,
-              }}
-            />
+          {/* Shimmer skeleton while the video buffers. No poster image —
+              the video plays as-is once canplay fires. */}
+          {!ready && (
+            <div style={{
+              position: "absolute", inset: 0,
+              borderRadius,
+              background: "linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%)",
+              backgroundSize: "400% 100%",
+              animation: "shimmer 1.4s ease infinite",
+              zIndex: 1,
+            }} />
           )}
-          {/* Video: plays on desktop AND mobile (muted + playsInline). */}
           {inView && (
             <video
               className="work-thumb"
@@ -1010,7 +1007,7 @@ function WorkCardThumb({
         </>
       ) : (
         <>
-          {/* Shimmer only for static images (videos use the poster instead) */}
+          {/* Shimmer skeleton until the image fires onLoad. */}
           {!ready && (
             <div style={{
               position: "absolute", inset: 0,
