@@ -900,39 +900,48 @@ export default function DesignSystemDeck() {
           .palette-row { row-gap: var(--space-2); }
         }
 
-        /* Token wall — 4 cols on desktop, 2 on tablet, 1 on mobile.
-           Each block is a tall rectangle; caption sits at the bottom
-           on a thin --surface bar so the color reads cleanly above. */
-        .token-wall {
+        /* Token table — minimal flat chips. 4 cols desktop / 2 tablet.
+           Each cell: a short swatch bar + clean label row underneath.
+           No hover lift, no blurs — just the color and its name. */
+        .token-table {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 0;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
+          overflow: hidden;
           width: 100%;
         }
-        .token-block {
-          position: relative;
-          aspect-ratio: 5 / 6;
-          transition: transform 280ms var(--ease-expo);
-          cursor: default;
+        .token-cell {
+          border-right: 1px solid var(--border);
+          border-bottom: 1px solid var(--border);
         }
-        .token-block:hover { transform: translateY(-4px); z-index: 1; }
-        .token-block-caption {
-          position: absolute;
-          left: 0; right: 0; bottom: 0;
-          padding: 12px 14px;
-          background: color-mix(in srgb, var(--surface) 92%, transparent);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
+        .token-cell:nth-child(4n)       { border-right: none; }
+        .token-cell:nth-last-child(-n+4) { border-bottom: none; }
+        .token-swatch-bar {
+          height: 72px;
+          width: 100%;
+          display: block;
+        }
+        .token-cell-label {
+          padding: 10px 14px 12px;
+          border-top: 1px solid var(--border);
+          background: var(--bg);
           display: flex;
           flex-direction: column;
           gap: 2px;
         }
         @media (max-width: 1023px) {
-          .token-wall { grid-template-columns: repeat(2, 1fr); }
+          .token-table { grid-template-columns: repeat(4, 1fr); }
+          .token-cell:nth-child(4n) { border-right: none; }
+          .token-cell:nth-last-child(-n+4) { border-bottom: none; }
         }
         @media (max-width: 640px) {
-          .token-wall { grid-template-columns: 1fr; }
-          .token-block { aspect-ratio: 5 / 3; }
+          .token-table { grid-template-columns: repeat(2, 1fr); }
+          .token-cell:nth-child(4n)        { border-right: 1px solid var(--border); }
+          .token-cell:nth-last-child(-n+4) { border-bottom: 1px solid var(--border); }
+          .token-cell:nth-child(2n)        { border-right: none; }
+          .token-cell:nth-last-child(-n+2) { border-bottom: none; }
+          .token-swatch-bar { height: 56px; }
         }
         /* Slide stack uses the same 16px gap as the landing panel rail
            so the vertical rhythm matches the horizontal one. */
@@ -1384,7 +1393,7 @@ transition:    180ms cubic-bezier(0.22, 1, 0.36, 1);`}
                   The whole palette,<br />
                   one source.
                 </h2>
-                <div className="token-wall">
+                <div className="token-table">
                   {[
                     { name: "Canvas",  token: "--bg" },
                     { name: "Surface", token: "--surface" },
@@ -1395,18 +1404,17 @@ transition:    180ms cubic-bezier(0.22, 1, 0.36, 1);`}
                     { name: "Warm",    token: "--accent-warm" },
                     { name: "Success", token: "--accent-success" },
                   ].map(s => (
-                    <div key={s.token} className="token-block" style={{
-                      background: `var(${s.token})`,
-                      // Outline only on light-on-light (--bg, --surface, --chrome) so the
-                      // block edge is visible. Other tokens are dark enough to self-define.
-                      boxShadow: "inset 0 0 0 1px var(--border)",
-                    }}>
-                      <div className="token-block-caption">
+                    <div key={s.token} className="token-cell">
+                      <span
+                        className="token-swatch-bar"
+                        style={{ background: `var(${s.token})` }}
+                      />
+                      <div className="token-cell-label">
                         <span style={{
                           fontFamily: "var(--font-body)",
-                          fontSize: "var(--text-body-lg)",
+                          fontSize: "var(--text-body-sm)",
                           fontWeight: 500,
-                          letterSpacing: "-0.015em",
+                          letterSpacing: "-0.01em",
                           color: "var(--text)",
                         }}>{s.name}</span>
                         <code style={{
@@ -1519,19 +1527,19 @@ transition:    180ms cubic-bezier(0.22, 1, 0.36, 1);`}
                     key={row.hex}
                     className="palette-row"
                     style={{
-                      padding: "var(--space-5) 0",
+                      padding: "var(--space-4) 0",
                       borderBottom: "1px solid var(--border)",
                     }}
                   >
                     <div className="palette-swatch">
                       <span style={{
                         display: "inline-block",
-                        width: 36,
-                        height: 36,
+                        width: 28,
+                        height: 28,
                         background: row.swatch,
-                        border: row.swatch === "#ffffff" ? "1px solid var(--border)" : "none",
+                        border: "1px solid var(--border)",
                         borderRadius: "var(--radius-sm)",
-                        opacity: row.reserved ? 0.5 : 1,
+                        opacity: row.reserved ? 0.45 : 1,
                       }} />
                     </div>
                     <div className="palette-meta" style={{
