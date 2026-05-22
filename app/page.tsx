@@ -1103,11 +1103,12 @@ function SystemFeatureCard() {
           {/* Thumbnail. auto-playing screen recording of the portfolio's
               design language in motion. Muted + looped, mirrors the case
               study video thumbnail pattern. */}
-          <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+          <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
             <WorkCardThumb
               src="/images/system/portfolio-design-language.mp4"
               poster="/images/system/cover.png"
               height={200}
+              borderRadius="16px 16px 0 0"
             />
           </div>
 
@@ -1434,11 +1435,12 @@ function WorkPanel() {
                       onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                       onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                       >
-                        <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                        <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                           <WorkCardThumb
                             src={WORK_THUMBS[cs.slug] || ""}
                             poster={WORK_POSTERS[cs.slug]}
                             height={200}
+                            borderRadius="16px 16px 0 0"
                           />
                         </div>
                         <div style={{ padding: "12px 16px 16px" }}>
@@ -2934,12 +2936,13 @@ function AiExplorationsPanel() {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                 >
-                  <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
+                  <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                     {WORK_THUMBS[astra.slug] ? (
                       <WorkCardThumb
                         src={WORK_THUMBS[astra.slug]}
                         poster={WORK_POSTERS[astra.slug]}
                         height={200}
+                        borderRadius="16px 16px 0 0"
                       />
                     ) : (
                       <MeshThumbnail index={0} type={astra.type} confidential={astra.confidential} />
