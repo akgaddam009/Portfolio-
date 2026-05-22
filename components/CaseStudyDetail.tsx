@@ -389,9 +389,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           {/* PortfolioChat (Quick guide) removed from case study top nav. */}
         </div>
 
-        {/* Next case study CTA — outlined-box pattern matching the homepage
-            Contact panel LinkedIn button. Disabled state drops opacity and
-            removes hover. */}
+        {/* Next case study CTA — elevated-chip pattern matching the
+            wordmark + theme toggle on the left side of the nav (no
+            border, card-shadow at rest, hover-shadow lift, 12px
+            radius, 44px height). Disabled state drops opacity. */}
         {next ? (
           <Link
             href={`/work/${next.slug}`}
@@ -400,14 +401,15 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--muted)",
-              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface)",
+              height: "44px", padding: "0 14px", borderRadius: "12px",
+              border: "none", background: "var(--surface)",
+              boxShadow: "var(--card-shadow)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              transition: "color 0.18s, box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
               textDecoration: "none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
           >
             Next case study
             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -421,8 +423,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--muted)",
-              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
-              border: "1px solid var(--border)", background: "var(--surface)",
+              height: "44px", padding: "0 14px", borderRadius: "12px",
+              border: "none", background: "var(--surface)",
+              boxShadow: "var(--card-shadow)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               opacity: 0.45,
               cursor: "not-allowed",
