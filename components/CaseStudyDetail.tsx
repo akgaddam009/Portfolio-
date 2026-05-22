@@ -538,7 +538,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)", position: "relative", aspectRatio: "9 / 19.5" }}>
                       <video
                         src={src}
-                        autoPlay loop muted playsInline preload="auto"
+                        autoPlay loop muted playsInline preload="metadata"
                         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                       />
                     </div>
@@ -2485,7 +2485,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         <div style={{ position: "relative", width: "100%", aspectRatio: "9 / 19.5" }}>
                           <video
                             src={src}
-                            autoPlay loop muted playsInline preload="auto"
+                            autoPlay loop muted playsInline preload="metadata"
                             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                           />
                         </div>
@@ -5495,7 +5495,7 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
           cursor: "default",
           imageRendering: "auto",
         }}
-        alt=""
+        alt="Enlarged view"
       />
       )}
       <button
