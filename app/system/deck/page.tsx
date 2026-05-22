@@ -26,77 +26,84 @@ const PANEL_SHADOW_ACTIVE_DARK  = "0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(
    DECK MANIFEST
    ========================================================================= */
 
+/* Narrative architecture — the deck is organized as seven chapters
+   modelled on the cocoon → wings transformation. The metaphor lives in
+   the pacing and structure, not in literal butterflies. */
 const SLIDES = [
-  { id: "intro",       label: "Introduction" },
-  { id: "origin",      label: "Origin" },
-  { id: "why",         label: "Why this exists" },
-  { id: "philosophy",  label: "Four principles" },
-  { id: "workflow",    label: "AI workflow" },
+  // I — The Struggle Before Systems
+  { id: "intro",       label: "Opening" },
+  { id: "origin",      label: "The cocoon" },
+  // II — Chaos Scales Faster Than Consistency
+  { id: "why",         label: "Drift" },
+  { id: "without",     label: "Without foundations" },
+  // III — Inside the Cocoon
+  { id: "tokens",      label: "Foundations" },
   { id: "specimen",    label: "Specimen" },
   { id: "palette",     label: "Palette" },
-  { id: "tokens",      label: "Tokens" },
-  { id: "without",     label: "Without tokens" },
-  { id: "with",        label: "With tokens" },
-  { id: "responsive",  label: "Breakpoints" },
-  { id: "navigation",  label: "Top navigation" },
-  { id: "grids",       label: "Grids" },
+  // IV — Constraints Create Strength
+  { id: "philosophy",  label: "Four constraints" },
+  { id: "workflow",    label: "The loop" },
+  // V — Building the Wings
+  { id: "with",        label: "With foundations" },
   { id: "buttons",     label: "Buttons" },
   { id: "chips",       label: "Chip tones" },
-  { id: "splash",      label: "Launch splash" },
+  // VI — A System Designed to Fly
+  { id: "responsive",  label: "Breakpoints" },
+  { id: "navigation",  label: "Navigation" },
+  { id: "grids",       label: "Grids" },
+  // VII — Beyond Components
+  { id: "splash",      label: "Closing" },
 ] as const;
 
 type SlideId = typeof SLIDES[number]["id"];
 
-/* Grouped TOC structure — mirrors the article sidebar at
-   app/system/page.tsx:19. Group headers are mono caps, items are
-   body-font with a sliding left border for active state. */
+/* Chapter index — the spine of the deck. Each chapter has a Roman
+   numeral, an editorial title, and a firstSlide pointer used to render
+   the chapter heading on that slide. */
+const CHAPTERS = [
+  { numeral: "I",   title: "The Struggle Before Systems",          firstSlide: "intro"      },
+  { numeral: "II",  title: "Chaos Scales Faster Than Consistency", firstSlide: "why"        },
+  { numeral: "III", title: "Inside the Cocoon",                    firstSlide: "tokens"     },
+  { numeral: "IV",  title: "Constraints Create Strength",          firstSlide: "philosophy" },
+  { numeral: "V",   title: "Building the Wings",                   firstSlide: "with"       },
+  { numeral: "VI",  title: "A System Designed to Fly",             firstSlide: "responsive" },
+  { numeral: "VII", title: "Beyond Components",                    firstSlide: "splash"     },
+] as const;
+
+/* TOC structure mirrors the chapter spine. Group headers carry the
+   Roman numeral; the chapter title sits underneath as a soft second
+   line so long titles don't have to wrap into a single mono line. */
 const TOC_GROUPS = [
-  {
-    group: "About",
-    items: [
-      { id: "intro",      label: "Introduction" },
-      { id: "origin",     label: "Origin" },
-      { id: "why",        label: "Why this exists" },
-    ],
-  },
-  {
-    group: "Principles",
-    items: [
-      { id: "philosophy", label: "Four principles" },
-      { id: "workflow",   label: "AI workflow" },
-    ],
-  },
-  {
-    group: "Specimen",
-    items: [
-      { id: "specimen",   label: "Specimen" },
-      { id: "palette",    label: "Palette" },
-    ],
-  },
-  {
-    group: "Tokens",
-    items: [
-      { id: "tokens",     label: "Tokens" },
-      { id: "without",    label: "Without tokens" },
-      { id: "with",       label: "With tokens" },
-    ],
-  },
-  {
-    group: "Layout",
-    items: [
-      { id: "responsive", label: "Breakpoints" },
-      { id: "navigation", label: "Top navigation" },
-      { id: "grids",      label: "Grids" },
-    ],
-  },
-  {
-    group: "Components",
-    items: [
-      { id: "buttons",    label: "Buttons" },
-      { id: "chips",      label: "Chip tones" },
-      { id: "splash",     label: "Launch splash" },
-    ],
-  },
+  { group: "I",   subtitle: "The Struggle Before Systems",          items: [
+    { id: "intro",   label: "Opening" },
+    { id: "origin",  label: "The cocoon" },
+  ]},
+  { group: "II",  subtitle: "Chaos Scales Faster Than Consistency", items: [
+    { id: "why",     label: "Drift" },
+    { id: "without", label: "Without foundations" },
+  ]},
+  { group: "III", subtitle: "Inside the Cocoon",                    items: [
+    { id: "tokens",   label: "Foundations" },
+    { id: "specimen", label: "Specimen" },
+    { id: "palette",  label: "Palette" },
+  ]},
+  { group: "IV",  subtitle: "Constraints Create Strength",          items: [
+    { id: "philosophy", label: "Four constraints" },
+    { id: "workflow",   label: "The loop" },
+  ]},
+  { group: "V",   subtitle: "Building the Wings",                   items: [
+    { id: "with",    label: "With foundations" },
+    { id: "buttons", label: "Buttons" },
+    { id: "chips",   label: "Chip tones" },
+  ]},
+  { group: "VI",  subtitle: "A System Designed to Fly",             items: [
+    { id: "responsive", label: "Breakpoints" },
+    { id: "navigation", label: "Navigation" },
+    { id: "grids",      label: "Grids" },
+  ]},
+  { group: "VII", subtitle: "Beyond Components",                    items: [
+    { id: "splash", label: "Closing" },
+  ]},
 ] as const;
 
 const NEXT_AFTER_DECK_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage"];
@@ -163,6 +170,50 @@ function SlideTitle({
     }}>
       {children}
     </h2>
+  );
+}
+
+/* ChapterHeading — prepended above the eyebrow on the first slide of
+   each narrative chapter. Two restrained lines (numeral + title) over
+   a hairline rule. Reads as a chapter card in a book, not a header
+   banner. Intentionally quiet — the chapter does the heavy lifting,
+   not the label. */
+function ChapterHeading({
+  numeral,
+  title,
+}: {
+  numeral: string;
+  title: string;
+}) {
+  return (
+    <div style={{
+      marginBottom: "var(--space-9)",
+      paddingBottom: "var(--space-5)",
+      borderBottom: "1px solid var(--border)",
+      maxWidth: 560,
+    }}>
+      <p style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: "var(--text-mono)",
+        letterSpacing: "0.22em",
+        textTransform: "uppercase",
+        color: "var(--muted)",
+        margin: 0,
+        marginBottom: "var(--space-3)",
+      }}>
+        Chapter {numeral}
+      </p>
+      <p style={{
+        fontFamily: "var(--font-body)",
+        fontSize: "var(--text-title-sm)",
+        lineHeight: 1.35,
+        letterSpacing: "-0.005em",
+        color: "var(--muted2)",
+        margin: 0,
+      }}>
+        {title}
+      </p>
+    </div>
   );
 }
 
@@ -556,18 +607,32 @@ function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) 
     <aside className="deck-rail" aria-label="Deck navigation">
       <nav style={{ flex: 1 }}>
         {TOC_GROUPS.map((group, gi) => (
-          <div key={group.group} style={{ marginBottom: gi < TOC_GROUPS.length - 1 ? "24px" : 0 }}>
+          <div key={group.group} style={{ marginBottom: gi < TOC_GROUPS.length - 1 ? "28px" : 0 }}>
+            {/* Chapter heading — two lines: Roman numeral in mono caps
+                over a soft body-font subtitle. Lets long chapter titles
+                breathe without forcing them into a single mono row. */}
             <p style={{
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-mono)",
-              letterSpacing: "0.08em",
+              letterSpacing: "0.22em",
               textTransform: "uppercase",
+              color: "var(--muted)",
+              margin: 0,
+              marginBottom: 2,
+            }}>
+              {group.group}
+            </p>
+            <p style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-caption)",
+              lineHeight: 1.3,
+              letterSpacing: "-0.005em",
               color: "var(--text)",
               fontWeight: 500,
               margin: 0,
               marginBottom: "10px",
             }}>
-              {group.group}
+              {group.subtitle}
             </p>
             <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
               {group.items.map(item => {
@@ -818,7 +883,7 @@ export default function DesignSystemDeck() {
            first line, meta on the second, role on the third. */
         .palette-row {
           display: grid;
-          grid-template-columns: auto 1.2fr 1.4fr 1.6fr;
+          grid-template-columns: auto 1.3fr 2fr;
           column-gap: var(--space-7);
           align-items: center;
         }
@@ -827,7 +892,6 @@ export default function DesignSystemDeck() {
             grid-template-columns: auto 1fr;
             row-gap: var(--space-3);
           }
-          .palette-row .palette-meta,
           .palette-row .palette-role {
             grid-column: 1 / 3;
           }
@@ -1135,19 +1199,9 @@ export default function DesignSystemDeck() {
                 sentence at display-manifesto scale (clamp 56-96). Tiny
                 structural label above; one supporting line below. The
                 composition is the moment; no card, no shadow, no clutter. */}
-            <HeroSlide id="intro" isActive={active === "intro"}>
-              <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-                <p style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "var(--text-mono)",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "var(--muted2)",
-                  margin: 0,
-                  marginBottom: "var(--space-9)",
-                }}>
-                  01 · Manifesto
-                </p>
+            <HeroSlide id="intro" isActive={active === "intro"} align="start">
+              <div style={{ maxWidth: 1100, margin: "0 auto", width: "100%" }}>
+                <ChapterHeading numeral="I" title="The Struggle Before Systems" />
                 <h2 style={{
                   fontFamily: "var(--font-body)",
                   fontSize: "clamp(48px, 7vw, 96px)",
@@ -1157,6 +1211,7 @@ export default function DesignSystemDeck() {
                   color: "var(--text)",
                   margin: 0,
                   marginBottom: "var(--space-10)",
+                  maxWidth: 980,
                 }}>
                   A working artifact,<br />
                   not a deliverable.
@@ -1168,12 +1223,12 @@ export default function DesignSystemDeck() {
                   letterSpacing: "-0.005em",
                   color: "var(--muted)",
                   margin: 0,
-                  maxWidth: 520,
+                  maxWidth: 560,
                 }}>
-                  Most design systems live in Figma. They drift the moment
-                  engineers touch them. This one lives in the code — one
-                  CSS file, a handful of React components. If this page
-                  renders, the system is correct.
+                  Most design systems are pictures of design systems. This
+                  one is the design system. When the page renders, the
+                  rules are correct — not because everyone agreed, but
+                  because there is nowhere left for the rules to live.
                 </p>
               </div>
             </HeroSlide>
@@ -1184,13 +1239,6 @@ export default function DesignSystemDeck() {
                 editorial typography, no card chrome. */}
             <HeroSlide id="origin" isActive={active === "origin"} align="start">
               <div style={{ maxWidth: 720, margin: "0 auto" }}>
-                <PaintedLadyMark
-                  size={36}
-                  style={{
-                    color: "var(--accent-warm)",
-                    marginBottom: "var(--space-7)",
-                  }}
-                />
                 <p style={{
                   fontFamily: "var(--font-mono)",
                   fontSize: "var(--text-mono)",
@@ -1200,7 +1248,7 @@ export default function DesignSystemDeck() {
                   margin: 0,
                   marginBottom: "var(--space-7)",
                 }}>
-                  02 · Origin
+                  The cocoon
                 </p>
                 <h2 style={{
                   fontFamily: "var(--font-body)",
@@ -1264,286 +1312,53 @@ export default function DesignSystemDeck() {
               </div>
             </HeroSlide>
 
-            {/* 03 — Why */}
+            {/* Chapter II opener — diagnostic of unbounded scale. */}
             <SlidePanel id="why" isActive={active === "why"} tint="surface">
-              <Eyebrow>Why this exists</Eyebrow>
-              <SlideTitle weight="manifesto">Drift was the problem. Code was the answer.</SlideTitle>
+              <ChapterHeading numeral="II" title="Chaos Scales Faster Than Consistency" />
+              <Eyebrow>Drift</Eyebrow>
+              <SlideTitle weight="manifesto">Speed makes copies, not systems.</SlideTitle>
               <Lead>
-                Three portfolio rebuilds in, the same gray was hex-coded four different ways.
-                Spacing wandered. One rule fixed it: nothing visual lives outside the token file.
-                Drift becomes impossible because there’s only one place to drift from.
+                Three rebuilds in, the same gray was hex-coded four different ways.
+                Spacing wandered. The problem wasn’t carelessness — it was the absence
+                of a single source. Drift isn’t a failure of attention. It’s what
+                happens when nothing is bound.
               </Lead>
             </SlidePanel>
 
-            {/* 04 — Philosophy */}
-            <SlidePanel id="philosophy" isActive={active === "philosophy"}>
-              <Eyebrow>Four principles</Eyebrow>
-              <SlideTitle>The opinions that shape every decision.</SlideTitle>
-              <div style={{
-                marginTop: "var(--space-7)",
-                display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gap: "var(--space-4)",
-              }}>
-                {[
-                  { n: "01", title: "No primary, on purpose", body: "Three button tiers, none dominant. The work is the hero." },
-                  { n: "02", title: "One easing curve",       body: "Every transition uses the same cubic-bezier. One motion language." },
-                  { n: "03", title: "Code, not Figma",        body: "Tokens live in globals.css. One source means nothing to drift from." },
-                  { n: "04", title: "44px floor",             body: "Touch-target minimum is a spacing token. Accessibility, baked in." },
-                ].map(p => (
-                  <div key={p.n} style={{
-                    background: "var(--surface2)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "var(--space-5)",
-                  }}>
-                    <p style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-mono)",
-                      color: "var(--muted)",
-                      letterSpacing: "0.08em",
-                      margin: 0,
-                      marginBottom: "var(--space-4)",
-                    }}>{p.n}</p>
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-title-sm)",
-                      fontWeight: 500,
-                      letterSpacing: "-0.015em",
-                      color: "var(--text)",
-                      margin: 0,
-                      marginBottom: 8,
-                    }}>{p.title}</p>
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-body)",
-                      color: "var(--muted)",
-                      margin: 0,
-                      lineHeight: 1.6,
-                    }}>{p.body}</p>
-                  </div>
-                ))}
-              </div>
-            </SlidePanel>
-
-            {/* 05 — AI workflow */}
-            <SlidePanel id="workflow" isActive={active === "workflow"} tint="surface">
-              <Eyebrow>AI-assisted workflow</Eyebrow>
-              <SlideTitle>Plan in Claude AI. Build in Claude Code.</SlideTitle>
-              <Lead>
-                Two modes, one loop. The plan file is the contract between them.
+            {/* Without foundations — the cost of unbounded scale, rendered
+                in code. Closes out Chapter II. */}
+            <SlidePanel id="without" isActive={active === "without"} tint="warm">
+              <Eyebrow>Without foundations</Eyebrow>
+              <SlideTitle>Each pixel a private decision.</SlideTitle>
+              <Lead max={520}>
+                Every value is independent. A theme change is a search-and-replace.
+                The system bends to whoever wrote the last line.
               </Lead>
-              <div style={{
+              <pre data-scrollable style={{
                 marginTop: "var(--space-7)",
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "var(--space-3)",
-              }}>
-                {[
-                  { step: "Plan",    tool: "Claude AI",   body: "Decisions as prose. Tradeoffs named." },
-                  { step: "Approve", tool: "Human",       body: "Read it. Push back. Lock scope." },
-                  { step: "Build",   tool: "Claude Code", body: "Execute the plan. Verify." },
-                  { step: "Review",  tool: "Human",       body: "Open the browser. Wrong? Back to the plan." },
-                ].map((s, i) => (
-                  <div key={s.step} style={{
-                    background: "var(--surface2)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "var(--space-5)",
-                  }}>
-                    <p style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-mono)",
-                      color: "var(--muted)",
-                      letterSpacing: "0.08em",
-                      margin: 0,
-                      marginBottom: "var(--space-3)",
-                    }}>
-                      {String(i + 1).padStart(2, "0")} · {s.tool}
-                    </p>
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-title-sm)",
-                      fontWeight: 500,
-                      color: "var(--text)",
-                      margin: 0,
-                      marginBottom: 6,
-                    }}>{s.step}</p>
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-body)",
-                      color: "var(--muted)",
-                      margin: 0,
-                      lineHeight: 1.5,
-                    }}>{s.body}</p>
-                  </div>
-                ))}
-              </div>
-            </SlidePanel>
-
-            {/* 06 — Specimen — the keystone of the design system.
-                Painted Lady (Vanessa cardui) annotated plate. The full
-                palette derivation lives here: each wing zone is leadered
-                out to the token it became. This is the slide the Origin
-                fable was setting up. */}
-            <HeroSlide id="specimen" isActive={active === "specimen"} align="start">
-              <div style={{ maxWidth: 980, margin: "0 auto", width: "100%" }}>
-                <p style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "var(--text-mono)",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "var(--muted2)",
-                  margin: 0,
-                  marginBottom: "var(--space-7)",
-                }}>
-                  06 · Specimen
-                </p>
-                <h2 style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "clamp(36px, 5vw, 64px)",
-                  fontWeight: 300,
-                  lineHeight: 1.05,
-                  letterSpacing: "-0.035em",
-                  color: "var(--text)",
-                  margin: 0,
-                  marginBottom: "var(--space-5)",
-                  maxWidth: 760,
-                }}>
-                  The palette was here before the system was.
-                </h2>
-                <p style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-title-sm)",
-                  lineHeight: 1.65,
-                  color: "var(--muted2)",
-                  margin: 0,
-                  marginBottom: "var(--space-10)",
-                  maxWidth: 620,
-                }}>
-                  Every color in this system was sampled from a single
-                  Painted Lady wing. The struggle made the pigment; the
-                  pigment made the surface.
-                </p>
-
-                <div style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: "var(--space-7) 0",
-                }}>
-                  <PaintedLadySpecimen width={620} />
-                </div>
-
-                <p style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "var(--text-mono)",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--muted)",
-                  textAlign: "center",
-                  margin: 0,
-                  marginTop: "var(--space-7)",
-                }}>
-                  Vanessa cardui · cosmopolitan · multi-generational migrant
-                </p>
-              </div>
-            </HeroSlide>
-
-            {/* 07 — Palette — documentary companion to Specimen. Wing zone
-                → swatch → hex → token → role in a structured grid. This is
-                where the metaphor cashes out into engineering. */}
-            <SlidePanel id="palette" isActive={active === "palette"} tint="surface">
-              <Eyebrow>07 · Palette</Eyebrow>
-              <h2 style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "var(--text-display)",
-                fontWeight: 300,
-                lineHeight: 1.1,
-                letterSpacing: "-0.025em",
+                padding: "var(--space-5)",
+                background: "var(--surface2)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius-md)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "var(--text-mono-lg)",
+                lineHeight: 1.75,
                 color: "var(--text)",
-                margin: 0,
-                marginBottom: "var(--space-3)",
+                overflow: "auto",
               }}>
-                Five pigments. Five jobs.
-              </h2>
-              <p style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "var(--text-lead)",
-                lineHeight: 1.65,
-                color: "var(--muted2)",
-                margin: 0,
-                marginBottom: "var(--space-10)",
-                maxWidth: 640,
-              }}>
-                The wing carries more colors than this system uses. The
-                ones with a job became tokens. The cream patch was left in
-                the specimen — reserved, not retired.
-              </p>
-
-              <div className="palette-grid" style={{ borderTop: "1px solid var(--border)" }}>
-                {[
-                  { swatch: "#d17b53", zone: "Forewing wash",    hex: "#D17B53", token: "--accent-warm", role: "Action · accent · the single chromatic note" },
-                  { swatch: "#1d1d1f", zone: "Wing margin",      hex: "#1D1D1F", token: "--text",        role: "Primary type · ink" },
-                  { swatch: "#424245", zone: "Body",             hex: "#424245", token: "--muted2",      role: "Tertiary type · captions" },
-                  { swatch: "#6e6e73", zone: "Veining",          hex: "#6E6E73", token: "--muted",       role: "Secondary type · supporting prose" },
-                  { swatch: "#ffffff", zone: "Submarginal spot", hex: "#FFFFFF", token: "--bg",          role: "Paper · the surface everything floats on" },
-                  { swatch: "#f5e9d3", zone: "Cream patch",      hex: "#F5E9D3", token: "—",             role: "Reserved · no role in the current system", reserved: true },
-                ].map((row) => (
-                  <div
-                    key={row.hex}
-                    className="palette-row"
-                    style={{
-                      padding: "var(--space-5) 0",
-                      borderBottom: "1px solid var(--border)",
-                    }}
-                  >
-                    <div className="palette-swatch">
-                      <span style={{
-                        display: "inline-block",
-                        width: 36,
-                        height: 36,
-                        background: row.swatch,
-                        border: row.swatch === "#ffffff" ? "1px solid var(--border)" : "none",
-                        borderRadius: "var(--radius-sm)",
-                        opacity: row.reserved ? 0.5 : 1,
-                      }} />
-                    </div>
-                    <div className="palette-zone" style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-body-lg)",
-                      color: row.reserved ? "var(--muted)" : "var(--text)",
-                      fontStyle: row.reserved ? "italic" : "normal",
-                    }}>
-                      {row.zone}
-                    </div>
-                    <div className="palette-meta" style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-mono-lg)",
-                      letterSpacing: "0.08em",
-                      color: row.reserved ? "var(--muted)" : "var(--muted2)",
-                    }}>
-                      <span>{row.hex}</span>
-                      <span style={{ marginLeft: "var(--space-4)", color: "var(--muted)" }}>{row.token}</span>
-                    </div>
-                    <div className="palette-role" style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-body)",
-                      lineHeight: 1.5,
-                      color: "var(--muted)",
-                    }}>
-                      {row.role}
-                    </div>
-                  </div>
-                ))}
-              </div>
+{`color:         #1d1d1f;
+background:    #f5f5f7;
+padding:       16px 24px;
+border-radius: 12px;
+transition:    180ms cubic-bezier(0.22, 1, 0.36, 1);`}
+              </pre>
             </SlidePanel>
 
-            {/* 08 — Tokens — TOKEN WALL. Full-bleed grid of bare color
-                blocks. No card chrome around each swatch — the color IS
-                the surface. Mono-caps captions hang on each block. The
-                wall reads as a single composition, not eight cards. */}
+            {/* Chapter III opener — the token wall. The first visible
+                structure of the system: a palette bound to a source. */}
             <HeroSlide id="tokens" isActive={active === "tokens"} align="start">
               <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%" }}>
+                <ChapterHeading numeral="III" title="Inside the Cocoon" />
                 <p style={{
                   fontFamily: "var(--font-mono)",
                   fontSize: "var(--text-mono)",
@@ -1553,7 +1368,7 @@ export default function DesignSystemDeck() {
                   margin: 0,
                   marginBottom: "var(--space-5)",
                 }}>
-                  06 · Token wall
+                  Foundations
                 </p>
                 <h2 style={{
                   fontFamily: "var(--font-body)",
@@ -1607,41 +1422,259 @@ export default function DesignSystemDeck() {
               </div>
             </HeroSlide>
 
-            {/* 07 — Without tokens */}
-            <SlidePanel id="without" isActive={active === "without"} tint="warm">
-              <Eyebrow>Without tokens</Eyebrow>
-              <SlideTitle>Decisions trapped in pixel literals.</SlideTitle>
-              <Lead max={520}>
-                Every value is independent. A theme change is a search-and-replace. Drift is one
-                careless paste away.
+            {/* Specimen — a quiet exhibit moment inside Chapter III. The
+                plate sits at exhibit-drawer scale (not wall mural), framed
+                with a brief museum-card caption. The metaphor is now
+                annotation, not centerpiece. */}
+            <SlidePanel id="specimen" isActive={active === "specimen"} tint="surface">
+              <Eyebrow>Specimen</Eyebrow>
+              <SlideTitle weight="manifesto">
+                The foundations were not invented. They were sampled.
+              </SlideTitle>
+              <Lead max={560}>
+                Five pigments earned a place in the system. One was kept
+                in the drawer. The constraint is in what was left out.
               </Lead>
-              <pre data-scrollable style={{
-                marginTop: "var(--space-7)",
-                padding: "var(--space-5)",
-                background: "var(--surface2)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-md)",
-                fontFamily: "var(--font-mono)",
-                fontSize: "var(--text-mono-lg)",
-                lineHeight: 1.75,
-                color: "var(--text)",
-                overflow: "auto",
+
+              <div style={{
+                marginTop: "var(--space-9)",
+                display: "grid",
+                gridTemplateColumns: "minmax(280px, 420px) 1fr",
+                columnGap: "var(--space-10)",
+                rowGap: "var(--space-7)",
+                alignItems: "center",
               }}>
-{`color:         #1d1d1f;
-background:    #f5f5f7;
-padding:       16px 24px;
-border-radius: 12px;
-transition:    180ms cubic-bezier(0.22, 1, 0.36, 1);`}
-              </pre>
+                <div style={{
+                  background: "var(--bg)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "var(--space-7) var(--space-5)",
+                  display: "flex",
+                  justifyContent: "center",
+                }}>
+                  <PaintedLadySpecimen width={360} showAnnotations={false} />
+                </div>
+                <div>
+                  <p style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "var(--text-mono)",
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: "var(--muted)",
+                    margin: 0,
+                    marginBottom: "var(--space-3)",
+                  }}>
+                    Plate · 01
+                  </p>
+                  <p style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "var(--text-title-sm)",
+                    lineHeight: 1.5,
+                    color: "var(--text)",
+                    margin: 0,
+                    marginBottom: "var(--space-4)",
+                    letterSpacing: "-0.005em",
+                  }}>
+                    Vanessa cardui
+                  </p>
+                  <p style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "var(--text-body)",
+                    lineHeight: 1.65,
+                    color: "var(--muted)",
+                    margin: 0,
+                    maxWidth: 440,
+                  }}>
+                    A specimen whose pigments compose, by accident, the
+                    same restricted set this system arrived at by years of
+                    iteration. The match is what made it worth keeping.
+                  </p>
+                </div>
+              </div>
             </SlidePanel>
 
-            {/* 08 — With tokens */}
+            {/* Palette — Chapter III's quiet documentation slide. The wing
+                metaphor is no longer labeled in the grid; the swatches
+                speak for themselves. The reserved row stays as the
+                system's only acknowledged absence. */}
+            <SlidePanel id="palette" isActive={active === "palette"} tint="surface">
+              <Eyebrow>Palette</Eyebrow>
+              <SlideTitle>Five pigments. Five jobs.</SlideTitle>
+              <Lead max={620}>
+                Each color is bound to a role. The system uses a subset of
+                what is available — not because more wouldn’t work, but
+                because more wouldn’t help.
+              </Lead>
+
+              <div className="palette-grid" style={{ marginTop: "var(--space-9)", borderTop: "1px solid var(--border)" }}>
+                {[
+                  { swatch: "#d17b53", hex: "#D17B53", token: "--accent-warm", role: "Action · accent · the single chromatic note" },
+                  { swatch: "#1d1d1f", hex: "#1D1D1F", token: "--text",        role: "Primary type · ink" },
+                  { swatch: "#424245", hex: "#424245", token: "--muted2",      role: "Tertiary type · captions" },
+                  { swatch: "#6e6e73", hex: "#6E6E73", token: "--muted",       role: "Secondary type · supporting prose" },
+                  { swatch: "#ffffff", hex: "#FFFFFF", token: "--bg",          role: "Paper · the surface everything floats on" },
+                  { swatch: "#f5e9d3", hex: "#F5E9D3", token: "—",             role: "Reserved · present in the drawer, absent from the system", reserved: true },
+                ].map((row) => (
+                  <div
+                    key={row.hex}
+                    className="palette-row"
+                    style={{
+                      padding: "var(--space-5) 0",
+                      borderBottom: "1px solid var(--border)",
+                    }}
+                  >
+                    <div className="palette-swatch">
+                      <span style={{
+                        display: "inline-block",
+                        width: 36,
+                        height: 36,
+                        background: row.swatch,
+                        border: row.swatch === "#ffffff" ? "1px solid var(--border)" : "none",
+                        borderRadius: "var(--radius-sm)",
+                        opacity: row.reserved ? 0.5 : 1,
+                      }} />
+                    </div>
+                    <div className="palette-meta" style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-mono-lg)",
+                      letterSpacing: "0.08em",
+                      color: row.reserved ? "var(--muted)" : "var(--muted2)",
+                    }}>
+                      <span>{row.hex}</span>
+                      <span style={{ marginLeft: "var(--space-4)", color: "var(--muted)" }}>{row.token}</span>
+                    </div>
+                    <div className="palette-role" style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body)",
+                      lineHeight: 1.5,
+                      color: "var(--muted)",
+                      fontStyle: row.reserved ? "italic" : "normal",
+                    }}>
+                      {row.role}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </SlidePanel>
+
+            {/* Chapter IV opener — the constraints that hold the system together. */}
+            <SlidePanel id="philosophy" isActive={active === "philosophy"}>
+              <ChapterHeading numeral="IV" title="Constraints Create Strength" />
+              <Eyebrow>Four constraints</Eyebrow>
+              <SlideTitle>The opinions that shape every decision.</SlideTitle>
+              <div style={{
+                marginTop: "var(--space-7)",
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: "var(--space-4)",
+              }}>
+                {[
+                  { n: "01", title: "No primary, on purpose", body: "Three button tiers, none dominant. The work is the hero." },
+                  { n: "02", title: "One easing curve",       body: "Every transition uses the same cubic-bezier. One motion language." },
+                  { n: "03", title: "Code, not Figma",        body: "Tokens live in globals.css. One source means nothing to drift from." },
+                  { n: "04", title: "44px floor",             body: "Touch-target minimum is a spacing token. Accessibility, baked in." },
+                ].map(p => (
+                  <div key={p.n} style={{
+                    background: "var(--surface2)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                    padding: "var(--space-5)",
+                  }}>
+                    <p style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-mono)",
+                      color: "var(--muted)",
+                      letterSpacing: "0.08em",
+                      margin: 0,
+                      marginBottom: "var(--space-4)",
+                    }}>{p.n}</p>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-title-sm)",
+                      fontWeight: 500,
+                      letterSpacing: "-0.015em",
+                      color: "var(--text)",
+                      margin: 0,
+                      marginBottom: 8,
+                    }}>{p.title}</p>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body)",
+                      color: "var(--muted)",
+                      margin: 0,
+                      lineHeight: 1.6,
+                    }}>{p.body}</p>
+                  </div>
+                ))}
+              </div>
+            </SlidePanel>
+
+            {/* The loop — Chapter IV's working method. */}
+            <SlidePanel id="workflow" isActive={active === "workflow"} tint="surface">
+              <Eyebrow>The loop</Eyebrow>
+              <SlideTitle>Plan in Claude AI. Build in Claude Code.</SlideTitle>
+              <Lead>
+                Two modes, one loop. The plan file is the contract between them —
+                the constraint that keeps thinking and making honest with each other.
+              </Lead>
+              <div style={{
+                marginTop: "var(--space-7)",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "var(--space-3)",
+              }}>
+                {[
+                  { step: "Plan",    tool: "Claude AI",   body: "Decisions as prose. Tradeoffs named." },
+                  { step: "Approve", tool: "Human",       body: "Read it. Push back. Lock scope." },
+                  { step: "Build",   tool: "Claude Code", body: "Execute the plan. Verify." },
+                  { step: "Review",  tool: "Human",       body: "Open the browser. Wrong? Back to the plan." },
+                ].map((s, i) => (
+                  <div key={s.step} style={{
+                    background: "var(--surface2)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                    padding: "var(--space-5)",
+                  }}>
+                    <p style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-mono)",
+                      color: "var(--muted)",
+                      letterSpacing: "0.08em",
+                      margin: 0,
+                      marginBottom: "var(--space-3)",
+                    }}>
+                      {String(i + 1).padStart(2, "0")} · {s.tool}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-title-sm)",
+                      fontWeight: 500,
+                      color: "var(--text)",
+                      margin: 0,
+                      marginBottom: 6,
+                    }}>{s.step}</p>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-body)",
+                      color: "var(--muted)",
+                      margin: 0,
+                      lineHeight: 1.5,
+                    }}>{s.body}</p>
+                  </div>
+                ))}
+              </div>
+            </SlidePanel>
+
+            {/* Chapter V opener — what the foundations afford. The same
+                surface as 'without', rewritten in tokens. */}
             <SlidePanel id="with" isActive={active === "with"}>
-              <Eyebrow>With tokens</Eyebrow>
-              <SlideTitle>Decisions named. Drift impossible.</SlideTitle>
+              <ChapterHeading numeral="V" title="Building the Wings" />
+              <Eyebrow>With foundations</Eyebrow>
+              <SlideTitle>Every value a reference.</SlideTitle>
               <Lead max={520}>
-                Every value is a reference. A theme change is one variable redefinition. There is
-                only one place to change anything.
+                The same component, written against the system. A theme change is
+                one variable redefinition. The constraints are no longer in the way —
+                they hold the work up.
               </Lead>
               <pre data-scrollable style={{
                 marginTop: "var(--space-7)",
@@ -1665,12 +1698,102 @@ transition:    var(--dur-fast) var(--ease-expo);`}
 
             {/* — Layout group ─────────────────────────────────────────── */}
 
-            {/* Responsive — DIORAMA. One oversized device frame that
-                morphs between three breakpoints. Reads as a single stage,
-                not three small mockups. The pixel number is a co-equal
-                typographic element next to the device. */}
-            <HeroSlide id="responsive" isActive={active === "responsive"}>
-              <BreakpointDiorama />
+            {/* 09 — Buttons */}
+            <SlidePanel id="buttons" isActive={active === "buttons"} tint="surface">
+              <Eyebrow>Buttons</Eyebrow>
+              <SlideTitle>Three tiers, no primary.</SlideTitle>
+              <Lead>The work is the hero. None of these buttons is allowed to compete for attention.</Lead>
+              <div style={{
+                marginTop: "var(--space-7)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-4)",
+              }}>
+                {[
+                  { variant: "chrome" as const, label: "Chrome — page-level chrome, elevated", example: "Contact" },
+                  { variant: "inline" as const, label: "Inline — actions within content",      example: "Download CV" },
+                  { variant: "tag"    as const, label: "Tag — metadata, lowest weight",         example: "UX · Product" },
+                ].map(row => (
+                  <div key={row.variant} className="deck-panel-buttons-row" style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 220px",
+                    gap: "var(--space-5)",
+                    alignItems: "center",
+                    padding: "var(--space-5) var(--space-6)",
+                    background: "var(--surface2)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                  }}>
+                    <p style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-title-sm)",
+                      fontWeight: 500,
+                      letterSpacing: "-0.015em",
+                      color: "var(--text)",
+                      margin: 0,
+                    }}>
+                      {row.label}
+                    </p>
+                    <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                      <Button variant={row.variant}>{row.example}</Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </SlidePanel>
+
+            {/* 10 — Chip tones */}
+            <SlidePanel id="chips" isActive={active === "chips"}>
+              <Eyebrow>Chip tones</Eyebrow>
+              <SlideTitle>Six tones for inline emphasis.</SlideTitle>
+              <div style={{
+                marginTop: "var(--space-7)",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                gap: "var(--space-3)",
+              }}>
+                {([
+                  { tone: "indigo",  label: "AI copilot" },
+                  { tone: "teal",    label: "research-led" },
+                  { tone: "amber",   label: "ambiguous" },
+                  { tone: "violet",  label: "first principles" },
+                  { tone: "emerald", label: "68% adoption" },
+                  { tone: "sage",    label: "studio of one" },
+                ] as const).map(c => (
+                  <div key={c.tone} style={{
+                    background: "var(--surface2)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                    padding: "var(--space-5)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "var(--space-3)",
+                    alignItems: "flex-start",
+                  }}>
+                    <InlineChip label={c.label} tone={c.tone} scale="match" />
+                    <p style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-mono)",
+                      color: "var(--muted)",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      margin: 0,
+                    }}>
+                      {c.tone}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </SlidePanel>
+
+            {/* Chapter VI opener — the system in motion. The diorama is
+                the chapter's first image; the heading sits as marginalia
+                in the top-left so the stage stays uncluttered. */}
+            <HeroSlide id="responsive" isActive={active === "responsive"} align="start">
+              <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto" }}>
+                <ChapterHeading numeral="VI" title="A System Designed to Fly" />
+                <BreakpointDiorama />
+              </div>
             </HeroSlide>
 
             {/* Top navigation — live preview of the actual nav. The pills
@@ -1887,104 +2010,18 @@ transition:    var(--dur-fast) var(--ease-expo);`}
               </div>
             </SlidePanel>
 
-            {/* 09 — Buttons */}
-            <SlidePanel id="buttons" isActive={active === "buttons"} tint="surface">
-              <Eyebrow>Buttons</Eyebrow>
-              <SlideTitle>Three tiers, no primary.</SlideTitle>
-              <Lead>The work is the hero. None of these buttons is allowed to compete for attention.</Lead>
-              <div style={{
-                marginTop: "var(--space-7)",
-                display: "flex",
-                flexDirection: "column",
-                gap: "var(--space-4)",
-              }}>
-                {[
-                  { variant: "chrome" as const, label: "Chrome — page-level chrome, elevated", example: "Contact" },
-                  { variant: "inline" as const, label: "Inline — actions within content",      example: "Download CV" },
-                  { variant: "tag"    as const, label: "Tag — metadata, lowest weight",         example: "UX · Product" },
-                ].map(row => (
-                  <div key={row.variant} className="deck-panel-buttons-row" style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 220px",
-                    gap: "var(--space-5)",
-                    alignItems: "center",
-                    padding: "var(--space-5) var(--space-6)",
-                    background: "var(--surface2)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius-md)",
-                  }}>
-                    <p style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-title-sm)",
-                      fontWeight: 500,
-                      letterSpacing: "-0.015em",
-                      color: "var(--text)",
-                      margin: 0,
-                    }}>
-                      {row.label}
-                    </p>
-                    <div style={{ display: "flex", justifyContent: "flex-start" }}>
-                      <Button variant={row.variant}>{row.example}</Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </SlidePanel>
-
-            {/* 10 — Chip tones */}
-            <SlidePanel id="chips" isActive={active === "chips"}>
-              <Eyebrow>Chip tones</Eyebrow>
-              <SlideTitle>Six tones for inline emphasis.</SlideTitle>
-              <div style={{
-                marginTop: "var(--space-7)",
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                gap: "var(--space-3)",
-              }}>
-                {([
-                  { tone: "indigo",  label: "AI copilot" },
-                  { tone: "teal",    label: "research-led" },
-                  { tone: "amber",   label: "ambiguous" },
-                  { tone: "violet",  label: "first principles" },
-                  { tone: "emerald", label: "68% adoption" },
-                  { tone: "sage",    label: "studio of one" },
-                ] as const).map(c => (
-                  <div key={c.tone} style={{
-                    background: "var(--surface2)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "var(--space-5)",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "var(--space-3)",
-                    alignItems: "flex-start",
-                  }}>
-                    <InlineChip label={c.label} tone={c.tone} scale="match" />
-                    <p style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-mono)",
-                      color: "var(--muted)",
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                      margin: 0,
-                    }}>
-                      {c.tone}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </SlidePanel>
-
             {/* Launch splash — preview of the actual splash composition.
                 The wordmark + hint render inline at the splash's real type
                 treatment so visitors see what shows on first visit instead
                 of reading a description of it. */}
             <SlidePanel id="splash" isActive={active === "splash"}>
-              <Eyebrow>Launch splash</Eyebrow>
-              <SlideTitle weight="manifesto">A signature, once per session.</SlideTitle>
+              <ChapterHeading numeral="VII" title="Beyond Components" />
+              <Eyebrow>Closing signature</Eyebrow>
+              <SlideTitle weight="manifesto">What comes after the system.</SlideTitle>
               <Lead>
-                A particle &ldquo;Arun Gaddam&rdquo; wordmark assembles on first visit.
-                Dismisses on any key or click. Never seen on a return visit.
+                A particle wordmark assembles, once. Then it stays out of the way.
+                The signature isn’t the system — it’s the threshold the system
+                holds open behind it.
               </Lead>
 
               {/* Live splash preview — mini viewport mockup */}
