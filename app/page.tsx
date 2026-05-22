@@ -1206,7 +1206,12 @@ function WorkPanel() {
   const CARD_ORDER = [
     "apple-business-listings", "planful-esm-tables", "fancode-homepage",
   ];
-  const EXPLORATION_ORDER = ["astra"];
+  /* AI Exploration section hidden from the live homepage. Empty array
+     collapses the entire "AI Exploration" block (header + Astra card +
+     Portfolio Design Language card) via the `explorationCards.length > 0`
+     gate further down. Routes for /work/astra and /system still exist
+     for direct linking; only the homepage surface is removed. */
+  const EXPLORATION_ORDER: string[] = [];
   const COMING_SOON = new Set<string>();
 
   const allCards = CARD_ORDER
