@@ -15,10 +15,15 @@
 
 import { useState } from "react";
 
-export default function VideoBlock({ src, appType, chromeUrl }: { src: string; appType?: string; chromeUrl?: string }) {
+export default function VideoBlock({ src, appType, chromeUrl, dark }: { src: string; appType?: string; chromeUrl?: string; dark?: boolean }) {
   const isMobile = !!appType && /mobile/i.test(appType);
   const urlLabel = chromeUrl || "app.example.com";
   const [ready, setReady] = useState(false);
+  // When `dark` is true, the surrounding panel + browser chrome render
+  // a dark surface so a dark-themed app video blends in light mode.
+  // Used on the Reputation case study where the product UI is dark.
+  const panelBg = dark ? "#0f1115" : "var(--chrome)";
+  const videoBg = dark ? "#0f1115" : "var(--surface)";
 
   if (isMobile) {
     return (
@@ -47,8 +52,8 @@ export default function VideoBlock({ src, appType, chromeUrl }: { src: string; a
   }
 
   return (
-    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--chrome)", boxShadow: "var(--card-shadow)" }}>
-      <div style={{ position: "relative", height: "38px", background: "var(--chrome)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ borderRadius: "16px", overflow: "hidden", background: panelBg, boxShadow: "var(--card-shadow)" }}>
+      <div style={{ position: "relative", height: "38px", background: panelBg, borderBottom: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ position: "absolute", left: "14px", display: "flex", alignItems: "center", gap: "6px" }}>
           {["#ff5f57", "#febc2e", "#28c840"].map((c, i) => (
             <div key={i} style={{ width: "10px", height: "10px", borderRadius: "50%", background: c }} />
@@ -64,7 +69,7 @@ export default function VideoBlock({ src, appType, chromeUrl }: { src: string; a
           </span>
         </div>
       </div>
-      <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9", background: "var(--surface)" }}>
+      <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9", background: videoBg }}>
         <video
           src={src}
           autoPlay
@@ -77,7 +82,7 @@ export default function VideoBlock({ src, appType, chromeUrl }: { src: string; a
             position: "absolute", inset: 0,
             width: "100%", height: "100%",
             objectFit: "contain",
-            background: "var(--surface)",
+            background: videoBg,
             opacity: ready ? 1 : 0,
             transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
           }}

@@ -1542,8 +1542,8 @@ function WorkPanel() {
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
                     {thumbnail && (
-                      <div style={{ position: "relative", height: "200px", overflow: "hidden", padding: "12px 12px 0" }}>
-                        <div style={{ width: "100%", height: "100%", overflow: "hidden", borderRadius: "8px 8px 0 0", background: "var(--surface2)" }}>
+                      <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                        <div style={{ width: "100%", height: "100%", overflow: "hidden", background: "var(--surface2)" }}>
                           <img
                             src={thumbnail}
                             alt={`${title} thumbnail`}
