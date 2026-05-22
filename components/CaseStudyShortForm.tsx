@@ -124,7 +124,7 @@ export default function CaseStudyShortForm({ title, tags, paragraphs, builtWith,
             >
               <video
                 src={media.src}
-                autoPlay loop muted playsInline preload="auto"
+                autoPlay loop muted playsInline preload="metadata"
                 style={{
                   width: "100%",
                   display: "block",

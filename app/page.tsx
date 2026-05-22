@@ -993,9 +993,10 @@ function WorkCardThumb({
               className="work-thumb"
               src={src}
               autoPlay loop muted playsInline
-              preload="auto"
+              preload="metadata"
               aria-hidden="true"
               onCanPlay={() => setReady(true)}
+              onError={() => setReady(true)}
               style={{
                 ...coverStyle,
                 opacity: ready ? 1 : 0,
@@ -1023,6 +1024,7 @@ function WorkCardThumb({
             alt="" aria-hidden="true"
             loading="lazy" decoding="async"
             onLoad={() => setReady(true)}
+            onError={() => setReady(true)}
             style={{
               ...coverStyle,
               opacity: ready ? 1 : 0,
@@ -1309,6 +1311,33 @@ function WorkPanel() {
   // Portal mount guard — createPortal must only run client-side after mount.
   const [portalReady, setPortalReady] = useState(false);
   useEffect(() => { setPortalReady(true); }, []);
+
+  // Focus trap for the password modal — keeps Tab/Shift+Tab cycling
+  // within the dialog so keyboard users can't escape into the page
+  // behind the backdrop while the modal is open.
+  useEffect(() => {
+    if (!pwOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      const dialog = document.querySelector<HTMLElement>('[aria-labelledby="archived-pw-modal-title"]');
+      if (!dialog) return;
+      const focusable = dialog.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [pwOpen]);
 
   return (
     <div id="work-panel">
@@ -1718,7 +1747,7 @@ function WorkPanel() {
                     fontFamily: "var(--font-body)", color: "var(--text)",
                     background: "var(--bg)",
                     border: `1.5px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
-                    borderRadius: "10px", outline: "none",
+                    borderRadius: "10px",
                     marginBottom: "10px",
                     boxSizing: "border-box",
                     transition: "border-color 0.18s",

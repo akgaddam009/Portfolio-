@@ -204,7 +204,7 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
                         }}>
                           <video
                             src={src}
-                            autoPlay loop muted playsInline preload="auto"
+                            autoPlay loop muted playsInline preload="metadata"
                             style={{
                               position: "absolute", inset: 0,
                               width: "100%", height: "100%",
@@ -369,7 +369,6 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
                     border: `1.5px solid ${pwError ? "color-mix(in srgb, var(--accent-error) 55%, var(--accent-warm) 45%)" : "var(--border)"}`,
                     borderRadius: "10px",
                     padding: "11px 14px",
-                    outline: "none",
                     transition: "border-color 0.18s",
                     marginBottom: "10px",
                     boxSizing: "border-box",

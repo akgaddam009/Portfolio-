@@ -5,9 +5,9 @@
    so the gate gets the exact same visual treatment without dragging
    the rest of the case study payload into the gate's bundle.
 
-   Important: this version renders the video unconditionally with
-   preload="auto" — no image fallback, no swap. Mobile and web both
-   get the same auto-playing muted loop the moment the page mounts.
+   Important: this version renders the video with preload="metadata"
+   so we fetch just enough to autoplay-muted without burning data on
+   the full payload before the user has scrolled to it.
 
    The container reserves an aspect ratio so the panel doesn't
    collapse while the video is loading; the video crossfades in
@@ -35,7 +35,7 @@ export default function VideoBlock({ src, appType, chromeUrl, dark }: { src: str
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             onCanPlay={() => setReady(true)}
             style={{
               position: "absolute", inset: 0,
@@ -76,7 +76,7 @@ export default function VideoBlock({ src, appType, chromeUrl, dark }: { src: str
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           onCanPlay={() => setReady(true)}
           style={{
             position: "absolute", inset: 0,

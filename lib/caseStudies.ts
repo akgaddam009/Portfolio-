@@ -841,7 +841,7 @@ export const caseStudies: CaseStudy[] = [
       src: "/images/reputation/listings-performance.jpg",
       alt: "Final design of the Listings Performance dashboard: 5-section structure with Apple integrated alongside Google, Bing, and Facebook",
       caption: "the final dashboard: 5 sections, platform equity, Apple integrated.",
-      width: "65%",
+      width: "100%",
     },
 
     resultSection: {
