@@ -227,6 +227,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
            the content still work for direct anchor links. */
         @media (max-width: 1180px) {
           .cs-rail { display: none !important; }
+          .fc-pres-panel { display: none !important; }
         }
         .cs-rail-item:hover {
           color: var(--text) !important;
@@ -716,6 +717,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
               Pattern: Stripe Docs / Linear / Vercel sidebar nav with a
               sliding indicator bar via Framer Motion layoutId. ── */}
+          {cs.slug !== "fancode-homepage" && (
           <aside
             className="cs-rail"
             style={{
@@ -799,6 +801,21 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 </AnimatePresence>
             </div>{/* /.sticky wrapper inside .cs-rail */}
           </aside>
+          )}
+
+          {/* Fancode-only — Presentation panel.
+              Fixed-position right-side panel that swaps its slide
+              content based on which chapter the reader has scrolled
+              past. Replaces the left rail (hidden above for Fancode).
+              Each chapter has one slide: eyebrow + title + visual +
+              thesis. activeSection is the same state the rail uses
+              for the active-item highlight. */}
+          {cs.slug === "fancode-homepage" && (
+            <FancodePresentationPanel
+              activeId={activeSection || "ch-cover"}
+              visible={navVisible}
+            />
+          )}
 
           {/* Content column. .page-pad keeps content at 680px max,
               centered on the viewport just like the hero. */}
@@ -4314,6 +4331,175 @@ function ChapterCover({
         </motion.div>
       </div>
     </section>
+  );
+}
+
+/* FancodePresentationPanel — sticky right-side presentation deck used
+   only on /work/fancode-homepage. Replaces the left chapter rail.
+   Shows one slide at a time (eyebrow + title + visual + thesis);
+   swaps the slide via crossfade when the reader scrolls past a new
+   chapter anchor. activeId comes from the parent's IntersectionObserver
+   that's already wired to the six chapter ids. */
+type FancodeSlide = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  thesis: string;
+  visual: { kind: "image" | "video"; src: string; poster?: string };
+};
+const FANCODE_SLIDES: FancodeSlide[] = [
+  {
+    id: "ch-cover",
+    eyebrow: "I — Cover",
+    title: "Rethink the FanCode homepage",
+    thesis: "A mental model shift and a reusable component system lifted engagement below the first fold by 15–20%.",
+    visual: { kind: "video", src: "/images/fancode/fancode-homepage-before.mp4", poster: "/images/fancode/earlier-homepage.jpg" },
+  },
+  {
+    id: "ch-contest",
+    eyebrow: "II — The Contest",
+    title: "The first fold was constantly contested",
+    thesis: "Every team that wanted discovery, adoption, or visibility pushed for prime placement. The space was finite.",
+    visual: { kind: "image", src: "/images/fancode/earlier-homepage.jpg" },
+  },
+  {
+    id: "ch-insight",
+    eyebrow: "III — The mental model shift",
+    title: "Organised around how users think",
+    thesis: "Sports fans follow tournaments, teams, and players — not content formats.",
+    visual: { kind: "image", src: "/images/fancode/hp-concept-strategy.jpg" },
+  },
+  {
+    id: "ch-design",
+    eyebrow: "IV — The strategy",
+    title: "Pattern, break, pattern",
+    thesis: "A reusable component system that gave every team a home, and every fan a path.",
+    visual: { kind: "image", src: "/images/fancode/hp-final-ui.jpg" },
+  },
+  {
+    id: "ch-result",
+    eyebrow: "V — 15-20% lift",
+    title: "The homepage learned to recognise you",
+    thesis: "Engagement below the first fold lifted 15–20%. Staged A/B rollout, ramped from <5% to 100%.",
+    visual: { kind: "video", src: "/images/fancode/fancode-homepage-after.mp4", poster: "/images/fancode/new-homepage.jpg" },
+  },
+  {
+    id: "ch-reflection",
+    eyebrow: "VI — Reflection",
+    title: "The hardest design problems are structural",
+    thesis: "They're rarely visual. What I'd instrument differently next time.",
+    visual: { kind: "image", src: "/images/fancode/new-homepage-first-return-users.jpg" },
+  },
+];
+
+function FancodePresentationPanel({ activeId, visible }: { activeId: string; visible: boolean }) {
+  const slide = FANCODE_SLIDES.find(s => s.id === activeId) ?? FANCODE_SLIDES[0];
+  return (
+    <aside
+      className="fc-pres-panel"
+      aria-label="Chapter presentation panel"
+      style={{
+        position: "fixed",
+        top: "88px",
+        right: "32px",
+        width: "min(440px, 32vw)",
+        maxHeight: "calc(100vh - 120px)",
+        background: "var(--surface)",
+        border: "1px solid var(--border)",
+        borderRadius: "16px",
+        boxShadow: "var(--card-shadow)",
+        overflow: "hidden",
+        zIndex: 5,
+        opacity: visible ? 1 : 0,
+        pointerEvents: visible ? "auto" : "none",
+        transition: "opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* Visual — top half of the panel. Crossfades when active slide changes. */}
+      <div style={{
+        width: "100%",
+        aspectRatio: "16 / 10",
+        background: "var(--bg)",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={slide.id + "-visual"}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.45, ease: EASE }}
+            style={{ position: "absolute", inset: 0 }}
+          >
+            {slide.visual.kind === "image" ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={slide.visual.src}
+                alt={slide.title}
+                loading="lazy"
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            ) : (
+              <video
+                src={slide.visual.src}
+                poster={slide.visual.poster}
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Text — eyebrow + title + thesis. Crossfades independently. */}
+      <div style={{ padding: "20px 22px 24px", display: "flex", flexDirection: "column", gap: "10px" }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={slide.id + "-text"}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.35, ease: EASE }}
+          >
+            <p style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "var(--text-mono)",
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              margin: 0, marginBottom: "10px",
+            }}>
+              {slide.eyebrow}
+            </p>
+            <p style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-title-sm)",
+              fontWeight: 500, letterSpacing: "-0.02em",
+              lineHeight: 1.25,
+              color: "var(--text)",
+              margin: 0, marginBottom: "10px",
+            }}>
+              {slide.title}
+            </p>
+            <p style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-body)",
+              lineHeight: 1.55, letterSpacing: "-0.005em",
+              color: "var(--muted2)",
+              margin: 0,
+            }}>
+              {slide.thesis}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </aside>
   );
 }
 
