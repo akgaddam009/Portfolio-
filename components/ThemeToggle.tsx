@@ -76,7 +76,7 @@ export default function ThemeToggle() {
           /* ── Moon ── */
           <motion.svg
             key="moon"
-            width="15" height="15"
+            width="18" height="18"
             viewBox="0 0 24 24"
             fill="none"
             initial={{ opacity: 0, rotate: -40, scale: 0.75 }}
@@ -93,7 +93,7 @@ export default function ThemeToggle() {
           /* ── Sun ── */
           <motion.svg
             key="sun"
-            width="15" height="15"
+            width="18" height="18"
             viewBox="0 0 24 24"
             fill="none"
             initial={{ opacity: 0, rotate:  40, scale: 0.75 }}

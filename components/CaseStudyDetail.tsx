@@ -76,7 +76,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
     .map(slug => caseStudies.find(c => c.slug === slug))
     .filter((c): c is NonNullable<typeof c> => !!c);
   const currentIndex = navList.findIndex(c => c.slug === cs.slug);
-  const next = currentIndex >= 0 && currentIndex < navList.length - 1 ? navList[currentIndex + 1] : null;
+  // Wrap around: the last case study links to the first one so the
+  // Next case study button stays active everywhere (no half-readable
+  // disabled state at the end of the sequence).
+  const next = currentIndex >= 0 ? navList[(currentIndex + 1) % navList.length] : null;
   const prev = currentIndex > 0 ? navList[currentIndex - 1] : null;
 
   // Scroll progress bar
