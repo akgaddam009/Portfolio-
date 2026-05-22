@@ -398,18 +398,18 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             href={`/work/${next.slug}`}
             aria-label={`Next case study: ${next.title}`}
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
+              color: "var(--text)",
               height: "44px", padding: "0 14px", borderRadius: "12px",
               border: "none", background: "var(--surface)",
               boxShadow: "var(--card-shadow)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
+              transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
               textDecoration: "none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
           >
             Next case study
             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -420,9 +420,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           <span
             aria-disabled="true"
             style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 500,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
+              color: "var(--text)",
               height: "44px", padding: "0 14px", borderRadius: "12px",
               border: "none", background: "var(--surface)",
               boxShadow: "var(--card-shadow)",
