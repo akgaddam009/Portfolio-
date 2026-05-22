@@ -271,6 +271,11 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             grid-template-columns: 1fr !important;
             gap: 1px !important;
           }
+          /* OutcomesImage inner well — ignore the desktop width cap so
+             the final-design screenshot fills the panel on mobile. */
+          .outcomes-image-well {
+            width: 100% !important;
+          }
           /* ESM vs OLAP diagram — stack on mobile so the cell labels don't clip */
           .cs-esm-olap {
             grid-template-columns: 1fr !important;
@@ -4320,8 +4325,12 @@ function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt:
       >
         {/* Inner well reserves a 16:10 aspect ratio so the shimmer fills
             the eventual image footprint instead of collapsing the panel
-            to a 24px stub during load. */}
-        <div style={{ position: "relative", width: width ?? "100%", aspectRatio: "16 / 10", margin: "0 auto" }}>
+            to a 24px stub during load. On mobile the explicit width
+            cap is ignored — narrow viewports need every pixel. */}
+        <div
+          className="outcomes-image-well"
+          style={{ position: "relative", width: width ?? "100%", aspectRatio: "16 / 10", margin: "0 auto" }}
+        >
           {!loaded && (
             <div style={{ position: "absolute", inset: 0 }}>
               <Shimmer height="100%" borderRadius="8px" />
@@ -4346,7 +4355,7 @@ function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt:
         </div>
       </div>
       {loaded && caption && (
-        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", paddingTop: "10px", textAlign: "center" }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.005em", color: "var(--muted)", paddingTop: "10px", textAlign: "center", margin: 0 }}>
           {caption}
         </p>
       )}
