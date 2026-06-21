@@ -1353,11 +1353,12 @@ function WorkPanel() {
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
           {allCards.map((cs, i) => {
-            const href = `/work/${cs.slug}`;
+            const href = cs.driveUrl ?? `/work/${cs.slug}`;
+            const isExternal = !!cs.driveUrl;
             const comingSoon = COMING_SOON.has(cs.slug);
             const CardWrapper = comingSoon
               ? ({ children }: { children: React.ReactNode }) => <div style={{ cursor: "default" }}>{children}</div>
-              : ({ children }: { children: React.ReactNode }) => <Link href={href}>{children}</Link>;
+              : ({ children }: { children: React.ReactNode }) => <Link href={href} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
             return (
               <motion.div
                 key={cs.slug}
