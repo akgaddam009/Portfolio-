@@ -694,7 +694,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "apple-business-listings",
     number: "07",
-    title: "Apple Maps Business Insights",
+    title: "Apple Maps Business Discovery Insights for Multi-Location Enterprise Users",
     titleHighlights: { "Apple Maps": "indigo" },
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
     cardImpact: "~68% weekly adoption from launch. Apple Maps data visible across 100M+ US users",
@@ -725,13 +725,7 @@ export const caseStudies: CaseStudy[] = [
 
     chromeUrl: "app.reputation.com",
 
-    metrics: [
-      {
-        value: "~68%",
-        label: "Weekly adoption",
-        body: "of customers check Apple Maps data week on week.",
-      },
-    ],
+    metrics: [],
 
     summary:
       "Bringing Apple into a Google-dominant dashboard without making it look broken, while giving all platforms equal respect.",

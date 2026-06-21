@@ -1206,7 +1206,7 @@ function WorkPanel() {
   // accessible via direct URL only -share with recruiters as needed.
   // Astra is hidden from the public surface; the route 404s.
   const CARD_ORDER = [
-    "apple-business-listings", "planful-esm-tables", "fancode-homepage",
+    "apple-business-listings", "fancode-homepage",
     "vendor-credit-financing", "logistics-tax-compliance",
     "financial-planning-workflow", "first-time-user-experience",
   ];
