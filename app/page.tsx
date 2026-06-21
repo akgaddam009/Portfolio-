@@ -1412,7 +1412,7 @@ function WorkPanel() {
                       ) : cs.driveUrl ? (
                         (() => {
                           const match = cs.driveUrl.match(/\/d\/([^/]+)/);
-                          const thumbSrc = match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800` : null;
+                          const thumbSrc = match ? `https://lh3.googleusercontent.com/d/${match[1]}=w800` : null;
                           return thumbSrc ? (
                             <DriveThumb src={thumbSrc} alt={cs.title} index={i} type={cs.type} confidential={cs.confidential} />
                           ) : (
