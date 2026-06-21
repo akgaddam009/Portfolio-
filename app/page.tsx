@@ -1038,6 +1038,20 @@ function WorkCardThumb({
   );
 }
 
+/* ── Google Drive PDF thumbnail with MeshThumbnail fallback on error ── */
+function DriveThumb({ src, alt, index, type, confidential }: { src: string; alt: string; index: number; type?: string; confidential?: boolean }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <MeshThumbnail index={index} type={type} confidential={confidential} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      onError={() => setFailed(true)}
+      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+    />
+  );
+}
+
 /* ── Count-up animation for metric values ── */
 function MetricValue({ value }: { value: string }) {
   const [display, setDisplay] = useState(value);
@@ -1400,14 +1414,7 @@ function WorkPanel() {
                           const match = cs.driveUrl.match(/\/d\/([^/]+)/);
                           const thumbSrc = match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800` : null;
                           return thumbSrc ? (
-                            <Image
-                              src={thumbSrc}
-                              alt={cs.title}
-                              fill
-                              sizes="(max-width: 768px) 100vw, 400px"
-                              style={{ objectFit: "cover", objectPosition: "top" }}
-                              priority={i < 2}
-                            />
+                            <DriveThumb src={thumbSrc} alt={cs.title} index={i} type={cs.type} confidential={cs.confidential} />
                           ) : (
                             <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
                           );
