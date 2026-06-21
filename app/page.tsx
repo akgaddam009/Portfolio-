@@ -1246,7 +1246,6 @@ function WorkPanel() {
     "logistics-tax-compliance",
     "financial-planning-workflow",
     "first-time-user-experience",
-    "fancode-homepage",
   ];
   /* AI Exploration section hidden from the live homepage. Empty array
      collapses the entire "AI Exploration" block (header + Astra card +
