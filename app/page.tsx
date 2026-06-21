@@ -1479,7 +1479,7 @@ function WorkPanel() {
                     <div style={{ padding: "16px 16px 18px" }}>
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
-                        lineHeight: "22px", letterSpacing: "-0.02em",
+                        lineHeight: "26px", letterSpacing: "-0.02em",
                         color: "var(--text)", marginBottom: "10px",
                       }}>
                         {cs.title}
