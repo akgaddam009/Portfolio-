@@ -937,6 +937,7 @@ const THUMB_LIGHT: Record<string, string> = {
 };
 const THUMB_DARK: Record<string, string> = {
   "apple-business-listings":     "/images/thumbnails/apple-dark.jpg",
+  "vendor-credit-financing":     "/images/thumbnails/vendor-credit-dark.jpg",
   "logistics-tax-compliance":    "/images/thumbnails/logistics-dark.jpg",
   "financial-planning-workflow": "/images/thumbnails/financial-planning-dark.jpg",
   "first-time-user-experience":  "/images/thumbnails/ftux-dark.jpg",
