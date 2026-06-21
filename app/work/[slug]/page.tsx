@@ -12,6 +12,12 @@ import { isUnlocked } from "@/lib/auth";
    case study treatment. */
 const SHORT_FORM_SLUGS: Record<string, { paragraphs: string[]; builtWith: string; media?: { src: string } }> = {};
 
+/* Slugs that embed a Google Drive PDF/folder instead of the full case
+   study detail. The embedUrl is loaded in a full-screen iframe. */
+const DRIVE_EMBEDS: Record<string, string> = {
+  "apple-business-listings": "https://drive.google.com/embeddedfolderview?id=1Hdt07pFd18jstGzcJO0DorEzllqT7r1d#list",
+};
+
 /* Slugs that are completely hidden from the public — no static page is
    generated, no metadata, no route. Anyone visiting these URLs gets a
    404. Used for case studies with confidentiality requirements that go
@@ -115,27 +121,39 @@ export async function generateMetadata({
     };
   }
 
+  const SITE_URL = "https://arungaddamux.vercel.app";
   const title       = `${cs.title} — Arun Gaddam`;
   // Strip ==highlight== markers from the meta description so social previews
   // don't surface "==text==" literally.
   const description = cs.summary?.replace(/==(.+?)==/g, "$1");
   // Use the first decision image as OG image if available
   const ogImage = cs.decisions?.find(d => d.image?.src)?.image?.src;
+  const pageUrl = `${SITE_URL}/work/${slug}`;
   return {
     title,
     description,
+    alternates: { canonical: pageUrl },
+    keywords: [...(cs.tags ?? []), "Arun Gaddam", "Product Designer", "UX Case Study"],
     openGraph: {
       title,
       description,
       type: "article",
-      url: `https://arungaddamux.vercel.app/work/${slug}`,
+      url: pageUrl,
+      siteName: "Arun Gaddam",
       ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630, alt: cs.title }] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      creator: "@akgaddam",
+      site: "@akgaddam",
       ...(ogImage ? { images: [ogImage] } : {}),
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
     },
   };
 }
@@ -149,6 +167,10 @@ export default async function CaseStudyPage({
   if (HIDDEN_SLUGS.has(slug)) notFound();
   const cs = getCaseStudy(slug);
   if (!cs) notFound();
+
+  const SITE_URL = "https://arungaddamux.vercel.app";
+  const pageUrl  = `${SITE_URL}/work/${slug}`;
+  const cleanSummary = cs.summary?.replace(/==(.+?)==/g, "$1");
 
   /* Short-form layout for exploration-style builds — skips the gate
      and the full narrative, renders the minimal template instead. */
@@ -181,5 +203,43 @@ export default async function CaseStudyPage({
     );
   }
 
-  return <CaseStudyDetail cs={cs} />;
+  if (DRIVE_EMBEDS[slug]) {
+    return (
+      <div className="fixed inset-0 w-full h-full">
+        <iframe
+          src={DRIVE_EMBEDS[slug]}
+          className="w-full h-full border-0"
+          allowFullScreen
+          title={cs.title}
+        />
+      </div>
+    );
+  }
+
+  const jsonLd = !cs.confidential ? {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: cs.title,
+    url: pageUrl,
+    description: cleanSummary,
+    keywords: cs.tags?.join(", "),
+    author: {
+      "@type": "Person",
+      name: "Arun Gaddam",
+      url: SITE_URL,
+    },
+    inLanguage: "en-US",
+  } : null;
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <CaseStudyDetail cs={cs} />
+    </>
+  );
 }

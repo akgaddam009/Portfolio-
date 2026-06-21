@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; PortfolioChat is hidden from the nav for now
-import PortfolioChat from "@/components/PortfolioChat";
-import { MapLibreMap } from "@/components/ui/MapLibreMap";
+import dynamic from "next/dynamic";
+const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
+const MapLibreMap = dynamic(() => import("@/components/ui/MapLibreMap").then(m => ({ default: m.MapLibreMap })), { ssr: false });
 import { caseStudies } from "@/lib/caseStudies";
 import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure } from "@/components/ui/Icon";
@@ -495,7 +497,7 @@ function PortraitMagnify() {
           willChange: "transform",
         }}
       >
-        <PixelRevealPortrait src="/arun-gaddam.png" alt="Arun Gaddam" />
+        <PixelRevealPortrait src="/arun-gaddam.webp" alt="Arun Gaddam" />
       </div>
     </div>
   );
@@ -562,7 +564,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Helping product teams <InlineChip label="reduce ambiguity" tone="amber" scale="match" /> through <InlineChip label="research, rapid validation" tone="violet" scale="match" /> <InlineChip label="structured UX thinking" tone="emerald" scale="match" /></motion.h1>
+          Helping product teams <InlineChip label="reduce ambiguity" tone="amber" scale="match" /> through <InlineChip label="research, rapid validation" tone="violet" scale="match" /> <InlineChip label="structured design thinking" tone="emerald" scale="match" /></motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
@@ -918,12 +920,28 @@ function MeshThumbnail({ index, type, confidential }: {
 /* ── Panel 2: Selected Work ── */
 
 const WORK_THUMBS: Record<string, string> = {
+  /* ── Video thumbnails (existing) ── */
   "astra":                "/images/astra/overview.mp4",
   "planful-esm-tables":   "/images/planful/planful-product-video.mp4",
-  "apple-business-listings": "/images/reputation/after.mp4",
   "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
+};
+
+/* Light/dark thumbnail pairs for Drive-linked cards. */
+const THUMB_LIGHT: Record<string, string> = {
+  "apple-business-listings":     "/images/thumbnails/apple-light.jpg",
+  "vendor-credit-financing":     "/images/thumbnails/vendor-credit-light.jpg",
+  "logistics-tax-compliance":    "/images/thumbnails/logistics-light.jpg",
+  "financial-planning-workflow": "/images/thumbnails/financial-planning-light.jpg",
+  "first-time-user-experience":  "/images/thumbnails/ftux-light.jpg",
+};
+const THUMB_DARK: Record<string, string> = {
+  "apple-business-listings":     "/images/thumbnails/apple-dark.jpg",
+  "vendor-credit-financing":     "/images/thumbnails/vendor-credit-dark.jpg",
+  "logistics-tax-compliance":    "/images/thumbnails/logistics-dark.jpg",
+  "financial-planning-workflow": "/images/thumbnails/financial-planning-dark.jpg",
+  "first-time-user-experience":  "/images/thumbnails/ftux-dark.jpg",
 };
 
 const WORK_POSTERS: Record<string, string> = {
@@ -978,7 +996,7 @@ function WorkCardThumb({
         <>
           {/* Shimmer skeleton while the video buffers. No poster image —
               the video plays as-is once canplay fires. */}
-          {!ready && (
+          {!ready && !poster && (
             <div style={{
               position: "absolute", inset: 0,
               borderRadius,
@@ -992,6 +1010,7 @@ function WorkCardThumb({
             <video
               className="work-thumb"
               src={src}
+              poster={poster}
               autoPlay loop muted playsInline
               preload="metadata"
               aria-hidden="true"
@@ -1034,6 +1053,20 @@ function WorkCardThumb({
         </>
       )}
     </div>
+  );
+}
+
+/* ── Google Drive PDF thumbnail with MeshThumbnail fallback on error ── */
+function DriveThumb({ src, alt, index, type, confidential }: { src: string; alt: string; index: number; type?: string; confidential?: boolean }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <MeshThumbnail index={index} type={type} confidential={confidential} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      onError={() => setFailed(true)}
+      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+    />
   );
 }
 
@@ -1199,13 +1232,24 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
 }
 
 function WorkPanel() {
-  // Explicit display order. Only 4 cases shown in the public grid.
-  // Confidential cases (zetwerk-dc, zetwerk-bu-ecosystem, astra) are
-  // accessible via direct URL only -share with recruiters as needed.
-  // Astra is hidden from the public surface; the route 404s.
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.dataset.theme === "dark");
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
   const CARD_ORDER = [
-    "apple-business-listings", "planful-esm-tables", "fancode-homepage",
+    "vendor-credit-financing",
+    "apple-business-listings",
+    "logistics-tax-compliance",
+    "financial-planning-workflow",
+    "first-time-user-experience",
   ];
+  /* Drive-linked cards that require a password before the PDF opens. */
+  const PROTECTED_DRIVE = new Set<string>(["financial-planning-workflow"]);
   /* AI Exploration section hidden from the live homepage. Empty array
      collapses the entire "AI Exploration" block (header + Astra card +
      Portfolio Design Language card) via the `explorationCards.length > 0`
@@ -1351,11 +1395,37 @@ function WorkPanel() {
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
           {allCards.map((cs, i) => {
-            const href = `/work/${cs.slug}`;
+            const href = cs.driveUrl ?? `/work/${cs.slug}`;
+            const isExternal = !!cs.driveUrl;
             const comingSoon = COMING_SOON.has(cs.slug);
+            const isProtected = PROTECTED_DRIVE.has(cs.slug);
             const CardWrapper = comingSoon
               ? ({ children }: { children: React.ReactNode }) => <div style={{ cursor: "default" }}>{children}</div>
-              : ({ children }: { children: React.ReactNode }) => <Link href={href}>{children}</Link>;
+              : isProtected
+                ? ({ children }: { children: React.ReactNode }) => {
+                    const openOrGate = (e: React.MouseEvent | React.KeyboardEvent) => {
+                      const alreadyUnlocked = archivedUnlocked
+                        || (typeof document !== "undefined"
+                            && document.cookie.split(";").some(c => c.trim().startsWith(`${UNLOCK_UI_KEY}=1`)));
+                      if (alreadyUnlocked) {
+                        window.open(href, "_blank", "noopener,noreferrer");
+                      } else {
+                        handleArchivedClick(e as unknown as React.MouseEvent, href);
+                      }
+                    };
+                    return (
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        style={{ cursor: "pointer", display: "contents" }}
+                        onClick={openOrGate}
+                        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") openOrGate(e); }}
+                      >
+                        {children}
+                      </div>
+                    );
+                  }
+                : ({ children }: { children: React.ReactNode }) => <Link href={href} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
             return (
               <motion.div
                 key={cs.slug}
@@ -1391,18 +1461,33 @@ function WorkPanel() {
                           height={220}
                           borderRadius="16px 16px 0 0"
                         />
+                      ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
+                        <Image
+                          src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
+                          alt={cs.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 420px"
+                          style={{ objectFit: "cover", objectPosition: "top" }}
+                          priority={i < 2}
+                          quality={75}
+                        />
                       ) : (
-                        <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
+                        <MeshThumbnail index={i} type={cs.type} confidential={cs.slug === "apple-business-listings" ? false : cs.confidential} />
                       )}
                     </div>
 
                     {/* Body */}
-                    <div style={{ padding: "12px 16px 16px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+                    <div style={{ padding: "16px 16px 18px" }}>
+                      <h3 style={{
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
+                        lineHeight: "26px", letterSpacing: "-0.02em",
+                        color: "var(--text)", marginBottom: "10px",
+                      }}>
+                        {cs.title}
+                      </h3>
+                      <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap" }}>
                         {cs.slug === "astra"                  && <AccentChip label="AI Experiments"  tone="violet"  icon={Sparkles} />}
                         {cs.slug === "planful-esm-tables"     && <AccentChip label="Fintech"         tone="indigo"  icon={Briefcase} />}
-                        {cs.slug === "apple-business-listings"&& <AccentChip label="CXM"             tone="teal"    icon={Users} />}
-                        {cs.slug === "fancode-homepage"       && <AccentChip label="Consumer Mobile" tone="emerald" icon={LayoutGrid} />}
                         {cs.slug === "zetwerk-dc"             && <AccentChip label="Supply Chain"    tone="amber"   icon={Path} />}
                         {cs.slug === "zetwerk-bu-ecosystem"   && <AccentChip label="Service Design"  tone="amber"   icon={TreeStructure} />}
                         {cs.tags.slice(0, 2).map(tag => (
@@ -1410,21 +1495,6 @@ function WorkPanel() {
                         ))}
                         {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
                       </div>
-                      <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
-                        lineHeight: "22px", letterSpacing: "-0.02em",
-                        color: "var(--text)", marginBottom: "4px",
-                      }}>
-                        {cs.title}
-                      </h3>
-                      <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
-                        letterSpacing: "-0.01em",
-                        color: "var(--muted)", lineHeight: 1.65, fontWeight: 400,
-                        marginBottom: 0,
-                      }}>
-                        {cs.cardImpact ?? cs.subtitle}
-                      </p>
                     </div>
                   </div>
                 </CardWrapper>
@@ -1505,131 +1575,10 @@ function WorkPanel() {
             </div>
           </div>
         )}
-
-        {/* Archived case studies — PDF links */}
-        <div style={{ padding: "0 0 24px" }}>
-          <p style={{
-            fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 400,
-            letterSpacing: "0.1em", textTransform: "uppercase",
-            color: "var(--muted)", margin: "16px 0 12px 0",
-          }}>
-            Archived case studies
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {([
-              {
-                title: "Designed first time user experience",
-                subtitle: "Increased user retention by ~18% and subscription growth through UX improvements.",
-                accent: <AccentChip label="Consumer Mobile" tone="emerald" icon={LayoutGrid} />,
-                tags: ["UX Research", "Onboarding"],
-                href: "https://drive.google.com/file/d/1w9phRxE7f3G9shoPu7CVFMAG6xMVaqi9/view?usp=sharing",
-                thumbnail: "/images/fancode-ftux/fc-ftux-thumbnail.jpg",
-                thumbnailPosition: "center center",
-              },
-              {
-                title: "Vendor credit financing workflow",
-                subtitle: "Streamlined faster business decisions with better risk visibility and opportunity assessment.",
-                accent: <AccentChip label="Fintech" tone="indigo" icon={Briefcase} />,
-                tags: ["Enterprise", "Workflow"],
-                href: "https://drive.google.com/file/d/19Q3CF_KYVUfQx6OtYa0oSU2TGutACaW0/view?usp=sharing",
-                thumbnail: "/images/zetwerk-cu/zw-creditunderwriting-thumbnail.jpg",
-                thumbnailPosition: "center center",
-              },
-              {
-                title: "Logistics and tax compliance in manufacturing",
-                subtitle: "Achieved 90% adoption within three months while streamlining operations.",
-                accent: <AccentChip label="Supply Chain" tone="amber" icon={Path} />,
-                tags: ["B2B", "Enterprise"],
-                href: "https://drive.google.com/file/d/1NcnWyM1oO2VF_YIoLjOvgALeAqPTym1k/view?usp=sharing",
-                thumbnail: "/images/zetwerk-dc/zw-dc-thumbnail.png",
-                thumbnailPosition: "center center",
-              },
-            ] as { title: string; subtitle: string; accent: React.ReactNode; tags: string[]; href: string; thumbnail?: string; thumbnailPosition?: string }[]).map(({ title, subtitle, accent, tags, href, thumbnail, thumbnailPosition }, i) => (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -2 }}
-                viewport={{ once: true, margin: "-20px" }}
-                transition={{
-                  opacity: { duration: 0.5, ease: EASE, delay: i * 0.06 },
-                  y: { type: "spring", stiffness: 320, damping: 28 },
-                }}
-              >
-                <Link
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ textDecoration: "none" }}
-                  onClick={(e) => handleArchivedClick(e, href)}
-                >
-                  <div
-                    className="work-card"
-                    style={{
-                      background: "var(--surface)",
-                      borderRadius: "16px",
-                      overflow: "hidden",
-                      boxShadow: "var(--card-shadow)",
-                      transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-                  >
-                    {thumbnail && (
-                      <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
-                        <div style={{ width: "100%", height: "100%", overflow: "hidden", background: "var(--surface2)" }}>
-                          <img
-                            src={thumbnail}
-                            alt={`${title} thumbnail`}
-                            loading="lazy"
-                            decoding="async"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                              objectPosition: thumbnailPosition ?? "center top",
-                              display: "block",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                    <div style={{ padding: "18px 20px 20px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
-                        {accent}
-                        {tags.map(tag => <WorkChip key={tag} label={tag} />)}
-                      </div>
-                      <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 600,
-                        lineHeight: "22px", letterSpacing: "-0.02em",
-                        color: "var(--text)", marginBottom: "8px",
-                      }}>{title}</h3>
-                      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "8px" }}>
-                        <p style={{
-                          fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
-                          letterSpacing: "-0.01em", color: "var(--muted)",
-                          lineHeight: 1.65, fontWeight: 400, marginBottom: 0,
-                        }}>{subtitle}</p>
-                        <span style={{
-                          fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
-                          color: "var(--muted)", flexShrink: 0, opacity: 0.6,
-                          lineHeight: 1,
-                        }}>↗</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
       </div>
 
-      {/* Password modal for archived case studies — portalled to document.body
-          so it escapes the transformed panel ancestors (which would otherwise
-          break `position: fixed` and trap the modal off-screen on mobile). */}
-      {portalReady && createPortal(
+      {/* Password modal removed with archived section */}
+      {false && portalReady && createPortal(
       <AnimatePresence>
         {pwOpen && (
           <motion.div
@@ -1640,8 +1589,6 @@ function WorkPanel() {
             style={{
               position: "fixed",
               top: 0, left: 0, right: 0,
-              // 100dvh tracks the visual viewport on iOS Safari so the modal
-              // doesn't get clipped behind the URL bar or the soft keyboard.
               height: "100dvh",
               zIndex: 300,
               background: "rgba(0,0,0,0.72)", backdropFilter: "blur(8px)",
@@ -2713,7 +2660,7 @@ function ContactPanel() {
             marginBottom: "20px",
           }}
         >
-          Open to senior IC and lead roles at teams building complex, human-centred products.
+          Open to Senior IC and Lead opportunities with teams building AI-native products, platforms, and experiences.
         </motion.p>
 
         {/* CTAs. always visible. marginBottom:24px gives mobile spacing
@@ -2735,7 +2682,7 @@ function ContactPanel() {
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "6px",
               border: "1px solid var(--border)", background: "var(--surface)",
               cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: "6px",
@@ -2754,7 +2701,7 @@ function ContactPanel() {
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--muted)",
-              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "6px",
               border: "1px solid var(--border)", background: "var(--surface)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
@@ -2774,7 +2721,7 @@ function ContactPanel() {
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
               color: "var(--muted)",
-              padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "6px",
               border: "1px solid var(--border)", background: "var(--surface)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
@@ -3106,7 +3053,7 @@ function StoryView() {
       >
         {/* Headshot -small, sits above the bio paragraph. */}
         <img
-          src="/arun-gaddam.png"
+          src="/arun-gaddam.webp"
           alt="Arun Gaddam"
           width={64}
           height={64}
@@ -3623,13 +3570,7 @@ export default function Home() {
               opacity 0.45s cubic-bezier(0.22,1,0.36,1),
               box-shadow 0.35s cubic-bezier(0.22,1,0.36,1) !important;
           }
-          .panels-container[data-dim-ready="true"] .panel:not(.is-active):not(:hover) {
-            opacity: 0.6 !important;
-          }
-          /* Light theme: no opacity fade on inactive panels */
-          [data-theme="light"] .panels-container[data-dim-ready="true"] .panel:not(.is-active):not(:hover) {
-            opacity: 1 !important;
-          }
+          /* Dimming of inactive panels removed — all panels stay at full opacity */
         }
         @media (prefers-reduced-motion: reduce) {
           .panels-container[data-dim-ready="true"] .panel {

@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { caseStudies } from "@/lib/caseStudies";
 
+const SITE_URL = "https://arungaddamux.vercel.app";
+
 const HIDDEN_SLUGS = new Set<string>([
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",
@@ -43,7 +45,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: disallowed,
       },
     ],
-    sitemap: "https://arungaddamux.vercel.app/sitemap.xml",
-    host: "https://arungaddamux.vercel.app",
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }

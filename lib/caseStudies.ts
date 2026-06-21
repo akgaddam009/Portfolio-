@@ -262,6 +262,9 @@ export type CaseStudy = {
     section: "discovery" | "approach";
     images: { src: string; alt: string; caption?: string; span?: "wide" | "tall" | "normal" }[];
   }[];
+  /** Optional Google Drive link. When set, clicking the card opens this URL directly
+      instead of navigating to the internal case study page. */
+  driveUrl?: string;
   /** Static before/after image pair shown before the Result section. */
   beforeAfterImages?: {
     before: { src: string; label: string };
@@ -691,7 +694,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "apple-business-listings",
     number: "07",
-    title: "Apple Maps Business Insights",
+    title: "Apple Maps Business Discovery Insights for Multi-Location Enterprise Users",
     titleHighlights: { "Apple Maps": "indigo" },
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
     cardImpact: "~68% weekly adoption from launch. Apple Maps data visible across 100M+ US users",
@@ -703,6 +706,7 @@ export const caseStudies: CaseStudy[] = [
     tags: ["Enterprise SaaS", "Analytical Dashboard", "Dashboard Design", "Data Visualisation"],
     heroLabel: "Real Work",
     confidential: true,
+    driveUrl: "https://drive.google.com/file/d/1jothvqDCrLXQBSFM2yDzbNP627vfTbic/view?usp=sharing",
 
     sectionLabels: {
       overview: "What's a Business Listing?",
@@ -721,13 +725,7 @@ export const caseStudies: CaseStudy[] = [
 
     chromeUrl: "app.reputation.com",
 
-    metrics: [
-      {
-        value: "~68%",
-        label: "Weekly adoption",
-        body: "of customers check Apple Maps data week on week.",
-      },
-    ],
+    metrics: [],
 
     summary:
       "Bringing Apple into a Google-dominant dashboard without making it look broken, while giving all platforms equal respect.",
@@ -1568,6 +1566,62 @@ export const caseStudies: CaseStudy[] = [
       "The hardest part of this project wasn't building the blueprint. It was holding the line on scope. I let a reasonable-sounding argument override a research instinct I had already documented. Finance was in my pre research system map. I flagged them. I let the constraint stand anyway. The lesson isn't about service blueprints or synthesis methods. It's about research independence: when you've mapped the system and identified a dependency, 'they don't use the platform directly' is not sufficient grounds for exclusion. Scope decisions made before the research starts should require the same standard of evidence as the findings that come out of it.",
   },
 
+  {
+    slug: "financial-planning-workflow",
+    number: "09",
+    title: "Financial Planning Workflow",
+    subtitle: "Redesigning a financial planning workflow to reduce complexity and improve team efficiency.",
+    role: "Product Designer",
+    tags: ["Enterprise SaaS", "Fintech", "Workflow Design"],
+    heroLabel: "Real Work",
+    confidential: false,
+    summary: "Redesigning a financial planning workflow to reduce complexity and improve team efficiency.",
+    problem: "",
+    outcomes: [],
+    driveUrl: "https://drive.google.com/file/d/1A-zLT6nJ2aYRrMYx3g_ueVF0EaPPRudD/view?usp=sharing",
+  },
+  {
+    slug: "first-time-user-experience",
+    number: "10",
+    title: "Designed First-Time User Experience",
+    subtitle: "Crafting an onboarding experience that helps new users find value quickly.",
+    role: "Product Designer",
+    tags: ["Consumer Mobile", "Onboarding", "UX Design"],
+    heroLabel: "Real Work",
+    confidential: false,
+    summary: "Crafting an onboarding experience that helps new users find value quickly.",
+    problem: "",
+    outcomes: [],
+    driveUrl: "https://drive.google.com/file/d/1w9phRxE7f3G9shoPu7CVFMAG6xMVaqi9/view?usp=sharing",
+  },
+  {
+    slug: "vendor-credit-financing",
+    number: "05",
+    title: "Vendor Credit Financing Workflow",
+    subtitle: "Designing a credit financing workflow for vendors in a manufacturing supply chain.",
+    role: "Product Designer",
+    tags: ["Enterprise SaaS", "Fintech", "Workflow Design"],
+    heroLabel: "Real Work",
+    confidential: false,
+    summary: "A credit financing workflow for vendors in a manufacturing supply chain.",
+    problem: "",
+    outcomes: [],
+    driveUrl: "https://drive.google.com/file/d/19Q3CF_KYVUfQx6OtYa0oSU2TGutACaW0/view?usp=sharing",
+  },
+  {
+    slug: "logistics-tax-compliance",
+    number: "02",
+    title: "Logistics and Tax Compliance in Manufacturing",
+    subtitle: "Digitising logistics and tax compliance workflows across a 500+ supplier manufacturing network.",
+    role: "Product Designer",
+    tags: ["Enterprise SaaS", "Supply Chain", "Compliance"],
+    heroLabel: "Real Work",
+    confidential: false,
+    summary: "Digitising logistics and tax compliance workflows across a 500+ supplier manufacturing network.",
+    problem: "",
+    outcomes: [],
+    driveUrl: "https://drive.google.com/file/d/1NcnWyM1oO2VF_YIoLjOvgALeAqPTym1k/view?usp=sharing",
+  },
 ];
 
 export function getCaseStudy(slug: string): CaseStudy | undefined {
