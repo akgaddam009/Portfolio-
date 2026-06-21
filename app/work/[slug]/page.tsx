@@ -121,27 +121,39 @@ export async function generateMetadata({
     };
   }
 
+  const SITE_URL = "https://arungaddamux.vercel.app";
   const title       = `${cs.title} — Arun Gaddam`;
   // Strip ==highlight== markers from the meta description so social previews
   // don't surface "==text==" literally.
   const description = cs.summary?.replace(/==(.+?)==/g, "$1");
   // Use the first decision image as OG image if available
   const ogImage = cs.decisions?.find(d => d.image?.src)?.image?.src;
+  const pageUrl = `${SITE_URL}/work/${slug}`;
   return {
     title,
     description,
+    alternates: { canonical: pageUrl },
+    keywords: [...(cs.tags ?? []), "Arun Gaddam", "Product Designer", "UX Case Study"],
     openGraph: {
       title,
       description,
       type: "article",
-      url: `https://arungaddamux.vercel.app/work/${slug}`,
+      url: pageUrl,
+      siteName: "Arun Gaddam",
       ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630, alt: cs.title }] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      creator: "@akgaddam",
+      site: "@akgaddam",
       ...(ogImage ? { images: [ogImage] } : {}),
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
     },
   };
 }
@@ -155,6 +167,10 @@ export default async function CaseStudyPage({
   if (HIDDEN_SLUGS.has(slug)) notFound();
   const cs = getCaseStudy(slug);
   if (!cs) notFound();
+
+  const SITE_URL = "https://arungaddamux.vercel.app";
+  const pageUrl  = `${SITE_URL}/work/${slug}`;
+  const cleanSummary = cs.summary?.replace(/==(.+?)==/g, "$1");
 
   /* Short-form layout for exploration-style builds — skips the gate
      and the full narrative, renders the minimal template instead. */
@@ -200,5 +216,30 @@ export default async function CaseStudyPage({
     );
   }
 
-  return <CaseStudyDetail cs={cs} />;
+  const jsonLd = !cs.confidential ? {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: cs.title,
+    url: pageUrl,
+    description: cleanSummary,
+    keywords: cs.tags?.join(", "),
+    author: {
+      "@type": "Person",
+      name: "Arun Gaddam",
+      url: SITE_URL,
+    },
+    inLanguage: "en-US",
+  } : null;
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <CaseStudyDetail cs={cs} />
+    </>
+  );
 }

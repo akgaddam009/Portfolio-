@@ -25,11 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     }));
 
+  const buildDate = new Date("2026-06-21");
   return [
     {
       url: BASE_URL,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
+      lastModified: buildDate,
+      changeFrequency: "weekly" as const,
       priority: 1.0,
     },
     ...caseStudyEntries,
