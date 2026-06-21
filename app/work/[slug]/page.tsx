@@ -12,6 +12,12 @@ import { isUnlocked } from "@/lib/auth";
    case study treatment. */
 const SHORT_FORM_SLUGS: Record<string, { paragraphs: string[]; builtWith: string; media?: { src: string } }> = {};
 
+/* Slugs that embed a Google Drive PDF/folder instead of the full case
+   study detail. The embedUrl is loaded in a full-screen iframe. */
+const DRIVE_EMBEDS: Record<string, string> = {
+  "apple-business-listings": "https://drive.google.com/embeddedfolderview?id=1Hdt07pFd18jstGzcJO0DorEzllqT7r1d#list",
+};
+
 /* Slugs that are completely hidden from the public — no static page is
    generated, no metadata, no route. Anyone visiting these URLs gets a
    404. Used for case studies with confidentiality requirements that go
@@ -178,6 +184,19 @@ export default async function CaseStudyPage({
         heroLabel={cs.heroLabel}
         cover={cover}
       />
+    );
+  }
+
+  if (DRIVE_EMBEDS[slug]) {
+    return (
+      <div className="fixed inset-0 w-full h-full">
+        <iframe
+          src={DRIVE_EMBEDS[slug]}
+          className="w-full h-full border-0"
+          allowFullScreen
+          title={cs.title}
+        />
+      </div>
     );
   }
 
