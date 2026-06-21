@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
    pages, which are embedded as iframes inside /work/astra. */
 const baseCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval: maplibre WebGL shaders; unsafe-inline: Next.js chunks
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'", // wasm-unsafe-eval: maplibre WebGL/WASM shaders (safer than unsafe-eval); unsafe-inline: Next.js chunks
   "style-src 'self' 'unsafe-inline'",                // unsafe-inline: Framer Motion inline styles
   "img-src 'self' data: blob: https://tiles.openfreemap.org https://drive.google.com https://lh3.googleusercontent.com https://lh4.googleusercontent.com https://lh5.googleusercontent.com https://lh6.googleusercontent.com", // blob: for maplibre canvas exports; openfreemap for sprite/marker PNGs; drive/googleusercontent for PDF thumbnails
   "media-src 'self'",                                // portfolio videos served from /public
@@ -20,7 +20,7 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+  { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
   {
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
@@ -39,7 +39,7 @@ const astraEmbedHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+  { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
   {
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",

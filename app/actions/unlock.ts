@@ -2,6 +2,7 @@
 
 import { cookies, headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { timingSafeEqual } from "crypto";
 import {
   UNLOCK_COOKIE_NAME,
   UNLOCK_COOKIE_MAX_AGE,
@@ -24,11 +25,22 @@ import {
      (best-effort — Vercel adds x-forwarded-for). Defense in depth, not
      a guarantee. */
 
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 min
+const RATE_LIMIT_WINDOW_MS   = 15 * 60 * 1000; // 15 min
 const RATE_LIMIT_MAX_ATTEMPTS = 30;
+/* Prune expired buckets after this many total entries to prevent
+   unbounded memory growth from large numbers of unique IPs. */
+const BUCKET_PRUNE_THRESHOLD = 500;
 
 type Bucket = { count: number; resetAt: number };
 const buckets = new Map<string, Bucket>();
+
+function pruneExpiredBuckets(): void {
+  if (buckets.size < BUCKET_PRUNE_THRESHOLD) return;
+  const now = Date.now();
+  for (const [key, bucket] of buckets) {
+    if (bucket.resetAt < now) buckets.delete(key);
+  }
+}
 
 function getClientKey(headerStore: Headers): string {
   // Vercel populates x-forwarded-for. Fall back to a generic key so the
@@ -39,6 +51,7 @@ function getClientKey(headerStore: Headers): string {
 }
 
 function checkRateLimit(key: string): { ok: true } | { ok: false; retryInSec: number } {
+  pruneExpiredBuckets();
   const now = Date.now();
   const bucket = buckets.get(key);
   if (!bucket || bucket.resetAt < now) {
@@ -52,16 +65,17 @@ function checkRateLimit(key: string): { ok: true } | { ok: false; retryInSec: nu
   return { ok: true };
 }
 
-/* Constant-time string compare — prevents an attacker from probing the
-   password one character at a time by measuring response latency.
-   Returns true iff both strings are byte-identical. */
+/* Constant-time string compare using Node's built-in crypto module.
+   Pads both buffers to the same length before comparing so neither
+   length nor content leaks via response timing. */
 function safeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) {
-    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  try {
+    const bufA = Buffer.from(a.padEnd(Math.max(a.length, b.length), "\0"));
+    const bufB = Buffer.from(b.padEnd(Math.max(a.length, b.length), "\0"));
+    return timingSafeEqual(bufA, bufB) && a.length === b.length;
+  } catch {
+    return false;
   }
-  return diff === 0;
 }
 
 export type UnlockResult =
