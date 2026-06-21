@@ -919,11 +919,18 @@ function MeshThumbnail({ index, type, confidential }: {
 /* ── Panel 2: Selected Work ── */
 
 const WORK_THUMBS: Record<string, string> = {
+  /* ── Video thumbnails (existing) ── */
   "astra":                "/images/astra/overview.mp4",
   "planful-esm-tables":   "/images/planful/planful-product-video.mp4",
   "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
+  /* ── Static thumbnails — drop images into /public/images/thumbnails/ ── */
+  "apple-business-listings":  "/images/thumbnails/apple-thumbnail.jpg",
+  "vendor-credit-financing":  "/images/thumbnails/vendor-credit-thumbnail.jpg",
+  "logistics-tax-compliance": "/images/thumbnails/logistics-thumbnail.jpg",
+  "financial-planning-workflow": "/images/thumbnails/financial-planning-thumbnail.jpg",
+  "first-time-user-experience":  "/images/thumbnails/ftux-thumbnail.jpg",
 };
 
 const WORK_POSTERS: Record<string, string> = {
