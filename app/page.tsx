@@ -1413,7 +1413,7 @@ function WorkPanel() {
                           borderRadius="16px 16px 0 0"
                         />
                       ) : (
-                        <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
+                        <MeshThumbnail index={i} type={cs.type} confidential={cs.slug === "apple-business-listings" ? false : cs.confidential} />
                       )}
                     </div>
 
@@ -1438,14 +1438,6 @@ function WorkPanel() {
                       }}>
                         {cs.title}
                       </h3>
-                      <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
-                        letterSpacing: "-0.01em",
-                        color: "var(--muted)", lineHeight: 1.65, fontWeight: 400,
-                        marginBottom: 0,
-                      }}>
-                        {cs.cardImpact ?? cs.subtitle}
-                      </p>
                     </div>
                   </div>
                 </CardWrapper>
