@@ -311,8 +311,7 @@ export const caseStudies: CaseStudy[] = [
     team: "Product, Engineering, Implementation Consultants",
     tags: ["Enterprise software", "Data workflow", "Fintech", "Web Application"],
     heroLabel: "Real Work",
-    /* Confidential. case study sits behind a password gate. */
-    confidential: true,
+    confidential: false,
 
     sectionLabels: {
       overview: "Context",

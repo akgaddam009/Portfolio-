@@ -79,7 +79,7 @@ const nextConfig: NextConfig = {
            the page to a different visitor. The page itself is fast to
            render server-side; this only blocks shared cache, not the
            browser's per-session cache. */
-        source: "/work/:slug(planful-esm-tables|apple-business-listings|fancode-homepage)",
+        source: "/work/:slug(apple-business-listings|fancode-homepage)",
         headers: [
           { key: "Cache-Control", value: "private, no-store, max-age=0, must-revalidate" },
         ],
