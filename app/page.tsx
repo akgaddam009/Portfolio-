@@ -925,12 +925,22 @@ const WORK_THUMBS: Record<string, string> = {
   "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
-  /* ── Static thumbnails — drop images into /public/images/thumbnails/ ── */
-  "apple-business-listings":  "/images/thumbnails/apple-thumbnail.jpg",
-  "vendor-credit-financing":  "/images/thumbnails/vendor-credit-thumbnail.jpg",
-  "logistics-tax-compliance": "/images/thumbnails/logistics-thumbnail.jpg",
-  "financial-planning-workflow": "/images/thumbnails/financial-planning-thumbnail.jpg",
-  "first-time-user-experience":  "/images/thumbnails/ftux-thumbnail.jpg",
+};
+
+/* Light/dark thumbnail pairs for Drive-linked cards. */
+const THUMB_LIGHT: Record<string, string> = {
+  "apple-business-listings":     "/images/thumbnails/apple-light.jpg",
+  "vendor-credit-financing":     "/images/thumbnails/vendor-credit-light.jpg",
+  "logistics-tax-compliance":    "/images/thumbnails/logistics-light.jpg",
+  "financial-planning-workflow": "/images/thumbnails/financial-planning-light.jpg",
+  "first-time-user-experience":  "/images/thumbnails/ftux-light.jpg",
+};
+const THUMB_DARK: Record<string, string> = {
+  "apple-business-listings":     "/images/thumbnails/apple-dark.jpg",
+  "vendor-credit-financing":     "/images/thumbnails/vendor-credit-dark.jpg",
+  "logistics-tax-compliance":    "/images/thumbnails/logistics-dark.jpg",
+  "financial-planning-workflow": "/images/thumbnails/financial-planning-dark.jpg",
+  "first-time-user-experience":  "/images/thumbnails/ftux-dark.jpg",
 };
 
 const WORK_POSTERS: Record<string, string> = {
@@ -1418,6 +1428,12 @@ function WorkPanel() {
                           poster={WORK_POSTERS[cs.slug]}
                           height={220}
                           borderRadius="16px 16px 0 0"
+                        />
+                      ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
+                        <img
+                          src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug])}
+                          alt={cs.title}
+                          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
                         />
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.slug === "apple-business-listings" ? false : cs.confidential} />
