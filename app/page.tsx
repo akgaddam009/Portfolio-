@@ -921,7 +921,6 @@ function MeshThumbnail({ index, type, confidential }: {
 const WORK_THUMBS: Record<string, string> = {
   "astra":                "/images/astra/overview.mp4",
   "planful-esm-tables":   "/images/planful/planful-product-video.mp4",
-  "apple-business-listings": "/images/reputation/after.mp4",
   "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
@@ -1528,15 +1527,9 @@ function WorkPanel() {
           </div>
         )}
 
-        {/* Archived case studies — PDF links */}
-        <div style={{ padding: "0 0 24px" }}>
-          <p style={{
-            fontFamily: "var(--font-mono)", fontSize: "var(--text-mono-lg)", fontWeight: 400,
-            letterSpacing: "0.1em", textTransform: "uppercase",
-            color: "var(--muted)", margin: "16px 0 12px 0",
-          }}>
-            Archived case studies
-          </p>
+        {/* Archived case studies removed */}
+        <div style={{ display: "none" }}>
+          <div>
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             {([
               {
@@ -1648,10 +1641,8 @@ function WorkPanel() {
 
       </div>
 
-      {/* Password modal for archived case studies — portalled to document.body
-          so it escapes the transformed panel ancestors (which would otherwise
-          break `position: fixed` and trap the modal off-screen on mobile). */}
-      {portalReady && createPortal(
+      {/* Password modal removed with archived section */}
+      {false && portalReady && createPortal(
       <AnimatePresence>
         {pwOpen && (
           <motion.div
@@ -1662,8 +1653,6 @@ function WorkPanel() {
             style={{
               position: "fixed",
               top: 0, left: 0, right: 0,
-              // 100dvh tracks the visual viewport on iOS Safari so the modal
-              // doesn't get clipped behind the URL bar or the soft keyboard.
               height: "100dvh",
               zIndex: 300,
               background: "rgba(0,0,0,0.72)", backdropFilter: "blur(8px)",
