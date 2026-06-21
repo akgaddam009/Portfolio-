@@ -1480,7 +1480,6 @@ function WorkPanel() {
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
                         {cs.slug === "astra"                  && <AccentChip label="AI Experiments"  tone="violet"  icon={Sparkles} />}
                         {cs.slug === "planful-esm-tables"     && <AccentChip label="Fintech"         tone="indigo"  icon={Briefcase} />}
-                        {cs.slug === "apple-business-listings"&& <AccentChip label="CXM"             tone="teal"    icon={Users} />}
                         {cs.slug === "zetwerk-dc"             && <AccentChip label="Supply Chain"    tone="amber"   icon={Path} />}
                         {cs.slug === "zetwerk-bu-ecosystem"   && <AccentChip label="Service Design"  tone="amber"   icon={TreeStructure} />}
                         {cs.tags.slice(0, 2).map(tag => (
