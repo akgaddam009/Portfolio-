@@ -1401,17 +1401,29 @@ function WorkPanel() {
             const CardWrapper = comingSoon
               ? ({ children }: { children: React.ReactNode }) => <div style={{ cursor: "default" }}>{children}</div>
               : isProtected
-                ? ({ children }: { children: React.ReactNode }) => (
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      style={{ cursor: "pointer", display: "contents" }}
-                      onClick={e => handleArchivedClick(e as unknown as React.MouseEvent, href)}
-                      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") handleArchivedClick(e as unknown as React.MouseEvent, href); }}
-                    >
-                      {children}
-                    </div>
-                  )
+                ? ({ children }: { children: React.ReactNode }) => {
+                    const openOrGate = (e: React.MouseEvent | React.KeyboardEvent) => {
+                      const alreadyUnlocked = archivedUnlocked
+                        || (typeof document !== "undefined"
+                            && document.cookie.split(";").some(c => c.trim().startsWith(`${UNLOCK_UI_KEY}=1`)));
+                      if (alreadyUnlocked) {
+                        window.open(href, "_blank", "noopener,noreferrer");
+                      } else {
+                        handleArchivedClick(e as unknown as React.MouseEvent, href);
+                      }
+                    };
+                    return (
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        style={{ cursor: "pointer", display: "contents" }}
+                        onClick={openOrGate}
+                        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") openOrGate(e); }}
+                      >
+                        {children}
+                      </div>
+                    );
+                  }
                 : ({ children }: { children: React.ReactNode }) => <Link href={href} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
             return (
               <motion.div
