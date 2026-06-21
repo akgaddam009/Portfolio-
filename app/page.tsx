@@ -2660,7 +2660,7 @@ function ContactPanel() {
             marginBottom: "20px",
           }}
         >
-          Open to senior IC and lead roles at teams building complex, human-centred products.
+          Open to Senior IC and Lead opportunities with teams building AI-native products, platforms, and experiences.
         </motion.p>
 
         {/* CTAs. always visible. marginBottom:24px gives mobile spacing
