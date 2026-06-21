@@ -3543,13 +3543,7 @@ export default function Home() {
               opacity 0.45s cubic-bezier(0.22,1,0.36,1),
               box-shadow 0.35s cubic-bezier(0.22,1,0.36,1) !important;
           }
-          .panels-container[data-dim-ready="true"] .panel:not(.is-active) {
-            opacity: 0.6 !important;
-          }
-          /* Light theme: no opacity fade on inactive panels */
-          [data-theme="light"] .panels-container[data-dim-ready="true"] .panel:not(.is-active) {
-            opacity: 1 !important;
-          }
+          /* Dimming of inactive panels removed — all panels stay at full opacity */
         }
         @media (prefers-reduced-motion: reduce) {
           .panels-container[data-dim-ready="true"] .panel {
