@@ -706,7 +706,7 @@ export const caseStudies: CaseStudy[] = [
     tags: ["Enterprise SaaS", "Analytical Dashboard", "Dashboard Design", "Data Visualisation"],
     heroLabel: "Real Work",
     confidential: true,
-    driveUrl: "https://drive.google.com/drive/folders/1Hdt07pFd18jstGzcJO0DorEzllqT7r1d",
+    driveUrl: "https://drive.google.com/file/d/1jothvqDCrLXQBSFM2yDzbNP627vfTbic/view?usp=sharing",
 
     sectionLabels: {
       overview: "What's a Business Listing?",
@@ -1572,6 +1572,34 @@ export const caseStudies: CaseStudy[] = [
       "The hardest part of this project wasn't building the blueprint. It was holding the line on scope. I let a reasonable-sounding argument override a research instinct I had already documented. Finance was in my pre research system map. I flagged them. I let the constraint stand anyway. The lesson isn't about service blueprints or synthesis methods. It's about research independence: when you've mapped the system and identified a dependency, 'they don't use the platform directly' is not sufficient grounds for exclusion. Scope decisions made before the research starts should require the same standard of evidence as the findings that come out of it.",
   },
 
+  {
+    slug: "vendor-credit-financing",
+    number: "05",
+    title: "Vendor Credit Financing Workflow",
+    subtitle: "Designing a credit financing workflow for vendors in a manufacturing supply chain.",
+    role: "Product Designer",
+    tags: ["Enterprise SaaS", "Fintech", "Workflow Design"],
+    heroLabel: "Real Work",
+    confidential: false,
+    summary: "A credit financing workflow for vendors in a manufacturing supply chain.",
+    problem: "",
+    outcomes: [],
+    driveUrl: "https://drive.google.com/file/d/19Q3CF_KYVUfQx6OtYa0oSU2TGutACaW0/view?usp=sharing",
+  },
+  {
+    slug: "logistics-tax-compliance",
+    number: "02",
+    title: "Logistics and Tax Compliance in Manufacturing",
+    subtitle: "Digitising logistics and tax compliance workflows across a 500+ supplier manufacturing network.",
+    role: "Product Designer",
+    tags: ["Enterprise SaaS", "Supply Chain", "Compliance"],
+    heroLabel: "Real Work",
+    confidential: false,
+    summary: "Digitising logistics and tax compliance workflows across a 500+ supplier manufacturing network.",
+    problem: "",
+    outcomes: [],
+    driveUrl: "https://drive.google.com/file/d/1NcnWyM1oO2VF_YIoLjOvgALeAqPTym1k/view?usp=sharing",
+  },
 ];
 
 export function getCaseStudy(slug: string): CaseStudy | undefined {
