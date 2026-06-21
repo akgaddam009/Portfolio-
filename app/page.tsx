@@ -1486,7 +1486,6 @@ function WorkPanel() {
                           <WorkChip key={tag} label={tag} />
                         ))}
                         {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
-                        {isProtected && !archivedUnlocked && <AccentChip label="Confidential" tone="amber" />}
                       </div>
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
