@@ -1409,16 +1409,6 @@ function WorkPanel() {
                           height={220}
                           borderRadius="16px 16px 0 0"
                         />
-                      ) : cs.driveUrl ? (
-                        (() => {
-                          const match = cs.driveUrl.match(/\/d\/([^/]+)/);
-                          const thumbSrc = match ? `https://lh3.googleusercontent.com/d/${match[1]}=w800` : null;
-                          return thumbSrc ? (
-                            <DriveThumb src={thumbSrc} alt={cs.title} index={i} type={cs.type} confidential={cs.confidential} />
-                          ) : (
-                            <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
-                          );
-                        })()
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
                       )}
