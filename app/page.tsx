@@ -1219,9 +1219,10 @@ function WorkPanel() {
   // accessible via direct URL only -share with recruiters as needed.
   // Astra is hidden from the public surface; the route 404s.
   const CARD_ORDER = [
-    "apple-business-listings", "fancode-homepage",
+    "apple-business-listings",
     "vendor-credit-financing", "logistics-tax-compliance",
     "financial-planning-workflow", "first-time-user-experience",
+    "fancode-homepage",
   ];
   /* AI Exploration section hidden from the live homepage. Empty array
      collapses the entire "AI Exploration" block (header + Astra card +
