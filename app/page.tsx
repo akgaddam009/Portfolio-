@@ -7,8 +7,9 @@ import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; PortfolioChat is hidden from the nav for now
-import PortfolioChat from "@/components/PortfolioChat";
-import { MapLibreMap } from "@/components/ui/MapLibreMap";
+import dynamic from "next/dynamic";
+const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
+const MapLibreMap = dynamic(() => import("@/components/ui/MapLibreMap").then(m => ({ default: m.MapLibreMap })), { ssr: false });
 import { caseStudies } from "@/lib/caseStudies";
 import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure } from "@/components/ui/Icon";
@@ -496,7 +497,7 @@ function PortraitMagnify() {
           willChange: "transform",
         }}
       >
-        <PixelRevealPortrait src="/arun-gaddam.png" alt="Arun Gaddam" />
+        <PixelRevealPortrait src="/arun-gaddam.webp" alt="Arun Gaddam" />
       </div>
     </div>
   );
@@ -3052,7 +3053,7 @@ function StoryView() {
       >
         {/* Headshot -small, sits above the bio paragraph. */}
         <img
-          src="/arun-gaddam.png"
+          src="/arun-gaddam.webp"
           alt="Arun Gaddam"
           width={64}
           height={64}
