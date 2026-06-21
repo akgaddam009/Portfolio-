@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -1399,10 +1400,13 @@ function WorkPanel() {
                           const match = cs.driveUrl.match(/\/d\/([^/]+)/);
                           const thumbSrc = match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800` : null;
                           return thumbSrc ? (
-                            <img
+                            <Image
                               src={thumbSrc}
                               alt={cs.title}
-                              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+                              fill
+                              sizes="(max-width: 768px) 100vw, 400px"
+                              style={{ objectFit: "cover", objectPosition: "top" }}
+                              priority={i < 2}
                             />
                           ) : (
                             <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />

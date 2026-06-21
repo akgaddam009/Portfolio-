@@ -7,7 +7,7 @@ const baseCsp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval: maplibre WebGL shaders; unsafe-inline: Next.js chunks
   "style-src 'self' 'unsafe-inline'",                // unsafe-inline: Framer Motion inline styles
-  "img-src 'self' data: blob: https://tiles.openfreemap.org", // blob: for maplibre canvas exports; openfreemap for sprite/marker PNGs
+  "img-src 'self' data: blob: https://tiles.openfreemap.org https://drive.google.com", // blob: for maplibre canvas exports; openfreemap for sprite/marker PNGs; drive.google.com for PDF thumbnails
   "media-src 'self'",                                // portfolio videos served from /public
   "connect-src 'self' https://tiles.openfreemap.org", // maplibre vector tiles
   "font-src 'self' https://tiles.openfreemap.org",   // next/font Inter + maplibre glyph PBFs
@@ -53,6 +53,12 @@ const astraEmbedHeaders = [
 const nextConfig: NextConfig = {
   // Remove the X-Powered-By: Next.js header — no need to advertise the stack
   poweredByHeader: false,
+
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "drive.google.com" },
+    ],
+  },
 
   experimental: {
     viewTransition: true,
