@@ -1247,6 +1247,8 @@ function WorkPanel() {
     "financial-planning-workflow",
     "first-time-user-experience",
   ];
+  /* Drive-linked cards that require a password before the PDF opens. */
+  const PROTECTED_DRIVE = new Set<string>(["financial-planning-workflow"]);
   /* AI Exploration section hidden from the live homepage. Empty array
      collapses the entire "AI Exploration" block (header + Astra card +
      Portfolio Design Language card) via the `explorationCards.length > 0`
@@ -1395,9 +1397,22 @@ function WorkPanel() {
             const href = cs.driveUrl ?? `/work/${cs.slug}`;
             const isExternal = !!cs.driveUrl;
             const comingSoon = COMING_SOON.has(cs.slug);
+            const isProtected = PROTECTED_DRIVE.has(cs.slug);
             const CardWrapper = comingSoon
               ? ({ children }: { children: React.ReactNode }) => <div style={{ cursor: "default" }}>{children}</div>
-              : ({ children }: { children: React.ReactNode }) => <Link href={href} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
+              : isProtected
+                ? ({ children }: { children: React.ReactNode }) => (
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      style={{ cursor: "pointer", display: "contents" }}
+                      onClick={e => handleArchivedClick(e as unknown as React.MouseEvent, href)}
+                      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") handleArchivedClick(e as unknown as React.MouseEvent, href); }}
+                    >
+                      {children}
+                    </div>
+                  )
+                : ({ children }: { children: React.ReactNode }) => <Link href={href} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
             return (
               <motion.div
                 key={cs.slug}
@@ -1460,6 +1475,7 @@ function WorkPanel() {
                           <WorkChip key={tag} label={tag} />
                         ))}
                         {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
+                        {isProtected && !archivedUnlocked && <AccentChip label="Confidential" tone="amber" />}
                       </div>
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
