@@ -1394,6 +1394,20 @@ function WorkPanel() {
                           height={220}
                           borderRadius="16px 16px 0 0"
                         />
+                      ) : cs.driveUrl ? (
+                        (() => {
+                          const match = cs.driveUrl.match(/\/d\/([^/]+)/);
+                          const thumbSrc = match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800` : null;
+                          return thumbSrc ? (
+                            <img
+                              src={thumbSrc}
+                              alt={cs.title}
+                              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+                            />
+                          ) : (
+                            <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
+                          );
+                        })()
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.confidential} />
                       )}
