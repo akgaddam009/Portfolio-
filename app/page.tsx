@@ -979,7 +979,7 @@ function WorkCardThumb({
         <>
           {/* Shimmer skeleton while the video buffers. No poster image —
               the video plays as-is once canplay fires. */}
-          {!ready && (
+          {!ready && !poster && (
             <div style={{
               position: "absolute", inset: 0,
               borderRadius,
@@ -993,6 +993,7 @@ function WorkCardThumb({
             <video
               className="work-thumb"
               src={src}
+              poster={poster}
               autoPlay loop muted playsInline
               preload="metadata"
               aria-hidden="true"
