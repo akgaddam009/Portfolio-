@@ -1231,10 +1231,15 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
 }
 
 function WorkPanel() {
-  // Explicit display order. Only 4 cases shown in the public grid.
-  // Confidential cases (zetwerk-dc, zetwerk-bu-ecosystem, astra) are
-  // accessible via direct URL only -share with recruiters as needed.
-  // Astra is hidden from the public surface; the route 404s.
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.dataset.theme === "dark");
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
   const CARD_ORDER = [
     "vendor-credit-financing",
     "apple-business-listings",
