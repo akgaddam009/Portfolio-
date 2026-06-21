@@ -7,7 +7,7 @@ const baseCsp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval: maplibre WebGL shaders; unsafe-inline: Next.js chunks
   "style-src 'self' 'unsafe-inline'",                // unsafe-inline: Framer Motion inline styles
-  "img-src 'self' data: blob: https://tiles.openfreemap.org https://drive.google.com", // blob: for maplibre canvas exports; openfreemap for sprite/marker PNGs; drive.google.com for PDF thumbnails
+  "img-src 'self' data: blob: https://tiles.openfreemap.org https://drive.google.com https://lh3.googleusercontent.com https://lh4.googleusercontent.com https://lh5.googleusercontent.com https://lh6.googleusercontent.com", // blob: for maplibre canvas exports; openfreemap for sprite/marker PNGs; drive/googleusercontent for PDF thumbnails
   "media-src 'self'",                                // portfolio videos served from /public
   "connect-src 'self' https://tiles.openfreemap.org", // maplibre vector tiles
   "font-src 'self' https://tiles.openfreemap.org",   // next/font Inter + maplibre glyph PBFs
@@ -57,6 +57,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "drive.google.com" },
+      { protocol: "https", hostname: "*.googleusercontent.com" },
     ],
   },
 
