@@ -24,11 +24,12 @@ export default function CaseStudyCard({
   index: number;
   featured?: boolean;
 }) {
-  const href = `/work/${cs.slug}`;
+  const href = cs.driveUrl ?? `/work/${cs.slug}`;
+  const isExternal = !!cs.driveUrl;
 
   if (featured) {
     return (
-      <Link href={href} prefetch>
+      <Link href={href} prefetch {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
         <motion.div
           whileHover={{ y: -3 }}
           whileTap={{ scale: 0.985 }}
@@ -143,7 +144,7 @@ export default function CaseStudyCard({
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.65, ease: EASE, delay: (index % 2) * 0.07 }}
     >
-      <Link href={href} prefetch>
+      <Link href={href} prefetch {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
         <motion.div
           whileHover={{ y: -3 }}
           whileTap={{ scale: 0.985 }}

@@ -262,6 +262,9 @@ export type CaseStudy = {
     section: "discovery" | "approach";
     images: { src: string; alt: string; caption?: string; span?: "wide" | "tall" | "normal" }[];
   }[];
+  /** Optional Google Drive link. When set, clicking the card opens this URL directly
+      instead of navigating to the internal case study page. */
+  driveUrl?: string;
   /** Static before/after image pair shown before the Result section. */
   beforeAfterImages?: {
     before: { src: string; label: string };
@@ -703,6 +706,7 @@ export const caseStudies: CaseStudy[] = [
     tags: ["Enterprise SaaS", "Analytical Dashboard", "Dashboard Design", "Data Visualisation"],
     heroLabel: "Real Work",
     confidential: true,
+    driveUrl: "https://drive.google.com/drive/folders/1Hdt07pFd18jstGzcJO0DorEzllqT7r1d",
 
     sectionLabels: {
       overview: "What's a Business Listing?",
