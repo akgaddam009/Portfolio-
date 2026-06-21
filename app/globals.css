@@ -318,6 +318,7 @@ body {
   font-family: var(--font-body);
   font-size: var(--text-lead);
   line-height: 1.6;
+  font-feature-settings: "cv01", "ss03";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
