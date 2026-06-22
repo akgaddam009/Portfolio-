@@ -312,6 +312,7 @@ export const caseStudies: CaseStudy[] = [
     tags: ["Enterprise software", "Data workflow", "Fintech", "Web Application"],
     heroLabel: "Real Work",
     confidential: false,
+    driveUrl: "https://drive.google.com/file/d/1A-zLT6nJ2aYRrMYx3g_ueVF0EaPPRudD/view?usp=sharing",
 
     sectionLabels: {
       overview: "Context",

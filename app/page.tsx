@@ -1242,6 +1242,7 @@ function WorkPanel() {
   }, []);
 
   const CARD_ORDER = [
+    "planful-esm-tables",
     "vendor-credit-financing",
     "apple-business-listings",
     "logistics-tax-compliance",
