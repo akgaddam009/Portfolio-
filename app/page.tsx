@@ -1242,7 +1242,6 @@ function WorkPanel() {
   }, []);
 
   const CARD_ORDER = [
-    "planful-esm-tables",
     "vendor-credit-financing",
     "apple-business-listings",
     "logistics-tax-compliance",
@@ -1250,7 +1249,7 @@ function WorkPanel() {
     "first-time-user-experience",
   ];
   /* Drive-linked cards that require a password before the PDF opens. */
-  const PROTECTED_DRIVE = new Set<string>(["financial-planning-workflow"]);
+  const PROTECTED_DRIVE = new Set<string>();
   /* AI Exploration section hidden from the live homepage. Empty array
      collapses the entire "AI Exploration" block (header + Astra card +
      Portfolio Design Language card) via the `explorationCards.length > 0`
