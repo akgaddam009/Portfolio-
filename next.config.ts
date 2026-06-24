@@ -5,11 +5,11 @@ import type { NextConfig } from "next";
    pages, which are embedded as iframes inside /work/astra. */
 const baseCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'", // wasm-unsafe-eval: maplibre WebGL/WASM shaders (safer than unsafe-eval); unsafe-inline: Next.js chunks
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://www.googletagmanager.com https://www.clarity.ms", // GA4 + Clarity
   "style-src 'self' 'unsafe-inline'",                // unsafe-inline: Framer Motion inline styles
-  "img-src 'self' data: blob: https://tiles.openfreemap.org https://drive.google.com https://lh3.googleusercontent.com https://lh4.googleusercontent.com https://lh5.googleusercontent.com https://lh6.googleusercontent.com", // blob: for maplibre canvas exports; openfreemap for sprite/marker PNGs; drive/googleusercontent for PDF thumbnails
+  "img-src 'self' data: blob: https://tiles.openfreemap.org https://drive.google.com https://lh3.googleusercontent.com https://lh4.googleusercontent.com https://lh5.googleusercontent.com https://lh6.googleusercontent.com https://www.google-analytics.com", // GA4 pixel
   "media-src 'self'",                                // portfolio videos served from /public
-  "connect-src 'self' https://tiles.openfreemap.org", // maplibre vector tiles
+  "connect-src 'self' https://tiles.openfreemap.org https://www.google-analytics.com https://analytics.google.com https://www.clarity.ms", // GA4 + Clarity beacons
   "font-src 'self' https://tiles.openfreemap.org",   // next/font Inter + maplibre glyph PBFs
   "worker-src blob:",                                // maplibre Web Workers
 ];

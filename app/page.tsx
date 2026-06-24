@@ -15,6 +15,7 @@ import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure } from "@/components/ui/Icon";
 import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
 import LoadingScreen from "@/components/LoadingScreen";
+import { trackEmailClick, trackLinkedInClick, trackResumeDownload } from "@/lib/analytics";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -511,6 +512,7 @@ function AboutPanel() {
   const [copied, setCopied] = useState(false);
   const copyEmail = () => {
     navigator.clipboard.writeText("akgaddam02@gmail.com");
+    trackEmailClick();
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -618,14 +620,15 @@ function AboutPanel() {
           </button>
 
           {[
-            { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true },
-            { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true },
-          ].map(({ label, href, external }) => (
+            { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true, onTrack: trackLinkedInClick },
+            { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true, onTrack: trackResumeDownload },
+          ].map(({ label, href, external, onTrack }) => (
             <Link
               key={label}
               href={href}
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
+              onClick={onTrack}
               style={{
                 fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                 letterSpacing: "0.08em", textTransform: "uppercase",
@@ -2620,6 +2623,7 @@ function ContactPanel() {
   const copyEmail = () => {
     navigator.clipboard.writeText("akgaddam02@gmail.com");
     haptic([10, 40, 10]); // double-tap success pattern
+    trackEmailClick();
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

@@ -5,6 +5,8 @@ import Cursor from "@/components/Cursor";
 import AnalyticsClient from "@/components/AnalyticsClient";
 import RouteProgress from "@/components/RouteProgress";
 import LaunchSplash from "@/components/LaunchSplash";
+import GA4 from "@/components/GA4";
+import Clarity from "@/components/Clarity";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -177,6 +179,8 @@ export default function RootLayout({
         {children}
         <LaunchSplash />
         <AnalyticsClient />
+        <GA4 />
+        <Clarity />
       </body>
     </html>
   );
