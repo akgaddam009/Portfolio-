@@ -1812,9 +1812,6 @@ const careerItems: CareerItem[] = [
     dateLabel: "Nov 2023 - Present", impact: "Top 1%",
     link: "https://adplist.org/",
     description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList, mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
-    highlights: [
-      "Top 1% Mentor Recognition: Feb, Mar, May & Jun 2024 (Expertise of Design)",
-    ],
   },
   {
     type: "education", startYear: 2023.75, endYear: 2025.083,
