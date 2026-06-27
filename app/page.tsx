@@ -1812,13 +1812,11 @@ const careerItems: CareerItem[] = [
   {
     type: "education", startYear: 2023.833, endYear: 2026.25,
     title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
-    dateLabel: "Nov 2023 - Present", impact: "Top 1% · 3K+ mins",
+    dateLabel: "Nov 2023 - Present", impact: "Top 1%",
     link: "https://adplist.org/",
     description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList, mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
     highlights: [
       "Top 1% Mentor Recognition: Feb, Mar, May & Jun 2024 (Expertise of Design)",
-      "3,000+ mentorship minutes milestone, Feb 2026",
-      "Ongoing 1:1 sessions on product design, career strategy, and portfolio critique",
     ],
   },
   {
