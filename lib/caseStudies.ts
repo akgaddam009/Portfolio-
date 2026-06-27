@@ -1611,7 +1611,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "logistics-tax-compliance",
     number: "02",
-    title: "Logistics and Tax Compliance in Manufacturing",
+    title: "Designed Logistics and tax compliance workflow for high growth manufacturing startup",
     subtitle: "Digitising logistics and tax compliance workflows across a 500+ supplier manufacturing network.",
     role: "Product Designer",
     tags: ["Enterprise SaaS", "Supply Chain", "Compliance"],
