@@ -1729,6 +1729,7 @@ type CareerItem = {
   impact?: string;
   logoDomain?: string;
   description?: string;
+  bullets?: string[];
   highlights?: string[];
   highlightLink?: string;
   learnings?: string[];
@@ -1824,13 +1825,23 @@ const careerItems: CareerItem[] = [
     type: "education", startYear: 2023.75, endYear: 2025.083,
     title: "Product Management", subtitle: "IIT Guwahati · Accredian",
     dateLabel: "Oct 2023 - Feb 2025", logoDomain: "accredian.com", minHeight: 72,
-    description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati), focused on applying data, product strategy, and user-centric approaches across the product lifecycle. Covered customer research, analytics, product strategy, and experimentation, translating insights into product roadmaps, metrics, and iterative, data-informed decisions.",
+    description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati).",
+    bullets: [
+      "Applied data, product strategy, and user-centric approaches across the product lifecycle",
+      "Covered customer research, analytics, product strategy, and experimentation",
+      "Translated insights into product roadmaps, metrics, and iterative data-informed decisions",
+    ],
   },
   {
     type: "education", startYear: 2020.917, endYear: 2021.333,
     title: "Program in UX Design", subtitle: "IIT Bombay",
     dateLabel: "Dec 2020 - May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
-    description: "Program in User Experience Design from IDC School of Design, IIT Bombay, covering the end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation. Completed a hands-on, project-based curriculum including a field research project using contextual inquiry to uncover real-world user behaviours and translate insights into iterative design solutions.",
+    description: "Program in User Experience Design from IDC School of Design, IIT Bombay.",
+    bullets: [
+      "Covered end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation",
+      "Completed a hands-on, project-based curriculum with a field research project using contextual inquiry",
+      "Translated real-world user behaviours into iterative design solutions",
+    ],
     images: ["/images/career/iitb-1.jpg", "/images/career/iitb-2.jpg"],
   },
   {
@@ -2123,10 +2134,21 @@ function CareerPanel() {
                   <p style={{
                     fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                     letterSpacing: "-0.01em", lineHeight: 1.65,
-                    color: "var(--muted2)", marginBottom: "16px",
+                    color: "var(--muted2)", marginBottom: item.bullets ? "8px" : "16px",
                   }}>
                     {item.description}
                   </p>
+                )}
+
+                {item.bullets && item.bullets.length > 0 && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "16px" }}>
+                    {item.bullets.map((b, i) => (
+                      <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                        <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.5, flexShrink: 0 }}>·</span>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400, letterSpacing: "-0.01em", lineHeight: 1.65, color: "var(--muted2)", margin: 0 }}>{b}</p>
+                      </div>
+                    ))}
+                  </div>
                 )}
 
                 {/* Highlights */}
