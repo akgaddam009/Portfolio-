@@ -1583,7 +1583,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "first-time-user-experience",
     number: "10",
-    title: "Designed First-Time User Experience",
+    title: "Designed a first-time user experience that strengthened activation, retention, and long-term engagement",
     subtitle: "Crafting an onboarding experience that helps new users find value quickly.",
     role: "Product Designer",
     tags: ["Consumer Mobile", "Sports App", "UX Design"],
