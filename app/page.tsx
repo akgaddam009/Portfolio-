@@ -532,23 +532,6 @@ function AboutPanel() {
           <PortraitMagnify />
         </motion.div>
 
-        {/* Seniority eyebrow */}
-        <motion.p
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.02 }}
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "var(--text-mono)",
-            fontWeight: 500,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "var(--muted)",
-            marginBottom: "6px",
-          }}
-        >
-          Senior Product Designer · 8+ years
-        </motion.p>
 
         {/* Hero headline. typography per Figma reference:
             Inter 400 / 18px / line-height 30px / 0 tracking. */}
