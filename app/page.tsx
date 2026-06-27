@@ -1755,9 +1755,6 @@ const careerItems: CareerItem[] = [
     dateLabel: "Mar 2025 - Aug 2025", impact: "Fintech", logoDomain: "planful.com",
     link: "https://planful.com/",
     description: "Led end-to-end design of two finance planning features, reducing training time ~30% and supporting migration of core finance workflows from legacy tools to a modern web interface.",
-    highlights: [
-      "Designed two finance planning features end-to-end, reducing training time by ~30%",
-    ],
   },
   {
     type: "role", startYear: 2024.167, endYear: 2025.083,
