@@ -694,7 +694,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "apple-business-listings",
     number: "07",
-    title: "Apple Maps Business Discovery Insights for Multi-Location Enterprise Users",
+    title: "Designed Apple Maps Business Listing Insights for Multi-Location Enterprise Users",
     titleHighlights: { "Apple Maps": "indigo" },
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
     cardImpact: "~68% weekly adoption from launch. Apple Maps data visible across 100M+ US users",
