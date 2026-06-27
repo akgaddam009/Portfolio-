@@ -1586,7 +1586,7 @@ export const caseStudies: CaseStudy[] = [
     title: "Designed First-Time User Experience",
     subtitle: "Crafting an onboarding experience that helps new users find value quickly.",
     role: "Product Designer",
-    tags: ["Consumer Mobile", "Onboarding", "UX Design"],
+    tags: ["Consumer Mobile", "Sports App", "UX Design"],
     heroLabel: "Real Work",
     confidential: false,
     summary: "Crafting an onboarding experience that helps new users find value quickly.",
