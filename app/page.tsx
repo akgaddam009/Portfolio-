@@ -1732,6 +1732,7 @@ type CareerItem = {
   bullets?: string[];
   highlights?: string[];
   highlightLink?: string;
+  highlightLinks?: (string | null)[];
   learnings?: string[];
   link?: string;
   images?: string[];
@@ -1780,6 +1781,7 @@ const careerItems: CareerItem[] = [
       "Replaced guesswork with evidence-based design, improving product quality and reducing backlog ~20 to 30%",
       "Achievement – Zetwerk Hackathon Winner: Won competing against 11 other teams during an intense 40-hour innovation challenge",
     ],
+    highlightLinks: [null, null, "https://www.youtube.com/watch?v=ZJoioJyN4H4"],
   },
   {
     type: "role", startYear: 2020.583, endYear: 2022.25,
@@ -2168,15 +2170,17 @@ function CareerPanel() {
                       {item.subtitle === "ADPList" ? "Achievements" : "Worked on"}
                     </p>
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                      {item.highlights.map((h, i) => (
-                        <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
-                          <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.5, flexShrink: 0 }}>·</span>
-                          <p style={{
-                            fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
-                            letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--text)",
-                          }}>{h}</p>
-                        </div>
-                      ))}
+                      {item.highlights.map((h, i) => {
+                        const hLink = item.highlightLinks?.[i];
+                        return (
+                          <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                            <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.5, flexShrink: 0 }}>·</span>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--text)" }}>
+                              {h}{hLink && <>{" "}<a href={hLink} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "underline" }}>Watch ↗</a></>}
+                            </p>
+                          </div>
+                        );
+                      })}
                     </div>
                     {/* Highlight reference link (e.g. Competitive Insights report) */}
                     {item.highlightLink && (
