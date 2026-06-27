@@ -1597,7 +1597,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "vendor-credit-financing",
     number: "05",
-    title: "Vendor Credit Financing Workflow",
+    title: "Led the Vendor Credit Financing Workflow for a high growth manufacturing startup",
     subtitle: "Designing a credit financing workflow for vendors in a manufacturing supply chain.",
     role: "Product Designer",
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design"],
