@@ -1843,7 +1843,11 @@ const careerItems: CareerItem[] = [
     type: "education", startYear: 2019.583, endYear: 2019.75,
     title: "Conducting Usability Testing", subtitle: "Interaction Design Foundation",
     dateLabel: "Aug 2019", logoDomain: "interaction-design.org", minHeight: 72,
-    description: "Usability Testing certification from Interaction Design Foundation, focused on planning, conducting, and analysing user tests to drive data-informed design improvements.",
+    description: "Usability Testing certification from Interaction Design Foundation.",
+    bullets: [
+      "Focused on planning, conducting, and analysing user tests",
+      "Drive data-informed design improvements through structured testing methods",
+    ],
   },
   {
     type: "education", startYear: 2019.5, endYear: 2019.583,
@@ -1859,7 +1863,12 @@ const careerItems: CareerItem[] = [
     type: "education", startYear: 2017, endYear: 2017.5,
     title: "Design Thinking & Leadership", subtitle: "DSIL Global",
     dateLabel: "2017", minHeight: 72,
-    description: "Global certification in social innovation and leadership, applying human-centered methods and systems thinking through field immersions and cross-sector collaboration to address complex, real-world problems. Worked closely with local communities, social enterprises, and ecosystem leaders across Southeast Asia: conducting contextual research, facilitating design sprints, and translating insights into actionable solutions through iterative prototyping and real-world validation.",
+    description: "Global certification in social innovation and leadership.",
+    bullets: [
+      "Applied human-centred methods and systems thinking through field immersions and cross-sector collaboration",
+      "Worked with local communities, social enterprises, and ecosystem leaders across Southeast Asia",
+      "Conducted contextual research, facilitated design sprints, and translated insights into actionable solutions through iterative prototyping",
+    ],
     images: ["/images/career/dsil-1.jpg", "/images/career/dsil-2.jpg"],
   },
 ];
