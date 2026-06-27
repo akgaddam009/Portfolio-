@@ -630,33 +630,6 @@ function AboutPanel() {
           ))}
         </motion.div>
 
-        {/* Experience row */}
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: EASE, delay: 0.18 }}
-          style={{ padding: "16px 0" }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            <p style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
-              letterSpacing: "0.1em", textTransform: "uppercase",
-              color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
-            }}>
-              Experience
-            </p>
-            <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
-          </div>
-          <p className="text-hoverable" style={{
-            fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
-            letterSpacing: "-0.01em",
-            color: "var(--muted)", lineHeight: 1.65, fontWeight: 400,
-          }}>
-            Designing products for startups and large scale platforms with millions of users.
-          </p>
-        </motion.div>
-
         {/* Industries row */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
