@@ -542,7 +542,7 @@ function AboutPanel() {
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "20px",
-            fontWeight: 400,
+            fontWeight: 500,
             lineHeight: 1.6,
             letterSpacing: "-0.03em",
             color: "var(--text-display)",
