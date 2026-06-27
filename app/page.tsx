@@ -1854,7 +1854,11 @@ const careerItems: CareerItem[] = [
     type: "education", startYear: 2019.5, endYear: 2019.583,
     title: "Industry Jury", subtitle: "Institute of Product Leadership",
     dateLabel: "Jul 2019", minHeight: 72,
-    description: "At the Institute of Product Leadership, examinations are replaced with Skillathons. Top Product Lab UX ideas are presented to a live jury of hiring managers and industry experts. The best voted team wins the Skill Champion Trophy and cash award.",
+    description: "Institute of Product Leadership — Skillathon format replacing traditional exams.",
+    bullets: [
+      "Top Product Lab UX ideas presented to a live jury of hiring managers and industry experts",
+      "Best voted team wins the Skill Champion Trophy and cash award",
+    ],
   },
   {
     type: "education", startYear: 2017, endYear: 2017.5,
