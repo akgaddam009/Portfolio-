@@ -1801,7 +1801,7 @@ const careerItems: CareerItem[] = [
     type: "role", startYear: 2016.667, endYear: 2020.5,
     title: "UX Designer (Founder)", subtitle: "Quazire Consulting",
     dateLabel: "Sep 2016 - Jul 2020", impact: "0→1 founder",
-    description: "Founded and ran a boutique UX consultancy, designing 0→1 digital products across healthcare, HRIS, and fintech verticals for early-stage startups and SMEs.",
+    description: "Founded and ran a boutique UX consultancy.",
     highlights: [
       "Designed an award-winning suite of hospital applications, improving operational efficiency, patient management, and clinical decision-making",
       "Designed an HRIS and applicant tracking system that streamlined recruitment workflows and enhanced hiring team collaboration",
