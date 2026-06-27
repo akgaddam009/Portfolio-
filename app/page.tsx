@@ -1778,6 +1778,7 @@ const careerItems: CareerItem[] = [
     highlights: [
       "Mentored three designers and partnered with leadership to establish UX practices: research, concept validation, usability testing",
       "Replaced guesswork with evidence-based design, improving product quality and reducing backlog ~20 to 30%",
+      "Achievement – Zetwerk Hackathon Winner: Won competing against 11 other teams during an intense 40-hour innovation challenge",
     ],
   },
   {
