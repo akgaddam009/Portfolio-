@@ -566,7 +566,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Hey, I'm Arun Gaddam. I'm a Senior Product Designer skilled at designing large scale complex enterprise applications and consumer apps with more than <InlineChip label="100M+ users" tone="amber" scale="match" /></motion.h1>
+          Hi, I'm a Senior Product Designer with experience designing enterprise and consumer products used by millions. I specialize in AI products, complex workflows, design systems, and scalable user experiences across B2B and B2C.</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
