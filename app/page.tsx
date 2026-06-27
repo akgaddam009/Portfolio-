@@ -1854,6 +1854,7 @@ const careerItems: CareerItem[] = [
     title: "Industry Jury", subtitle: "Institute of Product Leadership",
     dateLabel: "Jul 2019", minHeight: 72,
     description: "Institute of Product Leadership — Skillathon format replacing traditional exams.",
+    link: "https://www.productleadership.com/user-interface-design-prototyping-skillathon-hyderabad-6-july-2019/",
     bullets: [
       "Top Product Lab UX ideas presented to a live jury of hiring managers and industry experts",
       "Best voted team wins the Skill Champion Trophy and cash award",
