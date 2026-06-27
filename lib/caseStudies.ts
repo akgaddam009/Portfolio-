@@ -1569,7 +1569,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "financial-planning-workflow",
     number: "09",
-    title: "Financial Planning Workflow",
+    title: "Designed Financial Planning Workflow for Core Finance users",
     subtitle: "Redesigning a financial planning workflow to reduce complexity and improve team efficiency.",
     role: "Product Designer",
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design"],
