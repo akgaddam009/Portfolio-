@@ -912,14 +912,14 @@ const WORK_THUMBS: Record<string, string> = {
 
 /* Light/dark thumbnail pairs for Drive-linked cards. */
 const THUMB_LIGHT: Record<string, string> = {
-  "apple-business-listings":     "/images/apple.png",
+  "apple-business-listings":     "/images/reputation/thumbnail.jpg",
   "vendor-credit-financing":     "/images/vendor-credit.png",
   "logistics-tax-compliance":    "/images/logistics.png",
   "financial-planning-workflow": "/images/financial-planning.png",
   "first-time-user-experience":  "/images/ftux.png",
 };
 const THUMB_DARK: Record<string, string> = {
-  "apple-business-listings":     "/images/apple.png",
+  "apple-business-listings":     "/images/reputation/thumbnail.jpg",
   "vendor-credit-financing":     "/images/vendor-credit.png",
   "logistics-tax-compliance":    "/images/logistics.png",
   "financial-planning-workflow": "/images/financial-planning.png",
