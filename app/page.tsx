@@ -543,7 +543,7 @@ function AboutPanel() {
             fontFamily: "var(--font-body)",
             fontSize: "var(--text-title-lg)",
             fontWeight: 500,
-            lineHeight: 1.35,
+            lineHeight: 1.5,
             letterSpacing: "-0.02em",
             color: "var(--text-display)",
             marginBottom: "20px",
