@@ -1444,15 +1444,17 @@ function WorkPanel() {
                           borderRadius="16px 16px 0 0"
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
+                        <div style={{ position: "absolute", inset: "16px" }}>
                         <Image
                           src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                           alt={cs.title}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
-                          style={{ objectFit: "cover", objectPosition: "top", padding: "16px" }}
+                          style={{ objectFit: "cover", objectPosition: "top" }}
                           priority={i < 2}
                           quality={90}
                         />
+                        </div>
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.slug === "apple-business-listings" ? false : cs.confidential} />
                       )}
