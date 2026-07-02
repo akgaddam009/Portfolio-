@@ -1444,7 +1444,7 @@ function WorkPanel() {
                           borderRadius="16px 16px 0 0"
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
-                        <div style={{ position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden" }}>
+                        <div style={{ position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden", background: "#f5f5f7" }}>
                         <Image
                           src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                           alt={cs.title}
