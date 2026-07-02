@@ -217,32 +217,29 @@
    continue the scale. Each card layer also takes a 1px white hairline ring
    because drop shadows darken, and there's nothing to darken on near-black. */
 [data-theme="dark"] {
-  /* Lifted dark scale — canvas stays pure black, but panels and cards each
-     gain visible elevation steps so the depth model reads in dark mode the
-     same way it does in light mode. */
-  --bg:       #141414;   /* panel fill — lifted from pure-black canvas (20-unit step for legibility) */
-  --surface:  #1c1c1c;   /* card fill — lifted from panel */
-  --surface2: #242424;   /* hover / inset — one subtle step further */
-  --border:   #2a2a2a;   /* hairline — visible against the new bg */
+  /* Lifted dark scale — wider elevation steps so panels read as distinctly
+     layered, matching the depth clarity of light mode.
+     Warm undertone (#1a1918) on panel bg mirrors Apple's subtle dark warmth —
+     prevents the flat cool-grey fog feeling. */
+  --bg:       #1a1918;   /* panel fill — warm dark, clearly lifted from black canvas */
+  --surface:  #242422;   /* card fill — wider gap from panel for visible elevation */
+  --surface2: #2e2e2b;   /* hover / inset */
+  --border:   #383836;   /* hairlines — stronger, clearly visible on warm dark panels */
   --text:         #ffffff;
-  --text-hover:   #c8c3bc;   /* hover — warm parchment off-white, softer than pure white */
-  --text-display: #e8e8ed;   /* large display / H1 text — warm off-white, not searing pure
-                                 white. ~13.5:1 on #141414. Editorial dark-mode headlines
-                                 never use #fff — it reads as washed out at display scale. */
-  --muted:    #8a8a93;   /* Bumped from #71717b (was 3.97:1 on --surface — fails AA).
-                            Now ≈5.1:1 on --bg #141414 and ≈4.8:1 on --surface #1c1c1c. */
-  --muted2:   #a1a1aa;   /* lifted from --muted for body / value text */
-  --accent-success: #34c759;  /* Apple systemGreen — bright, readable on dark bg */
+  --text-hover:   #c8c3bc;   /* hover — warm parchment off-white */
+  --text-display: #e8e8ed;   /* large display / H1 — warm off-white, ~12.8:1 on #1a1918 */
+  --muted:    #8f8f97;   /* secondary label — ≈4.9:1 on #1a1918 (AA pass) */
+  --muted2:   #a1a1aa;   /* body / value text */
+  --accent-success: #34c759;
   --chrome:   #000000;   /* canvas — pure black, panels lift off it */
 
-  /* Ring does the edge definition (drop shadows are invisible on dark bg).
-     Soft drop shadow adds ambient depth on the lighter panel backgrounds. */
-  --card-shadow:       0 0 0 1px rgba(255, 255, 255, 0.07),
-                       0 1px 3px rgba(0, 0, 0, 0.45),
-                       0 4px 16px rgba(0, 0, 0, 0.3);
-  --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.10),
-                       0 2px 6px rgba(0, 0, 0, 0.55),
-                       0 12px 28px rgba(0, 0, 0, 0.4);
+  /* Stronger ring opacity so cards have a clear visible edge on warm dark bg. */
+  --card-shadow:       0 0 0 1px rgba(255, 255, 255, 0.10),
+                       0 1px 3px rgba(0, 0, 0, 0.5),
+                       0 4px 16px rgba(0, 0, 0, 0.35);
+  --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.14),
+                       0 2px 6px rgba(0, 0, 0, 0.6),
+                       0 12px 28px rgba(0, 0, 0, 0.45);
 
   /* Dark mode relies on the hairline border for edge definition; no resting
      shadow needed. Hover/focal states still use --card-shadow-hover. */
