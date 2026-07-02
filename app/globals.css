@@ -145,8 +145,8 @@
      Light: pure layered shadow lifts cards off the warm bg, no border needed.
      Dark: shadow + 1px ring (since shadows don't read on dark — the ring is
      the edge that prevents the card from bleeding into the canvas). */
-  --card-shadow:       0 1px 3px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(0, 0, 0, 0.07);
-  --card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07), 0 14px 36px rgba(0, 0, 0, 0.10);
+  --card-shadow:       0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(0, 0, 0, 0.07);
+  --card-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.10), 0 2px 4px rgba(0, 0, 0, 0.07), 0 14px 36px rgba(0, 0, 0, 0.10);
 
   /* Minimal resting elevation for non-interactive cards. Half the strength of
      --card-shadow — provides just enough lift in light mode where hairline
@@ -233,10 +233,8 @@
   --accent-success: #34c759;
   --chrome:   #000000;   /* canvas — pure black, panels lift off it */
 
-  --card-shadow:       0 1px 3px rgba(0, 0, 0, 0.5),
-                       0 4px 16px rgba(0, 0, 0, 0.35);
-  --card-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.6),
-                       0 12px 28px rgba(0, 0, 0, 0.45);
+  --card-shadow:       0 0 0 1px rgba(255, 255, 255, 0.08), 0 1px 3px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.35);
+  --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.6), 0 12px 28px rgba(0, 0, 0, 0.45);
 
   /* Dark mode relies on the hairline border for edge definition; no resting
      shadow needed. Hover/focal states still use --card-shadow-hover. */
