@@ -1460,14 +1460,7 @@ function WorkPanel() {
 
                     {/* Body */}
                     <div style={{ padding: "16px 16px 18px" }}>
-                      <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
-                        lineHeight: "26px", letterSpacing: "-0.02em",
-                        color: "var(--text)", marginBottom: "10px",
-                      }}>
-                        {cs.title}
-                      </h3>
-                      <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
                         {cs.slug === "astra"                  && <AccentChip label="AI Experiments"  tone="violet"  icon={Sparkles} />}
                         {cs.slug === "planful-esm-tables"     && <AccentChip label="Fintech"         tone="indigo"  icon={Briefcase} />}
                         {cs.slug === "zetwerk-dc"             && <AccentChip label="Supply Chain"    tone="amber"   icon={Path} />}
@@ -1477,6 +1470,13 @@ function WorkPanel() {
                         ))}
                         {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
                       </div>
+                      <h3 style={{
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
+                        lineHeight: "26px", letterSpacing: "-0.02em",
+                        color: "var(--text)", marginBottom: 0,
+                      }}>
+                        {cs.title}
+                      </h3>
                     </div>
                   </div>
                 </CardWrapper>
