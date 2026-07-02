@@ -1449,7 +1449,7 @@ function WorkPanel() {
                           alt={cs.title}
                           fill
                           sizes="(max-width: 768px) 100vw, 420px"
-                          style={{ objectFit: "cover", objectPosition: "center" }}
+                          style={{ objectFit: "cover", objectPosition: "center", padding: "16px" }}
                           priority={i < 2}
                           quality={75}
                         />
