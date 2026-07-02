@@ -541,7 +541,7 @@ function AboutPanel() {
           transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "var(--text-title-lg)",
+            fontSize: "20px",
             fontWeight: 500,
             lineHeight: 1.5,
             letterSpacing: "-0.02em",
