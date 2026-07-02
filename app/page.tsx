@@ -1448,10 +1448,10 @@ function WorkPanel() {
                           src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                           alt={cs.title}
                           fill
-                          sizes="(max-width: 768px) 100vw, 420px"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
                           style={{ objectFit: "cover", objectPosition: "top", padding: "16px" }}
                           priority={i < 2}
-                          quality={75}
+                          quality={90}
                         />
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.slug === "apple-business-listings" ? false : cs.confidential} />
