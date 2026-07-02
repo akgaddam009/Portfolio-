@@ -2955,8 +2955,8 @@ const PANEL_SHADOW_ACTIVE_LIGHT = "0 2px 4px rgba(0,0,0,0.06), 0 12px 40px rgba(
 /* Dark panels sit on #050507 canvas. drop shadows are invisible on near-black.
    A white hairline ring defines the panel edge; the surface step (#1c1c1e panel
    vs #050507 canvas) provides the perceived lift. */
-const PANEL_SHADOW_DARK  = "0 1px 2px rgba(0,0,0,0.40), 0 6px 24px rgba(0,0,0,0.35)";
-const PANEL_SHADOW_ACTIVE_DARK = "0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(0,0,0,0.45)";
+const PANEL_SHADOW_DARK  = "inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.40), 0 6px 24px rgba(0,0,0,0.35)";
+const PANEL_SHADOW_ACTIVE_DARK = "inset 0 1px 0 rgba(255,255,255,0.11), 0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(0,0,0,0.45)";
 
 /* ── Story View. Stripped-down single-column resume page. ──
    Bio · 3 stats · work list · tenure line · contact.
