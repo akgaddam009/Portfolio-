@@ -530,24 +530,6 @@ function AboutPanel() {
           <PortraitMagnify />
         </motion.div>
 
-        {/* Seniority eyebrow */}
-        <motion.p
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.02 }}
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "var(--text-mono)",
-            fontWeight: 500,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "var(--muted)",
-            marginBottom: "6px",
-          }}
-        >
-          Senior Product Designer · 8+ years
-        </motion.p>
-
         {/* Hero headline. typography per Figma reference:
             Inter 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h1
@@ -556,15 +538,15 @@ function AboutPanel() {
           transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "24px",
-            fontWeight: 400,
-            lineHeight: 1.6,
-            letterSpacing: "-0.03em",
+            fontSize: "20px",
+            fontWeight: 500,
+            lineHeight: 1.5,
+            letterSpacing: "-0.02em",
             color: "var(--text-display)",
             marginBottom: "20px",
           }}
         >
-          Helping product teams <InlineChip label="reduce ambiguity" tone="amber" scale="match" /> through <InlineChip label="research, rapid validation" tone="violet" scale="match" /> <InlineChip label="structured design thinking" tone="emerald" scale="match" /></motion.h1>
+          Arun is a senior product designer crafting intuitive, impactful experiences with a growing focus on artificial Intelligence.</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
