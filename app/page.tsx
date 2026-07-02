@@ -912,18 +912,18 @@ const WORK_THUMBS: Record<string, string> = {
 
 /* Light/dark thumbnail pairs for Drive-linked cards. */
 const THUMB_LIGHT: Record<string, string> = {
-  "apple-business-listings":     "/images/thumbnails/apple-light.jpg",
-  "vendor-credit-financing":     "/images/thumbnails/vendor-credit-light.jpg",
-  "logistics-tax-compliance":    "/images/thumbnails/logistics-light.jpg",
-  "financial-planning-workflow": "/images/thumbnails/financial-planning-light.jpg",
-  "first-time-user-experience":  "/images/thumbnails/ftux-light.jpg",
+  "apple-business-listings":     "/images/apple.png",
+  "vendor-credit-financing":     "/images/vendor-credit.png",
+  "logistics-tax-compliance":    "/images/logistics.png",
+  "financial-planning-workflow": "/images/financial-planning.png",
+  "first-time-user-experience":  "/images/ftux.png",
 };
 const THUMB_DARK: Record<string, string> = {
-  "apple-business-listings":     "/images/thumbnails/apple-dark.jpg",
-  "vendor-credit-financing":     "/images/thumbnails/vendor-credit-dark.jpg",
-  "logistics-tax-compliance":    "/images/thumbnails/logistics-dark.jpg",
-  "financial-planning-workflow": "/images/thumbnails/financial-planning-dark.jpg",
-  "first-time-user-experience":  "/images/thumbnails/ftux-dark.jpg",
+  "apple-business-listings":     "/images/apple.png",
+  "vendor-credit-financing":     "/images/vendor-credit.png",
+  "logistics-tax-compliance":    "/images/logistics.png",
+  "financial-planning-workflow": "/images/financial-planning.png",
+  "first-time-user-experience":  "/images/ftux.png",
 };
 
 const WORK_POSTERS: Record<string, string> = {
