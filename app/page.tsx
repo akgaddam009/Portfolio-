@@ -546,7 +546,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Arun is a senior product designer crafting <InlineChip label="intuitive, impactful experiences" tone="violet" scale="match" variant="strip" /> with a <InlineChip label="growing focus on artificial Intelligence" tone="emerald" scale="match" variant="strip" />.</motion.h1>
+          Arun is a senior product designer crafting intuitive, impactful experiences with a growing focus on artificial Intelligence.</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
