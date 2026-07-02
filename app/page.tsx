@@ -549,7 +549,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Arun is a <span style={{ color: "var(--accent-warm)" }}>senior product designer</span> crafting <span style={{ color: "var(--accent-warm)" }}>intuitive, impactful experiences</span> with a <span style={{ color: "var(--accent-warm)" }}>growing focus on artificial Intelligence.</span></motion.h1>
+          Arun is a <InlineChip label="senior product designer" tone="amber" scale="match" /> crafting <InlineChip label="intuitive, impactful experiences" tone="violet" scale="match" /> with a <InlineChip label="growing focus on artificial Intelligence." tone="emerald" scale="match" /></motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
