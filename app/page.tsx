@@ -889,18 +889,18 @@ const WORK_THUMBS: Record<string, string> = {
 
 /* Light/dark thumbnail pairs for Drive-linked cards. */
 const THUMB_LIGHT: Record<string, string> = {
-  "apple-business-listings":     "/images/thumbnails/apple-light.jpg",
-  "vendor-credit-financing":     "/images/thumbnails/vendor-credit-light.jpg",
-  "logistics-tax-compliance":    "/images/thumbnails/logistics-light.jpg",
-  "financial-planning-workflow": "/images/thumbnails/financial-planning-light.jpg",
-  "first-time-user-experience":  "/images/thumbnails/ftux-light.jpg",
+  "apple-business-listings":     "/images/reputation/thumbnail.jpg",
+  "vendor-credit-financing":     "/images/vendor-credit.png",
+  "logistics-tax-compliance":    "/images/logistics.png",
+  "financial-planning-workflow": "/images/financial-planning.png",
+  "first-time-user-experience":  "/images/ftux.png",
 };
 const THUMB_DARK: Record<string, string> = {
-  "apple-business-listings":     "/images/thumbnails/apple-dark.jpg",
-  "vendor-credit-financing":     "/images/thumbnails/vendor-credit-dark.jpg",
-  "logistics-tax-compliance":    "/images/thumbnails/logistics-dark.jpg",
-  "financial-planning-workflow": "/images/thumbnails/financial-planning-dark.jpg",
-  "first-time-user-experience":  "/images/thumbnails/ftux-dark.jpg",
+  "apple-business-listings":     "/images/reputation/thumbnail.jpg",
+  "vendor-credit-financing":     "/images/vendor-credit.png",
+  "logistics-tax-compliance":    "/images/logistics.png",
+  "financial-planning-workflow": "/images/financial-planning.png",
+  "first-time-user-experience":  "/images/ftux.png",
 };
 
 const WORK_POSTERS: Record<string, string> = {
@@ -1421,15 +1421,13 @@ function WorkPanel() {
                           borderRadius="16px 16px 0 0"
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
-                        <Image
-                          src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
-                          alt={cs.title}
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
-                          style={{ objectFit: "cover", objectPosition: "top" }}
-                          priority={i < 2}
-                          quality={90}
-                        />
+                        <div style={{ position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
+                          <img
+                            src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
+                            alt={cs.title}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", display: "block" }}
+                          />
+                        </div>
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.slug === "apple-business-listings" ? false : cs.confidential} />
                       )}
@@ -1437,14 +1435,7 @@ function WorkPanel() {
 
                     {/* Body */}
                     <div style={{ padding: "16px 16px 18px" }}>
-                      <h3 style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
-                        lineHeight: "26px", letterSpacing: "-0.02em",
-                        color: "var(--text)", marginBottom: "10px",
-                      }}>
-                        {cs.title}
-                      </h3>
-                      <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
                         {cs.slug === "astra"                  && <AccentChip label="AI Experiments"  tone="violet"  icon={Sparkles} />}
                         {cs.slug === "planful-esm-tables"     && <AccentChip label="Fintech"         tone="indigo"  icon={Briefcase} />}
                         {cs.slug === "zetwerk-dc"             && <AccentChip label="Supply Chain"    tone="amber"   icon={Path} />}
@@ -1454,6 +1445,13 @@ function WorkPanel() {
                         ))}
                         {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
                       </div>
+                      <h3 style={{
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
+                        lineHeight: "26px", letterSpacing: "-0.02em",
+                        color: "var(--text)", marginBottom: 0,
+                      }}>
+                        {cs.title}
+                      </h3>
                     </div>
                   </div>
                 </CardWrapper>
