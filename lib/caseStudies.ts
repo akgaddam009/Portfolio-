@@ -303,7 +303,7 @@ export const caseStudies: CaseStudy[] = [
     titleHighlights: { "Financial planning": "amber" },
     subtitle:
       "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
-    cardImpact: "~95% reduction in time on task. 3.5 hrs to 10-15 min",
+    cardImpact: "~95% reduction in time on task. 3.5 hrs → 10–15 min",
     company: "Planful",
     type: "Enterprise SaaS · Fintech",
     role: "Senior Product Designer (IC)",
