@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getCaseStudy, caseStudies } from "@/lib/caseStudies";
+import { getCaseStudy, caseStudies, HIDDEN_SLUGS } from "@/lib/caseStudies";
 import CaseStudyDetail from "@/components/CaseStudyDetail";
 import CaseStudyGate from "@/components/CaseStudyGate";
 import CaseStudyShortForm from "@/components/CaseStudyShortForm";
@@ -37,11 +37,7 @@ const DRIVE_EMBEDS: Record<string, string> = {
    password-gated but recruiter-reachable via direct link. Listed here
    rather than in caseStudies.ts because the hide is a routing decision,
    not a data field. */
-const HIDDEN_SLUGS = new Set<string>([
-  "zetwerk-dc",
-  "zetwerk-bu-ecosystem",
-  "astra",
-]);
+/* HIDDEN_SLUGS now imported from lib/caseStudies (single source of truth). */
 
 /* Public hero media per confidential slug — mirrors the homepage WORK_THUMBS
    / WORK_POSTERS maps in app/page.tsx. These are non-confidential preview
@@ -150,11 +146,23 @@ export async function generateMetadata({
       site: "@akgaddam",
       ...(ogImage ? { images: [ogImage] } : {}),
     },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
-    },
+    /* Case studies whose card opens a Google Drive PDF are orphaned: nothing
+       in the site links to /work/<slug> for them (app/page.tsx prefers
+       cs.driveUrl), so the page is reachable only by direct URL and presents a
+       thinner version of work the PDF tells better. Noindex those to avoid
+       competing duplicate content, but keep follow so link equity still flows.
+       Studies without a driveUrl are still routable and stay indexable. */
+    robots: cs.driveUrl
+      ? {
+          index: false,
+          follow: true,
+          googleBot: { index: false, follow: true },
+        }
+      : {
+          index: true,
+          follow: true,
+          googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+        },
   };
 }
 

@@ -166,7 +166,7 @@ export function PaintedLadySpecimen({
           Kept to the LEFT half so the right half can carry token names. */}
       {showAnnotations && (
         <g
-          fontFamily="var(--font-mono), 'DM Mono', monospace"
+          fontFamily="var(--font-mono), 'Manrope', sans-serif"
           fontSize="2.6"
           letterSpacing="0.12em"
           fill="var(--muted2, #424245)"

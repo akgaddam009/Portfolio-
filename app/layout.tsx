@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, DM_Mono, DM_Sans } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/Cursor";
 import AnalyticsClient from "@/components/AnalyticsClient";
@@ -8,24 +8,13 @@ import LaunchSplash from "@/components/LaunchSplash";
 import GA4 from "@/components/GA4";
 import Clarity from "@/components/Clarity";
 
-const inter = Inter({
-  variable: "--font-inter",
+/* Manrope, the single family for the whole site -- --font-body, --font-mono
+   and --font-logo all resolve here. Manrope publishes no monospace cut, so the
+   tracked uppercase label tier is proportional rather than fixed-width. */
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
-  display: "swap",
-});
-
-const dmMono = DM_Mono({
-  variable: "--font-dm-mono",
-  subsets: ["latin"],
-  weight: ["400"],
-  display: "swap",
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
-  weight: ["400", "500"],
   display: "swap",
 });
 
@@ -113,7 +102,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${dmMono.variable} ${dmSans.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${manrope.variable}`} suppressHydrationWarning>
       <body>
         <script
           dangerouslySetInnerHTML={{

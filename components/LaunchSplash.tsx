@@ -67,7 +67,7 @@ export default function LaunchSplash() {
     const octx = off.getContext("2d");
     if (!octx) return;
     octx.fillStyle = "#000";
-    octx.font = `400 ${fontSize}px Inter, system-ui, sans-serif`;
+    octx.font = `400 ${fontSize}px Manrope, system-ui, sans-serif`;
     octx.textAlign = "center";
     octx.textBaseline = "middle";
     octx.fillText(text, W / 2, H / 2);

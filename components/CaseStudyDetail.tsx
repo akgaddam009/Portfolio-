@@ -373,7 +373,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               textTransform: "uppercase",
               height: "44px",
               padding: "0 14px",
-              borderRadius: "12px",
+              borderRadius: "var(--radius-lg)",
               border: "none",
               background: "var(--surface)",
               boxShadow: "var(--card-shadow)",

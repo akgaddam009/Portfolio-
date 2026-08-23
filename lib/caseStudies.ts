@@ -294,12 +294,24 @@ export type CaseStudy = {
   }[];
 };
 
+/* Slugs that must 404 on /work/<slug>: NDA-strict work whose URL is not
+   guessable, plus slugs that live at their own route instead.
+   Single source of truth. This was previously duplicated in
+   app/work/[slug]/page.tsx and app/sitemap.ts with a "keep in sync" comment;
+   they drifted, "astra" was missing from the sitemap copy, and the sitemap
+   ended up advertising a URL that 404s. */
+export const HIDDEN_SLUGS = new Set<string>([
+  "zetwerk-dc",
+  "zetwerk-bu-ecosystem",
+  "astra",
+]);
+
 export const caseStudies: CaseStudy[] = [
   /* ── #08 Planful ESM Tables. Excel → web (fresh, verbatim from HTML brief) ── */
   {
     slug: "planful-esm-tables",
     number: "08",
-    title: "Financial planning workflow",
+    title: "Financial planning workflow.",
     titleHighlights: { "Financial planning": "amber" },
     subtitle:
       "Cut a 3.5 hour finance workflow down to a few minutes, redesigned from Excel to the web.",
@@ -563,7 +575,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "astra",
     number: "00",
-    title: "AI Contract Review and Approval Workflow",
+    title: "AI contract review and approval workflow.",
     titleHighlights: { "AI": "violet", "Contract Review": "amber", "Approval Workflow": "indigo" },
     subtitle: "When AI is right 85 to 90% of the time, what should the other 10 to 15% look like? Two flows, built in 6–8 hours with Claude Code.",
     cardImpact: "Working prototype shipped in 6–8 hours. AI review and approval in 2 flows.",
@@ -694,16 +706,16 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "apple-business-listings",
     number: "07",
-    title: "Designed Apple Maps Business Listing Insights for Multi-Location Enterprise Users",
+    title: "Designed Apple Maps business listing insights for multi-location enterprise users.",
     titleHighlights: { "Apple Maps": "indigo" },
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
     cardImpact: "~68% weekly adoption from launch. Apple Maps data visible across 100M+ US users",
     company: "Reputation.com",
-    type: "Enterprise SaaS · Analytics & Insights",
+    type: "Customer Experience Platform · Online Reputation Management",
     role: "Senior UX Designer",
     timeline: "Q4 2024",
     team: "PM, Eng Lead, 3 Backend Engineers, 2 QA",
-    tags: ["Enterprise SaaS", "Analytical Dashboard", "Dashboard Design", "Data Visualisation"],
+    tags: ["Online Reputation Management"],
     heroLabel: "Real Work",
     confidential: true,
     driveUrl: "https://drive.google.com/file/d/1jothvqDCrLXQBSFM2yDzbNP627vfTbic/view?usp=sharing",
@@ -870,7 +882,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "fancode-homepage",
     number: "06",
-    title: "Rethink FanCode Sports app Homepage",
+    title: "Rethink FanCode Sports app homepage.",
     titleHighlights: { "Homepage": "indigo" },
     subtitle: "How a mental model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15 - 20%.",
     cardImpact: "15 - 20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",
@@ -1152,7 +1164,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "zetwerk-dc",
     number: "03",
     confidential: true,
-    title: "Supply chain coordination at scale",
+    title: "Supply chain coordination at scale.",
     titleHighlights: { "Supply chain": "amber", "scale": "indigo" },
     subtitle:
       "Designed a digital delivery challan workflow for a 500+ supplier network, turning a paper based process that tied up 8 employees full-time into a system any ops user could run, with built-in GST compliance for the tax team.",
@@ -1342,7 +1354,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "zetwerk-bu-ecosystem",
     number: "04",
     confidential: true,
-    title: "Enterprise Service Design & Operations Research",
+    title: "Enterprise service design & operations research.",
     titleHighlights: { "Service Design": "indigo", "Operations Research": "amber" },
     subtitle: "Five teams. Five broken workflows. Nobody had ever drawn the full picture.",
     cardImpact: "5 competing backlogs → 1 sequenced plan. first complete view of how ops actually worked",
@@ -1569,7 +1581,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "financial-planning-workflow",
     number: "09",
-    title: "Designed Financial Planning Workflow for Core Finance users",
+    title: "Designed core financial planning workflows, cutting time on task from 2–3 weeks to a few minutes and training time by 30%.",
     subtitle: "Redesigning a financial planning workflow to reduce complexity and improve team efficiency.",
     role: "Product Designer",
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design"],
@@ -1583,7 +1595,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "first-time-user-experience",
     number: "10",
-    title: "Designed a first-time user experience that strengthened activation, retention, and long-term engagement",
+    title: "Designed a first-time user experience that strengthened activation, retention, and long-term engagement.",
     subtitle: "Crafting an onboarding experience that helps new users find value quickly.",
     role: "Product Designer",
     tags: ["Consumer Mobile", "Sports App", "UX Design"],
@@ -1597,7 +1609,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "vendor-credit-financing",
     number: "05",
-    title: "Led the Vendor Credit Financing Workflow for a high growth manufacturing startup",
+    title: "Led the vendor credit financing workflow for a high growth manufacturing startup.",
     subtitle: "Designing a credit financing workflow for vendors in a manufacturing supply chain.",
     role: "Product Designer",
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design"],
@@ -1611,10 +1623,10 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "logistics-tax-compliance",
     number: "02",
-    title: "Designed Logistics and tax compliance workflow for high growth manufacturing startup",
+    title: "Designed logistics and tax compliance workflow for high growth manufacturing startup.",
     subtitle: "Digitising logistics and tax compliance workflows across a 500+ supplier manufacturing network.",
     role: "Product Designer",
-    tags: ["Enterprise SaaS", "Supply Chain", "Compliance"],
+    tags: ["Enterprise SaaS", "Supply Chain"],
     heroLabel: "Real Work",
     confidential: false,
     summary: "Digitising logistics and tax compliance workflows across a 500+ supplier manufacturing network.",

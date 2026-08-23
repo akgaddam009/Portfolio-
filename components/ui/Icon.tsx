@@ -83,6 +83,46 @@ export const ArrowUpRight = (p: IconProps) => (
   </Svg>
 );
 
+export const Mail = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+    <path d="m3.6 6.4 8.4 6.4 8.4-6.4" />
+  </Svg>
+);
+
+export const FileText = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" />
+    <path d="M14 3v5h5" />
+    <path d="M9 13h6" />
+    <path d="M9 17h4" />
+  </Svg>
+);
+
+/* LinkedIn mark. Only the "in" glyph from LinkedIn's own icon file on Wikimedia
+   Commons (PD-textlogo -- simple geometry, ineligible for copyright), drawn in
+   currentColor instead of white-on-blue so it inherits the button's text colour
+   and flips with the theme like every other mark here.
+
+   Filled, not stroked, so it does NOT use the Svg wrapper above -- and the
+   viewBox stays at the source's 72 rather than being rescaled to 24 by hand,
+   so the published coordinates are used verbatim.
+
+   Trademark remains LinkedIn's; used nominatively to link to Arun's profile. */
+export const LinkedIn = ({ size = 16, className, style }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 72 72"
+    fill="currentColor"
+    className={className}
+    style={{ display: "inline-block", verticalAlign: "-0.15em", flexShrink: 0, ...style }}
+    aria-hidden="true"
+  >
+    <path d="M62,62 L51.315625,62 L51.315625,43.8021149 C51.315625,38.8127542 49.4197917,36.0245323 45.4707031,36.0245323 C41.1746094,36.0245323 38.9300781,38.9261103 38.9300781,43.8021149 L38.9300781,62 L28.6333333,62 L28.6333333,27.3333333 L38.9300781,27.3333333 L38.9300781,32.0029283 C38.9300781,32.0029283 42.0260417,26.2742151 49.3825521,26.2742151 C56.7356771,26.2742151 62,30.7644705 62,40.051212 L62,62 Z M16.349349,22.7940133 C12.8420573,22.7940133 10,19.9296567 10,16.3970067 C10,12.8643566 12.8420573,10 16.349349,10 C19.8566406,10 22.6970052,12.8643566 22.6970052,16.3970067 C22.6970052,19.9296567 19.8566406,22.7940133 16.349349,22.7940133 Z M11.0325521,62 L21.769401,62 L21.769401,27.3333333 L11.0325521,27.3333333 L11.0325521,62 Z" />
+  </svg>
+);
+
 export const ArrowRight = (p: IconProps) => (
   <Svg {...p}>
     <path d="M5 12h14" />

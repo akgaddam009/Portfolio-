@@ -731,10 +731,12 @@ function RailPanel({ active, onJump }: { active: SlideId; onJump: (id: SlideId) 
             overflow: "hidden",
           }}>
             <div style={{
-              width: `${((currentIndex + 1) / SLIDES.length) * 100}%`,
+              width: "100%",
+              transform: `scaleX(${(currentIndex + 1) / SLIDES.length})`,
+              transformOrigin: "left",
               height: "100%",
               background: "var(--accent-warm)",
-              transition: "width 280ms var(--ease-expo)",
+              transition: "transform 280ms var(--ease-expo)",
             }} />
           </div>
         </div>
@@ -1939,7 +1941,7 @@ transition:    var(--dur-fast) var(--ease-expo);`}
                 flexWrap: "wrap",
               }}>
                 {[
-                  { k: "Wordmark", v: "DM Sans · 0.06em" },
+                  { k: "Wordmark", v: "Manrope · 0.06em" },
                   { k: "Pills",    v: "--surface + --card-shadow" },
                   { k: "Height",   v: "64px" },
                   { k: "Top",      v: "8px from viewport" },

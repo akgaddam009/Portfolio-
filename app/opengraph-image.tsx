@@ -20,7 +20,7 @@ export default async function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           padding: "80px",
-          fontFamily: "Inter, system-ui, sans-serif",
+          fontFamily: "Manrope, system-ui, sans-serif",
         }}
       >
         {/* Top label — mono caps, signature mark of the site */}

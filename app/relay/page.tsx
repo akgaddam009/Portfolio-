@@ -190,7 +190,7 @@ function RiskBadge({ risk }: { risk: Risk }) {
       padding: "2px 8px", borderRadius: 4,
       background: r.dim, border: `1px solid ${r.color}33`,
       color: r.color,
-      fontFamily: "var(--font-dm-mono, monospace)",
+      fontFamily: "var(--font-manrope, sans-serif)",
       fontSize: 10, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase",
     }}>
       <span style={{ width: 5, height: 5, borderRadius: "50%", background: r.dot, display: "inline-block" }} />
@@ -207,7 +207,7 @@ function ChannelBadge({ channel }: { channel: Channel }) {
       padding: "2px 8px", borderRadius: 4,
       background: `${ch.color}18`, border: `1px solid ${ch.color}33`,
       color: ch.color,
-      fontFamily: "var(--font-dm-mono, monospace)",
+      fontFamily: "var(--font-manrope, sans-serif)",
       fontSize: 10, fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase",
     }}>
       {ch.label}
@@ -221,7 +221,7 @@ function Avatar({ initials, color }: { initials: string; color: string }) {
       width: 28, height: 28, borderRadius: "50%",
       background: `${color}22`, border: `1px solid ${color}44`,
       display: "flex", alignItems: "center", justifyContent: "center",
-      color, fontFamily: "var(--font-dm-mono, monospace)",
+      color, fontFamily: "var(--font-manrope, sans-serif)",
       fontSize: 10, fontWeight: 600, letterSpacing: "0.04em", flexShrink: 0,
     }}>
       {initials}
@@ -249,7 +249,7 @@ export default function RelayPage() {
   return (
     <div style={{
       minHeight: "100vh", background: T.bg,
-      fontFamily: "var(--font-inter, -apple-system, sans-serif)",
+      fontFamily: "var(--font-manrope, -apple-system, sans-serif)",
       color: T.text, display: "flex", flexDirection: "column",
     }}>
 
@@ -275,7 +275,7 @@ export default function RelayPage() {
           <span style={{
             padding: "1px 7px", borderRadius: 4, background: T.amberDim,
             border: `1px solid ${T.amberBorder}`, color: T.amber,
-            fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+            fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
             letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 500,
           }}>
             AI
@@ -284,7 +284,7 @@ export default function RelayPage() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <span style={{
-            fontFamily: "var(--font-dm-mono, monospace)", fontSize: 10,
+            fontFamily: "var(--font-manrope, sans-serif)", fontSize: 10,
             color: T.textMuted, letterSpacing: "0.06em", textTransform: "uppercase",
           }}>
             {CONTRACTS.filter(c => !approved.has(c.id) && !escalated.has(c.id)).length} pending
@@ -292,7 +292,7 @@ export default function RelayPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ width: 7, height: 7, borderRadius: "50%", background: T.green }} />
             <span style={{
-              fontFamily: "var(--font-dm-mono, monospace)", fontSize: 10,
+              fontFamily: "var(--font-manrope, sans-serif)", fontSize: 10,
               color: T.textMuted, letterSpacing: "0.06em",
             }}>
               AI active
@@ -315,7 +315,7 @@ export default function RelayPage() {
             borderBottom: `1px solid ${T.border}`,
           }}>
             <p style={{
-              fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+              fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
               color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
               margin: 0, fontWeight: 500,
             }}>
@@ -348,7 +348,7 @@ export default function RelayPage() {
                   </span>
                   {isDone ? (
                     <span style={{
-                      fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                      fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                       color: approved.has(c.id) ? T.green : T.purple,
                       letterSpacing: "0.06em", textTransform: "uppercase",
                     }}>
@@ -366,7 +366,7 @@ export default function RelayPage() {
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <ChannelBadge channel={c.channel} />
                   <span style={{
-                    fontFamily: "var(--font-dm-mono, monospace)", fontSize: 10,
+                    fontFamily: "var(--font-manrope, sans-serif)", fontSize: 10,
                     color: c.risk === "critical" ? T.red : T.textDim,
                   }}>
                     {isDone ? "—" : c.timeLeft}
@@ -411,7 +411,7 @@ export default function RelayPage() {
                     padding: "6px 14px", borderRadius: 6, border: "none",
                     background: tab === t ? T.surface3 : "transparent",
                     color: tab === t ? T.text : T.textMuted,
-                    fontFamily: "var(--font-dm-mono, monospace)",
+                    fontFamily: "var(--font-manrope, sans-serif)",
                     fontSize: 10, fontWeight: 500, letterSpacing: "0.06em",
                     textTransform: "uppercase", cursor: "pointer",
                     transition: "background 0.15s, color 0.15s",
@@ -444,14 +444,14 @@ export default function RelayPage() {
                       borderRadius: 10, padding: "16px 20px",
                     }}>
                       <p style={{
-                        fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                        fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                         color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                         margin: "0 0 10px", fontWeight: 500,
                       }}>
                         Flagged clause
                       </p>
                       <p style={{
-                        fontSize: 12, fontFamily: "var(--font-dm-mono, monospace)",
+                        fontSize: 12, fontFamily: "var(--font-manrope, sans-serif)",
                         color: T.amber, lineHeight: 1.7, margin: 0,
                         background: T.amberDim, border: `1px solid ${T.amberBorder}`,
                         borderRadius: 6, padding: "10px 14px",
@@ -470,14 +470,14 @@ export default function RelayPage() {
                     }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                         <p style={{
-                          fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                          fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                           color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                           margin: 0, fontWeight: 500,
                         }}>
                           AI reasoning
                         </p>
                         <span style={{
-                          fontFamily: "var(--font-dm-mono, monospace)", fontSize: 10,
+                          fontFamily: "var(--font-manrope, sans-serif)", fontSize: 10,
                           color: contract.confidence >= 90 ? T.red : T.amber,
                           background: contract.confidence >= 90 ? T.redDim : T.amberDim,
                           border: `1px solid ${contract.confidence >= 90 ? T.red : T.amber}33`,
@@ -497,7 +497,7 @@ export default function RelayPage() {
                       borderRadius: 10, padding: "16px 20px",
                     }}>
                       <p style={{
-                        fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                        fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                         color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                         margin: "0 0 14px", fontWeight: 500,
                       }}>
@@ -528,7 +528,7 @@ export default function RelayPage() {
                               </div>
                               {selected_ch && (
                                 <span style={{
-                                  fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                                  fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                                   color: cfg.color, background: `${cfg.color}18`,
                                   border: `1px solid ${cfg.color}33`,
                                   padding: "2px 7px", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase",
@@ -576,7 +576,7 @@ export default function RelayPage() {
                       }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
                           <p style={{
-                            fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                            fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                             color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                             margin: 0, fontWeight: 500,
                           }}>
@@ -592,7 +592,7 @@ export default function RelayPage() {
                             marginBottom: 12,
                           }}>
                             <p style={{
-                              fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                              fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                               color: T.textMuted, letterSpacing: "0.08em", textTransform: "uppercase",
                               margin: "0 0 2px",
                             }}>Subject</p>
@@ -604,7 +604,7 @@ export default function RelayPage() {
                           padding: "12px 14px", borderRadius: 8,
                           background: contract.channel === "whatsapp" ? "#0d1f13" : T.surface3,
                           border: `1px solid ${contract.channel === "whatsapp" ? "#25d36633" : T.border}`,
-                          fontFamily: contract.channel === "whatsapp" ? "var(--font-inter, sans-serif)" : "var(--font-inter, sans-serif)",
+                          fontFamily: contract.channel === "whatsapp" ? "var(--font-manrope, sans-serif)" : "var(--font-manrope, sans-serif)",
                           fontSize: 12.5, lineHeight: 1.75, color: T.text,
                           whiteSpace: "pre-line",
                         }}>
@@ -642,7 +642,7 @@ export default function RelayPage() {
                         borderRadius: 10, padding: "16px",
                       }}>
                         <p style={{
-                          fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                          fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                           color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                           margin: "0 0 12px", fontWeight: 500,
                         }}>
@@ -662,7 +662,7 @@ export default function RelayPage() {
                         borderRadius: 10, padding: "16px",
                       }}>
                         <p style={{
-                          fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                          fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                           color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                           margin: "0 0 10px", fontWeight: 500,
                         }}>
@@ -682,7 +682,7 @@ export default function RelayPage() {
                         borderRadius: 10, padding: "16px",
                       }}>
                         <p style={{
-                          fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                          fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                           color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                           margin: "0 0 10px", fontWeight: 500,
                         }}>
@@ -699,10 +699,11 @@ export default function RelayPage() {
                           height: 4, background: T.surface3, borderRadius: 2, marginTop: 8, overflow: "hidden",
                         }}>
                           <div style={{
-                            height: "100%", borderRadius: 2,
-                            width: `${contract.confidence}%`,
+                            height: "100%", width: "100%",
+                            transform: `scaleX(${contract.confidence / 100})`,
+                            transformOrigin: "left",
                             background: contract.confidence >= 90 ? T.red : T.amber,
-                            transition: "width 0.4s ease",
+                            transition: "transform 0.4s ease",
                           }} />
                         </div>
                       </div>
@@ -724,7 +725,7 @@ export default function RelayPage() {
                       }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                           <p style={{
-                            fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                            fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                             color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                             margin: 0, fontWeight: 500,
                           }}>
@@ -895,7 +896,7 @@ export default function RelayPage() {
                         borderRadius: 10, padding: "16px",
                       }}>
                         <p style={{
-                          fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                          fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                           color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                           margin: "0 0 12px", fontWeight: 500,
                         }}>
@@ -913,7 +914,7 @@ export default function RelayPage() {
                         borderRadius: 10, padding: "16px",
                       }}>
                         <p style={{
-                          fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+                          fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
                           color: T.textMuted, letterSpacing: "0.12em", textTransform: "uppercase",
                           margin: "0 0 10px", fontWeight: 500,
                         }}>
@@ -950,13 +951,13 @@ export default function RelayPage() {
         padding: "0 20px", background: T.surface, flexShrink: 0,
       }}>
         <span style={{
-          fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+          fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
           color: T.textDim, letterSpacing: "0.1em", textTransform: "uppercase",
         }}>
           Relay · AI-powered contract approval routing · Concept by Arun Gaddam
         </span>
         <span style={{
-          fontFamily: "var(--font-dm-mono, monospace)", fontSize: 9,
+          fontFamily: "var(--font-manrope, sans-serif)", fontSize: 9,
           color: T.textDim, letterSpacing: "0.06em",
         }}>
           {approved.size + escalated.size} of {CONTRACTS.length} resolved

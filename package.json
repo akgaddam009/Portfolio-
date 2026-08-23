@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@paper-design/shaders-react": "^0.0.80",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
@@ -32,6 +33,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "agentation": "^3.0.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "tailwindcss": "^4",

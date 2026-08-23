@@ -55,7 +55,7 @@ export default function ThemeToggle() {
       style={{
         width: "44px",
         height: "44px",
-        borderRadius: "12px",
+        borderRadius: "var(--radius-lg)",
         border: "none",
         background: "var(--surface)",
         boxShadow: "var(--card-shadow)",

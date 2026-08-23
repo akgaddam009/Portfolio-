@@ -11,8 +11,10 @@ import dynamic from "next/dynamic";
 const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
 const MapLibreMap = dynamic(() => import("@/components/ui/MapLibreMap").then(m => ({ default: m.MapLibreMap })), { ssr: false });
 import { caseStudies } from "@/lib/caseStudies";
+import { brandIcons } from "@/lib/brandIcons";
+import { DitheredImage } from "@/components/DitheredImage";
 import ISTClock from "@/components/ISTClock";
-import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure } from "@/components/ui/Icon";
+import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure, Mail, FileText, LinkedIn, ChartActivity } from "@/components/ui/Icon";
 import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
 import LoadingScreen from "@/components/LoadingScreen";
 import { trackEmailClick, trackLinkedInClick, trackResumeDownload } from "@/lib/analytics";
@@ -54,7 +56,7 @@ function ViewModeToggle({
         alignItems: "center",
         height: "44px",
         padding: "4px",
-        borderRadius: "12px",
+        borderRadius: "var(--radius-lg)",
         background: "var(--surface)",
         boxShadow: "var(--card-shadow)",
         gap: "2px",
@@ -140,7 +142,7 @@ function HomeNav({
             textTransform: "uppercase",
             height: "44px",
             padding: "0 14px",
-            borderRadius: "12px",
+            borderRadius: "var(--radius-lg)",
             border: "none",
             background: "var(--surface)",
             boxShadow: "var(--card-shadow)",
@@ -161,8 +163,12 @@ function HomeNav({
             be restored later. */}
       </div>
 
-      {/* Panel dots + arrows -hidden in Story mode (no panels to navigate). */}
-      <div
+      {/* Panel dots + arrows -hidden in Story mode (no panels to navigate).
+          <nav> rather than <div>: these prev/next controls are how the site is
+          navigated, and the served homepage previously exposed no navigation
+          landmark at all. */}
+      <nav
+        aria-label="Panel navigation"
         style={{
           display: "flex",
           alignItems: "center",
@@ -212,7 +218,7 @@ function HomeNav({
                 style={{
                   width: "44px",
                   height: "44px",
-                  borderRadius: "12px",
+                  borderRadius: "var(--radius-lg)",
                   border: "none",
                   background: "var(--surface)",
                   boxShadow: "var(--card-shadow)",
@@ -233,7 +239,7 @@ function HomeNav({
             );
           })}
         </div>
-      </div>
+      </nav>
     </header>
   );
 }
@@ -403,7 +409,8 @@ function PanelHeader({ label }: { label: string }) {
       position: "sticky",
       top: 0,
       zIndex: 20,
-      padding: "12px 24px",
+      /* 16px, up a third from 12px. Horizontal stays on the 24px panel gutter. */
+      padding: "16px 24px",
       borderBottom: "1px solid color-mix(in srgb, var(--border) 50%, transparent)",
     }}>
       <p style={{
@@ -444,14 +451,20 @@ function PixelRevealPortrait({ src, alt }: { src: string; alt: string }) {
 
   return (
     <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "16px", overflow: "hidden" }}>
-      <img
+      {/* Dithered treatment. The grayscale->colour reveal stays on the wrapper
+          rather than the image, so it applies to the shader canvas and the
+          plain-<img> fallback identically -- CSS filters apply to a <canvas>
+          the same way they apply to an <img>. Grid softened twice on request:
+          3 -> 1.5 -> 0.75. */}
+      <DitheredImage
         src={src}
         alt={alt}
+        radius="16px"
+        size={0.75}
+        colorSteps={6}
         style={{
           position: "absolute", inset: 0,
           width: "100%", height: "100%",
-          objectFit: "cover", objectPosition: "center top",
-          display: "block",
           filter: colorized ? "grayscale(0%)" : "grayscale(100%)",
           transition: "filter 1.2s cubic-bezier(0.22,1,0.36,1)",
         }}
@@ -508,6 +521,90 @@ function PortraitMagnify() {
    study detail hero can reuse the same chip system. */
 
 
+/* Tool label -> brand mark. Only the tools whose marks exist in simple-icons
+   appear here; "ChatGPT (Custom GPTs)" and "Pendo" have no entry and fall back
+   to text-only, which the chip already handles. Keyed on the exact chip label
+   so the skill data stays plain strings. */
+const TOOL_ICON: Record<string, string> = {
+  "Claude": "claude",
+  "Gemini": "gemini",
+  "Perplexity": "perplexity",
+  "Figma": "figma",
+  "Cursor": "cursor",
+  "Dovetail": "dovetail",
+  "Mixpanel": "mixpanel",
+  "Looker": "looker",
+  "Notion": "notion",
+  "Jira": "jira",
+  "Miro": "miro",
+  "Pendo": "pendo",
+};
+
+/* Inline brand mark. fill="currentColor" so it takes the chip's text colour and
+   flips with the theme; aria-hidden because the chip label already names the
+   tool, so announcing it twice adds nothing. */
+function BrandGlyph({ name }: { name: string }) {
+  const icon = brandIcons[name];
+  if (!icon) return null;
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="12"
+      height="12"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      style={{ flexShrink: 0, opacity: 0.85 }}
+    >
+      <path d={icon.path} />
+    </svg>
+  );
+}
+
+/* Single source for the About panel's skill groups. The Contact panel's
+   "Skills & Tools" marquee derives from this too -- it used to keep its own
+   23-item list, which had already drifted from this one. One array, no drift. */
+const SKILL_GROUPS: {
+  label: string;
+  variant: "prose" | "chips";
+  tone?: "violet" | "indigo";
+  items: string[];
+}[] = [
+          {
+            label: "Skills",
+            variant: "prose" as const,
+            items: [
+              "Product Discovery & Strategy",
+              "Enterprise SaaS & Workflow Design",
+              "User Research & Validation",
+              "Prototyping",
+              "Design Systems",
+              "Cross-functional Leadership",
+              "Designing for AI",
+              "AI-Assisted Design",
+              "UX Design",
+              "Interaction Design",
+              "Usability & Accessibility",
+            ],
+          },
+          {
+            /* Tools and Data Tools merged into one group. The split read as two
+               eyebrow headers over two rows of visually identical chips, a
+               distinction that carried no meaning for the reader -- they are all
+               tools. Design and AI tools first, then research and analytics, so
+               the internal order still groups by kind without a second header.
+               The Contact panel's marquee flattens this array, so it picks the
+               merge up with no change of its own. */
+            label: "Tools",
+            variant: "chips" as const,
+            items: [
+              "Claude", "Figma", "Gemini", "Perplexity", "Cursor",
+              "Dovetail", "Mixpanel", "Pendo", "Looker",
+              "Notion", "Jira", "Miro",
+            ],
+          }
+];
+
 function AboutPanel() {
   const [copied, setCopied] = useState(false);
   const copyEmail = () => {
@@ -534,7 +631,7 @@ function AboutPanel() {
 
 
         {/* Hero headline. typography per Figma reference:
-            Inter 400 / 18px / line-height 30px / 0 tracking. */}
+            Manrope 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h1
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -549,10 +646,10 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Arun is a senior product designer crafting intuitive, impactful experiences with a growing focus on artificial Intelligence.</motion.h1>
+          I&apos;m a Product Designer with experience designing enterprise SaaS, B2B, and B2C products across industries.</motion.h1>
 
         {/* Bio. typography per Figma reference:
-            Inter 400 / 14px / line-height 26px / 0 tracking. */}
+            Manrope 400 / 14px / line-height 26px / 0 tracking. */}
         <motion.p
           className="text-hoverable"
           initial={{ opacity: 0, y: 6 }}
@@ -567,7 +664,9 @@ function AboutPanel() {
             marginBottom: "28px",
           }}
         >
-          I&apos;m hands on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
+          I&apos;m hands on throughout the entire process, from strategy to execution.
+          I&apos;ve been learning how LLMs work, and I&apos;m excited about designing
+          AI product experiences.
         </motion.p>
 
         {/* Contact links -moved above Focus, no label. Touch-target safe
@@ -587,44 +686,41 @@ function AboutPanel() {
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
+            className={`btn-cta${copied ? " is-copied" : ""}`}
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "8px 4px",
-              border: "none", background: "transparent",
-              cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px",
-              transition: "color 0.18s",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              cursor: "pointer",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; } }}
           >
+            {!copied && <Mail size={11} strokeWidth={1.5} />}
             {copied ? "Copied ✓" : "Copy email"}
           </button>
 
           {[
-            { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true, onTrack: trackLinkedInClick },
-            { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true, onTrack: trackResumeDownload },
-          ].map(({ label, href, external, onTrack }) => (
+            { label: "LinkedIn", href: "https://www.linkedin.com/in/akgaddam/", external: true, onTrack: trackLinkedInClick, Icon: LinkedIn },
+            { label: "CV", href: "https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing", external: true, onTrack: trackResumeDownload, Icon: FileText },
+          ].map(({ label, href, external, onTrack, Icon }) => (
             <Link
               key={label}
               href={href}
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
-              onClick={onTrack}
+              className="btn-cta"
               style={{
                 fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                 letterSpacing: "0.08em", textTransform: "uppercase",
-                color: "var(--muted)",
-                padding: "8px 4px",
-                display: "inline-flex", alignItems: "center", gap: "4px",
-                transition: "color 0.18s",
+                padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
+                display: "inline-flex", alignItems: "center", gap: "6px",
                 textDecoration: "none",
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
             >
+              <Icon size={11} strokeWidth={1.5} />
               {label}
+              {/* Trailing arrow kept: it is the affordance for "opens in a new
+                  tab", which the leading identity icon does not convey. */}
               <ArrowUpRight size={11} strokeWidth={1.5} />
             </Link>
           ))}
@@ -646,7 +742,6 @@ function AboutPanel() {
             }}>
               Industries
             </p>
-            <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
             {["B2B", "SaaS", "Fintech", "Manufacturing", "Entertainment", "Customer Experience"].map(chip => (
@@ -654,8 +749,14 @@ function AboutPanel() {
                 fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                 fontWeight: 400, letterSpacing: "-0.01em",
                 padding: "4px 10px", borderRadius: "9999px",
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
+                /* Matches the Tools chips below: surface2 fill, no hairline.
+                   These were surface + border, which in the light theme meant no
+                   fill contrast at all (--surface and --bg are both #ffffff) so
+                   the border carried the whole shape. Two chip groups in one
+                   panel, same class of information, should not be built
+                   differently. A hairline was tried on top of the fill and
+                   removed again -- fill defines the shape, not fill + border. */
+                background: "var(--surface2)",
                 color: "var(--muted2)",
               }}>
                 {chip}
@@ -664,84 +765,89 @@ function AboutPanel() {
           </div>
         </motion.div>
 
-        {/* Skills marquee */}
-        {(() => {
-          const skills = [
-            "AI UX",
-            "Systems Thinking", "Product Strategy",
-            "UX Research", "JTBD", "Service Design", "Research Synthesis",
-            "Interaction Design", "Information Architecture", "Prototyping", "Design Systems",
-            "Claude", "Agentic AI",
-          ];
-          return (
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: EASE, delay: 0.24 }}
-              style={{ padding: "12px 0" }}
-              className="skills-ticker"
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
-                <p style={{
-                  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
-                  letterSpacing: "0.1em", textTransform: "uppercase",
-                  color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
-                }}>
-                  Skills
-                </p>
-                <div style={{ flex: 1, borderTop: "1px dashed var(--border)" }} />
-              </div>
+        {/* Skill groups.
 
-              <div style={{ overflow: "hidden", position: "relative" }}>
-                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to right, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
-                <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: "linear-gradient(to left, var(--bg), transparent)", zIndex: 1, pointerEvents: "none" }} />
-                <div
-                  className="marquee-track"
-                  style={{
-                    ["--marquee-duration" as string]: "32s",
-                    display: "flex", alignItems: "center", gap: "0", whiteSpace: "nowrap",
-                  }}
-                >
-                  {skills.map((skill, i) => (
-                    <span key={`a-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
-                      <span style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
-                        letterSpacing: "-0.01em", color: "var(--muted2)",
-                        padding: "4px 10px",
-                        border: "1px solid var(--border)",
-                        borderRadius: "9999px",
-                        background: "var(--surface)",
-                        marginRight: "6px",
-                        whiteSpace: "nowrap",
-                      }}>
-                        {skill}
+            Two treatments on purpose, keyed by `variant`:
+
+            - "prose" (Skills) -- eleven capabilities set as one flowing run.
+              Chips were wrong for this: eleven pills of very different widths
+              wrap into a ragged mosaic with no scan order, each one is a
+              container around two or three words that has no function, and they
+              were visually identical to the Industries chips directly above, so
+              two different kinds of information read as the same thing. Pill
+              shapes also imply toggling, which these do not do.
+
+            - "chips" (Tools) -- kept, because these carry brand
+              marks and a logo needs a bounded shape to sit in. Concrete products
+              get chips; abstract capabilities get text.
+
+            The mono eyebrow header is shared by both, and by the
+            Industries block above, which is what keeps them one system. */}
+        {SKILL_GROUPS.map(({ label, variant, items, tone }, gi) => (
+          <motion.div
+            key={label}
+            initial={{ opacity: 0, y: 6 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, ease: EASE, delay: 0.24 + gi * 0.03 }}
+            style={{ padding: "16px 0" }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                letterSpacing: "0.1em", textTransform: "uppercase",
+                color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+              }}>
+                {label}
+              </p>
+
+            </div>
+
+            {variant === "prose" ? (
+              /* A list that reads as prose. <ul>/<li> rather than a <p> so screen
+                 readers still announce "list, 11 items"; the middots are
+                 aria-hidden so they are not read out as punctuation. Separators
+                 use --muted, which is lighter than the --muted2 text, so the
+                 words dominate and the dots recede. */
+              <ul style={{
+                listStyle: "none", margin: 0, padding: 0,
+                fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                fontWeight: 400, lineHeight: 1.7, letterSpacing: "-0.01em",
+                color: "var(--muted2)",
+              }}>
+                {items.map((item, ii) => (
+                  <li key={item} style={{ display: "inline" }}>
+                    {ii > 0 && (
+                      <span aria-hidden="true" style={{ color: "var(--muted)", padding: "0 6px" }}>
+                        ·
                       </span>
-                    </span>
-                  ))}
-                  <span className="marquee-clone" aria-hidden style={{ display: "inline-flex", alignItems: "center" }}>
-                    {skills.map((skill, i) => (
-                      <span key={`b-${skill}-${i}`} style={{ display: "inline-flex", alignItems: "center" }}>
-                        <span style={{
-                          fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
-                          letterSpacing: "-0.01em", color: "var(--muted2)",
-                          padding: "4px 10px",
-                          border: "1px solid var(--border)",
-                          borderRadius: "9999px",
-                          background: "var(--surface)",
-                          marginRight: "6px",
-                          whiteSpace: "nowrap",
-                        }}>
-                          {skill}
-                        </span>
-                      </span>
-                    ))}
+                    )}
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                {items.map(item => (
+                  <span key={item} style={{
+                    display: "inline-flex", alignItems: "center", gap: "6px",
+                    fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
+                    fontWeight: 400, letterSpacing: "-0.01em",
+                    padding: "4px 10px", borderRadius: "9999px",
+                    /* Tinted fill replaces surface + hairline. Measured with
+                       --muted2 on the tint: 8.56:1 light / 4.98:1 dark, against
+                       a 4.50:1 floor at 12px. */
+                    background: "var(--surface2)",
+                    color: "var(--muted2)",
+                  }}>
+                    {TOOL_ICON[item] && <BrandGlyph name={TOOL_ICON[item]} />}
+                    {item}
                   </span>
-                </div>
+                ))}
               </div>
-            </motion.div>
-          );
-        })()}
+            )}
+          </motion.div>
+        ))}
 
       </div>
     </div>
@@ -1158,7 +1264,9 @@ function WorkChip({ label }: { label: string }) {
       fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
       padding: "4px 8px", background: "var(--surface2)",
-      border: "1px solid var(--border)",
+      /* No border: the surface2 fill already separates the chip from the card
+         (1.09:1 light / 1.14:1 dark). A hairline on top of a fill was the same
+         doubled-up treatment removed from the tool chips and testimonials. */
       color: "var(--text)", borderRadius: "6px",
     }}>
       {label}
@@ -1166,10 +1274,37 @@ function WorkChip({ label }: { label: string }) {
   );
 }
 
+/* Domain badge per work card. Tone encodes the category, which is the whole
+   reason this chip is tonal while WorkChip stays greyscale -- one accent
+   against neutral tags, not a wall of colour. Cards sharing a domain share a
+   tone deliberately (both fintech pieces are indigo).
+
+   Teal is deliberately absent: it is spoken for by the testimonial cards.
+
+   Slugs not listed here render tags only, which is the correct default -- a
+   card with no clear single domain should not be given a fabricated one. */
+const CARD_CATEGORY: Record<string, {
+  label: string;
+  tone: ChipTone;
+  icon?: (p: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) => React.ReactElement;
+}> = {
+  "vendor-credit-financing":     { label: "Fintech",       tone: "indigo",  icon: Briefcase },
+  "financial-planning-workflow": { label: "Fintech",       tone: "indigo",  icon: Briefcase },
+  "logistics-tax-compliance":    { label: "Supply Chain",  tone: "amber",   icon: Path },
+  "apple-business-listings":     { label: "Customer Experience", tone: "emerald", icon: ChartActivity },
+  "first-time-user-experience":  { label: "Sports App",    tone: "sage",    icon: Users },
+  /* Not currently on the homepage, kept so they carry their badge if revived. */
+  "astra":                       { label: "AI Experiments", tone: "violet", icon: Sparkles },
+  "planful-esm-tables":          { label: "Fintech",        tone: "indigo", icon: Briefcase },
+  "zetwerk-dc":                  { label: "Supply Chain",   tone: "amber",  icon: Path },
+  "zetwerk-bu-ecosystem":        { label: "Service Design", tone: "amber",  icon: TreeStructure },
+};
+
 /* Accent chip -tonal category badge (theme-aware). Stands out from the
    standard greyscale WorkChip (e.g. "AI Experiments", "Coming soon"). */
-function AccentChip({ label, tone = "violet", icon: Icon }: {
+function AccentChip({ label, icon: Icon }: {
   label: string;
+  /** Retained on the data and call sites; no longer painted. */
   tone?: ChipTone;
   icon?: (p: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) => React.ReactElement;
 }) {
@@ -1178,13 +1313,22 @@ function AccentChip({ label, tone = "violet", icon: Icon }: {
       display: "inline-flex", alignItems: "center",
       fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
       letterSpacing: "0.06em", textTransform: "uppercase",
+      gap: "5px",
       padding: "4px 8px",
-      background: `var(--chip-${tone}-bg)`,
-      border: `1px solid color-mix(in srgb, var(--chip-${tone}-text) 50%, transparent)`,
-      color: `var(--chip-${tone}-text)`,
+      /* Neutral. Colour on this site now carries exactly one meaning -- "this is
+         someone else's voice" -- and lives only on the testimonial and mentee
+         review cards. A category badge is Arun describing his own work, so it
+         does not qualify.
+
+         The icon is what separates this from a plain WorkChip now that the tint
+         is gone. It was being accepted as a prop and silently dropped before,
+         so the icons passed by CARD_CATEGORY never rendered at all. */
+      background: "var(--surface2)",
+      color: "var(--text)",
       borderRadius: "6px",
       lineHeight: 1.4,
     }}>
+      {Icon && <Icon size={10} strokeWidth={1.5} />}
       {label}
     </span>
   );
@@ -1356,6 +1500,14 @@ function WorkPanel() {
           {allCards.map((cs, i) => {
             const href = cs.driveUrl ?? `/work/${cs.slug}`;
             const isExternal = !!cs.driveUrl;
+            /* Composed accessible name. Without this the link announces as a
+               run-on of the visual chips and title ("Enterprise SaaSFintechLed
+               the Vendor Credit..."), because the chips are separate elements
+               with no separating text. External cards also state where they go
+               and that a new tab opens, which the visual card does not say. */
+            /* Titles carry their own terminal period, so appending one here produced
+               ".." in every card's accessible name. Strip it before joining. */
+            const cardLabel = `${cs.title.replace(/\.$/, "")}. ${cs.tags.join(", ")}${isExternal ? ". Opens a PDF in Google Drive in a new tab" : ""}`;
             const comingSoon = COMING_SOON.has(cs.slug);
             const isProtected = PROTECTED_DRIVE.has(cs.slug);
             const CardWrapper = comingSoon
@@ -1384,7 +1536,7 @@ function WorkPanel() {
                       </div>
                     );
                   }
-                : ({ children }: { children: React.ReactNode }) => <Link href={href} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
+                : ({ children }: { children: React.ReactNode }) => <Link href={href} aria-label={cardLabel} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
             return (
               <motion.div
                 key={cs.slug}
@@ -1422,11 +1574,31 @@ function WorkPanel() {
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
                         <div style={{ position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
-                          <img
-                            src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
-                            alt={cs.title}
-                            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", display: "block" }}
-                          />
+                            {/* FanCode only. `first-time-user-experience` is the
+                              FanCode sports-app card -- the one FanCode entry
+                              in CARD_ORDER, so it is the only FanCode thumbnail
+                              that renders on the homepage (`fancode-homepage`
+                              exists in the data but is not in CARD_ORDER, so
+                              nothing reaches it). Every other card keeps the
+                              plain <img>: this treatment was asked for on
+                              FanCode alone. Grid softened on request:
+                              2 -> 1 -> 0.5, the shader's floor. */}
+                          {cs.slug === "first-time-user-experience" ? (
+                            <DitheredImage
+                              src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
+                              alt={cs.title}
+                              radius="6px"
+                              size={0.5}
+                              colorSteps={6}
+                              style={{ width: "100%", height: "100%" }}
+                            />
+                          ) : (
+                            <img
+                              src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
+                              alt={cs.title}
+                              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", display: "block" }}
+                            />
+                          )}
                         </div>
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.slug === "apple-business-listings" ? false : cs.confidential} />
@@ -1436,13 +1608,27 @@ function WorkPanel() {
                     {/* Body */}
                     <div style={{ padding: "16px 16px 18px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
-                        {cs.slug === "astra"                  && <AccentChip label="AI Experiments"  tone="violet"  icon={Sparkles} />}
-                        {cs.slug === "planful-esm-tables"     && <AccentChip label="Fintech"         tone="indigo"  icon={Briefcase} />}
-                        {cs.slug === "zetwerk-dc"             && <AccentChip label="Supply Chain"    tone="amber"   icon={Path} />}
-                        {cs.slug === "zetwerk-bu-ecosystem"   && <AccentChip label="Service Design"  tone="amber"   icon={TreeStructure} />}
-                        {cs.tags.slice(0, 2).map(tag => (
-                          <WorkChip key={tag} label={tag} />
-                        ))}
+                        {CARD_CATEGORY[cs.slug] && (
+                          <AccentChip
+                            label={CARD_CATEGORY[cs.slug].label}
+                            tone={CARD_CATEGORY[cs.slug].tone}
+                            icon={CARD_CATEGORY[cs.slug].icon}
+                          />
+                        )}
+                        {/* Tags minus anything the category badge already says.
+                            Three cards were printing their domain twice --
+                            [FINTECH] next to a FINTECH tag -- because the badge
+                            label and the tag list are authored separately.
+                            Filtering here rather than editing the tag data keeps
+                            the tags intact for the case study page, where there
+                            is no badge to duplicate. */}
+                        {cs.tags
+                          .filter(tag =>
+                            tag.toLowerCase() !== CARD_CATEGORY[cs.slug]?.label.toLowerCase())
+                          .slice(0, 2)
+                          .map(tag => (
+                            <WorkChip key={tag} label={tag} />
+                          ))}
                         {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
                       </div>
                       <h3 style={{
@@ -1743,12 +1929,6 @@ type CareerItem = {
 const careerItems: CareerItem[] = [
   // Work. newest first
   {
-    type: "role", startYear: 2025.667, endYear: 2026.25,
-    title: "Personal goal pursuit", subtitle: "Career break", minHeight: 72,
-    dateLabel: "Sep 2025 - Apr 2026 · 8 mos",
-    description: "Took time to focus on family, personal growth, and AI upskilling. Based in Hyderabad, Telangana, India.",
-  },
-  {
     type: "role", startYear: 2025.167, endYear: 2025.583,
     title: "Senior Product Designer", subtitle: "Planful Software", minHeight: 72,
     dateLabel: "Mar 2025 - Aug 2025", impact: "Fintech", logoDomain: "planful.com",
@@ -1770,7 +1950,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2022.25, endYear: 2023.833,
     title: "Senior Product Designer", subtitle: "Zetwerk",
-    dateLabel: "Apr 2022 - Nov 2023", impact: "Manufacturing startup", logoDomain: "zetwerk.com",
+    dateLabel: "Apr 2022 - Nov 2023", impact: "Manufacturing", logoDomain: "zetwerk.com",
     link: "https://www.zetwerk.com/",
     images: ["/images/career/zetwerk-team.jpg"],
     description: "Led product design initiatives for Zetwerk's Order Management System (OMS), improving workflows to support business operations during a ~6× revenue growth phase.",
@@ -1796,9 +1976,14 @@ const careerItems: CareerItem[] = [
     ],
   },
   {
-    type: "role", startYear: 2016.667, endYear: 2020.5,
+    /* endYear meets FanCode's startYear (2020.583) rather than sitting at
+       Jul 2020's 2020.5. The roles are contiguous -- Jul 2020 ends, Aug 2020
+       begins -- so the one-month numeric gap was a month-boundary artefact of
+       the scale, not a real break, and it rendered as blank track. dateLabel
+       is unchanged and still states the true dates. */
+    type: "role", startYear: 2016.667, endYear: 2020.583,
     title: "UX Designer (Founder)", subtitle: "Quazire Consulting",
-    dateLabel: "Sep 2016 - Jul 2020", impact: "0→1 founder",
+    dateLabel: "Sep 2016 - Jul 2020", impact: "Design consultancy",
     description: "Founded and ran a boutique UX consultancy.",
     highlights: [
       "Designed an award-winning suite of hospital applications, improving operational efficiency, patient management, and clinical decision-making",
@@ -1884,17 +2069,9 @@ type Testimonial = {
   image?: string;
 };
 
-const testimonials: Testimonial[] = [
-  { quote: "Arun possesses a remarkable understanding of user needs, seamlessly navigating between design strategy and hands-on execution. His strategic mindset significantly impacted our efforts to enhance retention metrics.", name: "Raissa Fichardo", role: "Director of UX", company: "Fancode", initials: "RF", image: "/images/testimonial/raissa-fichardo.webp" },
-  { quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.", name: "Jeff Orshalick", role: "UX Design Manager", company: "Reputation", initials: "JO", image: "/images/testimonial/jeff-orshalick.avif" },
-  { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "Fancode", initials: "VK", image: "/images/testimonial/vikas-kotian.jpeg" },
-  { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research. He was integral throughout the process, actively shaping the product. A true advocate for the customer's voice, and a definite asset to any team.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB", image: "/images/testimonial/nikhil-bhagya.jpeg" },
-  { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB", image: "/images/testimonial/bishal-biswas.jpeg" },
-];
-
 /** Deterministic hue (0-360) derived from initials so each person gets a
     stable, unique tint without us having to hand-pick colours. Used to softly
-    tint the monogram avatar background. */
+    tint the monogram avatar background when no headshot is present. */
 const hueFromInitials = (initials: string): number => {
   let hash = 0;
   for (let i = 0; i < initials.length; i++) {
@@ -1902,6 +2079,121 @@ const hueFromInitials = (initials: string): number => {
   }
   return hash % 360;
 };
+
+const testimonials: Testimonial[] = [
+  { quote: "Arun possesses a remarkable understanding of user needs, seamlessly navigating between design strategy and hands-on execution. His strategic mindset significantly impacted our efforts to enhance retention metrics.", name: "Raissa Fichardo", role: "Director of UX", company: "FanCode", initials: "RF", image: "/images/testimonial/raissa-fichardo.webp" },
+  { quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.", name: "Jeff Orshalick", role: "UX Design Manager", company: "Reputation", initials: "JO", image: "/images/testimonial/jeff-orshalick.avif" },
+  { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "FanCode", initials: "VK", image: "/images/testimonial/vikas-kotian.jpeg" },
+  { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB", image: "/images/testimonial/nikhil-bhagya.jpeg" },
+  { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB", image: "/images/testimonial/bishal-biswas.jpeg" },
+];
+
+/* ── Panel: AI Experiments ── */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; AI Experiments is hidden from PANEL_CONFIGS for now
+function AiExperimentsPanel() {
+  return (
+    <div>
+      <PanelHeader label="AI Experiments" />
+      <div style={{ padding: "16px 24px 32px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{
+              opacity: { duration: 0.5, ease: EASE },
+              y: { type: "spring", stiffness: 320, damping: 28 },
+            }}
+          >
+            {/* Thumbnail is the ChatGPT mark rather than a screenshot: it
+                identifies where the GPT lives, and there is no captured asset
+                of the GPT itself. Centred at its own size, not stretched --
+                it is a logo, not a photograph. Source and licence are recorded
+                in public/images/ai/README.txt (public domain, PD-shape).
+
+                The whole card is the link, matching the work cards. It used to
+                carry a "View GPT" button instead; removing that without moving
+                the href up here would have left the card with no destination. */}
+            <Link
+              href="https://chatgpt.com/g/g-6a6b5aeb663c81919ca14dbf88115b73-ux-product-research-assistant"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="UX product research assistant. Custom GPT on ChatGPT. Opens in a new tab"
+              style={{ textDecoration: "none", display: "block" }}
+            >
+            <div
+              className="work-card"
+              style={{
+                background: "var(--surface)",
+                borderRadius: "16px",
+                overflow: "hidden",
+                boxShadow: "var(--card-shadow)",
+                transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            >
+              {/* Same 220px / 16px-top-radius geometry as the work cards. */}
+              <div style={{
+                position: "relative",
+                height: "220px",
+                overflow: "hidden",
+                borderRadius: "16px 16px 0 0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "var(--surface2)",
+              }}>
+                <img
+                  src="/images/ai/chatgpt-logo.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width={88}
+                  height={88}
+                  loading="lazy"
+                  decoding="async"
+                  style={{ width: "88px", height: "88px", display: "block", borderRadius: "20px" }}
+                />
+              </div>
+
+              <div style={{ padding: "16px 16px 18px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "10px" }}>
+                  <AccentChip label="Custom GPT" tone="violet" icon={Sparkles} />
+                  <WorkChip label="UX Research" />
+                </div>
+
+                <h3 style={{
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)",
+                  fontWeight: 500, lineHeight: "22px", letterSpacing: 0,
+                  color: "var(--text)", marginBottom: "6px",
+                }}>
+                  UX product research assistant.
+                </h3>
+
+                <p style={{
+                  fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                  fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.01em",
+                  color: "var(--muted)", marginBottom: "14px",
+                }}>
+                  Built and launched a Custom GPT for UX researchers, product designers,
+                  and product managers, generating{" "}
+                  <strong style={{ color: "var(--text)", fontWeight: 500 }}>
+                    73K+ organic LinkedIn impressions
+                  </strong>
+                  .
+                </p>
+
+              </div>
+            </div>
+            </Link>
+          </motion.div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function CareerPanel() {
   const totalH = (CAL_END - CAL_START) * YEAR_PX + TOP_OFFSET;
@@ -2003,9 +2295,12 @@ function CareerPanel() {
           right: isExpanded ? "16px" : isEdu ? "16px" : "calc(42% + 8px)",
           borderRadius: "16px",
           background: isExpanded ? "var(--bg)" : "var(--surface)",
-          // Expanded state keeps a border because its bg matches the canvas;
-          // collapsed cards use shadow-only depth like the Work cards.
-          border: isExpanded ? "1px solid var(--border)" : "none",
+          // No border in either state. --card-shadow / --card-shadow-hover
+          // already open with `0 0 0 1px`, so adding a border here stacked a
+          // second 1px ring on top of the shadow's own -- two hairlines at
+          // slightly different colours, which read as one heavy edge. The
+          // shadow ring alone defines the card, exactly as it does collapsed.
+          border: "none",
           overflow: "hidden",
           cursor: isClickable ? "pointer" : "default",
           zIndex: isExpanded ? 10 : isHovered ? 5 : 1,
@@ -2021,7 +2316,13 @@ function CareerPanel() {
           padding: isExpanded ? "8px 12px" : naturalH < 40 ? "4px 10px" : "8px 12px",
           minHeight: isExpanded ? undefined : `${naturalH}px`,
           overflow: "hidden",
-          borderBottom: isExpanded ? "1px solid var(--border)" : "none",
+          /* 50% of --border, not full. At full strength this rule matched the
+             card's own outer ring exactly and the two met at the left and right
+             edges, so they read as one doubled border rather than an edge plus
+             an internal divider. Same idiom as PanelHeader's hairline. */
+          borderBottom: isExpanded
+            ? "1px solid color-mix(in srgb, var(--border) 50%, transparent)"
+            : "none",
         }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
@@ -2042,15 +2343,20 @@ function CareerPanel() {
                 {item.subtitle}
               </p>
             )}
-            {!isExpanded && !isEdu && (item.dateLabel || item.impact) && (
+            {/* Impact only. dateLabel used to sit here at rest and swap to impact
+                on hover, but the calendar axis this card is positioned against
+                already encodes the timeframe, so the date was saying twice what
+                the layout says once. Impact now shows at rest and lifts to
+                --text on hover. */}
+            {!isExpanded && !isEdu && item.impact && (
               <p style={{
                 fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                 fontWeight: 400, letterSpacing: "-0.01em",
-                color: isHovered && item.impact ? "var(--text)" : "var(--muted)", marginTop: "2px",
+                color: isHovered ? "var(--text)" : "var(--muted)", marginTop: "2px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                 transition: "color 0.2s",
               }}>
-                {isHovered && item.impact ? item.impact : item.dateLabel}
+                {item.impact}
               </p>
             )}
           </div>
@@ -2109,17 +2415,6 @@ function CareerPanel() {
                       Visit site <ArrowUpRight size={11} strokeWidth={1.5} />
                     </a>
                   </div>
-                )}
-
-                {/* Date label -role cards only */}
-                {item.dateLabel && !isEdu && (
-                  <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
-                    fontWeight: 400, letterSpacing: "-0.01em",
-                    color: "var(--muted)", lineHeight: 1.4, marginBottom: "12px",
-                  }}>
-                    {item.dateLabel}
-                  </p>
                 )}
 
                 {/* Images */}
@@ -2259,30 +2554,36 @@ function CareerPanel() {
                         },
                       ].map((r, i) => (
                         <div key={i} style={{
-                          background: "var(--surface)", borderRadius: "10px",
-                          padding: "10px 12px", border: "1px solid var(--border)",
+                          /* Tinted, not bordered. These sat inside the expanded
+                             career card as bordered cards within a bordered
+                             card, and their --surface fill is #ffffff in light
+                             theme -- identical to the card behind them -- so the
+                             border was load-bearing and could not simply be
+                             deleted. Teal is the same tone as the testimonial
+                             cards, which is what these are -- so they track the
+                             same --surface2 fill. */
+                          background: "var(--surface2)", borderRadius: "10px",
+                          padding: "10px 12px",
                         }}>
                           <p style={{
                             fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                             color: "var(--muted2)", lineHeight: 1.6,
-                            letterSpacing: "-0.01em", marginBottom: "8px",
+                            /* 14px, up from 8px. The quote wraps to several
+                               lines at 1.6, so 8px left the attribution reading
+                               as another line of the quote rather than a
+                               separate register. */
+                            letterSpacing: "-0.01em", marginBottom: "14px",
                           }}>
                             &ldquo;{r.quote}&rdquo;
                           </p>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+                            {/* Monogram avatar removed. The role + company lines
+                                already identify the reviewer, and at 20px the
+                                initials disc read as a bullet rather than a
+                                person. `initials` stays in the data -- the main
+                                testimonial cards still use it for their
+                                fallback avatar. */}
                             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                              <div style={{
-                                width: "20px", height: "20px", borderRadius: "50%",
-                                background: "var(--surface2)",
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                flexShrink: 0,
-                              }}>
-                                <span style={{
-                                  fontFamily: "var(--font-body)", fontSize: "var(--text-mono)",
-                                  fontWeight: 500, letterSpacing: "-0.01em",
-                                  color: "var(--muted)",
-                                }}>{r.initials}</span>
-                              </div>
                               <div>
                                 <span style={{
                                   fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
@@ -2310,8 +2611,7 @@ function CareerPanel() {
 
                 {/* Prev / Next navigation. only for work cards */}
                 {!isEdu && <div style={{
-                  display: "flex", gap: "6px", paddingTop: "12px",
-                  borderTop: "1px solid var(--border)",
+                  display: "flex", gap: "6px", paddingTop: "16px",
                 }}>
                   <motion.button
                     onClick={e => { e.stopPropagation(); prevCard(); }}
@@ -2319,8 +2619,13 @@ function CareerPanel() {
                     whileTap={selectedIdx > 0 ? { scale: 0.9 } : {}}
                     style={{
                       flex: 1, height: "36px",
-                      borderRadius: "8px", border: "1px solid var(--border)",
-                      background: "var(--surface)", color: "var(--text)",
+                      /* surface2 fill instead of surface + hairline: on the
+                         expanded card both --surface and --bg are #ffffff in
+                         light theme, so the border was the only edge. The
+                         fill separates them at 1.09:1 without adding a
+                         fourth line to this corner of the sheet. */
+                      borderRadius: "8px",
+                      background: "var(--surface2)", color: "var(--text)",
                       fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500,
                       letterSpacing: "-0.01em",
                       cursor: selectedIdx > 0 ? "pointer" : "default",
@@ -2336,8 +2641,13 @@ function CareerPanel() {
                     whileTap={selectedIdx < workItems.length - 1 ? { scale: 0.9 } : {}}
                     style={{
                       flex: 1, height: "36px",
-                      borderRadius: "8px", border: "1px solid var(--border)",
-                      background: "var(--surface)", color: "var(--text)",
+                      /* surface2 fill instead of surface + hairline: on the
+                         expanded card both --surface and --bg are #ffffff in
+                         light theme, so the border was the only edge. The
+                         fill separates them at 1.09:1 without adding a
+                         fourth line to this corner of the sheet. */
+                      borderRadius: "8px",
+                      background: "var(--surface2)", color: "var(--text)",
                       fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500,
                       letterSpacing: "-0.01em",
                       cursor: selectedIdx < workItems.length - 1 ? "pointer" : "default",
@@ -2504,51 +2814,92 @@ function TestimonialsPanel() {
           From colleagues and managers I&apos;ve worked closely with.
         </motion.p>
 
+        {/* Cards, but flat. boxShadow removed per request -- which means the
+            card needs a hairline border to survive: in the light theme --bg and
+            --surface are both #ffffff, so a shadowless card with no border is
+            literally invisible against the panel. The border is load-bearing,
+            not decoration. Semantic figure/blockquote retained from the text
+            pass; the 28px decorative quote glyph stays out. */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {testimonials.map((t, i) => (
-            <motion.div
+            <motion.figure
               key={t.name}
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}
               style={{
+                margin: 0,
                 borderRadius: "16px",
-                background: "var(--surface)",
-                boxShadow: "var(--card-shadow)",
+                /* --surface2, the same fill every chip on the site uses. The
+                   card originally had --surface plus a hairline, which in the
+                   light theme meant no fill contrast at all (--surface and --bg
+                   are both #ffffff) so the border carried the whole edge and
+                   read louder than the quote it framed. A teal tint replaced it
+                   for a while; this drops the last chip tone so the page has one
+                   contained-surface treatment and colour is reserved for
+                   --accent-warm.
+
+                   Measured light #f5f5f7 / dark #2e2e2b:
+                     quote --text   15.46:1 / 13.62:1
+                     name  --muted2  9.20:1 /  5.31:1
+                     role  --muted2  9.20:1 /  5.31:1  (AA floor 4.50:1) */
+                background: "var(--surface2)",
                 padding: "20px",
               }}
             >
-              {/* Quote mark */}
+              {/* Company wordmark. Stands in for a logo: only Atlassian of the
+                  four companies exists in simple-icons, so real marks would put
+                  a logo on one card out of five and nothing on the rest, which
+                  reads as broken rather than designed. Mono caps gives the same
+                  visual anchor with full coverage. */}
               <p style={{
-                fontFamily: "var(--font-body)", fontSize: "28px", lineHeight: 1,
-                color: "var(--text)", marginBottom: "8px",
-                letterSpacing: "-0.02em", opacity: 0.2,
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                letterSpacing: "0.12em", textTransform: "uppercase",
+                color: "var(--muted)", fontWeight: 400,
+                margin: "0 0 12px",
               }}>
-                &ldquo;
+                {t.company}
               </p>
 
-              {/* Quote body — matches About panel text styling */}
-              <p style={{
+              {/* Quote carries --text, not --muted. It is the primary content of
+                  the panel and was previously rendered at 5.07:1 while the name
+                  beside it sat at 16.83:1, so the attribution read louder than
+                  the claim it attributes. Small body text also wants the higher
+                  contrast; the softened --text-display exists for large display
+                  letterforms, which this is not. */}
+              <blockquote style={{
                 fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 400,
-                lineHeight: 1.65, color: "var(--muted)", marginBottom: "28px",
-                letterSpacing: "-0.01em",
+                lineHeight: 1.65, letterSpacing: "-0.01em",
+                color: "var(--text)", margin: "0 0 28px",
               }}>
                 {t.quote}
-              </p>
+              </blockquote>
 
-              {/* Author. no border, spacing does the separation */}
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <figcaption style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 {t.image ? (
-                  <img
+                  <DitheredImage
                     src={t.image}
-                    alt={t.name}
-                    loading="lazy"
-                    decoding="async"
+                    alt=""
+                    radius="50%"
+                    /* At 52px a coarse dither destroys the face -- too few
+                       pixels remain to read as a person, which defeats the
+                       point of a headshot. Softened twice on request:
+                       1.5 -> 0.75 -> 0.525, just above the 0.5 floor. */
+                    size={0.525}
+                    colorSteps={6}
                     style={{
-                      width: "40px", height: "40px", borderRadius: "50%",
-                      objectFit: "cover", flexShrink: 0,
-                      boxShadow: "inset 0 0 0 1px color-mix(in srgb, var(--text) 8%, transparent)",
+                      /* 52px, up from 40px. The monogram fallback below must
+                         stay the same number or the two avatar kinds desync
+                         between cards. */
+                      width: "52px", height: "52px", borderRadius: "50%",
+                      flexShrink: 0,
+                      /* outline, not inset box-shadow: an inset shadow paints
+                         between background and content, and a replaced element's
+                         content covers it -- so the ring was invisible on every
+                         avatar that had a photo. outline respects border-radius. */
+                      outline: "1px solid color-mix(in srgb, var(--text) 8%, transparent)",
+                      outlineOffset: "-1px",
                     }}
                   />
                 ) : (() => {
@@ -2558,19 +2909,19 @@ function TestimonialsPanel() {
                     <div
                       aria-hidden="true"
                       style={{
-                        width: "40px", height: "40px", borderRadius: "50%",
-                        // Soft hue-tinted gradient. color-mix blends with theme surface tones,
-                        // so this stays subtle in both light and dark mode.
+                        /* Matches the photo avatar above at 52px. */
+                        width: "52px", height: "52px", borderRadius: "50%",
                         background: `linear-gradient(135deg,
                           color-mix(in srgb, ${tint} 16%, var(--surface2)),
                           color-mix(in srgb, ${tint} 6%, var(--surface)))`,
-                        boxShadow: "inset 0 0 0 1px color-mix(in srgb, var(--text) 6%, transparent)",
+                        outline: "1px solid color-mix(in srgb, var(--text) 6%, transparent)",
+                        outlineOffset: "-1px",
                         display: "flex", alignItems: "center", justifyContent: "center",
                         flexShrink: 0,
                       }}
                     >
                       <span style={{
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
+                        fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)",
                         fontWeight: 600, letterSpacing: "-0.01em",
                         color: `color-mix(in srgb, ${tint} 65%, var(--text))`,
                       }}>
@@ -2582,20 +2933,23 @@ function TestimonialsPanel() {
                 <div>
                   <p style={{
                     fontFamily: "var(--font-body)", fontSize: "var(--text-body-lg)", fontWeight: 500,
-                    letterSpacing: "-0.01em", color: "var(--text)", lineHeight: 1.35,
+                    letterSpacing: "-0.01em", color: "var(--muted2)", lineHeight: 1.35,
                   }}>
                     {t.name}
                   </p>
                   <p style={{
                     fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
                     letterSpacing: "-0.01em",
-                    color: "var(--muted)", marginTop: "2px", lineHeight: 1.4,
+                    /* --muted2, not --muted: on --surface2 the lighter --muted
+                       falls to 4.24:1 in dark theme, under the AA floor. The
+                       name still outranks this line by size and weight. */
+                    color: "var(--muted2)", marginTop: "2px", lineHeight: 1.4,
                   }}>
-                    {t.role} · {t.company}
+                    {t.role}
                   </p>
                 </div>
-              </div>
-            </motion.div>
+              </figcaption>
+            </motion.figure>
           ))}
         </div>
       </div>
@@ -2621,7 +2975,7 @@ function ContactPanel() {
       <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
 
         {/* Headline. typography per Figma reference:
-            Inter 400 / 18px / line-height 30px / 0 tracking. */}
+            Manrope 400 / 18px / line-height 30px / 0 tracking. */}
         <motion.h2
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -2669,38 +3023,32 @@ function ContactPanel() {
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
+            className={`btn-cta${copied ? " is-copied" : ""}`}
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: copied ? "var(--accent-success)" : "var(--muted)",
-              padding: "5px 10px", minHeight: "32px", borderRadius: "6px",
-              border: "1px solid var(--border)", background: "var(--surface)",
-              cursor: "pointer",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
+              cursor: "pointer",
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; } }}
           >
+            {!copied && <Mail size={11} strokeWidth={1.5} />}
             {copied ? "Copied ✓" : "Copy email"}
           </button>
 
           <Link
             href="https://www.linkedin.com/in/akgaddam/"
             target="_blank" rel="noopener noreferrer"
+            className="btn-cta"
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
-              padding: "5px 10px", minHeight: "32px", borderRadius: "6px",
-              border: "1px solid var(--border)", background: "var(--surface)",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
               textDecoration: "none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
+            <LinkedIn size={11} />
             LinkedIn
             <ArrowUpRight size={11} strokeWidth={1.5} />
           </Link>
@@ -2708,45 +3056,36 @@ function ContactPanel() {
           <Link
             href="https://drive.google.com/file/d/1VWajNl_cigKjLwMNevZIJXUm1bY3hoOs/view?usp=sharing"
             target="_blank" rel="noopener noreferrer"
+            className="btn-cta"
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "var(--muted)",
-              padding: "5px 10px", minHeight: "32px", borderRadius: "6px",
-              border: "1px solid var(--border)", background: "var(--surface)",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
               display: "inline-flex", alignItems: "center", gap: "6px",
-              transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
               textDecoration: "none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
           >
+            <FileText size={11} strokeWidth={1.5} />
             CV
             <ArrowUpRight size={11} strokeWidth={1.5} />
           </Link>
         </motion.div>
 
         {/* Skills & Tools. matches the about-panel treatment (mono label
-            + dashed line + marquee of pills). marginTop: auto pushes it
+            + marquee of pills). marginTop: auto pushes it
             and the location card to the bottom of the panel. */}
         {(() => {
-          const skills = [
-            "AI UX Design",
-            "Systems Thinking", "Product Thinking",
-            "Product Strategy", "Claude Code", "Agentic AI", "Service Design",
-            "Cross functional Leadership", "UX Strategy", "UX Research",
-            "Research Synthesis", "Stakeholder Alignment", "Design Systems",
-            "Information Architecture", "Interaction Design", "Prototyping",
-            "Usability Testing", "Contextual Inquiry", "Service Blueprints",
-            "Jobs-to-be-Done", "Figma", "Framer", "Next.js",
-          ];
+          /* Same data as the About panel's skill groups -- Skills then Tools,
+             flattened in order, which is exactly what the "Skills & Tools"
+             label promises. */
+          const skills = SKILL_GROUPS.flatMap(g => g.items);
           return (
             <motion.div
               className="skills-ticker"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, ease: EASE, delay: 0.18 }}
-              style={{ marginTop: "auto", marginBottom: "16px" }}
+              style={{ marginTop: "auto", marginBottom: "28px" }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
                 <p style={{
@@ -2773,9 +3112,8 @@ function ContactPanel() {
                         fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                         letterSpacing: "-0.01em", color: "var(--muted2)",
                         padding: "4px 10px",
-                        border: "1px solid var(--border)",
                         borderRadius: "9999px",
-                        background: "var(--surface)",
+                        background: "var(--surface2)",
                         marginRight: "6px",
                         whiteSpace: "nowrap",
                       }}>
@@ -2790,9 +3128,8 @@ function ContactPanel() {
                           fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                           letterSpacing: "-0.01em", color: "var(--muted2)",
                           padding: "4px 10px",
-                          border: "1px solid var(--border)",
                           borderRadius: "9999px",
-                          background: "var(--surface)",
+                          background: "var(--surface2)",
                           marginRight: "6px",
                           whiteSpace: "nowrap",
                         }}>
@@ -2815,14 +3152,20 @@ function ContactPanel() {
           style={{
             borderRadius: "12px",
             overflow: "hidden",
-            boxShadow: "var(--card-shadow)",
+            /* Same --surface2 fill as the testimonial cards, but this card
+               also needs a border where they do not: the map is opaque and
+               covers the fill, so only the label strip shows it and the card
+               would otherwise read as edgeless. 60% of --border, the value
+               tuned for the testimonial cards before they went fill-only. */
+            background: "var(--surface2)",
+            border: "1px solid color-mix(in srgb, var(--border) 60%, transparent)",
           }}
         >
           {/* Map area. MapLibre GL */}
           <div style={{ position: "relative", overflow: "hidden" }}>
             <MapLibreMap height={190} />
           </div>
-          <div style={{ padding: "8px 12px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ padding: "8px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "var(--muted)", flexShrink: 0 }}>
                 <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -2833,12 +3176,17 @@ function ContactPanel() {
           </div>
         </motion.div>
 
-        {/* Footer */}
-        <motion.div
+        {/* Footer. role="contentinfo" is explicit on purpose: a bare <footer>
+            nested inside a <section> is scoped to that section and does NOT map
+            to the page-level contentinfo landmark. This layout has no page-level
+            footer to attach one to -- the colophon lives at the bottom of the
+            Contact panel -- so the role is declared here. */}
+        <motion.footer
+          role="contentinfo"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.25 }}
-          style={{ paddingTop: "16px", borderTop: "1px solid var(--border)", marginTop: "20px" }}
+          style={{ marginTop: "16px" }}
         >
           <p style={{
             fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
@@ -2846,12 +3194,7 @@ function ContactPanel() {
             color: "var(--muted)", lineHeight: 1.3,
             marginBottom: "4px",
           }}>
-            © 2026 · Arun Gaddam{" "}
-            <span style={{
-              color: "var(--accent-gold)",
-              textShadow: "0 0 6px rgba(234, 179, 8, 0.7)",
-              fontWeight: 700,
-            }}>ツ</span>
+            © 2026 · Arun Gaddam
           </p>
           <p style={{
             fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
@@ -2859,19 +3202,27 @@ function ContactPanel() {
             color: "var(--muted)", lineHeight: 1.3,
           }}>
             <span style={{ opacity: 0.6 }}>Designed with </span>
+            {/* Claude's own mark from lib/brandIcons.ts, not the generic
+                four-point sparkle that used to sit here. Keeps Claude's
+                #D97757 rather than currentColor so it reads as the brand
+                in both themes. */}
             <svg
-              width="11"
-              height="11"
+              width="15"
+              height="15"
               viewBox="0 0 24 24"
               fill="#D97757"
               aria-hidden
-              style={{ display: "inline-block", verticalAlign: "-1px", margin: "0 2px" }}
+              focusable="false"
+              /* 15px, up from 11px. verticalAlign moves with it: the baseline
+                 offset has to grow in step or the larger mark rides high
+                 against the text it sits in. */
+              style={{ display: "inline-block", verticalAlign: "-3px", margin: "0 2px" }}
             >
-              <path d="M12 2c.5 6 2 7.5 10 10-8 2.5-9.5 4-10 10-.5-6-2-7.5-10-10 8-2.5 9.5-4 10-10z" />
+              <path d={brandIcons.claude.path} />
             </svg>
-            <span style={{ opacity: 0.6 }}>Claude Code</span>
+            <span style={{ opacity: 0.6 }}>Claude</span>
           </p>
-        </motion.div>
+        </motion.footer>
 
       </div>
     </div>
@@ -3083,7 +3434,19 @@ function StoryView() {
             margin: "20px 0 0",
           }}
         >
-          I&apos;m hands on throughout the entire process, from strategy to execution. These days, I lean on AI to move faster and test ideas.
+          I&apos;m hands on throughout the entire process, from strategy to execution.
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "var(--text-body-lg)",
+            lineHeight: 1.65,
+            letterSpacing: "-0.01em",
+            color: "var(--muted)",
+            margin: "12px 0 0",
+          }}
+        >
+          I&apos;ve been learning how LLMs work, and I&apos;m excited about designing AI product experiences.
         </p>
 
         <hr style={divider} />
@@ -3237,13 +3600,9 @@ function StoryView() {
                 letterSpacing: "0.08em", textTransform: "uppercase",
                 color: "var(--muted)",
                 padding: "8px 12px", minHeight: "var(--space-8)", borderRadius: "8px",
-                border: "1px solid var(--border)", background: "var(--surface)",
-                textDecoration: "none",
+                  textDecoration: "none",
                 display: "inline-flex", alignItems: "center", gap: "6px",
-                transition: "color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.boxShadow = "none"; }}
+                  }}
             >
               {label}
               <ArrowUpRight size={10} strokeWidth={1.5} />
@@ -3258,6 +3617,11 @@ function StoryView() {
 const PANEL_CONFIGS = [
   { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
   { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
+  /* AI Experiments hidden from the homepage for now. PANEL_LABELS derives from
+     this array, so the nav dots, arrows, and floating menu all drop it with no
+     other change. AiExperimentsPanel stays in code for revival -- uncomment the
+     line below to bring it back. */
+  // { label: "AI Experiments", width: "420px", minWidth: "380px", Component: AiExperimentsPanel },
   { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
   { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
   { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },
@@ -3353,6 +3717,59 @@ export default function Home() {
     } else {
       el.scrollTo({ left: target.offsetLeft - 24, behavior: "smooth" });
     }
+  }, []);
+
+  /* Wheel anywhere outside a panel scrolls the panels horizontally.
+
+     Before this, the chrome around the panels was dead to the wheel: the top
+     nav strip, the bottom padding, the left gutter and the right fade are all
+     outside .panel, so a wheel there hit an element with nothing to scroll and
+     the page simply sat still. That reads as the site being frozen.
+
+     It deliberately does NOT forward when the pointer is over a panel. Each
+     .panel has its own overflowY: auto, so a vertical wheel there must keep
+     scrolling that panel's content -- hijacking it would break reading a case
+     study. Only wheels landing outside every panel are redirected.
+
+     Two details that matter:
+     - deltaX and deltaY are merged, so a mouse wheel (deltaY only) and a
+       trackpad swipe (deltaX) both work.
+     - The container carries scrollBehavior: "smooth" for the nav arrows and
+       keyboard jumps. Assigning scrollLeft under that setting animates every
+       single wheel tick, which feels like wading through treacle -- so it is
+       flipped to "auto" for the gesture and restored once the wheel goes
+       quiet, leaving the arrow/keyboard animation intact. */
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    let restore: ReturnType<typeof setTimeout> | null = null;
+
+    const onWheel = (e: WheelEvent) => {
+      /* Mobile stacks the panels vertically; there is no horizontal axis to
+         drive, and stealing the wheel there would break the page outright. */
+      if (window.matchMedia("(max-width: 640px)").matches) return;
+
+      const target = e.target as Element | null;
+      if (target && target.closest(".panel")) return;
+
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (!delta) return;
+
+      e.preventDefault();
+      el.style.scrollBehavior = "auto";
+      el.scrollLeft += delta;
+
+      if (restore) clearTimeout(restore);
+      restore = setTimeout(() => { el.style.scrollBehavior = "smooth"; }, 120);
+    };
+
+    /* passive: false because the handler calls preventDefault. */
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      if (restore) clearTimeout(restore);
+    };
   }, []);
 
   /* Mobile-only IntersectionObserver -tracks which panel is most in-view
@@ -3481,10 +3898,11 @@ export default function Home() {
             height: "calc(100dvh - 72px)",
             overflowX: "auto",
             overflowY: "hidden",
-            gap: "16px",
-            /* Inter-panel gap (16px) — a touch of breathing room
-               without separating the panels too far. Top padding
-               kept at 8px. */
+            gap: "24px",
+            /* Inter-panel gap (24px) — matches the panel's own 24px inner
+               gutter, so the space between two panels reads as the same
+               interval as the space inside one. Top padding kept at 8px.
+               Mobile stacks vertically at 12px via .panels-container. */
             padding: "8px 0 16px 24px",
             boxSizing: "border-box",
             /* Scroll-snap removed -the `proximity` mode was tugging the
@@ -3497,16 +3915,17 @@ export default function Home() {
             scrollBehavior: "smooth",
           }}
         >
-          {PANEL_CONFIGS.map(({ width, minWidth, Component }, i) => {
+          {PANEL_CONFIGS.map(({ label, width, minWidth, Component }, i) => {
             const isActive = activePanel === i;
             const shadow = isDark
               ? (isActive ? PANEL_SHADOW_ACTIVE_DARK  : PANEL_SHADOW_DARK)
               : (isActive ? PANEL_SHADOW_ACTIVE_LIGHT : PANEL_SHADOW_LIGHT);
             const panelClass = `panel${isActive ? " is-active" : ""}`;
             return (
-              <motion.div
+              <motion.section
                 key={i}
                 className={panelClass}
+                aria-label={label}
                 initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
                 animate={revealed
                   ? { opacity: 1, y: 0,  filter: "blur(0px)" }
@@ -3525,8 +3944,16 @@ export default function Home() {
                   transition: "box-shadow 0.35s cubic-bezier(0.22,1,0.36,1)",
                 }}
               >
+                {/* Visually-hidden section heading. Repairs the h1 -> h3 jump:
+                    panel card titles are h3, so the outline needs an h2 between
+                    them and the hero h1. Skipped for the first panel, which
+                    already contains the page h1 -- emitting an h2 there would
+                    place it before the h1 in document order and invert the
+                    hierarchy we are fixing. The <section> still gets its
+                    accessible name from aria-label above. */}
+                {i > 0 && <h2 className="sr-only">{label}</h2>}
                 <Component />
-              </motion.div>
+              </motion.section>
             );
           })}
 

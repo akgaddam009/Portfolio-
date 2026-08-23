@@ -1,13 +1,9 @@
 import type { MetadataRoute } from "next";
-import { caseStudies } from "@/lib/caseStudies";
+import { caseStudies, HIDDEN_SLUGS } from "@/lib/caseStudies";
 
 const BASE_URL = "https://arungaddamux.vercel.app";
 
-/* HIDDEN_SLUGS kept in sync with app/work/[slug]/page.tsx. */
-const HIDDEN_SLUGS = new Set<string>([
-  "zetwerk-dc",
-  "zetwerk-bu-ecosystem",
-]);
+
 
 export default function sitemap(): MetadataRoute.Sitemap {
   /* Only emit case studies that are both publicly routable AND
@@ -18,6 +14,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const caseStudyEntries = caseStudies
     .filter(cs => !HIDDEN_SLUGS.has(cs.slug))
     .filter(cs => !cs.confidential)
+    /* Drop studies whose card opens a Drive PDF. Those /work pages are
+       orphaned and now carry robots noindex, and listing a noindexed URL in
+       the sitemap is a contradiction search engines report as an error. */
+    .filter(cs => !cs.driveUrl)
     .map(cs => ({
       url: `${BASE_URL}/work/${cs.slug}`,
       lastModified: new Date(),
