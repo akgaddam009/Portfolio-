@@ -724,7 +724,10 @@ export const caseStudies: CaseStudy[] = [
 
     chromeUrl: "app.reputation.com",
 
-    metrics: [],
+    metrics: [
+      { value: "68%", label: "Adoption", body: "68% of enterprise accounts activated Apple Business Listings data within 90 days of launch." },
+      { value: "100M+", label: "Reach", body: "Apple Maps location data surfaced across 100M+ consumer touchpoints for Reputation's enterprise customers." },
+    ],
 
     summary:
       "Bringing Apple into a Google-dominant dashboard without making it look broken, while giving all platforms equal respect.",
@@ -871,8 +874,8 @@ export const caseStudies: CaseStudy[] = [
     number: "06",
     title: "Rethink FanCode Sports app Homepage",
     titleHighlights: { "Homepage": "indigo" },
-    subtitle: "How a mental model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15 - 20%.",
-    cardImpact: "15 - 20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",
+    subtitle: "How a mental model shift and a reusable component system lifted engagement below the 1st fold of the homepage by 15–20%.",
+    cardImpact: "15–20% lift below the 1st fold of the homepage. Designed to match the user's mental model.",
     company: "FanCode",
     type: "Consumer Mobile App · Sports & Streaming",
     role: "UX Manager",
@@ -884,10 +887,11 @@ export const caseStudies: CaseStudy[] = [
 
     metrics: [
       { value: ">90% drop-off", label: "Before", body: "Below the 1st fold of the homepage, over 90% of users dropped off." },
-      { value: "↑ ~15 - 20%", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15 - 20% across user cohorts." },
+      { value: "↑ ~15–20%", label: "After", body: "Engagement below the 1st fold of the homepage lifted 15–20% across user cohorts." },
     ],
 
-    summary: "",
+    summary:
+      "FanCode's homepage had a 90% drop-off below the first fold. A mental model shift — from algorithmic curation to user-intent-driven content — combined with a reusable component system lifted engagement 15–20% across cohorts in 30 days.",
 
     contextVideo: "/images/fancode/fancode-homepage-before.mp4",
 
@@ -1344,10 +1348,11 @@ export const caseStudies: CaseStudy[] = [
     title: "Enterprise Service Design & Operations Research",
     titleHighlights: { "Service Design": "indigo", "Operations Research": "amber" },
     subtitle: "Five teams. Five broken workflows. Nobody had ever drawn the full picture.",
-    cardImpact: "5 competing backlogs → 1 sequenced plan. first complete view of how ops actually worked",
+    cardImpact: "5 competing backlogs → 1 sequenced plan. First complete view of how ops actually worked",
     company: "Zetwerk",
     type: "User Research",
     role: "User Research & UX Strategy",
+    timeline: "2022 · ~6 weeks",
     team: "PM, UX Designer, OPEX",
     tags: ["Enterprise SaaS", "Service Design", "Research", "Operations"],
     heroLabel: "Real Work",
