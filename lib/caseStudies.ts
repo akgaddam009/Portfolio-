@@ -682,14 +682,14 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
 
-    // Live React routes fully interactive, role-switched, mock-data-driven.
-    prototypeIframes: [
-      { label: "Flow 1: AI Contract Review (procurement + legal)", src: "/astra/p1", height: "820px" },
-      { label: "Flow 2: Approval Workflow Configuration (admin)",  src: "/astra/p2", height: "820px" },
-    ],
+    /* prototypeIframes removed. These pointed at /astra/p1 and /astra/p2,
+       which now return notFound() -- app/astra/p1/page.tsx and p2/page.tsx
+       were retired from the live site but this block was left behind, so the
+       case study rendered a "Live prototype" section whose two iframes both
+       404'd. Restore both routes first if this section is ever revived. */
 
     approach:
-      "==6–8 hours, from problem to a working React prototype, using Claude Code.==\n\nClaude was a thinking partner, not just a code tool.\n\nWe worked through the problem together, tested ideas, and threw away most of the wireframes.\n\nThe role-based handoff didn't come from a brief. It came from asking who actually needs to see an open indemnity clause.\n\nThe wireframes were the exploration. The React build is the artifact. Both flows are above.",
+      "==6–8 hours, from problem to a working React prototype, using Claude Code.==\n\nClaude was a thinking partner, not just a code tool.\n\nWe worked through the problem together, tested ideas, and threw away most of the wireframes.\n\nThe role-based handoff didn't come from a brief. It came from asking who actually needs to see an open indemnity clause.\n\nThe wireframes were the exploration. The React build is the artifact.",
 
     outcomes: [
       "Reviewed with Astra's contract intelligence team. The role-based handoff was the part they pushed back on the most, and the part we kept.",
