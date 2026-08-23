@@ -117,7 +117,7 @@ export default function RootLayout({
       <body>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('theme');var h=new Date().getHours();var auto=(h>=18||h<6)?'dark':'light';document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:auto);}catch(e){document.documentElement.setAttribute('data-theme','light');}`,
+            __html: `try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}`,
           }}
         />
         <script

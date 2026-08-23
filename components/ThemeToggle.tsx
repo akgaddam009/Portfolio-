@@ -21,11 +21,8 @@ export default function ThemeToggle() {
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem("theme");
-    // Time-of-day default: dark 18:00 → 05:59, light 06:00 → 17:59.
-    // User's explicit toggle (saved in localStorage) always wins.
-    const hour   = new Date().getHours();
-    const auto   = (hour >= 18 || hour < 6) ? "dark" : "light";
-    const theme  = saved === "dark" || saved === "light" ? saved : auto;
+    // Light is the default. User's explicit toggle (saved in localStorage) always wins.
+    const theme  = saved === "dark" || saved === "light" ? saved : "light";
     const isDark = theme === "dark";
     setDark(isDark);
     document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
