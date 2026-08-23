@@ -94,16 +94,86 @@ function ViewModeToggle({
   );
 }
 
+/* ── First-visit panel navigation hint ──
+   Shows once (localStorage-gated) beneath the nav to signal horizontal
+   navigation. Auto-dismisses when the user navigates to any other panel
+   or after 5 seconds. */
+function PanelHint({ activePanel, onDismiss }: { activePanel: number; onDismiss: () => void }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("panel-hint-seen")) return;
+      localStorage.setItem("panel-hint-seen", "1");
+    } catch { return; }
+    const t = setTimeout(() => setVisible(true), 1200);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (activePanel > 0) {
+      setVisible(false);
+      onDismiss();
+    }
+  }, [activePanel, onDismiss]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const t = setTimeout(() => { setVisible(false); onDismiss(); }, 5000);
+    return () => clearTimeout(t);
+  }, [visible, onDismiss]);
+
+  if (!visible) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        position: "fixed",
+        top: "80px",
+        right: "24px",
+        zIndex: 199,
+        background: "var(--surface)",
+        border: "1px solid var(--border)",
+        boxShadow: "var(--card-shadow)",
+        borderRadius: "10px",
+        padding: "8px 12px",
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+        pointerEvents: "none",
+      }}
+      aria-hidden="true"
+    >
+      <span style={{
+        fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow, 10px)",
+        letterSpacing: "0.08em", textTransform: "uppercase",
+        color: "var(--muted)",
+        whiteSpace: "nowrap",
+      }}>
+        Use arrows or tap labels to explore
+      </span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--muted)", flexShrink: 0 }}>
+        <path d="M5 12h14M12 5l7 7-7 7" />
+      </svg>
+    </motion.div>
+  );
+}
+
 function HomeNav({
   onPrev,
   onNext,
+  onSelect,
   activePanel,
   viewMode,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; ViewModeToggle is hidden from the nav for now
   onViewModeChange,
 }: {
   onPrev: () => void;
   onNext: () => void;
+  onSelect: (i: number) => void;
   activePanel: number;
   viewMode: "workspace" | "story";
   onViewModeChange: (m: "workspace" | "story") => void;
@@ -160,37 +230,76 @@ function HomeNav({
             be restored later. */}
       </div>
 
-      {/* Panel dots + arrows -hidden in Story mode (no panels to navigate). */}
+      {/* Panel labeled nav + arrows — hidden in Story mode (no panels); story mode shows an exit button instead. */}
+      {viewMode === "story" ? (
+        <button
+          onClick={() => onViewModeChange("workspace")}
+          aria-label="Exit story view"
+          style={{
+            fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow, 10px)", fontWeight: 400,
+            letterSpacing: "0.08em", textTransform: "uppercase",
+            color: "var(--muted)",
+            padding: "0 14px",
+            height: "44px",
+            border: "none",
+            background: "var(--surface)",
+            boxShadow: "var(--card-shadow)",
+            borderRadius: "12px",
+            cursor: "pointer",
+            display: "inline-flex", alignItems: "center", gap: "6px",
+            transition: "color 0.18s, box-shadow 0.25s",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
+          onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+          Exit story
+        </button>
+      ) : (
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: "16px",
-          visibility: viewMode === "story" ? "hidden" : "visible",
         }}
-        aria-hidden={viewMode === "story"}
       >
-        {/* Panel position dots */}
-        <div className="panel-dots" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          {PANEL_LABELS.map((label, i) => (
-            <div
-              key={label}
-              title={label}
-              style={{
-                width: i === activePanel ? "16px" : "5px",
-                height: "5px",
-                borderRadius: "3px",
-                /* Inactive dots use --muted (warm taupe) instead of --border —
-                   the warm parchment chrome is too close in lightness to --border,
-                   so dots disappeared in light theme. --muted gives clear
-                   separation while staying clearly inactive vs --text. */
-                background: i === activePanel ? "var(--text)" : "var(--muted)",
-                opacity: i === activePanel ? 1 : 0.45,
-                transition: "width 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s, opacity 0.3s",
-              }}
-            />
-          ))}
-        </div>
+        {/* Panel labeled nav — replaces bare dots so visitors can see what's in each panel */}
+        <nav aria-label="Panels" className="panel-label-nav" style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+          {PANEL_LABELS.map((label, i) => {
+            const active = i === activePanel;
+            return (
+              <button
+                key={label}
+                onClick={() => { haptic(8); onSelect(i); }}
+                aria-current={active ? "page" : undefined}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "var(--text-eyebrow, 10px)",
+                  fontWeight: active ? 500 : 400,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: active ? "var(--text)" : "var(--muted)",
+                  opacity: active ? 1 : 0.55,
+                  padding: "6px 8px",
+                  height: "32px",
+                  border: "none",
+                  background: active ? "var(--surface)" : "transparent",
+                  borderRadius: "8px",
+                  boxShadow: active ? "var(--card-shadow)" : "none",
+                  cursor: "pointer",
+                  transition: "color 0.25s, opacity 0.25s, background 0.25s, box-shadow 0.25s",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={e => { if (!active) { e.currentTarget.style.opacity = "0.85"; e.currentTarget.style.color = "var(--text)"; } }}
+                onMouseLeave={e => { if (!active) { e.currentTarget.style.opacity = "0.55"; e.currentTarget.style.color = "var(--muted)"; } }}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </nav>
 
         {/* Arrows */}
         <div className="desktop-nav-arrows" style={{ display: "flex", gap: "6px" }}>
@@ -233,6 +342,7 @@ function HomeNav({
           })}
         </div>
       </div>
+      )}
     </header>
   );
 }
@@ -309,7 +419,7 @@ function FloatingPanelMenu({
           right: "20px",
           bottom: "20px",
           zIndex: 150,
-          transform: hidden && !open ? "translateY(140%)" : "translateY(0)",
+          transform: "translateY(0)",
           transition: "transform 0.32s cubic-bezier(0.22,1,0.36,1)",
         }}
       >
@@ -546,7 +656,7 @@ function AboutPanel() {
             marginBottom: "20px",
           }}
         >
-          Arun is a senior product designer crafting intuitive, impactful experiences with a growing focus on artificial Intelligence.</motion.h1>
+          I&apos;m a senior product designer crafting intuitive, impactful experiences with a growing focus on artificial intelligence.</motion.h1>
 
         {/* Bio. typography per Figma reference:
             Inter 400 / 14px / line-height 26px / 0 tracking. */}
@@ -581,9 +691,28 @@ function AboutPanel() {
           {/* Plain-text CTA pattern — used across About panel + case study
               top nav + case study back button. Mono caps, no border, no bg,
               just text + arrow with hover color lift. */}
+          <a
+            href="mailto:akgaddam02@gmail.com"
+            aria-label="Send email to Arun Gaddam"
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "var(--muted)",
+              padding: "8px 4px",
+              display: "inline-flex", alignItems: "center", gap: "4px",
+              transition: "color 0.18s",
+              textDecoration: "none",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
+          >
+            Email
+            <ArrowUpRight size={11} strokeWidth={1.5} />
+          </a>
           <button
             onClick={copyEmail}
             aria-label={copied ? "Email copied" : "Copy email address"}
+            title="Copy email address"
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
@@ -592,11 +721,12 @@ function AboutPanel() {
               border: "none", background: "transparent",
               cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px",
               transition: "color 0.18s",
+              opacity: 0.65,
             }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; } }}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; } }}
+            onMouseEnter={e => { if (!copied) { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.opacity = "1"; } }}
+            onMouseLeave={e => { if (!copied) { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.opacity = "0.65"; } }}
           >
-            {copied ? "Copied ✓" : "Copy email"}
+            {copied ? "Copied ✓" : "Copy"}
           </button>
 
           {[
@@ -1471,10 +1601,19 @@ function WorkPanel() {
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
                         lineHeight: "26px", letterSpacing: "-0.02em",
-                        color: "var(--text)", marginBottom: 0,
+                        color: "var(--text)", marginBottom: cs.subtitle ? "4px" : 0,
                       }}>
                         {cs.title}
                       </h3>
+                      {cs.subtitle && (
+                        <p style={{
+                          fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400,
+                          lineHeight: 1.5, letterSpacing: 0,
+                          color: "var(--muted)", marginBottom: 0,
+                        }}>
+                          {cs.subtitle}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </CardWrapper>
@@ -3434,10 +3573,12 @@ export default function Home() {
       <HomeNav
         onPrev={() => scrollByPanel(-1)}
         onNext={() => scrollByPanel(1)}
+        onSelect={scrollToPanel}
         activePanel={activePanel}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
       />
+      <PanelHint activePanel={activePanel} onDismiss={() => {}} />
       {/* Story view temporarily hidden -toggle is removed from nav, so we
           force Workspace regardless of any persisted viewMode value. */}
       {false ? (

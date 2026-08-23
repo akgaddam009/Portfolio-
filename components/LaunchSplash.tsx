@@ -21,11 +21,11 @@ export default function LaunchSplash() {
   // on subsequent loads is acceptable).
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (sessionStorage.getItem("launch-splash-seen")) {
+    if (localStorage.getItem("launch-splash-seen")) {
       setShow(false);
       return;
     }
-    sessionStorage.setItem("launch-splash-seen", "1");
+    localStorage.setItem("launch-splash-seen", "1");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const hold = reduced ? 1200 : 2400;
     const fadeMs = 600;
