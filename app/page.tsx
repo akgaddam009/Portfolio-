@@ -1039,7 +1039,7 @@ function MeshThumbnail({ index, type, confidential }: {
         <div style={{
           position: "absolute", top: "10px", right: "10px",
           background: badgeBg,
-          borderRadius: "6px", padding: "4px 8px",
+          borderRadius: "var(--radius-sm)", padding: "4px 8px",
           fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
           fontWeight: 500, letterSpacing: "-0.01em",
           color: badgeColor,
@@ -1337,7 +1337,7 @@ function WorkChip({ label }: { label: string }) {
       /* No border: the surface2 fill already separates the chip from the card
          (1.09:1 light / 1.14:1 dark). A hairline on top of a fill was the same
          doubled-up treatment removed from the tool chips and testimonials. */
-      color: "var(--text)", borderRadius: "6px",
+      color: "var(--text)", borderRadius: "var(--radius-sm)",
     }}>
       {label}
     </span>
@@ -1395,7 +1395,7 @@ function AccentChip({ label, icon: Icon }: {
          so the icons passed by CARD_CATEGORY never rendered at all. */
       background: "var(--surface2)",
       color: "var(--text)",
-      borderRadius: "6px",
+      borderRadius: "var(--radius-sm)",
       lineHeight: 1.4,
     }}>
       {Icon && <Icon size={10} strokeWidth={1.5} />}
@@ -1643,7 +1643,7 @@ function WorkPanel() {
                           borderRadius="16px 16px 0 0"
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
-                        <div style={{ position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
+                        <div style={{ position: "absolute", inset: "16px", borderRadius: "var(--radius-xs)", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
                             {/* FanCode only. `first-time-user-experience` is the
                               FanCode sports-app card -- the one FanCode entry
                               in CARD_ORDER, so it is the only FanCode thumbnail
@@ -1824,7 +1824,7 @@ function WorkPanel() {
               transition={{ duration: 0.22, ease: EASE }}
               onClick={(e) => e.stopPropagation()}
               style={{
-                background: "var(--surface)", borderRadius: "20px",
+                background: "var(--surface)", borderRadius: "var(--radius-lg)",
                 border: "1px solid var(--border)",
                 boxShadow: "0 32px 80px -16px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06)",
                 padding: "36px 32px 28px",
@@ -1912,7 +1912,7 @@ function WorkPanel() {
                     fontFamily: "var(--font-body)", color: "var(--text)",
                     background: "var(--bg)",
                     border: `1.5px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
-                    borderRadius: "10px",
+                    borderRadius: "var(--radius-md)",
                     marginBottom: "10px",
                     boxSizing: "border-box",
                     transition: "border-color 0.18s",
@@ -1938,7 +1938,7 @@ function WorkPanel() {
                     padding: "12px", fontSize: "var(--text-body-lg)", fontFamily: "var(--font-body)",
                     fontWeight: 500, letterSpacing: "-0.01em",
                     color: "var(--bg)", background: "var(--text)",
-                    border: "none", borderRadius: "10px",
+                    border: "none", borderRadius: "var(--radius-md)",
                     cursor: pwBusy ? "wait" : "pointer", opacity: pwBusy ? 0.65 : 1,
                     transition: "opacity 0.15s",
                     marginBottom: "10px",
@@ -1952,7 +1952,7 @@ function WorkPanel() {
                     width: "100%",
                     padding: "10px", fontSize: "var(--text-body)", fontFamily: "var(--font-body)",
                     color: "var(--muted)", background: "transparent",
-                    border: "none", borderRadius: "10px",
+                    border: "none", borderRadius: "var(--radius-md)",
                     cursor: "pointer",
                   }}
                 >Cancel</button>
@@ -2040,7 +2040,7 @@ function AiExperimentsPanel() {
                   height={88}
                   loading="lazy"
                   decoding="async"
-                  style={{ width: "88px", height: "88px", display: "block", borderRadius: "20px" }}
+                  style={{ width: "88px", height: "88px", display: "block", borderRadius: "var(--radius-lg)" }}
                 />
               </div>
 
@@ -2484,7 +2484,7 @@ function CareerPanel() {
                              deleted. Teal is the same tone as the testimonial
                              cards, which is what these are -- so they track the
                              same --surface2 fill. */
-                          background: "var(--surface2)", borderRadius: "10px",
+                          background: "var(--surface2)", borderRadius: "var(--radius-md)",
                           padding: "10px 12px",
                         }}>
                           <p style={{
