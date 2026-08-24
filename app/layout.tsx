@@ -4,7 +4,6 @@ import "./globals.css";
 import Cursor from "@/components/Cursor";
 import AnalyticsClient from "@/components/AnalyticsClient";
 import RouteProgress from "@/components/RouteProgress";
-import LaunchSplash from "@/components/LaunchSplash";
 import GA4 from "@/components/GA4";
 import Clarity from "@/components/Clarity";
 
@@ -166,7 +165,6 @@ export default function RootLayout({
         <Cursor />
         <RouteProgress />
         {children}
-        <LaunchSplash />
         <AnalyticsClient />
         <GA4 />
         <Clarity />
