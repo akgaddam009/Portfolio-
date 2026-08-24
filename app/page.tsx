@@ -520,7 +520,7 @@ function PixelRevealPortrait({ src, alt }: { src: string; alt: string }) {
   }, []);
 
   return (
-    <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "var(--radius-md)", overflow: "hidden" }}>
+    <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "var(--radius-lg) var(--radius-lg) 0 0", overflow: "hidden" }}>
       {/* Dithered treatment. The grayscale->colour reveal stays on the wrapper
           rather than the image, so it applies to the shader canvas and the
           plain-<img> fallback identically -- CSS filters apply to a <canvas>
@@ -574,7 +574,7 @@ function PortraitMagnify() {
         style={{
           position: "relative",
           width: "100%", height: "100%",
-          borderRadius: "var(--radius-md)",
+          borderRadius: "var(--radius-lg) var(--radius-lg) 0 0",
           overflow: "hidden",
           transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
           transition: leaving ? "transform 0.55s cubic-bezier(0.22,1,0.36,1)" : "transform 0.08s linear",
@@ -694,7 +694,15 @@ function AboutPanel() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
-          style={{ marginBottom: "20px" }}
+          /* Negative side margins pull the portrait back out of the body's
+             --space-6 gutter, so it meets the panel on three edges while the
+             copy below keeps its 24px. Even on all three, rather than flush
+             on top and inset at the sides. */
+          style={{
+            marginLeft: "calc(-1 * var(--space-6))",
+            marginRight: "calc(-1 * var(--space-6))",
+            marginBottom: "var(--space-6)",
+          }}
         >
           <PortraitMagnify />
         </motion.div>
