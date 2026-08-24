@@ -341,15 +341,10 @@
    touching Panels mode, which has to stay identical to live, and without
    editing a component the other mode shares.
 
-   Values come from the spacing scale, not from measuring by eye:
-   --space-5 (20px) on top of each body's own --space-4 gives 36px of
-   clearance against a 24px radius, --space-6 (24px) at the foot.
-
-   The inner variance between panels is left alone on purpose. Bodies differ
-   (About 16/24/48, Career 16/12/12, Testimonials 24/24/48) and Career's
-   narrow 12px sides are load-bearing for the absolutely-positioned calendar.
-   Flattening them would cost the rhythm and risk that timeline; uniform outer
-   clearance with varied inner density is the intended shape.
+   --space-5 on top of each body's own --space-4 gives 36px of clearance
+   against a 24px radius. No bottom padding here: the panel bodies now all
+   carry --space-9 at the foot themselves, and stacking another --space-6 on
+   top of that would leave 72px of dead space under the last line.
 
    The radius goes up with it: --radius-lg was chosen for a 420px card in a
    rail of five, and one centred card carrying the whole viewport takes the
@@ -357,7 +352,6 @@
 .focus-stage .panel {
   border-radius: var(--radius-xl);
   padding-top: var(--space-5);
-  padding-bottom: var(--space-6);
 }
 
 
