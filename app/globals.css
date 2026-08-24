@@ -320,9 +320,12 @@
    and ContactPanel would put a mode branch inside all five and make every
    future panel change a two-mode regression. The stage owns the decision.
 
-   No padding compensation needed: every panel body already carries its own
-   16px top padding, which the header used to sit above rather than replace. */
-.focus-stage .panel-header-glass { display: none; }
+   visibility rather than display: none. Taking the header out of flow moved
+   everything that sized against it and the content width came out wrong, so
+   the header keeps its box and simply stops painting. visibility: hidden also
+   takes it out of the accessibility tree, so the name is not announced twice
+   alongside the tab. */
+.focus-stage .panel-header-glass { visibility: hidden; }
 
 
 /* ─── Base ───────────────────────────────────────────── */
