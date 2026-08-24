@@ -104,6 +104,7 @@ function HomeNav({
   onNext,
   onSelectPanel,
   activePanel,
+  panelWidth,
   viewMode,
   onViewModeChange,
 }: {
@@ -111,6 +112,7 @@ function HomeNav({
   onNext: () => void;
   onSelectPanel: (i: number) => void;
   activePanel: number;
+  panelWidth: string;
   viewMode: "panels" | "scroll";
   onViewModeChange: (m: "panels" | "scroll") => void;
 }) {
@@ -182,11 +184,21 @@ function HomeNav({
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "2px",
+            /* Same width as the panel beneath it, and it changes with the
+               panel: the widths in PANEL_CONFIGS are per-panel (380-440px), so
+               a fixed bar would only line up on one of them. Both are centred
+               in the same column, so matching the width lines up both edges.
+               space-between rather than flex: 1 on each tab -- equal fifths
+               would give "Testimonials" the same 84px as "Work" and crop it. */
+            justifyContent: "space-between",
+            width: panelWidth,
+            maxWidth: "100%",
+            boxSizing: "border-box",
             padding: "4px",
             borderRadius: "var(--radius-lg)",
             background: "var(--surface)",
             boxShadow: "var(--card-shadow)",
+            transition: "width 0.32s cubic-bezier(0.22,1,0.36,1)",
           }}
         >
           {PANEL_LABELS.map((label, i) => {
@@ -199,7 +211,7 @@ function HomeNav({
                 onClick={() => { haptic(8); onSelectPanel(i); }}
                 style={{
                   height: "36px",
-                  padding: "0 12px",
+                  padding: "0 10px",
                   border: "none",
                   borderRadius: "8px",
                   background: active ? "var(--bg)" : "transparent",
@@ -3767,6 +3779,7 @@ export default function Home() {
         onPrev={() => scrollByPanel(-1)}
         onNext={() => scrollByPanel(1)}
         onSelectPanel={scrollToPanel}
+        panelWidth={PANEL_CONFIGS[activePanel].width}
         activePanel={activePanel}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
