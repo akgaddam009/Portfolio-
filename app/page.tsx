@@ -1582,13 +1582,13 @@ function WorkPanel() {
                               nothing reaches it). Every other card keeps the
                               plain <img>: this treatment was asked for on
                               FanCode alone. Grid softened on request:
-                              2 -> 1 -> 0.5, the shader's floor. */}
+                              2 -> 1 -> 0.5, then back up to 0.75 (+50%). */}
                           {cs.slug === "first-time-user-experience" ? (
                             <DitheredImage
                               src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                               alt={cs.title}
                               radius="6px"
-                              size={0.5}
+                              size={0.75}
                               colorSteps={6}
                               style={{ width: "100%", height: "100%" }}
                             />
@@ -2204,10 +2204,44 @@ function CareerPanel() {
   const [selectedItem, setSelectedItem] = useState<CareerItem | null>(null);
 
   const selectedIdx   = selectedItem ? workItems.findIndex(w => w.title === selectedItem.title && w.startYear === selectedItem.startYear) : -1;
-  const toggleCard    = (item: CareerItem) => setSelectedItem(prev => prev?.title === item.title ? null : item);
+  const toggleCard    = (item: CareerItem) => setSelectedItem(prev =>
+    prev?.title === item.title && prev?.startYear === item.startYear ? null : item);
   const collapseCard  = () => setSelectedItem(null);
-  const prevCard      = () => { if (selectedIdx > 0) setSelectedItem(workItems[selectedIdx - 1]); };
-  const nextCard      = () => { if (selectedIdx < workItems.length - 1) setSelectedItem(workItems[selectedIdx + 1]); };
+
+  /* Prev / Next fired correctly but read as dead buttons. They sit at the bottom
+     of an expanded card that runs 600-900px tall, so the click happens deep in
+     the panel's scroll. Selecting a sibling collapses that card back to ~72px,
+     the panel's scrollHeight drops by ~700px, the browser clamps scrollTop, and
+     the newly expanded card opens only 66-83px from the old one -- well above
+     where the eye was. Nothing followed it, so the card appeared not to change.
+     navPending marks the selection as keyboard/button-driven so the effect below
+     scrolls to it; a direct card click is left alone, since the user is already
+     looking at the card they just clicked. */
+  const navPending    = useRef(false);
+  const cancelRef     = useRef(0);
+  const prevCard      = () => { if (selectedIdx > 0) { navPending.current = true; setSelectedItem(workItems[selectedIdx - 1]); } };
+  const nextCard      = () => { if (selectedIdx < workItems.length - 1) { navPending.current = true; setSelectedItem(workItems[selectedIdx + 1]); } };
+
+  useEffect(() => {
+    if (!navPending.current || !selectedItem) return;
+    navPending.current = false;
+    const key = `${selectedItem.title}-${selectedItem.startYear}`;
+    /* Two frames: the card carries a layout spring, so after one frame it is
+       still measured at its pre-expansion box. */
+    const r1 = requestAnimationFrame(() => {
+      const r2 = requestAnimationFrame(() => {
+        document.querySelector(`[data-career-card="${key}"]`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          /* nearest, not center: the panel deck scrolls horizontally, and any
+             other inline value drags the whole deck sideways. */
+          inline: "nearest",
+        });
+      });
+      cancelRef.current = r2;
+    });
+    return () => { cancelAnimationFrame(r1); cancelAnimationFrame(cancelRef.current); };
+  }, [selectedItem]);
 
   // Which years fall within the hovered card's span
   const isYearActive = (yr: number) => {
@@ -2275,6 +2309,7 @@ function CareerPanel() {
     return (
       <motion.div
         key={item.title + item.startYear}
+        data-career-card={`${item.title}-${item.startYear}`}
         layout
         initial={{ opacity: 0, x: isEdu ? 8 : -8 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -2614,46 +2649,18 @@ function CareerPanel() {
                   display: "flex", gap: "6px", paddingTop: "16px",
                 }}>
                   <motion.button
+                    className="career-nav-btn"
                     onClick={e => { e.stopPropagation(); prevCard(); }}
                     disabled={selectedIdx <= 0}
                     whileTap={selectedIdx > 0 ? { scale: 0.9 } : {}}
-                    style={{
-                      flex: 1, height: "36px",
-                      /* surface2 fill instead of surface + hairline: on the
-                         expanded card both --surface and --bg are #ffffff in
-                         light theme, so the border was the only edge. The
-                         fill separates them at 1.09:1 without adding a
-                         fourth line to this corner of the sheet. */
-                      borderRadius: "8px",
-                      background: "var(--surface2)", color: "var(--text)",
-                      fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500,
-                      letterSpacing: "-0.01em",
-                      cursor: selectedIdx > 0 ? "pointer" : "default",
-                      opacity: selectedIdx > 0 ? 1 : 0.3,
-                      transition: "opacity 0.15s",
-                    }}
                   >
                     ‹ Prev
                   </motion.button>
                   <motion.button
+                    className="career-nav-btn"
                     onClick={e => { e.stopPropagation(); nextCard(); }}
                     disabled={selectedIdx >= workItems.length - 1}
                     whileTap={selectedIdx < workItems.length - 1 ? { scale: 0.9 } : {}}
-                    style={{
-                      flex: 1, height: "36px",
-                      /* surface2 fill instead of surface + hairline: on the
-                         expanded card both --surface and --bg are #ffffff in
-                         light theme, so the border was the only edge. The
-                         fill separates them at 1.09:1 without adding a
-                         fourth line to this corner of the sheet. */
-                      borderRadius: "8px",
-                      background: "var(--surface2)", color: "var(--text)",
-                      fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 500,
-                      letterSpacing: "-0.01em",
-                      cursor: selectedIdx < workItems.length - 1 ? "pointer" : "default",
-                      opacity: selectedIdx < workItems.length - 1 ? 1 : 0.3,
-                      transition: "opacity 0.15s",
-                    }}
                   >
                     Next ›
                   </motion.button>

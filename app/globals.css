@@ -794,3 +794,60 @@ html[data-mode="executive"] .exec-decision-body,
 html[data-mode="executive"] .exec-decision-image {
   display: none !important;
 }
+
+/* ─── Career expanded-card Prev / Next ────────────────────
+   These buttons carried their whole appearance in inline styles, which cannot
+   express :hover, :focus-visible or :disabled -- and, being inline, outrank any
+   class selector, so an earlier hover rule silently lost to the inline
+   background. Everything static now lives here; the call site keeps only
+   `disabled`, which :disabled tracks.
+
+   Secondary, and staying secondary. These step the fill one token deeper
+   (--surface2 -> --border) and leave the label at --text. No inversion: the
+   --text-on---bg flip is .btn-cta's primary-CTA language, and borrowing it here
+   made two in-card navigation controls outrank the case-study links beside
+   them. Matches how this card's own secondary links behave -- a quiet lift on
+   hover, never a repaint.
+
+   transform is deliberately absent from the transition: the whileTap spring
+   owns it, and a CSS transition would fight the animation. */
+.career-nav-btn {
+  flex: 1;
+  height: 36px;
+  border: none;
+  /* surface2 fill instead of surface + hairline: on the expanded card both
+     --surface and --bg are #ffffff in light theme, so a border was the only
+     edge. The fill separates them at 1.09:1 without adding a fourth line to
+     this corner of the sheet. */
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.career-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+/* --border as a fill, not a hairline: one perceptible step up from --surface2
+   in both themes, and --text still clears 11:1 on it either way. */
+.career-nav-btn:not(:disabled):hover {
+  background: var(--border);
+}
+/* --border alone lifts only 1.16:1 off --surface2 on the warm dark panel --
+   a clear step in light, near-invisible in dark. A touch of --muted restores
+   the same ~1.38:1 delta the light theme gets; the label still clears 10:1. */
+[data-theme="dark"] .career-nav-btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--border) 88%, var(--muted));
+}
+.career-nav-btn:not(:disabled):focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .career-nav-btn { transition: none; }
+}
