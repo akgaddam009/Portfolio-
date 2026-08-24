@@ -687,7 +687,7 @@ function AboutPanel() {
   return (
     <div>
       <PanelHeader label="About me" />
-      <div className="about-panel-body" style={{ padding: "var(--space-6)" }}>
+      <div className="about-panel-body" style={{ padding: "0 var(--space-6) var(--space-6)" }}>
 
         {/* Portrait. illustration by default, real photo on hover */}
         <motion.div
