@@ -100,6 +100,7 @@ function ViewModeToggle({
 function HomeNav({
   onPrev,
   onNext,
+  onSelectPanel,
   activePanel,
   viewMode,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; ViewModeToggle is hidden from the nav for now
@@ -107,6 +108,7 @@ function HomeNav({
 }: {
   onPrev: () => void;
   onNext: () => void;
+  onSelectPanel: (i: number) => void;
   activePanel: number;
   viewMode: "workspace" | "story";
   onViewModeChange: (m: "workspace" | "story") => void;
@@ -177,26 +179,56 @@ function HomeNav({
         }}
         aria-hidden={viewMode === "story"}
       >
-        {/* Panel position dots */}
-        <div className="panel-dots" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          {PANEL_LABELS.map((label, i) => (
-            <div
-              key={label}
-              title={label}
-              style={{
-                width: i === activePanel ? "16px" : "5px",
-                height: "5px",
-                borderRadius: "3px",
-                /* Inactive dots use --muted (warm taupe) instead of --border —
-                   the warm parchment chrome is too close in lightness to --border,
-                   so dots disappeared in light theme. --muted gives clear
-                   separation while staying clearly inactive vs --text. */
-                background: i === activePanel ? "var(--text)" : "var(--muted)",
-                opacity: i === activePanel ? 1 : 0.45,
-                transition: "width 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s, opacity 0.3s",
-              }}
-            />
-          ))}
+        {/* Panel tabs. The dots said "there are five of these and you are on
+            the second"; they never said what any of them were, and were not
+            clickable. Named tabs answer both and make the top bar the primary
+            way to move, which is the point of the focused layout. */}
+        <div
+          className="panel-tabs"
+          role="tablist"
+          aria-label="Panels"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "2px",
+            padding: "4px",
+            borderRadius: "var(--radius-lg)",
+            background: "var(--surface)",
+            boxShadow: "var(--card-shadow)",
+          }}
+        >
+          {PANEL_LABELS.map((label, i) => {
+            const active = i === activePanel;
+            return (
+              <button
+                key={label}
+                role="tab"
+                aria-selected={active}
+                aria-controls={`panel-${i}`}
+                onClick={() => { haptic(8); onSelectPanel(i); }}
+                className="panel-tab"
+                style={{
+                  height: "36px",
+                  padding: "0 12px",
+                  border: "none",
+                  borderRadius: "8px",
+                  background: active ? "var(--bg)" : "transparent",
+                  color: active ? "var(--text)" : "var(--muted)",
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-mono-lg)",
+                  fontWeight: 500,
+                  letterSpacing: "0.04em",
+                  cursor: active ? "default" : "pointer",
+                  whiteSpace: "nowrap",
+                  transition: "background 0.25s cubic-bezier(0.22,1,0.36,1), color 0.25s",
+                }}
+                onMouseEnter={e => { if (!active) e.currentTarget.style.color = "var(--text-hover)"; }}
+                onMouseLeave={e => { if (!active) e.currentTarget.style.color = "var(--muted)"; }}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Arrows */}
@@ -3623,17 +3655,22 @@ function StoryView() {
   );
 }
 
+/* One panel is on screen at a time now, centred, with the others unmounted.
+   Widths are the original columns scaled by 1.7 and then back by 0.7, landing
+   ~19% above where they started: enough that the Work cards and Career
+   calendar breathe, without a single card sprawling across a 1440px viewport
+   with nothing beside it. */
 const PANEL_CONFIGS = [
-  { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
-  { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
+  { label: "About",          width: "500px", minWidth: "452px", Component: AboutPanel },
+  { label: "Work",           width: "524px", minWidth: "452px", Component: WorkPanel },
   /* AI Experiments hidden from the homepage for now. PANEL_LABELS derives from
      this array, so the nav dots, arrows, and floating menu all drop it with no
      other change. AiExperimentsPanel stays in code for revival -- uncomment the
      line below to bring it back. */
   // { label: "AI Experiments", width: "420px", minWidth: "380px", Component: AiExperimentsPanel },
-  { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
-  { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
-  { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },
+  { label: "Career",         width: "500px", minWidth: "452px", Component: CareerPanel },
+  { label: "Testimonials",   width: "476px", minWidth: "428px", Component: TestimonialsPanel },
+  { label: "Contact",        width: "452px", minWidth: "404px", Component: ContactPanel },
 ];
 
 /* Derive PANEL_LABELS from the single source above. Adding/removing a panel
@@ -3702,141 +3739,73 @@ export default function Home() {
     return () => clearTimeout(cap);
   }, []);
 
+  /* Panels no longer sit in a scrollable rail, so "navigation" is just moving
+     an index. navDir carries which way we moved so the swap animates with the
+     direction of travel rather than dissolving identically both ways. */
+  const [navDir, setNavDir] = useState<1 | -1>(1);
+
+  const goToPanel = useCallback((i: number) => {
+    setActivePanel(prev => {
+      const next = Math.max(0, Math.min(PANEL_CONFIGS.length - 1, i));
+      if (next === prev) return prev;
+      setNavDir(next > prev ? 1 : -1);
+      return next;
+    });
+  }, []);
+
   const scrollByPanel = useCallback((dir: 1 | -1) => {
-    const el = containerRef.current;
-    if (!el) return;
-    const panels = el.querySelectorAll<HTMLElement>(".panel");
-    const current = panels[activePanel];
-    if (!current) return;
-    el.scrollBy({ left: dir * (current.offsetWidth + 16), behavior: "smooth" });
-  }, [activePanel]);
+    setNavDir(dir);
+    setActivePanel(prev => Math.max(0, Math.min(PANEL_CONFIGS.length - 1, prev + dir)));
+  }, []);
 
-  /* Scroll directly to a panel by index -used by the mobile FAB menu.
-     On desktop scrolls horizontally inside the panels container; on mobile
-     uses scrollIntoView since panels are vertically stacked. */
-  const scrollToPanel = useCallback((i: number) => {
-    const el = containerRef.current;
-    if (!el) return;
-    const panels = el.querySelectorAll<HTMLElement>(".panel");
-    const target = panels[i];
-    if (!target) return;
-    const isMobile = window.matchMedia("(max-width: 640px)").matches;
-    if (isMobile) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      el.scrollTo({ left: target.offsetLeft - 24, behavior: "smooth" });
+  const scrollToPanel = goToPanel;
+
+  /* Wheel steps between panels instead of scrolling a rail.
+
+     Three things stop this feeling twitchy. A distance threshold, so a light
+     trackpad brush does not fire. A cooldown, because one flick emits a long
+     tail of decaying events that would otherwise skip three panels. And an
+     early return when the pointer is over a panel that can still scroll
+     vertically -- reading a long panel must not yank you to the next one.
+     Only once a panel is at its end does the wheel hand over. */
+  const wheelAccum = useRef(0);
+  const wheelLock  = useRef(false);
+  const onStageWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    const panel = (e.target as Element | null)?.closest?.(".panel") as HTMLElement | null;
+    if (panel) {
+      const atTop    = panel.scrollTop <= 0;
+      const atBottom = panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 1;
+      const canScroll = panel.scrollHeight > panel.clientHeight + 1;
+      if (canScroll && !((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom))) {
+        wheelAccum.current = 0;
+        return;
+      }
     }
-  }, []);
 
-  /* Wheel anywhere outside a panel scrolls the panels horizontally.
+    if (wheelLock.current) return;
 
-     Before this, the chrome around the panels was dead to the wheel: the top
-     nav strip, the bottom padding, the left gutter and the right fade are all
-     outside .panel, so a wheel there hit an element with nothing to scroll and
-     the page simply sat still. That reads as the site being frozen.
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (!delta) return;
+    wheelAccum.current += delta;
 
-     It deliberately does NOT forward when the pointer is over a panel. Each
-     .panel has its own overflowY: auto, so a vertical wheel there must keep
-     scrolling that panel's content -- hijacking it would break reading a case
-     study. Only wheels landing outside every panel are redirected.
+    const THRESHOLD = 120;
+    if (Math.abs(wheelAccum.current) < THRESHOLD) return;
 
-     Two details that matter:
-     - deltaX and deltaY are merged, so a mouse wheel (deltaY only) and a
-       trackpad swipe (deltaX) both work.
-     - The container carries scrollBehavior: "smooth" for the nav arrows and
-       keyboard jumps. Assigning scrollLeft under that setting animates every
-       single wheel tick, which feels like wading through treacle -- so it is
-       flipped to "auto" for the gesture and restored once the wheel goes
-       quiet, leaving the arrow/keyboard animation intact. */
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+    const dir: 1 | -1 = wheelAccum.current > 0 ? 1 : -1;
+    wheelAccum.current = 0;
+    wheelLock.current = true;
+    setTimeout(() => { wheelLock.current = false; }, 520);
+    scrollByPanel(dir);
+  }, [scrollByPanel]);
 
-    let restore: ReturnType<typeof setTimeout> | null = null;
 
-    const onWheel = (e: WheelEvent) => {
-      /* Mobile stacks the panels vertically; there is no horizontal axis to
-         drive, and stealing the wheel there would break the page outright. */
-      if (window.matchMedia("(max-width: 640px)").matches) return;
 
-      const target = e.target as Element | null;
-      if (target && target.closest(".panel")) return;
+  /* The window-level wheel-forwarding effect was removed with the rail. It
+     existed to turn wheel events over the chrome into horizontal scroll of a
+     container that no longer overflows. The stage's own onWheel handles
+     stepping now, and it is scoped to the stage rather than the window. */
 
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (!delta) return;
 
-      e.preventDefault();
-      el.style.scrollBehavior = "auto";
-      el.scrollLeft += delta;
-
-      if (restore) clearTimeout(restore);
-      restore = setTimeout(() => { el.style.scrollBehavior = "smooth"; }, 120);
-    };
-
-    /* passive: false because the handler calls preventDefault. */
-    window.addEventListener("wheel", onWheel, { passive: false });
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-      if (restore) clearTimeout(restore);
-    };
-  }, []);
-
-  /* Mobile-only IntersectionObserver -tracks which panel is most in-view
-     and updates activePanel. Desktop Workspace uses its own horizontal
-     scroll handler below. Story mode renders no panels, so this is a no-op there. */
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const mq = window.matchMedia("(max-width: 640px)");
-    let observer: IntersectionObserver | null = null;
-
-    const setup = () => {
-      observer?.disconnect();
-      observer = null;
-      if (!mq.matches) return;
-      const panels = Array.from(el.querySelectorAll<HTMLElement>(".panel"));
-      if (!panels.length) return;
-      observer = new IntersectionObserver(
-        (entries) => {
-          let bestIdx = -1;
-          let bestRatio = 0;
-          entries.forEach((entry) => {
-            const idx = panels.indexOf(entry.target as HTMLElement);
-            if (idx >= 0 && entry.intersectionRatio > bestRatio) {
-              bestRatio = entry.intersectionRatio;
-              bestIdx = idx;
-            }
-          });
-          if (bestIdx >= 0 && bestRatio > 0.3) setActivePanel(bestIdx);
-        },
-        { threshold: [0.3, 0.5, 0.7] }
-      );
-      panels.forEach((p) => observer!.observe(p));
-    };
-
-    setup();
-    mq.addEventListener("change", setup);
-    return () => {
-      observer?.disconnect();
-      mq.removeEventListener("change", setup);
-    };
-  }, []);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = () => {
-      const panels = el.querySelectorAll<HTMLElement>(".panel");
-      let closest = 0, minDist = Infinity;
-      panels.forEach((p, i) => {
-        const dist = Math.abs(p.getBoundingClientRect().left - 24);
-        if (dist < minDist) { minDist = dist; closest = i; }
-      });
-      setActivePanel(closest);
-    };
-    el.addEventListener("scroll", handler, { passive: true });
-    return () => el.removeEventListener("scroll", handler);
-  }, []);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -3863,7 +3832,6 @@ export default function Home() {
     return () => cleanups.forEach(fn => fn());
   }, [revealed]);
 
-  const isLastPanel = activePanel === PANEL_CONFIGS.length - 1;
 
   return (
     <>
@@ -3871,6 +3839,7 @@ export default function Home() {
       <HomeNav
         onPrev={() => scrollByPanel(-1)}
         onNext={() => scrollByPanel(1)}
+        onSelectPanel={scrollToPanel}
         activePanel={activePanel}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
@@ -3884,90 +3853,67 @@ export default function Home() {
       {/* Mobile-only floating panel menu -hidden ≥641px via CSS */}
       <FloatingPanelMenu activePanel={activePanel} onSelect={scrollToPanel} />
 
-      {/* Right-edge fade. hides on last panel */}
-      <motion.div
-        className="panels-right-fade"
-        animate={{ opacity: isLastPanel ? 0 : 1 }}
-        transition={{ duration: 0.3, ease: EASE }}
-        style={{
-          position: "fixed", top: "64px", right: 0,
-          width: "80px", height: "calc(100dvh - 64px)",
-          background: "linear-gradient(to right, transparent, var(--chrome))",
-          pointerEvents: "none", zIndex: 100,
-        }}
-      />
+      {/* The right-edge fade is gone with the rail. It signalled "more panels
+          off to the right"; nothing is off to the right any more, and the tab
+          bar states the position explicitly. */}
 
       <main id="main-content" className="home-main" style={{ paddingTop: "72px", height: "100dvh", overflow: "hidden", background: "var(--chrome)" }}>
+        {/* Single-panel stage. Only the active panel is mounted; the others
+            are not off-screen, they are not in the tree at all. That is what
+            makes this a replacement rather than a rail -- there is nothing to
+            scroll past, and a heavy panel (MapLibre, the WebGL dither, five
+            videos) costs nothing while it is not the one being read. */}
         <div
           ref={containerRef}
           className="panels-container"
           data-dim-ready={dimReady ? "true" : "false"}
+          onWheel={onStageWheel}
           style={{
             display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "center",
             height: "calc(100dvh - 72px)",
-            overflowX: "auto",
-            overflowY: "hidden",
-            gap: "24px",
-            /* Inter-panel gap (24px) — matches the panel's own 24px inner
-               gutter, so the space between two panels reads as the same
-               interval as the space inside one. Top padding kept at 8px.
-               Mobile stacks vertically at 12px via .panels-container. */
-            padding: "8px 0 16px 24px",
+            overflow: "hidden",
+            padding: "8px 24px 16px",
             boxSizing: "border-box",
-            /* Scroll-snap removed -the `proximity` mode was tugging the
-               scroll mid-gesture and made horizontal scrolling feel
-               jerky. Free scrolling now; nav arrows + keyboard still
-               jump cleanly via behavior: "smooth". */
-            scrollPaddingLeft: "24px",
-            /* Stop browser back-swipe from stealing horizontal scroll. */
-            overscrollBehaviorX: "contain",
-            scrollBehavior: "smooth",
           }}
         >
-          {PANEL_CONFIGS.map(({ label, width, minWidth, Component }, i) => {
-            const isActive = activePanel === i;
-            const shadow = isDark
-              ? (isActive ? PANEL_SHADOW_ACTIVE_DARK  : PANEL_SHADOW_DARK)
-              : (isActive ? PANEL_SHADOW_ACTIVE_LIGHT : PANEL_SHADOW_LIGHT);
-            const panelClass = `panel${isActive ? " is-active" : ""}`;
-            return (
-              <motion.section
-                key={i}
-                className={panelClass}
-                aria-label={label}
-                initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
-                animate={revealed
-                  ? { opacity: 1, y: 0,  filter: "blur(0px)" }
-                  : { opacity: 0, y: 20, filter: "blur(6px)" }}
-                transition={{ duration: 0.7, ease: EASE, delay: i * 0.12 }}
-                style={{
-                  minWidth,
-                  width,
-                  flex: "0 0 auto",
-                  height: "100%",
-                  overflowY: "auto",
-                  borderRadius: "16px",
-                  background: "var(--bg)",
-                  boxShadow: shadow,
-                  scrollSnapAlign: "start",
-                  transition: "box-shadow 0.35s cubic-bezier(0.22,1,0.36,1)",
-                }}
-              >
-                {/* Visually-hidden section heading. Repairs the h1 -> h3 jump:
-                    panel card titles are h3, so the outline needs an h2 between
-                    them and the hero h1. Skipped for the first panel, which
-                    already contains the page h1 -- emitting an h2 there would
-                    place it before the h1 in document order and invert the
-                    hierarchy we are fixing. The <section> still gets its
-                    accessible name from aria-label above. */}
-                {i > 0 && <h2 className="sr-only">{label}</h2>}
-                <Component />
-              </motion.section>
-            );
-          })}
-
-          {/* Trailing spacer so last panel gets 24px right breathing room */}
-          <div style={{ minWidth: "24px", flexShrink: 0 }} />
+          <AnimatePresence mode="wait" initial={false}>
+            {(() => {
+              const { label, width, minWidth, Component } = PANEL_CONFIGS[activePanel];
+              const shadow = isDark ? PANEL_SHADOW_ACTIVE_DARK : PANEL_SHADOW_ACTIVE_LIGHT;
+              return (
+                <motion.section
+                  key={activePanel}
+                  id={`panel-${activePanel}`}
+                  className="panel is-active"
+                  aria-label={label}
+                  /* Direction-aware: the outgoing panel leaves the way the
+                     incoming one arrives, so a forward step reads as forward.
+                     8px, not 40 -- this is a cross-dissolve with a hint of
+                     travel, not a slide. */
+                  initial={{ opacity: 0, x: navDir * 8, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, x: navDir * -8, filter: "blur(4px)" }}
+                  transition={{ duration: 0.32, ease: EASE }}
+                  style={{
+                    width,
+                    minWidth,
+                    maxWidth: "100%",
+                    flex: "0 0 auto",
+                    height: "100%",
+                    overflowY: "auto",
+                    borderRadius: "16px",
+                    background: "var(--bg)",
+                    boxShadow: shadow,
+                  }}
+                >
+                  <h2 className="sr-only">{label}</h2>
+                  <Component />
+                </motion.section>
+              );
+            })()}
+          </AnimatePresence>
         </div>
       </main>
 
