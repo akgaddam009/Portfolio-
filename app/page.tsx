@@ -2089,7 +2089,6 @@ const testimonials: Testimonial[] = [
 ];
 
 /* ── Panel: AI Experiments ── */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; AI Experiments is hidden from PANEL_CONFIGS for now
 function AiExperimentsPanel() {
   return (
     <div>
@@ -3626,11 +3625,7 @@ function StoryView() {
 const PANEL_CONFIGS = [
   { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
   { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
-  /* AI Experiments hidden from the homepage for now. PANEL_LABELS derives from
-     this array, so the nav dots, arrows, and floating menu all drop it with no
-     other change. AiExperimentsPanel stays in code for revival -- uncomment the
-     line below to bring it back. */
-  // { label: "AI Experiments", width: "420px", minWidth: "380px", Component: AiExperimentsPanel },
+  { label: "AI Experiments", width: "420px", minWidth: "380px", Component: AiExperimentsPanel },
   { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
   { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
   { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },
