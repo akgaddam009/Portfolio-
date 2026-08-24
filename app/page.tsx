@@ -12,6 +12,8 @@ const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr:
 const MapLibreMap = dynamic(() => import("@/components/ui/MapLibreMap").then(m => ({ default: m.MapLibreMap })), { ssr: false });
 import { caseStudies } from "@/lib/caseStudies";
 import { brandIcons } from "@/lib/brandIcons";
+import { careerItems, type CareerItem } from "@/lib/careerItems";
+import { testimonials, hueFromInitials } from "@/lib/testimonials";
 import { DitheredImage } from "@/components/DitheredImage";
 import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure, Mail, FileText, LinkedIn, ChartActivity } from "@/components/ui/Icon";
@@ -39,18 +41,18 @@ const haptic = (pattern: number | number[]) => {
    Story is a Ben-Roach-style stripped-down single-column resume page:
    bio paragraph, 3 stats, work list, contact. No cards, chips, or panels.
    Uses --bg/--text tokens so it respects the user's theme. */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; toggle is hidden from the nav for now
 function ViewModeToggle({
   viewMode,
   onChange,
 }: {
-  viewMode: "workspace" | "story";
-  onChange: (m: "workspace" | "story") => void;
+  viewMode: "panels" | "scroll";
+  onChange: (m: "panels" | "scroll") => void;
 }) {
   return (
     <div
       role="tablist"
-      aria-label="View mode"
+      aria-label="Layout mode"
+      className="view-mode-toggle"
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -62,7 +64,7 @@ function ViewModeToggle({
         gap: "2px",
       }}
     >
-      {(["workspace", "story"] as const).map((m) => {
+      {(["panels", "scroll"] as const).map((m) => {
         const active = viewMode === m;
         return (
           <button
@@ -89,7 +91,7 @@ function ViewModeToggle({
             onMouseEnter={e => { if (!active) e.currentTarget.style.opacity = "0.85"; }}
             onMouseLeave={e => { if (!active) e.currentTarget.style.opacity = "0.55"; }}
           >
-            {m === "workspace" ? "Workspace" : "Story"}
+            {m === "panels" ? "Panels" : "Scroll"}
           </button>
         );
       })}
@@ -100,18 +102,15 @@ function ViewModeToggle({
 function HomeNav({
   onPrev,
   onNext,
-  onSelectPanel,
   activePanel,
   viewMode,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; ViewModeToggle is hidden from the nav for now
   onViewModeChange,
 }: {
   onPrev: () => void;
   onNext: () => void;
-  onSelectPanel: (i: number) => void;
   activePanel: number;
-  viewMode: "workspace" | "story";
-  onViewModeChange: (m: "workspace" | "story") => void;
+  viewMode: "panels" | "scroll";
+  onViewModeChange: (m: "panels" | "scroll") => void;
 }) {
   return (
     <header
@@ -160,9 +159,7 @@ function HomeNav({
           Arun Gaddam
         </Link>
         <ThemeToggle />
-        {/* Quick guide + view-mode toggle hidden -focus is on Workspace
-            polish for now. Underlying components stay in code so they can
-            be restored later. */}
+        <ViewModeToggle viewMode={viewMode} onChange={onViewModeChange} />
       </div>
 
       {/* Panel dots + arrows -hidden in Story mode (no panels to navigate).
@@ -175,60 +172,28 @@ function HomeNav({
           display: "flex",
           alignItems: "center",
           gap: "16px",
-          visibility: viewMode === "story" ? "hidden" : "visible",
         }}
-        aria-hidden={viewMode === "story"}
       >
-        {/* Panel tabs. The dots said "there are five of these and you are on
-            the second"; they never said what any of them were, and were not
-            clickable. Named tabs answer both and make the top bar the primary
-            way to move, which is the point of the focused layout. */}
-        <div
-          className="panel-tabs"
-          role="tablist"
-          aria-label="Panels"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "2px",
-            padding: "4px",
-            borderRadius: "var(--radius-lg)",
-            background: "var(--surface)",
-            boxShadow: "var(--card-shadow)",
-          }}
-        >
-          {PANEL_LABELS.map((label, i) => {
-            const active = i === activePanel;
-            return (
-              <button
-                key={label}
-                role="tab"
-                aria-selected={active}
-                aria-controls={`panel-${i}`}
-                onClick={() => { haptic(8); onSelectPanel(i); }}
-                className="panel-tab"
-                style={{
-                  height: "36px",
-                  padding: "0 12px",
-                  border: "none",
-                  borderRadius: "8px",
-                  background: active ? "var(--bg)" : "transparent",
-                  color: active ? "var(--text)" : "var(--muted)",
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-mono-lg)",
-                  fontWeight: 500,
-                  letterSpacing: "0.04em",
-                  cursor: active ? "default" : "pointer",
-                  whiteSpace: "nowrap",
-                  transition: "background 0.25s cubic-bezier(0.22,1,0.36,1), color 0.25s",
-                }}
-                onMouseEnter={e => { if (!active) e.currentTarget.style.color = "var(--text-hover)"; }}
-                onMouseLeave={e => { if (!active) e.currentTarget.style.color = "var(--muted)"; }}
-              >
-                {label}
-              </button>
-            );
-          })}
+        {/* Panel position dots */}
+        <div className="panel-dots" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          {PANEL_LABELS.map((label, i) => (
+            <div
+              key={label}
+              title={label}
+              style={{
+                width: i === activePanel ? "16px" : "5px",
+                height: "5px",
+                borderRadius: "3px",
+                /* Inactive dots use --muted (warm taupe) instead of --border —
+                   the warm parchment chrome is too close in lightness to --border,
+                   so dots disappeared in light theme. --muted gives clear
+                   separation while staying clearly inactive vs --text. */
+                background: i === activePanel ? "var(--text)" : "var(--muted)",
+                opacity: i === activePanel ? 1 : 0.45,
+                transition: "width 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s, opacity 0.3s",
+              }}
+            />
+          ))}
         </div>
 
         {/* Arrows */}
@@ -1935,190 +1900,7 @@ const CAL_START  = 2012;
 const CAL_END    = 2027;
 const TOP_OFFSET = 20;   // px breathing room above the topmost card
 
-type CareerItem = {
-  type: "role" | "education" | "label";
-  startYear: number;
-  endYear?: number;
-  title: string;
-  subtitle?: string;
-  dateLabel?: string;
-  impact?: string;
-  logoDomain?: string;
-  description?: string;
-  bullets?: string[];
-  highlights?: string[];
-  highlightLink?: string;
-  highlightLinks?: (string | null)[];
-  learnings?: string[];
-  link?: string;
-  images?: string[];
-  minHeight?: number;
-};
 
-// Month helper: year + (month-1)/12
-// Jan=0, Feb=0.083, Mar=0.167, Apr=0.25, May=0.333, Jun=0.417,
-// Jul=0.5, Aug=0.583, Sep=0.667, Oct=0.75, Nov=0.833, Dec=0.917
-const careerItems: CareerItem[] = [
-  // Work. newest first
-  {
-    type: "role", startYear: 2025.167, endYear: 2025.583,
-    title: "Senior Product Designer", subtitle: "Planful Software", minHeight: 72,
-    dateLabel: "Mar 2025 - Aug 2025", impact: "Fintech", logoDomain: "planful.com",
-    link: "https://planful.com/",
-    description: "Led end-to-end design of two finance planning features, reducing training time ~30% and supporting migration of core finance workflows from legacy tools to a modern web interface.",
-  },
-  {
-    type: "role", startYear: 2024.167, endYear: 2025.083,
-    title: "Senior UX Designer", subtitle: "Reputation.com", minHeight: 72,
-    dateLabel: "Mar 2024 - Feb 2025", impact: "Enterprise SaaS", logoDomain: "reputation.com",
-    link: "https://reputation.com/",
-    description: "Led design across three core product verticals (Insights, Reporting, Business Listings, and Reviews), directly supporting primary revenue drivers and AI feature initiatives.",
-    highlights: [
-      "Designed a unified Competitive Insights workflow that reduced task time by 40%, increased active usage, and contributed to higher customer retention and monetisation",
-      "Implemented design QA, reducing design defects by ~25% and improving release quality",
-    ],
-    highlightLink: "https://reputation.com/resources/reports-guides/competitive-intelligence-stand-out-from-competition",
-  },
-  {
-    type: "role", startYear: 2022.25, endYear: 2023.833,
-    title: "Senior Product Designer", subtitle: "Zetwerk",
-    dateLabel: "Apr 2022 - Nov 2023", impact: "Manufacturing", logoDomain: "zetwerk.com",
-    link: "https://www.zetwerk.com/",
-    images: ["/images/career/zetwerk-team.jpg"],
-    description: "Led product design initiatives for Zetwerk's Order Management System (OMS), improving workflows to support business operations during a ~6× revenue growth phase.",
-    highlights: [
-      "Mentored three designers and partnered with leadership to establish UX practices: research, concept validation, usability testing",
-      "Replaced guesswork with evidence-based design, improving product quality and reducing backlog ~20 to 30%",
-      "Achievement – Zetwerk Hackathon Winner: Won competing against 11 other teams during an intense 40-hour innovation challenge",
-    ],
-    highlightLinks: [null, null, "https://www.youtube.com/watch?v=ZJoioJyN4H4"],
-  },
-  {
-    type: "role", startYear: 2020.583, endYear: 2022.25,
-    title: "Manager UX Designer", subtitle: "FanCode / Dream Sports",
-    dateLabel: "Aug 2020 - Apr 2022", impact: "B2C startup", logoDomain: "fancode.com",
-    link: "https://play.google.com/store/apps/details?id=com.dream11sportsguru&hl=en_IN",
-    images: ["/images/career/fancode-team.jpg"],
-    description: "Owned UX for a core product initiative, designing multiple features that drove adoption, retention, and growth across a ~50M user base.",
-    highlights: [
-      "Led research and concept validation to solve new-user retention, informing a 12-month roadmap and increasing retention by 18% while boosting subscriptions",
-      "Redesign of FanCode homepage experience led to an increase in user engagement by 20%",
-      "Designed and delivered new sports experiences as part of growth initiatives, driving adoption in football and kabaddi",
-      "Uncovered and improved interconnected fan journeys across key touchpoints, increasing time spent by ~20%",
-    ],
-  },
-  {
-    /* endYear meets FanCode's startYear (2020.583) rather than sitting at
-       Jul 2020's 2020.5. The roles are contiguous -- Jul 2020 ends, Aug 2020
-       begins -- so the one-month numeric gap was a month-boundary artefact of
-       the scale, not a real break, and it rendered as blank track. dateLabel
-       is unchanged and still states the true dates. */
-    type: "role", startYear: 2016.667, endYear: 2020.583,
-    title: "UX Designer (Founder)", subtitle: "Quazire Consulting",
-    dateLabel: "Sep 2016 - Jul 2020", impact: "Design consultancy",
-    description: "Founded and ran a boutique UX consultancy.",
-    highlights: [
-      "Designed an award-winning suite of hospital applications, improving operational efficiency, patient management, and clinical decision-making",
-      "Designed an HRIS and applicant tracking system that streamlined recruitment workflows and enhanced hiring team collaboration",
-      "Designed a mobile ERP solution for MSMEs in India",
-    ],
-  },
-  // Other. education & side roles
-  {
-    type: "education", startYear: 2023.833, endYear: 2026.25,
-    title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
-    dateLabel: "Nov 2023 - Present", impact: "Top 1%",
-    link: "https://adplist.org/",
-    description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList, mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
-  },
-  {
-    type: "education", startYear: 2023.75, endYear: 2025.083,
-    title: "Product Management", subtitle: "IIT Guwahati · Accredian",
-    dateLabel: "Oct 2023 - Feb 2025", logoDomain: "accredian.com", minHeight: 72,
-    description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati).",
-    bullets: [
-      "Applied data, product strategy, and user-centric approaches across the product lifecycle",
-      "Covered customer research, analytics, product strategy, and experimentation",
-      "Translated insights into product roadmaps, metrics, and iterative data-informed decisions",
-    ],
-  },
-  {
-    type: "education", startYear: 2020.917, endYear: 2021.333,
-    title: "Program in UX Design", subtitle: "IIT Bombay",
-    dateLabel: "Dec 2020 - May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
-    description: "Program in User Experience Design from IDC School of Design, IIT Bombay.",
-    bullets: [
-      "Covered end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation",
-      "Completed a hands-on, project-based curriculum with a field research project using contextual inquiry",
-      "Translated real-world user behaviours into iterative design solutions",
-    ],
-    images: ["/images/career/iitb-1.jpg", "/images/career/iitb-2.jpg"],
-  },
-  {
-    type: "education", startYear: 2019.583, endYear: 2019.75,
-    title: "Conducting Usability Testing", subtitle: "Interaction Design Foundation",
-    dateLabel: "Aug 2019", logoDomain: "interaction-design.org", minHeight: 72,
-    description: "Usability Testing certification from Interaction Design Foundation.",
-    bullets: [
-      "Focused on planning, conducting, and analysing user tests",
-      "Drive data-informed design improvements through structured testing methods",
-    ],
-  },
-  {
-    type: "education", startYear: 2019.5, endYear: 2019.583,
-    title: "Industry Jury", subtitle: "Institute of Product Leadership",
-    dateLabel: "Jul 2019", minHeight: 72,
-    description: "Institute of Product Leadership — Skillathon format replacing traditional exams.",
-    link: "https://www.productleadership.com/user-interface-design-prototyping-skillathon-hyderabad-6-july-2019/",
-    bullets: [
-      "Top Product Lab UX ideas presented to a live jury of hiring managers and industry experts",
-      "Best voted team wins the Skill Champion Trophy and cash award",
-    ],
-  },
-  {
-    type: "education", startYear: 2017, endYear: 2017.5,
-    title: "Design Thinking & Leadership", subtitle: "DSIL Global",
-    dateLabel: "2017", minHeight: 72,
-    description: "Global certification in social innovation and leadership.",
-    bullets: [
-      "Applied human-centred methods and systems thinking through field immersions and cross-sector collaboration",
-      "Worked with local communities, social enterprises, and ecosystem leaders across Southeast Asia",
-      "Conducted contextual research, facilitated design sprints, and translated insights into actionable solutions through iterative prototyping",
-    ],
-    images: ["/images/career/dsil-1.jpg", "/images/career/dsil-2.jpg"],
-  },
-];
-
-type Testimonial = {
-  quote: string;
-  name: string;
-  role: string;
-  company: string;
-  initials: string;
-  /** Optional headshot path, e.g. "/images/testimonials/raissa.jpg".
-      When present the avatar renders the photo; otherwise it falls back to the
-      tinted-monogram avatar built from `initials`. */
-  image?: string;
-};
-
-/** Deterministic hue (0-360) derived from initials so each person gets a
-    stable, unique tint without us having to hand-pick colours. Used to softly
-    tint the monogram avatar background when no headshot is present. */
-const hueFromInitials = (initials: string): number => {
-  let hash = 0;
-  for (let i = 0; i < initials.length; i++) {
-    hash = (hash * 31 + initials.charCodeAt(i)) >>> 0;
-  }
-  return hash % 360;
-};
-
-const testimonials: Testimonial[] = [
-  { quote: "Arun possesses a remarkable understanding of user needs, seamlessly navigating between design strategy and hands-on execution. His strategic mindset significantly impacted our efforts to enhance retention metrics.", name: "Raissa Fichardo", role: "Director of UX", company: "FanCode", initials: "RF", image: "/images/testimonial/raissa-fichardo.webp" },
-  { quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.", name: "Jeff Orshalick", role: "UX Design Manager", company: "Reputation", initials: "JO", image: "/images/testimonial/jeff-orshalick.avif" },
-  { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "FanCode", initials: "VK", image: "/images/testimonial/vikas-kotian.jpeg" },
-  { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB", image: "/images/testimonial/nikhil-bhagya.jpeg" },
-  { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB", image: "/images/testimonial/bishal-biswas.jpeg" },
-];
 
 /* ── Panel: AI Experiments ── */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; AI Experiments is hidden from PANEL_CONFIGS for now
@@ -3655,22 +3437,17 @@ function StoryView() {
   );
 }
 
-/* One panel is on screen at a time now, centred, with the others unmounted.
-   Widths are the original columns scaled by 1.7 and then back by 0.7, landing
-   ~19% above where they started: enough that the Work cards and Career
-   calendar breathe, without a single card sprawling across a 1440px viewport
-   with nothing beside it. */
 const PANEL_CONFIGS = [
-  { label: "About",          width: "500px", minWidth: "452px", Component: AboutPanel },
-  { label: "Work",           width: "524px", minWidth: "452px", Component: WorkPanel },
+  { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
+  { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
   /* AI Experiments hidden from the homepage for now. PANEL_LABELS derives from
      this array, so the nav dots, arrows, and floating menu all drop it with no
      other change. AiExperimentsPanel stays in code for revival -- uncomment the
      line below to bring it back. */
   // { label: "AI Experiments", width: "420px", minWidth: "380px", Component: AiExperimentsPanel },
-  { label: "Career",         width: "500px", minWidth: "452px", Component: CareerPanel },
-  { label: "Testimonials",   width: "476px", minWidth: "428px", Component: TestimonialsPanel },
-  { label: "Contact",        width: "452px", minWidth: "404px", Component: ContactPanel },
+  { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
+  { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
+  { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },
 ];
 
 /* Derive PANEL_LABELS from the single source above. Adding/removing a panel
@@ -3684,14 +3461,17 @@ export default function Home() {
   const [loading, setLoading]         = useState(true);
   const [revealed, setRevealed]       = useState(false);
   const [isDark, setIsDark]           = useState(false);
-  /* viewMode persists across sessions. Default "workspace" so SSR matches
+  /* viewMode persists across sessions. Default "panels" so SSR matches
      first paint; saved value hydrates on mount. */
-  const [viewMode, setViewMode] = useState<"workspace" | "story">("workspace");
+  const [viewMode, setViewMode] = useState<"panels" | "scroll">("panels");
+  /* Which way the last panel change went, so Scroll's swap animates with the
+     direction of travel rather than dissolving identically both ways. */
+  const [navDir, setNavDir] = useState<1 | -1>(1);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem("portfolio-view-mode");
-      if (saved === "workspace" || saved === "story") setViewMode(saved);
+      if (saved === "panels" || saved === "scroll") setViewMode(saved);
     } catch { /* localStorage unavailable -keep default */ }
   }, []);
 
@@ -3739,51 +3519,167 @@ export default function Home() {
     return () => clearTimeout(cap);
   }, []);
 
-  /* Panels no longer sit in a scrollable rail, so "navigation" is just moving
-     an index. navDir carries which way we moved so the swap animates with the
-     direction of travel rather than dissolving identically both ways. */
-  const [navDir, setNavDir] = useState<1 | -1>(1);
-
-  const goToPanel = useCallback((i: number) => {
-    setActivePanel(prev => {
-      const next = Math.max(0, Math.min(PANEL_CONFIGS.length - 1, i));
-      if (next === prev) return prev;
-      setNavDir(next > prev ? 1 : -1);
-      return next;
-    });
-  }, []);
-
   const scrollByPanel = useCallback((dir: 1 | -1) => {
-    setNavDir(dir);
-    setActivePanel(prev => Math.max(0, Math.min(PANEL_CONFIGS.length - 1, prev + dir)));
+    /* Scroll mode has no rail to move; stepping is just an index change. */
+    if (viewMode === "scroll") {
+      setNavDir(dir);
+      setActivePanel(prev => Math.max(0, Math.min(PANEL_CONFIGS.length - 1, prev + dir)));
+      return;
+    }
+    const el = containerRef.current;
+    if (!el) return;
+    const panels = el.querySelectorAll<HTMLElement>(".panel");
+    const current = panels[activePanel];
+    if (!current) return;
+    el.scrollBy({ left: dir * (current.offsetWidth + 16), behavior: "smooth" });
+  }, [activePanel, viewMode]);
+
+  /* Scroll directly to a panel by index -used by the mobile FAB menu.
+     On desktop scrolls horizontally inside the panels container; on mobile
+     uses scrollIntoView since panels are vertically stacked. */
+  const scrollToPanel = useCallback((i: number) => {
+    if (viewMode === "scroll") {
+      setActivePanel(prev => {
+        const next = Math.max(0, Math.min(PANEL_CONFIGS.length - 1, i));
+        if (next !== prev) setNavDir(next > prev ? 1 : -1);
+        return next;
+      });
+      return;
+    }
+    const el = containerRef.current;
+    if (!el) return;
+    const panels = el.querySelectorAll<HTMLElement>(".panel");
+    const target = panels[i];
+    if (!target) return;
+    const isMobile = window.matchMedia("(max-width: 640px)").matches;
+    if (isMobile) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      el.scrollTo({ left: target.offsetLeft - 24, behavior: "smooth" });
+    }
+  }, [viewMode]);
+
+  /* Wheel anywhere outside a panel scrolls the panels horizontally.
+
+     Before this, the chrome around the panels was dead to the wheel: the top
+     nav strip, the bottom padding, the left gutter and the right fade are all
+     outside .panel, so a wheel there hit an element with nothing to scroll and
+     the page simply sat still. That reads as the site being frozen.
+
+     It deliberately does NOT forward when the pointer is over a panel. Each
+     .panel has its own overflowY: auto, so a vertical wheel there must keep
+     scrolling that panel's content -- hijacking it would break reading a case
+     study. Only wheels landing outside every panel are redirected.
+
+     Two details that matter:
+     - deltaX and deltaY are merged, so a mouse wheel (deltaY only) and a
+       trackpad swipe (deltaX) both work.
+     - The container carries scrollBehavior: "smooth" for the nav arrows and
+       keyboard jumps. Assigning scrollLeft under that setting animates every
+       single wheel tick, which feels like wading through treacle -- so it is
+       flipped to "auto" for the gesture and restored once the wheel goes
+       quiet, leaving the arrow/keyboard animation intact. */
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    let restore: ReturnType<typeof setTimeout> | null = null;
+
+    const onWheel = (e: WheelEvent) => {
+      /* Mobile stacks the panels vertically; there is no horizontal axis to
+         drive, and stealing the wheel there would break the page outright. */
+      if (window.matchMedia("(max-width: 640px)").matches) return;
+
+      const target = e.target as Element | null;
+      if (target && target.closest(".panel")) return;
+
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (!delta) return;
+
+      e.preventDefault();
+      el.style.scrollBehavior = "auto";
+      el.scrollLeft += delta;
+
+      if (restore) clearTimeout(restore);
+      restore = setTimeout(() => { el.style.scrollBehavior = "smooth"; }, 120);
+    };
+
+    /* passive: false because the handler calls preventDefault. */
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      if (restore) clearTimeout(restore);
+    };
   }, []);
 
-  const scrollToPanel = goToPanel;
+  /* Mobile-only IntersectionObserver -tracks which panel is most in-view
+     and updates activePanel. Desktop Workspace uses its own horizontal
+     scroll handler below. Story mode renders no panels, so this is a no-op there. */
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const mq = window.matchMedia("(max-width: 640px)");
+    let observer: IntersectionObserver | null = null;
 
-  /* Wheel no longer changes panels. It stepped between them on a threshold
-     plus cooldown, but that meant a scroll gesture had two possible meanings
-     depending on where a panel happened to be scrolled to, and the wrong one
-     threw away your place. Panels change on tab, arrow, keyboard and the
-     mobile menu only. The wheel scrolls the panel under the pointer, which is
-     the browser's own behaviour and needs no code. */
+    const setup = () => {
+      observer?.disconnect();
+      observer = null;
+      if (!mq.matches) return;
+      const panels = Array.from(el.querySelectorAll<HTMLElement>(".panel"));
+      if (!panels.length) return;
+      observer = new IntersectionObserver(
+        (entries) => {
+          let bestIdx = -1;
+          let bestRatio = 0;
+          entries.forEach((entry) => {
+            const idx = panels.indexOf(entry.target as HTMLElement);
+            if (idx >= 0 && entry.intersectionRatio > bestRatio) {
+              bestRatio = entry.intersectionRatio;
+              bestIdx = idx;
+            }
+          });
+          if (bestIdx >= 0 && bestRatio > 0.3) setActivePanel(bestIdx);
+        },
+        { threshold: [0.3, 0.5, 0.7] }
+      );
+      panels.forEach((p) => observer!.observe(p));
+    };
 
-
-
-  /* The window-level wheel-forwarding effect was removed with the rail. It
-     existed to turn wheel events over the chrome into horizontal scroll of a
-     container that no longer overflows. The stage's own onWheel handles
-     stepping now, and it is scoped to the stage rather than the window. */
-
-
+    setup();
+    mq.addEventListener("change", setup);
+    return () => {
+      observer?.disconnect();
+      mq.removeEventListener("change", setup);
+    };
+  }, []);
 
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const handler = () => {
+      const panels = el.querySelectorAll<HTMLElement>(".panel");
+      let closest = 0, minDist = Infinity;
+      panels.forEach((p, i) => {
+        const dist = Math.abs(p.getBoundingClientRect().left - 24);
+        if (dist < minDist) { minDist = dist; closest = i; }
+      });
+      setActivePanel(closest);
+    };
+    el.addEventListener("scroll", handler, { passive: true });
+    return () => el.removeEventListener("scroll", handler);
+  }, []);
+
+  /* Panels mode only: Scroll has no rail to step, and a window-level listener
+     there would swallow arrow keys the page might want. */
+  useEffect(() => {
+    if (viewMode !== "panels") return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") scrollByPanel(1);
       if (e.key === "ArrowLeft")  scrollByPanel(-1);
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [scrollByPanel]);
+  }, [scrollByPanel, viewMode]);
 
   // Add scrolled class to panel headers when panel scrolls
   useEffect(() => {
@@ -3801,6 +3697,7 @@ export default function Home() {
     return () => cleanups.forEach(fn => fn());
   }, [revealed]);
 
+  const isLastPanel = activePanel === PANEL_CONFIGS.length - 1;
 
   return (
     <>
@@ -3808,80 +3705,151 @@ export default function Home() {
       <HomeNav
         onPrev={() => scrollByPanel(-1)}
         onNext={() => scrollByPanel(1)}
-        onSelectPanel={scrollToPanel}
         activePanel={activePanel}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
       />
-      {/* Story view temporarily hidden -toggle is removed from nav, so we
-          force Workspace regardless of any persisted viewMode value. */}
-      {false ? (
-        <StoryView />
+      {/* The switcher. Panels is the live horizontal rail, untouched. Scroll is
+          the same panels and the same components, mounted one at a time and
+          centred: only the active one is in the tree, so a heavy panel costs
+          nothing while it is not the one being read. */}
+      {viewMode === "scroll" ? (
+        <main id="main-content" className="home-main" style={{ paddingTop: "72px", height: "100dvh", overflow: "hidden", background: "var(--chrome)" }}>
+          <div
+            className="focus-stage"
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "center",
+              height: "calc(100dvh - 72px)",
+              overflow: "hidden",
+              padding: "8px 24px 16px",
+              boxSizing: "border-box",
+            }}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {(() => {
+                const { label, width, minWidth, Component } = PANEL_CONFIGS[activePanel];
+                return (
+                  <motion.section
+                    key={activePanel}
+                    className="panel is-active"
+                    aria-label={label}
+                    /* 8px of travel, not 40: a cross-dissolve with a hint of
+                       direction, not a slide. */
+                    initial={{ opacity: 0, x: navDir * 8, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, x: navDir * -8, filter: "blur(4px)" }}
+                    transition={{ duration: 0.32, ease: EASE }}
+                    style={{
+                      width,
+                      minWidth,
+                      maxWidth: "100%",
+                      flex: "0 0 auto",
+                      height: "100%",
+                      overflowY: "auto",
+                      borderRadius: "16px",
+                      background: "var(--bg)",
+                      boxShadow: isDark ? PANEL_SHADOW_ACTIVE_DARK : PANEL_SHADOW_ACTIVE_LIGHT,
+                    }}
+                  >
+                    <h2 className="sr-only">{label}</h2>
+                    <Component />
+                  </motion.section>
+                );
+              })()}
+            </AnimatePresence>
+          </div>
+        </main>
       ) : (
       <>
       {/* Mobile-only floating panel menu -hidden ≥641px via CSS */}
       <FloatingPanelMenu activePanel={activePanel} onSelect={scrollToPanel} />
 
-      {/* The right-edge fade is gone with the rail. It signalled "more panels
-          off to the right"; nothing is off to the right any more, and the tab
-          bar states the position explicitly. */}
+      {/* Right-edge fade. hides on last panel */}
+      <motion.div
+        className="panels-right-fade"
+        animate={{ opacity: isLastPanel ? 0 : 1 }}
+        transition={{ duration: 0.3, ease: EASE }}
+        style={{
+          position: "fixed", top: "64px", right: 0,
+          width: "80px", height: "calc(100dvh - 64px)",
+          background: "linear-gradient(to right, transparent, var(--chrome))",
+          pointerEvents: "none", zIndex: 100,
+        }}
+      />
 
       <main id="main-content" className="home-main" style={{ paddingTop: "72px", height: "100dvh", overflow: "hidden", background: "var(--chrome)" }}>
-        {/* Single-panel stage. Only the active panel is mounted; the others
-            are not off-screen, they are not in the tree at all. That is what
-            makes this a replacement rather than a rail -- there is nothing to
-            scroll past, and a heavy panel (MapLibre, the WebGL dither, five
-            videos) costs nothing while it is not the one being read. */}
         <div
           ref={containerRef}
           className="panels-container"
           data-dim-ready={dimReady ? "true" : "false"}
           style={{
             display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "center",
             height: "calc(100dvh - 72px)",
-            overflow: "hidden",
-            padding: "8px 24px 16px",
+            overflowX: "auto",
+            overflowY: "hidden",
+            gap: "24px",
+            /* Inter-panel gap (24px) — matches the panel's own 24px inner
+               gutter, so the space between two panels reads as the same
+               interval as the space inside one. Top padding kept at 8px.
+               Mobile stacks vertically at 12px via .panels-container. */
+            padding: "8px 0 16px 24px",
             boxSizing: "border-box",
+            /* Scroll-snap removed -the `proximity` mode was tugging the
+               scroll mid-gesture and made horizontal scrolling feel
+               jerky. Free scrolling now; nav arrows + keyboard still
+               jump cleanly via behavior: "smooth". */
+            scrollPaddingLeft: "24px",
+            /* Stop browser back-swipe from stealing horizontal scroll. */
+            overscrollBehaviorX: "contain",
+            scrollBehavior: "smooth",
           }}
         >
-          <AnimatePresence mode="wait" initial={false}>
-            {(() => {
-              const { label, width, minWidth, Component } = PANEL_CONFIGS[activePanel];
-              const shadow = isDark ? PANEL_SHADOW_ACTIVE_DARK : PANEL_SHADOW_ACTIVE_LIGHT;
-              return (
-                <motion.section
-                  key={activePanel}
-                  id={`panel-${activePanel}`}
-                  className="panel is-active"
-                  aria-label={label}
-                  /* Direction-aware: the outgoing panel leaves the way the
-                     incoming one arrives, so a forward step reads as forward.
-                     8px, not 40 -- this is a cross-dissolve with a hint of
-                     travel, not a slide. */
-                  initial={{ opacity: 0, x: navDir * 8, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, x: navDir * -8, filter: "blur(4px)" }}
-                  transition={{ duration: 0.32, ease: EASE }}
-                  style={{
-                    width,
-                    minWidth,
-                    maxWidth: "100%",
-                    flex: "0 0 auto",
-                    height: "100%",
-                    overflowY: "auto",
-                    borderRadius: "16px",
-                    background: "var(--bg)",
-                    boxShadow: shadow,
-                  }}
-                >
-                  <h2 className="sr-only">{label}</h2>
-                  <Component />
-                </motion.section>
-              );
-            })()}
-          </AnimatePresence>
+          {PANEL_CONFIGS.map(({ label, width, minWidth, Component }, i) => {
+            const isActive = activePanel === i;
+            const shadow = isDark
+              ? (isActive ? PANEL_SHADOW_ACTIVE_DARK  : PANEL_SHADOW_DARK)
+              : (isActive ? PANEL_SHADOW_ACTIVE_LIGHT : PANEL_SHADOW_LIGHT);
+            const panelClass = `panel${isActive ? " is-active" : ""}`;
+            return (
+              <motion.section
+                key={i}
+                className={panelClass}
+                aria-label={label}
+                initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+                animate={revealed
+                  ? { opacity: 1, y: 0,  filter: "blur(0px)" }
+                  : { opacity: 0, y: 20, filter: "blur(6px)" }}
+                transition={{ duration: 0.7, ease: EASE, delay: i * 0.12 }}
+                style={{
+                  minWidth,
+                  width,
+                  flex: "0 0 auto",
+                  height: "100%",
+                  overflowY: "auto",
+                  borderRadius: "16px",
+                  background: "var(--bg)",
+                  boxShadow: shadow,
+                  scrollSnapAlign: "start",
+                  transition: "box-shadow 0.35s cubic-bezier(0.22,1,0.36,1)",
+                }}
+              >
+                {/* Visually-hidden section heading. Repairs the h1 -> h3 jump:
+                    panel card titles are h3, so the outline needs an h2 between
+                    them and the hero h1. Skipped for the first panel, which
+                    already contains the page h1 -- emitting an h2 there would
+                    place it before the h1 in document order and invert the
+                    hierarchy we are fixing. The <section> still gets its
+                    accessible name from aria-label above. */}
+                {i > 0 && <h2 className="sr-only">{label}</h2>}
+                <Component />
+              </motion.section>
+            );
+          })}
+
+          {/* Trailing spacer so last panel gets 24px right breathing room */}
+          <div style={{ minWidth: "24px", flexShrink: 0 }} />
         </div>
       </main>
 
@@ -3935,8 +3903,8 @@ export default function Home() {
         }
 
         @media (max-width: 640px) {
-          /* Align nav pill left edge with panel card left edge (both 12px) */
-          .home-nav { padding: 0 12px !important; }
+          /* .home-nav padding moved to globals.css -- this block mounts only in
+             Panels mode, and the nav needs it in both. */
           .home-main { height: auto !important; overflow: visible !important; }
           .panels-right-fade { display: none !important; }
           .panels-container {
