@@ -808,15 +808,36 @@ html[data-mode="executive"] .exec-decision-image {
    spring at the call site owns transform, and .btn-secondary's -1px lift would
    fight it. The border and label shift to --text-hover carry hover here. */
 .career-nav-btn {
+  position: relative;
   flex: 1;
   height: 36px;
   padding: 0;
   justify-content: center;
+  /* --radius-lg to match the copy-email CTA, overriding .btn-secondary's
+     hardcoded 8px. On a 36px box that lands just shy of a full pill. */
+  border-radius: var(--radius-lg);
   font-size: var(--text-caption);
+  /* Explicit, rather than inheriting body's 1.6: at 12px that builds a 19.2px
+     line box whose half-leading rides the glyphs above the optical centre of a
+     36px button. 1 puts the cap height where the eye expects it. */
+  line-height: 1;
   font-weight: 500;
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease;
 }
+/* Chevron out of flow so it cannot push the label. Centring the whole
+   "\2039 Prev" string leaves the word itself off-centre -- and with the arrows on
+   facing sides, both labels drift toward the seam between the two buttons.
+   Pinned to the outer edge, each label centres on its button's true midpoint.
+   aria-hidden because the accessible name should read "Prev", not "\2039 Prev". */
+.career-nav-chevron {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.career-nav-btn--prev .career-nav-chevron { left: 12px; }
+.career-nav-btn--next .career-nav-chevron { right: 12px; }
 .career-nav-btn:not(:disabled):hover {
   transform: none;
 }
