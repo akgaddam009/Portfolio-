@@ -320,12 +320,12 @@
    and ContactPanel would put a mode branch inside all five and make every
    future panel change a two-mode regression. The stage owns the decision.
 
-   visibility rather than display: none. Taking the header out of flow moved
-   everything that sized against it and the content width came out wrong, so
-   the header keeps its box and simply stops painting. visibility: hidden also
-   takes it out of the accessibility tree, so the name is not announced twice
-   alongside the tab. */
-.focus-stage .panel-header-glass { visibility: hidden; }
+   display: none, not visibility: hidden. Keeping the box only to hide its
+   contents left 46px of dead space at the top of the one card on screen,
+   which was worse than whatever it was propping up. Out of flow and out of
+   the accessibility tree, so the name is not announced twice alongside the
+   tab that already carries it. */
+.focus-stage .panel-header-glass { display: none; }
 
 
 /* ─── Base ───────────────────────────────────────────── */
