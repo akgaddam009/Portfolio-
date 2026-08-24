@@ -2649,7 +2649,7 @@ function CareerPanel() {
                   display: "flex", gap: "6px", paddingTop: "16px",
                 }}>
                   <motion.button
-                    className="career-nav-btn"
+                    className="btn-secondary career-nav-btn"
                     onClick={e => { e.stopPropagation(); prevCard(); }}
                     disabled={selectedIdx <= 0}
                     whileTap={selectedIdx > 0 ? { scale: 0.9 } : {}}
@@ -2657,7 +2657,7 @@ function CareerPanel() {
                     ‹ Prev
                   </motion.button>
                   <motion.button
-                    className="career-nav-btn"
+                    className="btn-secondary career-nav-btn"
                     onClick={e => { e.stopPropagation(); nextCard(); }}
                     disabled={selectedIdx >= workItems.length - 1}
                     whileTap={selectedIdx < workItems.length - 1 ? { scale: 0.9 } : {}}
