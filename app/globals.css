@@ -327,6 +327,39 @@
    tab that already carries it. */
 .focus-stage .panel-header-glass { display: none; }
 
+/* Spacing repair for the headerless card.
+
+   The five panel bodies were never consistent with each other -- top padding
+   16px except Testimonials at 24, sides 24px except Career at 12, bottoms
+   ranging 12 to 48. In Panels mode the 46px sticky header sat above all of it
+   and hid the discrepancy. Remove the header and the first line lands 16px
+   from the card edge, inside the 16px corner radius, which is what reads as
+   cramped.
+
+   Fixed on the panel rather than in five inline style objects. Adding
+   scroll-container padding lifts every body clear of the curve without
+   touching Panels mode, which has to stay identical to live, and without
+   editing a component the other mode shares.
+
+   Values come from the spacing scale, not from measuring by eye:
+   --space-5 (20px) on top of each body's own --space-4 gives 36px of
+   clearance against a 24px radius, --space-6 (24px) at the foot.
+
+   The inner variance between panels is left alone on purpose. Bodies differ
+   (About 16/24/48, Career 16/12/12, Testimonials 24/24/48) and Career's
+   narrow 12px sides are load-bearing for the absolutely-positioned calendar.
+   Flattening them would cost the rhythm and risk that timeline; uniform outer
+   clearance with varied inner density is the intended shape.
+
+   The radius goes up with it: --radius-lg was chosen for a 420px card in a
+   rail of five, and one centred card carrying the whole viewport takes the
+   softer --radius-xl. */
+.focus-stage .panel {
+  border-radius: var(--radius-xl);
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-6);
+}
+
 
 /* ─── Base ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
