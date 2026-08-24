@@ -102,12 +102,14 @@ function ViewModeToggle({
 function HomeNav({
   onPrev,
   onNext,
+  onSelectPanel,
   activePanel,
   viewMode,
   onViewModeChange,
 }: {
   onPrev: () => void;
   onNext: () => void;
+  onSelectPanel: (i: number) => void;
   activePanel: number;
   viewMode: "panels" | "scroll";
   onViewModeChange: (m: "panels" | "scroll") => void;
@@ -122,9 +124,14 @@ function HomeNav({
         top: "8px", left: 0, right: 0,
         zIndex: 200,
         height: "64px",
-        display: "flex",
+        /* Grid rather than space-between so the Scroll-mode tab bar sits on the
+           true centre of the viewport. Under flex it would centre inside the
+           gap the wordmark and arrows happen to leave, and drift as they
+           change width. In Panels mode the middle cell is simply empty, so the
+           bar still reads as identity-left / controls-right exactly as live. */
+        display: "grid",
+        gridTemplateColumns: "1fr auto 1fr",
         alignItems: "center",
-        justifyContent: "space-between",
         padding: "0 24px",
         background: "transparent",
       }}
@@ -162,15 +169,69 @@ function HomeNav({
         <ViewModeToggle viewMode={viewMode} onChange={onViewModeChange} />
       </div>
 
+      {/* Centre cell: panel tabs, Scroll mode only. The dots tell you there are
+          five panels and which one you are on, but never what any of them are,
+          and they are not clickable. With one panel on screen at a time that
+          matters more, so Scroll gets named, clickable tabs while Panels keeps
+          the live dots. */}
+      {viewMode === "scroll" ? (
+        <nav
+          aria-label="Panel navigation"
+          className="panel-tabs"
+          role="tablist"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "2px",
+            padding: "4px",
+            borderRadius: "var(--radius-lg)",
+            background: "var(--surface)",
+            boxShadow: "var(--card-shadow)",
+          }}
+        >
+          {PANEL_LABELS.map((label, i) => {
+            const active = i === activePanel;
+            return (
+              <button
+                key={label}
+                role="tab"
+                aria-selected={active}
+                onClick={() => { haptic(8); onSelectPanel(i); }}
+                style={{
+                  height: "36px",
+                  padding: "0 12px",
+                  border: "none",
+                  borderRadius: "8px",
+                  background: active ? "var(--bg)" : "transparent",
+                  color: active ? "var(--text)" : "var(--muted)",
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-mono-lg)",
+                  fontWeight: 500,
+                  letterSpacing: "0.04em",
+                  cursor: active ? "default" : "pointer",
+                  whiteSpace: "nowrap",
+                  transition: "background 0.25s cubic-bezier(0.22,1,0.36,1), color 0.25s",
+                }}
+                onMouseEnter={e => { if (!active) e.currentTarget.style.color = "var(--text-hover)"; }}
+                onMouseLeave={e => { if (!active) e.currentTarget.style.color = "var(--muted)"; }}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </nav>
+      ) : <div />}
+
       {/* Panel dots + arrows -hidden in Story mode (no panels to navigate).
           <nav> rather than <div>: these prev/next controls are how the site is
           navigated, and the served homepage previously exposed no navigation
           landmark at all. */}
       <nav
-        aria-label="Panel navigation"
+        aria-label="Panel controls"
         style={{
           display: "flex",
           alignItems: "center",
+          justifySelf: "end",
           gap: "16px",
         }}
       >
@@ -3705,6 +3766,7 @@ export default function Home() {
       <HomeNav
         onPrev={() => scrollByPanel(-1)}
         onNext={() => scrollByPanel(1)}
+        onSelectPanel={scrollToPanel}
         activePanel={activePanel}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
@@ -3856,8 +3918,8 @@ export default function Home() {
       <style>{`
         .panels-container::-webkit-scrollbar { display: none; }
         .panels-container { -ms-overflow-style: none; scrollbar-width: none; }
-        .panel::-webkit-scrollbar { width: 0px; }
-        .panel { -ms-overflow-style: none; scrollbar-width: none; }
+        /* .panel scrollbar rules moved to globals.css -- this block mounts
+           only in Panels mode, and Scroll needs them too. */
 
         /* ── Focus dim (desktop only). Every panel fades to 0.6 unless
            it's the active panel (scrolled to) or being hovered. Both
