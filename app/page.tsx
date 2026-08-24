@@ -12,8 +12,6 @@ const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr:
 const MapLibreMap = dynamic(() => import("@/components/ui/MapLibreMap").then(m => ({ default: m.MapLibreMap })), { ssr: false });
 import { caseStudies } from "@/lib/caseStudies";
 import { brandIcons } from "@/lib/brandIcons";
-import { careerItems, type CareerItem } from "@/lib/careerItems";
-import { testimonials, hueFromInitials } from "@/lib/testimonials";
 import { DitheredImage } from "@/components/DitheredImage";
 import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure, Mail, FileText, LinkedIn, ChartActivity } from "@/components/ui/Icon";
@@ -41,18 +39,18 @@ const haptic = (pattern: number | number[]) => {
    Story is a Ben-Roach-style stripped-down single-column resume page:
    bio paragraph, 3 stats, work list, contact. No cards, chips, or panels.
    Uses --bg/--text tokens so it respects the user's theme. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; toggle is hidden from the nav for now
 function ViewModeToggle({
   viewMode,
   onChange,
 }: {
-  viewMode: "panels" | "scroll";
-  onChange: (m: "panels" | "scroll") => void;
+  viewMode: "workspace" | "story";
+  onChange: (m: "workspace" | "story") => void;
 }) {
   return (
     <div
       role="tablist"
-      aria-label="Layout mode"
-      className="view-mode-toggle"
+      aria-label="View mode"
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -64,7 +62,7 @@ function ViewModeToggle({
         gap: "2px",
       }}
     >
-      {(["panels", "scroll"] as const).map((m) => {
+      {(["workspace", "story"] as const).map((m) => {
         const active = viewMode === m;
         return (
           <button
@@ -91,7 +89,7 @@ function ViewModeToggle({
             onMouseEnter={e => { if (!active) e.currentTarget.style.opacity = "0.85"; }}
             onMouseLeave={e => { if (!active) e.currentTarget.style.opacity = "0.55"; }}
           >
-            {m === "panels" ? "Panels" : "Scroll"}
+            {m === "workspace" ? "Workspace" : "Story"}
           </button>
         );
       })}
@@ -102,19 +100,16 @@ function ViewModeToggle({
 function HomeNav({
   onPrev,
   onNext,
-  onSelectPanel,
   activePanel,
-  panelWidth,
   viewMode,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; ViewModeToggle is hidden from the nav for now
   onViewModeChange,
 }: {
   onPrev: () => void;
   onNext: () => void;
-  onSelectPanel: (i: number) => void;
   activePanel: number;
-  panelWidth: string;
-  viewMode: "panels" | "scroll";
-  onViewModeChange: (m: "panels" | "scroll") => void;
+  viewMode: "workspace" | "story";
+  onViewModeChange: (m: "workspace" | "story") => void;
 }) {
   return (
     <header
@@ -126,14 +121,9 @@ function HomeNav({
         top: "8px", left: 0, right: 0,
         zIndex: 200,
         height: "64px",
-        /* Grid rather than space-between so the Scroll-mode tab bar sits on the
-           true centre of the viewport. Under flex it would centre inside the
-           gap the wordmark and arrows happen to leave, and drift as they
-           change width. In Panels mode the middle cell is simply empty, so the
-           bar still reads as identity-left / controls-right exactly as live. */
-        display: "grid",
-        gridTemplateColumns: "1fr auto 1fr",
+        display: "flex",
         alignItems: "center",
+        justifyContent: "space-between",
         padding: "0 24px",
         background: "transparent",
       }}
@@ -168,84 +158,24 @@ function HomeNav({
           Arun Gaddam
         </Link>
         <ThemeToggle />
-        <ViewModeToggle viewMode={viewMode} onChange={onViewModeChange} />
+        {/* Quick guide + view-mode toggle hidden -focus is on Workspace
+            polish for now. Underlying components stay in code so they can
+            be restored later. */}
       </div>
-
-      {/* Centre cell: panel tabs, Scroll mode only. The dots tell you there are
-          five panels and which one you are on, but never what any of them are,
-          and they are not clickable. With one panel on screen at a time that
-          matters more, so Scroll gets named, clickable tabs while Panels keeps
-          the live dots. */}
-      {viewMode === "scroll" ? (
-        <nav
-          aria-label="Panel navigation"
-          className="panel-tabs"
-          role="tablist"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            /* Same width as the panel beneath it, and it changes with the
-               panel: the widths in PANEL_CONFIGS are per-panel (380-440px), so
-               a fixed bar would only line up on one of them. Both are centred
-               in the same column, so matching the width lines up both edges.
-               space-between rather than flex: 1 on each tab -- equal fifths
-               would give "Testimonials" the same 84px as "Work" and crop it. */
-            justifyContent: "space-between",
-            width: panelWidth,
-            maxWidth: "100%",
-            boxSizing: "border-box",
-            padding: "4px",
-            borderRadius: "var(--radius-lg)",
-            background: "var(--surface)",
-            boxShadow: "var(--card-shadow)",
-            transition: "width 0.32s cubic-bezier(0.22,1,0.36,1)",
-          }}
-        >
-          {PANEL_LABELS.map((label, i) => {
-            const active = i === activePanel;
-            return (
-              <button
-                key={label}
-                role="tab"
-                aria-selected={active}
-                onClick={() => { haptic(8); onSelectPanel(i); }}
-                style={{
-                  height: "36px",
-                  padding: "0 10px",
-                  border: "none",
-                  borderRadius: "8px",
-                  background: active ? "var(--bg)" : "transparent",
-                  color: active ? "var(--text)" : "var(--muted)",
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-mono-lg)",
-                  fontWeight: 500,
-                  letterSpacing: "0.04em",
-                  cursor: active ? "default" : "pointer",
-                  whiteSpace: "nowrap",
-                  transition: "background 0.25s cubic-bezier(0.22,1,0.36,1), color 0.25s",
-                }}
-                onMouseEnter={e => { if (!active) e.currentTarget.style.color = "var(--text-hover)"; }}
-                onMouseLeave={e => { if (!active) e.currentTarget.style.color = "var(--muted)"; }}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </nav>
-      ) : <div />}
 
       {/* Panel dots + arrows -hidden in Story mode (no panels to navigate).
           <nav> rather than <div>: these prev/next controls are how the site is
           navigated, and the served homepage previously exposed no navigation
           landmark at all. */}
       <nav
-        aria-label="Panel controls"
+        aria-label="Panel navigation"
         style={{
           display: "flex",
           alignItems: "center",
-          justifySelf: "end",
           gap: "16px",
+          visibility: viewMode === "story" ? "hidden" : "visible",
         }}
+        aria-hidden={viewMode === "story"}
       >
         {/* Panel position dots */}
         <div className="panel-dots" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -520,7 +450,7 @@ function PixelRevealPortrait({ src, alt }: { src: string; alt: string }) {
   }, []);
 
   return (
-    <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "var(--radius-lg) var(--radius-lg) 0 0", overflow: "hidden" }}>
+    <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "16px", overflow: "hidden" }}>
       {/* Dithered treatment. The grayscale->colour reveal stays on the wrapper
           rather than the image, so it applies to the shader canvas and the
           plain-<img> fallback identically -- CSS filters apply to a <canvas>
@@ -574,7 +504,7 @@ function PortraitMagnify() {
         style={{
           position: "relative",
           width: "100%", height: "100%",
-          borderRadius: "var(--radius-lg) var(--radius-lg) 0 0",
+          borderRadius: "16px",
           overflow: "hidden",
           transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
           transition: leaving ? "transform 0.55s cubic-bezier(0.22,1,0.36,1)" : "transform 0.08s linear",
@@ -687,22 +617,14 @@ function AboutPanel() {
   return (
     <div>
       <PanelHeader label="About me" />
-      <div className="about-panel-body" style={{ padding: "0 var(--space-6) var(--space-6)" }}>
+      <div className="about-panel-body" style={{ padding: "16px 24px 48px" }}>
 
         {/* Portrait. illustration by default, real photo on hover */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
-          /* Negative side margins pull the portrait back out of the body's
-             --space-6 gutter, so it meets the panel on three edges while the
-             copy below keeps its 24px. Even on all three, rather than flush
-             on top and inset at the sides. */
-          style={{
-            marginLeft: "calc(-1 * var(--space-6))",
-            marginRight: "calc(-1 * var(--space-6))",
-            marginBottom: "var(--space-6)",
-          }}
+          style={{ marginBottom: "20px" }}
         >
           <PortraitMagnify />
         </motion.div>
@@ -1047,7 +969,7 @@ function MeshThumbnail({ index, type, confidential }: {
         <div style={{
           position: "absolute", top: "10px", right: "10px",
           background: badgeBg,
-          borderRadius: "var(--radius-sm)", padding: "4px 8px",
+          borderRadius: "6px", padding: "4px 8px",
           fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
           fontWeight: 500, letterSpacing: "-0.01em",
           color: badgeColor,
@@ -1270,7 +1192,7 @@ function SystemFeatureCard() {
           className="work-card"
           style={{
             background: "var(--surface)",
-            borderRadius: "var(--radius-md)",
+            borderRadius: "16px",
             overflow: "hidden",
             boxShadow: "var(--card-shadow)",
             transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -1281,12 +1203,12 @@ function SystemFeatureCard() {
           {/* Thumbnail. auto-playing screen recording of the portfolio's
               design language in motion. Muted + looped, mirrors the case
               study video thumbnail pattern. */}
-          <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "var(--radius-md) var(--radius-md) 0 0" }}>
+          <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
             <WorkCardThumb
               src="/images/system/portfolio-design-language.mp4"
               poster="/images/system/cover.png"
               height={200}
-              borderRadius="var(--radius-md) var(--radius-md) 0 0"
+              borderRadius="16px 16px 0 0"
             />
           </div>
 
@@ -1345,7 +1267,7 @@ function WorkChip({ label }: { label: string }) {
       /* No border: the surface2 fill already separates the chip from the card
          (1.09:1 light / 1.14:1 dark). A hairline on top of a fill was the same
          doubled-up treatment removed from the tool chips and testimonials. */
-      color: "var(--text)", borderRadius: "var(--radius-sm)",
+      color: "var(--text)", borderRadius: "6px",
     }}>
       {label}
     </span>
@@ -1403,7 +1325,7 @@ function AccentChip({ label, icon: Icon }: {
          so the icons passed by CARD_CATEGORY never rendered at all. */
       background: "var(--surface2)",
       color: "var(--text)",
-      borderRadius: "var(--radius-sm)",
+      borderRadius: "6px",
       lineHeight: 1.4,
     }}>
       {Icon && <Icon size={10} strokeWidth={1.5} />}
@@ -1572,7 +1494,7 @@ function WorkPanel() {
   return (
     <div id="work-panel">
       <PanelHeader label="Selected Work" />
-      <div style={{ padding: "var(--space-6)" }}>
+      <div style={{ padding: "16px 24px 32px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
           {allCards.map((cs, i) => {
@@ -1633,7 +1555,7 @@ function WorkPanel() {
                     className="work-card"
                     style={{
                       background: "var(--surface)",
-                      borderRadius: "var(--radius-md)",
+                      borderRadius: "16px",
                       overflow: "hidden",
                       boxShadow: "var(--card-shadow)",
                       transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -1642,16 +1564,16 @@ function WorkPanel() {
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
                     {/* Thumbnail */}
-                    <div style={{ position: "relative", height: "220px", overflow: "hidden", borderRadius: "var(--radius-md) var(--radius-md) 0 0" }}>
+                    <div style={{ position: "relative", height: "220px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         <WorkCardThumb
                           src={WORK_THUMBS[cs.slug]}
                           poster={WORK_POSTERS[cs.slug]}
                           height={220}
-                          borderRadius="var(--radius-md) var(--radius-md) 0 0"
+                          borderRadius="16px 16px 0 0"
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
-                        <div style={{ position: "absolute", inset: "16px", borderRadius: "var(--radius-sm)", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
+                        <div style={{ position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
                             {/* FanCode only. `first-time-user-experience` is the
                               FanCode sports-app card -- the one FanCode entry
                               in CARD_ORDER, so it is the only FanCode thumbnail
@@ -1752,7 +1674,7 @@ function WorkPanel() {
                     <Link href={href}>
                       <div className="work-card" style={{
                         background: "var(--surface)",
-                        borderRadius: "var(--radius-md)",
+                        borderRadius: "16px",
                         overflow: "hidden",
                         boxShadow: "var(--card-shadow)",
                         transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -1760,12 +1682,12 @@ function WorkPanel() {
                       onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                       onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                       >
-                        <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "var(--radius-md) var(--radius-md) 0 0" }}>
+                        <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                           <WorkCardThumb
                             src={WORK_THUMBS[cs.slug] || ""}
                             poster={WORK_POSTERS[cs.slug]}
                             height={200}
-                            borderRadius="var(--radius-md) var(--radius-md) 0 0"
+                            borderRadius="16px 16px 0 0"
                           />
                         </div>
                         <div style={{ padding: "12px 16px 16px" }}>
@@ -1832,7 +1754,7 @@ function WorkPanel() {
               transition={{ duration: 0.22, ease: EASE }}
               onClick={(e) => e.stopPropagation()}
               style={{
-                background: "var(--surface)", borderRadius: "var(--radius-md)",
+                background: "var(--surface)", borderRadius: "20px",
                 border: "1px solid var(--border)",
                 boxShadow: "0 32px 80px -16px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06)",
                 padding: "36px 32px 28px",
@@ -1920,7 +1842,7 @@ function WorkPanel() {
                     fontFamily: "var(--font-body)", color: "var(--text)",
                     background: "var(--bg)",
                     border: `1.5px solid ${pwError ? "var(--accent-error)" : "var(--border)"}`,
-                    borderRadius: "var(--radius-md)",
+                    borderRadius: "10px",
                     marginBottom: "10px",
                     boxSizing: "border-box",
                     transition: "border-color 0.18s",
@@ -1946,7 +1868,7 @@ function WorkPanel() {
                     padding: "12px", fontSize: "var(--text-body-lg)", fontFamily: "var(--font-body)",
                     fontWeight: 500, letterSpacing: "-0.01em",
                     color: "var(--bg)", background: "var(--text)",
-                    border: "none", borderRadius: "var(--radius-md)",
+                    border: "none", borderRadius: "10px",
                     cursor: pwBusy ? "wait" : "pointer", opacity: pwBusy ? 0.65 : 1,
                     transition: "opacity 0.15s",
                     marginBottom: "10px",
@@ -1960,7 +1882,7 @@ function WorkPanel() {
                     width: "100%",
                     padding: "10px", fontSize: "var(--text-body)", fontFamily: "var(--font-body)",
                     color: "var(--muted)", background: "transparent",
-                    border: "none", borderRadius: "var(--radius-md)",
+                    border: "none", borderRadius: "10px",
                     cursor: "pointer",
                   }}
                 >Cancel</button>
@@ -1981,7 +1903,190 @@ const CAL_START  = 2012;
 const CAL_END    = 2027;
 const TOP_OFFSET = 20;   // px breathing room above the topmost card
 
+type CareerItem = {
+  type: "role" | "education" | "label";
+  startYear: number;
+  endYear?: number;
+  title: string;
+  subtitle?: string;
+  dateLabel?: string;
+  impact?: string;
+  logoDomain?: string;
+  description?: string;
+  bullets?: string[];
+  highlights?: string[];
+  highlightLink?: string;
+  highlightLinks?: (string | null)[];
+  learnings?: string[];
+  link?: string;
+  images?: string[];
+  minHeight?: number;
+};
 
+// Month helper: year + (month-1)/12
+// Jan=0, Feb=0.083, Mar=0.167, Apr=0.25, May=0.333, Jun=0.417,
+// Jul=0.5, Aug=0.583, Sep=0.667, Oct=0.75, Nov=0.833, Dec=0.917
+const careerItems: CareerItem[] = [
+  // Work. newest first
+  {
+    type: "role", startYear: 2025.167, endYear: 2025.583,
+    title: "Senior Product Designer", subtitle: "Planful Software", minHeight: 72,
+    dateLabel: "Mar 2025 - Aug 2025", impact: "Fintech", logoDomain: "planful.com",
+    link: "https://planful.com/",
+    description: "Led end-to-end design of two finance planning features, reducing training time ~30% and supporting migration of core finance workflows from legacy tools to a modern web interface.",
+  },
+  {
+    type: "role", startYear: 2024.167, endYear: 2025.083,
+    title: "Senior UX Designer", subtitle: "Reputation.com", minHeight: 72,
+    dateLabel: "Mar 2024 - Feb 2025", impact: "Enterprise SaaS", logoDomain: "reputation.com",
+    link: "https://reputation.com/",
+    description: "Led design across three core product verticals (Insights, Reporting, Business Listings, and Reviews), directly supporting primary revenue drivers and AI feature initiatives.",
+    highlights: [
+      "Designed a unified Competitive Insights workflow that reduced task time by 40%, increased active usage, and contributed to higher customer retention and monetisation",
+      "Implemented design QA, reducing design defects by ~25% and improving release quality",
+    ],
+    highlightLink: "https://reputation.com/resources/reports-guides/competitive-intelligence-stand-out-from-competition",
+  },
+  {
+    type: "role", startYear: 2022.25, endYear: 2023.833,
+    title: "Senior Product Designer", subtitle: "Zetwerk",
+    dateLabel: "Apr 2022 - Nov 2023", impact: "Manufacturing", logoDomain: "zetwerk.com",
+    link: "https://www.zetwerk.com/",
+    images: ["/images/career/zetwerk-team.jpg"],
+    description: "Led product design initiatives for Zetwerk's Order Management System (OMS), improving workflows to support business operations during a ~6× revenue growth phase.",
+    highlights: [
+      "Mentored three designers and partnered with leadership to establish UX practices: research, concept validation, usability testing",
+      "Replaced guesswork with evidence-based design, improving product quality and reducing backlog ~20 to 30%",
+      "Achievement – Zetwerk Hackathon Winner: Won competing against 11 other teams during an intense 40-hour innovation challenge",
+    ],
+    highlightLinks: [null, null, "https://www.youtube.com/watch?v=ZJoioJyN4H4"],
+  },
+  {
+    type: "role", startYear: 2020.583, endYear: 2022.25,
+    title: "Manager UX Designer", subtitle: "FanCode / Dream Sports",
+    dateLabel: "Aug 2020 - Apr 2022", impact: "B2C startup", logoDomain: "fancode.com",
+    link: "https://play.google.com/store/apps/details?id=com.dream11sportsguru&hl=en_IN",
+    images: ["/images/career/fancode-team.jpg"],
+    description: "Owned UX for a core product initiative, designing multiple features that drove adoption, retention, and growth across a ~50M user base.",
+    highlights: [
+      "Led research and concept validation to solve new-user retention, informing a 12-month roadmap and increasing retention by 18% while boosting subscriptions",
+      "Redesign of FanCode homepage experience led to an increase in user engagement by 20%",
+      "Designed and delivered new sports experiences as part of growth initiatives, driving adoption in football and kabaddi",
+      "Uncovered and improved interconnected fan journeys across key touchpoints, increasing time spent by ~20%",
+    ],
+  },
+  {
+    /* endYear meets FanCode's startYear (2020.583) rather than sitting at
+       Jul 2020's 2020.5. The roles are contiguous -- Jul 2020 ends, Aug 2020
+       begins -- so the one-month numeric gap was a month-boundary artefact of
+       the scale, not a real break, and it rendered as blank track. dateLabel
+       is unchanged and still states the true dates. */
+    type: "role", startYear: 2016.667, endYear: 2020.583,
+    title: "UX Designer (Founder)", subtitle: "Quazire Consulting",
+    dateLabel: "Sep 2016 - Jul 2020", impact: "Design consultancy",
+    description: "Founded and ran a boutique UX consultancy.",
+    highlights: [
+      "Designed an award-winning suite of hospital applications, improving operational efficiency, patient management, and clinical decision-making",
+      "Designed an HRIS and applicant tracking system that streamlined recruitment workflows and enhanced hiring team collaboration",
+      "Designed a mobile ERP solution for MSMEs in India",
+    ],
+  },
+  // Other. education & side roles
+  {
+    type: "education", startYear: 2023.833, endYear: 2026.25,
+    title: "Super Mentor", subtitle: "ADPList", minHeight: 72,
+    dateLabel: "Nov 2023 - Present", impact: "Top 1%",
+    link: "https://adplist.org/",
+    description: "Recognised as a Super Mentor and Top 1% Contributing Mentor on ADPList, mentoring designers across career transitions, portfolio reviews, and senior IC growth.",
+  },
+  {
+    type: "education", startYear: 2023.75, endYear: 2025.083,
+    title: "Product Management", subtitle: "IIT Guwahati · Accredian",
+    dateLabel: "Oct 2023 - Feb 2025", logoDomain: "accredian.com", minHeight: 72,
+    description: "Executive Program in Data-Driven Product Management (Accredian, IIT Guwahati).",
+    bullets: [
+      "Applied data, product strategy, and user-centric approaches across the product lifecycle",
+      "Covered customer research, analytics, product strategy, and experimentation",
+      "Translated insights into product roadmaps, metrics, and iterative data-informed decisions",
+    ],
+  },
+  {
+    type: "education", startYear: 2020.917, endYear: 2021.333,
+    title: "Program in UX Design", subtitle: "IIT Bombay",
+    dateLabel: "Dec 2020 - May 2021", logoDomain: "iitb.ac.in", minHeight: 72,
+    description: "Program in User Experience Design from IDC School of Design, IIT Bombay.",
+    bullets: [
+      "Covered end-to-end UX lifecycle from user research and problem framing to interaction design, testing, and implementation",
+      "Completed a hands-on, project-based curriculum with a field research project using contextual inquiry",
+      "Translated real-world user behaviours into iterative design solutions",
+    ],
+    images: ["/images/career/iitb-1.jpg", "/images/career/iitb-2.jpg"],
+  },
+  {
+    type: "education", startYear: 2019.583, endYear: 2019.75,
+    title: "Conducting Usability Testing", subtitle: "Interaction Design Foundation",
+    dateLabel: "Aug 2019", logoDomain: "interaction-design.org", minHeight: 72,
+    description: "Usability Testing certification from Interaction Design Foundation.",
+    bullets: [
+      "Focused on planning, conducting, and analysing user tests",
+      "Drive data-informed design improvements through structured testing methods",
+    ],
+  },
+  {
+    type: "education", startYear: 2019.5, endYear: 2019.583,
+    title: "Industry Jury", subtitle: "Institute of Product Leadership",
+    dateLabel: "Jul 2019", minHeight: 72,
+    description: "Institute of Product Leadership — Skillathon format replacing traditional exams.",
+    link: "https://www.productleadership.com/user-interface-design-prototyping-skillathon-hyderabad-6-july-2019/",
+    bullets: [
+      "Top Product Lab UX ideas presented to a live jury of hiring managers and industry experts",
+      "Best voted team wins the Skill Champion Trophy and cash award",
+    ],
+  },
+  {
+    type: "education", startYear: 2017, endYear: 2017.5,
+    title: "Design Thinking & Leadership", subtitle: "DSIL Global",
+    dateLabel: "2017", minHeight: 72,
+    description: "Global certification in social innovation and leadership.",
+    bullets: [
+      "Applied human-centred methods and systems thinking through field immersions and cross-sector collaboration",
+      "Worked with local communities, social enterprises, and ecosystem leaders across Southeast Asia",
+      "Conducted contextual research, facilitated design sprints, and translated insights into actionable solutions through iterative prototyping",
+    ],
+    images: ["/images/career/dsil-1.jpg", "/images/career/dsil-2.jpg"],
+  },
+];
+
+type Testimonial = {
+  quote: string;
+  name: string;
+  role: string;
+  company: string;
+  initials: string;
+  /** Optional headshot path, e.g. "/images/testimonials/raissa.jpg".
+      When present the avatar renders the photo; otherwise it falls back to the
+      tinted-monogram avatar built from `initials`. */
+  image?: string;
+};
+
+/** Deterministic hue (0-360) derived from initials so each person gets a
+    stable, unique tint without us having to hand-pick colours. Used to softly
+    tint the monogram avatar background when no headshot is present. */
+const hueFromInitials = (initials: string): number => {
+  let hash = 0;
+  for (let i = 0; i < initials.length; i++) {
+    hash = (hash * 31 + initials.charCodeAt(i)) >>> 0;
+  }
+  return hash % 360;
+};
+
+const testimonials: Testimonial[] = [
+  { quote: "Arun possesses a remarkable understanding of user needs, seamlessly navigating between design strategy and hands-on execution. His strategic mindset significantly impacted our efforts to enhance retention metrics.", name: "Raissa Fichardo", role: "Director of UX", company: "FanCode", initials: "RF", image: "/images/testimonial/raissa-fichardo.webp" },
+  { quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.", name: "Jeff Orshalick", role: "UX Design Manager", company: "Reputation", initials: "JO", image: "/images/testimonial/jeff-orshalick.avif" },
+  { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "FanCode", initials: "VK", image: "/images/testimonial/vikas-kotian.jpeg" },
+  { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB", image: "/images/testimonial/nikhil-bhagya.jpeg" },
+  { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB", image: "/images/testimonial/bishal-biswas.jpeg" },
+];
 
 /* ── Panel: AI Experiments ── */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; AI Experiments is hidden from PANEL_CONFIGS for now
@@ -2021,7 +2126,7 @@ function AiExperimentsPanel() {
               className="work-card"
               style={{
                 background: "var(--surface)",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: "var(--card-shadow)",
                 transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -2034,7 +2139,7 @@ function AiExperimentsPanel() {
                 position: "relative",
                 height: "220px",
                 overflow: "hidden",
-                borderRadius: "var(--radius-md) var(--radius-md) 0 0",
+                borderRadius: "16px 16px 0 0",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -2048,7 +2153,7 @@ function AiExperimentsPanel() {
                   height={88}
                   loading="lazy"
                   decoding="async"
-                  style={{ width: "88px", height: "88px", display: "block", borderRadius: "var(--radius-sm)" }}
+                  style={{ width: "88px", height: "88px", display: "block", borderRadius: "20px" }}
                 />
               </div>
 
@@ -2322,7 +2427,7 @@ function CareerPanel() {
               transition={{ duration: 0.28, ease: EASE, delay: 0.1 }}
             >
 
-              <div style={{ padding: "var(--space-6)" }}>
+              <div style={{ padding: "16px 12px 12px" }}>
 
                 {/* Company / project link. top */}
                 {item.link && (
@@ -2492,7 +2597,7 @@ function CareerPanel() {
                              deleted. Teal is the same tone as the testimonial
                              cards, which is what these are -- so they track the
                              same --surface2 fill. */
-                          background: "var(--surface2)", borderRadius: "var(--radius-md)",
+                          background: "var(--surface2)", borderRadius: "10px",
                           padding: "10px 12px",
                         }}>
                           <p style={{
@@ -2702,7 +2807,7 @@ function TestimonialsPanel() {
   return (
     <div>
       <PanelHeader label="Testimonials" />
-      <div style={{ padding: "var(--space-6)" }}>
+      <div style={{ padding: "24px 24px 48px" }}>
 
         {/* Intro */}
         <motion.p
@@ -2876,7 +2981,7 @@ function ContactPanel() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <PanelHeader label="Contact" />
-      <div style={{ padding: "var(--space-6)", flex: 1, display: "flex", flexDirection: "column" }}>
+      <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
 
         {/* Headline. typography per Figma reference:
             Manrope 400 / 18px / line-height 30px / 0 tracking. */}
@@ -3163,13 +3268,13 @@ function AiExplorationsPanel() {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                 >
-                  <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "var(--radius-md) var(--radius-md) 0 0" }}>
+                  <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                     {WORK_THUMBS[astra.slug] ? (
                       <WorkCardThumb
                         src={WORK_THUMBS[astra.slug]}
                         poster={WORK_POSTERS[astra.slug]}
                         height={200}
-                        borderRadius="var(--radius-md) var(--radius-md) 0 0"
+                        borderRadius="16px 16px 0 0"
                       />
                     ) : (
                       <MeshThumbnail index={0} type={astra.type} confidential={astra.confidential} />
@@ -3542,17 +3647,14 @@ export default function Home() {
   const [loading, setLoading]         = useState(true);
   const [revealed, setRevealed]       = useState(false);
   const [isDark, setIsDark]           = useState(false);
-  /* viewMode persists across sessions. Default "panels" so SSR matches
+  /* viewMode persists across sessions. Default "workspace" so SSR matches
      first paint; saved value hydrates on mount. */
-  const [viewMode, setViewMode] = useState<"panels" | "scroll">("panels");
-  /* Which way the last panel change went, so Scroll's swap animates with the
-     direction of travel rather than dissolving identically both ways. */
-  const [navDir, setNavDir] = useState<1 | -1>(1);
+  const [viewMode, setViewMode] = useState<"workspace" | "story">("workspace");
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem("portfolio-view-mode");
-      if (saved === "panels" || saved === "scroll") setViewMode(saved);
+      if (saved === "workspace" || saved === "story") setViewMode(saved);
     } catch { /* localStorage unavailable -keep default */ }
   }, []);
 
@@ -3601,32 +3703,18 @@ export default function Home() {
   }, []);
 
   const scrollByPanel = useCallback((dir: 1 | -1) => {
-    /* Scroll mode has no rail to move; stepping is just an index change. */
-    if (viewMode === "scroll") {
-      setNavDir(dir);
-      setActivePanel(prev => Math.max(0, Math.min(PANEL_CONFIGS.length - 1, prev + dir)));
-      return;
-    }
     const el = containerRef.current;
     if (!el) return;
     const panels = el.querySelectorAll<HTMLElement>(".panel");
     const current = panels[activePanel];
     if (!current) return;
     el.scrollBy({ left: dir * (current.offsetWidth + 16), behavior: "smooth" });
-  }, [activePanel, viewMode]);
+  }, [activePanel]);
 
   /* Scroll directly to a panel by index -used by the mobile FAB menu.
      On desktop scrolls horizontally inside the panels container; on mobile
      uses scrollIntoView since panels are vertically stacked. */
   const scrollToPanel = useCallback((i: number) => {
-    if (viewMode === "scroll") {
-      setActivePanel(prev => {
-        const next = Math.max(0, Math.min(PANEL_CONFIGS.length - 1, i));
-        if (next !== prev) setNavDir(next > prev ? 1 : -1);
-        return next;
-      });
-      return;
-    }
     const el = containerRef.current;
     if (!el) return;
     const panels = el.querySelectorAll<HTMLElement>(".panel");
@@ -3638,7 +3726,7 @@ export default function Home() {
     } else {
       el.scrollTo({ left: target.offsetLeft - 24, behavior: "smooth" });
     }
-  }, [viewMode]);
+  }, []);
 
   /* Wheel anywhere outside a panel scrolls the panels horizontally.
 
@@ -3750,17 +3838,14 @@ export default function Home() {
     return () => el.removeEventListener("scroll", handler);
   }, []);
 
-  /* Panels mode only: Scroll has no rail to step, and a window-level listener
-     there would swallow arrow keys the page might want. */
   useEffect(() => {
-    if (viewMode !== "panels") return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") scrollByPanel(1);
       if (e.key === "ArrowLeft")  scrollByPanel(-1);
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [scrollByPanel, viewMode]);
+  }, [scrollByPanel]);
 
   // Add scrolled class to panel headers when panel scrolls
   useEffect(() => {
@@ -3786,64 +3871,14 @@ export default function Home() {
       <HomeNav
         onPrev={() => scrollByPanel(-1)}
         onNext={() => scrollByPanel(1)}
-        onSelectPanel={scrollToPanel}
-        panelWidth={PANEL_CONFIGS[activePanel].width}
         activePanel={activePanel}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
       />
-      {/* The switcher. Panels is the live horizontal rail, untouched. Scroll is
-          the same panels and the same components, mounted one at a time and
-          centred: only the active one is in the tree, so a heavy panel costs
-          nothing while it is not the one being read. */}
-      {viewMode === "scroll" ? (
-        <main id="main-content" className="home-main" style={{ paddingTop: "72px", height: "100dvh", overflow: "hidden", background: "var(--chrome)" }}>
-          <div
-            className="focus-stage"
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "center",
-              height: "calc(100dvh - 72px)",
-              overflow: "hidden",
-              padding: "8px 24px 16px",
-              boxSizing: "border-box",
-            }}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              {(() => {
-                const { label, width, minWidth, Component } = PANEL_CONFIGS[activePanel];
-                return (
-                  <motion.section
-                    key={activePanel}
-                    className="panel is-active"
-                    aria-label={label}
-                    /* 8px of travel, not 40: a cross-dissolve with a hint of
-                       direction, not a slide. */
-                    initial={{ opacity: 0, x: navDir * 8, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, x: navDir * -8, filter: "blur(4px)" }}
-                    transition={{ duration: 0.32, ease: EASE }}
-                    style={{
-                      width,
-                      minWidth,
-                      maxWidth: "100%",
-                      flex: "0 0 auto",
-                      height: "100%",
-                      overflowY: "auto",
-                      borderRadius: "16px",
-                      background: "var(--bg)",
-                      boxShadow: isDark ? PANEL_SHADOW_ACTIVE_DARK : PANEL_SHADOW_ACTIVE_LIGHT,
-                    }}
-                  >
-                    <h2 className="sr-only">{label}</h2>
-                    <Component />
-                  </motion.section>
-                );
-              })()}
-            </AnimatePresence>
-          </div>
-        </main>
+      {/* Story view temporarily hidden -toggle is removed from nav, so we
+          force Workspace regardless of any persisted viewMode value. */}
+      {false ? (
+        <StoryView />
       ) : (
       <>
       {/* Mobile-only floating panel menu -hidden ≥641px via CSS */}
@@ -3939,8 +3974,8 @@ export default function Home() {
       <style>{`
         .panels-container::-webkit-scrollbar { display: none; }
         .panels-container { -ms-overflow-style: none; scrollbar-width: none; }
-        /* .panel scrollbar rules moved to globals.css -- this block mounts
-           only in Panels mode, and Scroll needs them too. */
+        .panel::-webkit-scrollbar { width: 0px; }
+        .panel { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* ── Focus dim (desktop only). Every panel fades to 0.6 unless
            it's the active panel (scrolled to) or being hovered. Both
@@ -3986,8 +4021,8 @@ export default function Home() {
         }
 
         @media (max-width: 640px) {
-          /* .home-nav padding moved to globals.css -- this block mounts only in
-             Panels mode, and the nav needs it in both. */
+          /* Align nav pill left edge with panel card left edge (both 12px) */
+          .home-nav { padding: 0 12px !important; }
           .home-main { height: auto !important; overflow: visible !important; }
           .panels-right-fade { display: none !important; }
           .panels-container {

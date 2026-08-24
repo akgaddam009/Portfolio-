@@ -117,24 +117,10 @@
 
   /* ── Radius scale ──
      Promoted from inline magic numbers. Cards = md/lg, chips = sm, pills = full. */
-  /* Radius is a nesting hierarchy, not a menu. Each level of containment steps
-     one rung down, so a curve inside another curve always reads as subordinate
-     rather than competing with it:
-
-       panel                       --radius-lg   16px
-        └ work card, portrait      --radius-md   12px
-           └ media inside a card   --radius-sm    8px
-
-     A card matching its panel at 16px is what read as "off": two identical
-     curves a few pixels apart give the eye no sense of which contains which.
-
-     Flush children are the exception -- a thumbnail sitting hard against its
-     card's top corners must use the card's radius exactly, or the curve breaks
-     at the seam. Those are written as `--radius-md --radius-md 0 0`. */
   --radius-xs:   4px;   /* hairline rounds — scrollbar, focus ring */
-  --radius-sm:   8px;   /* small buttons, mono labels, media inside a card */
-  --radius-md:   12px;  /* cards and media sitting directly in a panel */
-  --radius-lg:   16px;  /* the panel itself */
+  --radius-sm:   8px;   /* small buttons, mono labels */
+  --radius-md:   12px;  /* default card / panel */
+  --radius-lg:   16px;  /* large card / hero media */
   --radius-xl:   24px;  /* feature media */
   --radius-pill: 9999px;
 
@@ -324,29 +310,6 @@
   box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.3);
 }
 
-/* Scroll mode drops the per-panel sticky header. It exists in Panels mode to
-   label a card you are seeing alongside four others; with one panel on screen
-   and its name already lit in the tab bar directly above, the header repeats
-   the tab and costs 46px of the only card you can read.
-
-   Done as a scoped rule rather than a prop, deliberately: threading a
-   `showHeader` through AboutPanel, WorkPanel, CareerPanel, TestimonialsPanel
-   and ContactPanel would put a mode branch inside all five and make every
-   future panel change a two-mode regression. The stage owns the decision.
-
-   display: none, not visibility: hidden. Keeping the box only to hide its
-   contents left 46px of dead space at the top of the one card on screen,
-   which was worse than whatever it was propping up. Out of flow and out of
-   the accessibility tree, so the name is not announced twice alongside the
-   tab that already carries it. */
-.focus-stage .panel-header-glass { display: none; }
-
-/* Scroll mode needs no spacing compensation any more. The panel bodies carry
-   a flat --space-6 on all four sides, so the first element sits 24px from the
-   card edge whether the header is there or not. The old padding-top here was
-   propping up a 16px top against 24px sides; with the body even, it would
-   just make the top heavier than the sides again. */
-
 
 /* ─── Base ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -376,14 +339,6 @@ body {
 ::selection { background: var(--text); color: var(--bg); }
 
 /* ─── Scrollbar ─────────────────────────────────────── */
-/* Panels hide their scrollbar entirely, in both Panels and Scroll mode. These
-   rules used to live in the inline <style> inside app/page.tsx's Panels
-   branch, which meant Scroll mode never mounted them and every panel fell
-   through to the 3px global bar below. Chrome-level rules that apply in both
-   modes belong here. */
-.panel::-webkit-scrollbar { width: 0; height: 0; }
-.panel { -ms-overflow-style: none; scrollbar-width: none; }
-
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -733,17 +688,6 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 640px) {
   .chat-trigger-label { display: none !important; }
 
-  /* Nav pill left edge aligned with the panel card edge, both 12px. Lives here
-     rather than the inline <style> in app/page.tsx, because that block renders
-     inside the Panels branch only and Scroll mode would lose the padding. */
-  .home-nav { padding: 0 12px !important; }
-
-  /* The bar at 375px already carries the wordmark and theme button. Compact
-     the mode toggle rather than dropping it, so both views stay reachable on
-     a phone without the row overflowing. */
-  .view-mode-toggle { padding: 3px !important; }
-  .view-mode-toggle button { padding: 0 8px !important; letter-spacing: 0.03em !important; }
-
   .home-main {
     height: auto !important;
     overflow: visible !important;
@@ -769,9 +713,6 @@ a { color: inherit; text-decoration: none; }
   }
   .desktop-nav-arrows { display: none !important; }
   .panel-dots { display: none !important; }
-  /* Five named tabs cannot fit a phone bar; the floating panel menu is already
-     the mobile way to switch panels in both modes. */
-  .panel-tabs { display: none !important; }
 
   .nav-glass {
     background: rgba(255, 255, 255, 0.98) !important;
