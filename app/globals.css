@@ -341,32 +341,11 @@
    tab that already carries it. */
 .focus-stage .panel-header-glass { display: none; }
 
-/* Spacing repair for the headerless card.
-
-   The five panel bodies were never consistent with each other -- top padding
-   16px except Testimonials at 24, sides 24px except Career at 12, bottoms
-   ranging 12 to 48. In Panels mode the 46px sticky header sat above all of it
-   and hid the discrepancy. Remove the header and the first line lands 16px
-   from the card edge, inside the 16px corner radius, which is what reads as
-   cramped.
-
-   Fixed on the panel rather than in five inline style objects. Adding
-   scroll-container padding lifts every body clear of the curve without
-   touching Panels mode, which has to stay identical to live, and without
-   editing a component the other mode shares.
-
-   --space-5 on top of each body's own --space-4 gives 36px of clearance
-   against a 24px radius. No bottom padding here: the panel bodies now all
-   carry --space-9 at the foot themselves, and stacking another --space-6 on
-   top of that would leave 72px of dead space under the last line.
-
-   The radius is deliberately NOT changed. --radius-lg is what the portrait,
-   the work cards and every other card on the site use, so lifting only the
-   panel to --radius-xl left the panel corner and the portrait corner inside
-   it visibly out of step. One radius for cards, and the panel is a card. */
-.focus-stage .panel {
-  padding-top: var(--space-5);
-}
+/* Scroll mode needs no spacing compensation any more. The panel bodies carry
+   a flat --space-6 on all four sides, so the first element sits 24px from the
+   card edge whether the header is there or not. The old padding-top here was
+   propping up a 16px top against 24px sides; with the body even, it would
+   just make the top heavier than the sides again. */
 
 
 /* ─── Base ───────────────────────────────────────────── */

@@ -687,7 +687,7 @@ function AboutPanel() {
   return (
     <div>
       <PanelHeader label="About me" />
-      <div className="about-panel-body" style={{ padding: "var(--space-4) var(--space-6) var(--space-9)" }}>
+      <div className="about-panel-body" style={{ padding: "var(--space-6)" }}>
 
         {/* Portrait. illustration by default, real photo on hover */}
         <motion.div
@@ -1564,7 +1564,7 @@ function WorkPanel() {
   return (
     <div id="work-panel">
       <PanelHeader label="Selected Work" />
-      <div style={{ padding: "var(--space-4) var(--space-6) var(--space-9)" }}>
+      <div style={{ padding: "var(--space-6)" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
           {allCards.map((cs, i) => {
@@ -2314,7 +2314,7 @@ function CareerPanel() {
               transition={{ duration: 0.28, ease: EASE, delay: 0.1 }}
             >
 
-              <div style={{ padding: "var(--space-4) var(--space-3) var(--space-9)" }}>
+              <div style={{ padding: "var(--space-6)" }}>
 
                 {/* Company / project link. top */}
                 {item.link && (
@@ -2694,7 +2694,7 @@ function TestimonialsPanel() {
   return (
     <div>
       <PanelHeader label="Testimonials" />
-      <div style={{ padding: "var(--space-4) var(--space-6) var(--space-9)" }}>
+      <div style={{ padding: "var(--space-6)" }}>
 
         {/* Intro */}
         <motion.p
@@ -2868,7 +2868,7 @@ function ContactPanel() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <PanelHeader label="Contact" />
-      <div style={{ padding: "var(--space-4) var(--space-6) var(--space-9)", flex: 1, display: "flex", flexDirection: "column" }}>
+      <div style={{ padding: "var(--space-6)", flex: 1, display: "flex", flexDirection: "column" }}>
 
         {/* Headline. typography per Figma reference:
             Manrope 400 / 18px / line-height 30px / 0 tracking. */}
