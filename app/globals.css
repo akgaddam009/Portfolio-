@@ -346,11 +346,11 @@
    carry --space-9 at the foot themselves, and stacking another --space-6 on
    top of that would leave 72px of dead space under the last line.
 
-   The radius goes up with it: --radius-lg was chosen for a 420px card in a
-   rail of five, and one centred card carrying the whole viewport takes the
-   softer --radius-xl. */
+   The radius is deliberately NOT changed. --radius-lg is what the portrait,
+   the work cards and every other card on the site use, so lifting only the
+   panel to --radius-xl left the panel corner and the portrait corner inside
+   it visibly out of step. One radius for cards, and the panel is a card. */
 .focus-stage .panel {
-  border-radius: var(--radius-xl);
   padding-top: var(--space-5);
 }
 
