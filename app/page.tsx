@@ -642,7 +642,7 @@ function AboutPanel() {
             fontWeight: 500,
             lineHeight: 1.5,
             letterSpacing: "-0.02em",
-            color: "var(--text-display)",
+            color: "var(--about-h1)",
             marginBottom: "20px",
           }}
         >

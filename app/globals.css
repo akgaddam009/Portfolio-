@@ -47,6 +47,12 @@
                                  Large letterforms are inherently legible so max
                                  contrast is unnecessary and reads as harsh. ~12.6:1
                                  on white — AAA compliant, noticeably more editorial. */
+  --about-h1: #113264;   /* About-me headline only — deep navy, ~12.8:1 on white.
+                                 Its own token rather than a literal so the dark
+                                 theme has somewhere to answer: #113264 sits at
+                                 ~1.35:1 on the warm dark panel, effectively
+                                 invisible, so dark takes a lightened cut of the
+                                 same hue below. */
   --muted:    #6e6e73;   /* secondary label — cool gray */
   --muted2:   #424245;   /* tertiary label — deeper cool gray */
   --chrome:   #f5f5f5;   /* grouped-background canvas — panels float on this */
@@ -237,6 +243,8 @@
   --text:         #ffffff;
   --text-hover:   #c8c3bc;   /* hover — warm parchment off-white */
   --text-display: #e8e8ed;   /* large display / H1 — warm off-white, ~12.8:1 on #1a1918 */
+  --about-h1: #85acea;   /* same hue as light's #113264, lifted to ~7.4:1 on
+                                 #1a1918. The literal navy would land at ~1.35:1. */
   --muted:    #8f8f97;   /* secondary label — ≈4.9:1 on #1a1918 (AA pass) */
   --muted2:   #a1a1aa;   /* body / value text */
   --accent-success: #34c759;
