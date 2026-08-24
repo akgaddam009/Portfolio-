@@ -121,12 +121,19 @@
      one rung down, so a curve inside another curve always reads as subordinate
      rather than competing with it:
 
-       panel                       --radius-lg   16px
-        └ work card, portrait      --radius-md   12px
+       panel                       --radius-xl   24px   gutter --space-3
+        └ work card, portrait      --radius-md   12px   inner pad --space-3
            └ media inside a card   --radius-sm    8px
 
-     A card matching its panel at 16px is what read as "off": two identical
-     curves a few pixels apart give the eye no sense of which contains which.
+     The rule that makes it look right is concentric: an inner radius equals
+     its container's radius minus the gutter between them. 24 - 12 = 12, and
+     12 - 12 = 0 with the media inset flush so it tracks the card instead.
+
+     This is why the panel is --radius-xl and the gutter is only 12px. At the
+     old 16px panel with a 24px gutter the arithmetic went negative (16 - 24 =
+     -8), so NO card radius could nest and every value looked slightly wrong.
+     Widening the gutter again without widening the panel radius reintroduces
+     exactly that.
 
      Flush children are the exception -- a thumbnail sitting hard against its
      card's top corners must use the card's radius exactly, or the curve breaks
@@ -134,8 +141,8 @@
   --radius-xs:   4px;   /* hairline rounds — scrollbar, focus ring */
   --radius-sm:   8px;   /* small buttons, mono labels, media inside a card */
   --radius-md:   12px;  /* cards and media sitting directly in a panel */
-  --radius-lg:   16px;  /* the panel itself */
-  --radius-xl:   24px;  /* feature media */
+  --radius-lg:   16px;  /* mid step — pills, larger inline media */
+  --radius-xl:   24px;  /* the panel itself */
   --radius-pill: 9999px;
 
   /* ── Weight scale ──
