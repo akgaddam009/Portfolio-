@@ -3760,43 +3760,12 @@ export default function Home() {
 
   const scrollToPanel = goToPanel;
 
-  /* Wheel steps between panels instead of scrolling a rail.
-
-     Three things stop this feeling twitchy. A distance threshold, so a light
-     trackpad brush does not fire. A cooldown, because one flick emits a long
-     tail of decaying events that would otherwise skip three panels. And an
-     early return when the pointer is over a panel that can still scroll
-     vertically -- reading a long panel must not yank you to the next one.
-     Only once a panel is at its end does the wheel hand over. */
-  const wheelAccum = useRef(0);
-  const wheelLock  = useRef(false);
-  const onStageWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
-    const panel = (e.target as Element | null)?.closest?.(".panel") as HTMLElement | null;
-    if (panel) {
-      const atTop    = panel.scrollTop <= 0;
-      const atBottom = panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 1;
-      const canScroll = panel.scrollHeight > panel.clientHeight + 1;
-      if (canScroll && !((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom))) {
-        wheelAccum.current = 0;
-        return;
-      }
-    }
-
-    if (wheelLock.current) return;
-
-    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    if (!delta) return;
-    wheelAccum.current += delta;
-
-    const THRESHOLD = 120;
-    if (Math.abs(wheelAccum.current) < THRESHOLD) return;
-
-    const dir: 1 | -1 = wheelAccum.current > 0 ? 1 : -1;
-    wheelAccum.current = 0;
-    wheelLock.current = true;
-    setTimeout(() => { wheelLock.current = false; }, 520);
-    scrollByPanel(dir);
-  }, [scrollByPanel]);
+  /* Wheel no longer changes panels. It stepped between them on a threshold
+     plus cooldown, but that meant a scroll gesture had two possible meanings
+     depending on where a panel happened to be scrolled to, and the wrong one
+     threw away your place. Panels change on tab, arrow, keyboard and the
+     mobile menu only. The wheel scrolls the panel under the pointer, which is
+     the browser's own behaviour and needs no code. */
 
 
 
@@ -3867,7 +3836,6 @@ export default function Home() {
           ref={containerRef}
           className="panels-container"
           data-dim-ready={dimReady ? "true" : "false"}
-          onWheel={onStageWheel}
           style={{
             display: "flex",
             alignItems: "flex-start",
