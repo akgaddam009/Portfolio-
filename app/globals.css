@@ -310,6 +310,20 @@
   box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.3);
 }
 
+/* Scroll mode drops the per-panel sticky header. It exists in Panels mode to
+   label a card you are seeing alongside four others; with one panel on screen
+   and its name already lit in the tab bar directly above, the header repeats
+   the tab and costs 46px of the only card you can read.
+
+   Done as a scoped rule rather than a prop, deliberately: threading a
+   `showHeader` through AboutPanel, WorkPanel, CareerPanel, TestimonialsPanel
+   and ContactPanel would put a mode branch inside all five and make every
+   future panel change a two-mode regression. The stage owns the decision.
+
+   No padding compensation needed: every panel body already carries its own
+   16px top padding, which the header used to sit above rather than replace. */
+.focus-stage .panel-header-glass { display: none; }
+
 
 /* ─── Base ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
