@@ -520,7 +520,7 @@ function PixelRevealPortrait({ src, alt }: { src: string; alt: string }) {
   }, []);
 
   return (
-    <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "16px", overflow: "hidden" }}>
+    <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "var(--radius-md)", overflow: "hidden" }}>
       {/* Dithered treatment. The grayscale->colour reveal stays on the wrapper
           rather than the image, so it applies to the shader canvas and the
           plain-<img> fallback identically -- CSS filters apply to a <canvas>
@@ -574,7 +574,7 @@ function PortraitMagnify() {
         style={{
           position: "relative",
           width: "100%", height: "100%",
-          borderRadius: "16px",
+          borderRadius: "var(--radius-md)",
           overflow: "hidden",
           transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
           transition: leaving ? "transform 0.55s cubic-bezier(0.22,1,0.36,1)" : "transform 0.08s linear",
@@ -1262,7 +1262,7 @@ function SystemFeatureCard() {
           className="work-card"
           style={{
             background: "var(--surface)",
-            borderRadius: "16px",
+            borderRadius: "var(--radius-md)",
             overflow: "hidden",
             boxShadow: "var(--card-shadow)",
             transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -1273,12 +1273,12 @@ function SystemFeatureCard() {
           {/* Thumbnail. auto-playing screen recording of the portfolio's
               design language in motion. Muted + looped, mirrors the case
               study video thumbnail pattern. */}
-          <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+          <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "var(--radius-md) var(--radius-md) 0 0" }}>
             <WorkCardThumb
               src="/images/system/portfolio-design-language.mp4"
               poster="/images/system/cover.png"
               height={200}
-              borderRadius="16px 16px 0 0"
+              borderRadius="var(--radius-md) var(--radius-md) 0 0"
             />
           </div>
 
@@ -1625,7 +1625,7 @@ function WorkPanel() {
                     className="work-card"
                     style={{
                       background: "var(--surface)",
-                      borderRadius: "16px",
+                      borderRadius: "var(--radius-md)",
                       overflow: "hidden",
                       boxShadow: "var(--card-shadow)",
                       transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -1634,16 +1634,16 @@ function WorkPanel() {
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
                     {/* Thumbnail */}
-                    <div style={{ position: "relative", height: "220px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                    <div style={{ position: "relative", height: "220px", overflow: "hidden", borderRadius: "var(--radius-md) var(--radius-md) 0 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         <WorkCardThumb
                           src={WORK_THUMBS[cs.slug]}
                           poster={WORK_POSTERS[cs.slug]}
                           height={220}
-                          borderRadius="16px 16px 0 0"
+                          borderRadius="var(--radius-md) var(--radius-md) 0 0"
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
-                        <div style={{ position: "absolute", inset: "16px", borderRadius: "var(--radius-xs)", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
+                        <div style={{ position: "absolute", inset: "16px", borderRadius: "var(--radius-sm)", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
                             {/* FanCode only. `first-time-user-experience` is the
                               FanCode sports-app card -- the one FanCode entry
                               in CARD_ORDER, so it is the only FanCode thumbnail
@@ -1744,7 +1744,7 @@ function WorkPanel() {
                     <Link href={href}>
                       <div className="work-card" style={{
                         background: "var(--surface)",
-                        borderRadius: "16px",
+                        borderRadius: "var(--radius-md)",
                         overflow: "hidden",
                         boxShadow: "var(--card-shadow)",
                         transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -1752,12 +1752,12 @@ function WorkPanel() {
                       onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                       onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                       >
-                        <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                        <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "var(--radius-md) var(--radius-md) 0 0" }}>
                           <WorkCardThumb
                             src={WORK_THUMBS[cs.slug] || ""}
                             poster={WORK_POSTERS[cs.slug]}
                             height={200}
-                            borderRadius="16px 16px 0 0"
+                            borderRadius="var(--radius-md) var(--radius-md) 0 0"
                           />
                         </div>
                         <div style={{ padding: "12px 16px 16px" }}>
@@ -1824,7 +1824,7 @@ function WorkPanel() {
               transition={{ duration: 0.22, ease: EASE }}
               onClick={(e) => e.stopPropagation()}
               style={{
-                background: "var(--surface)", borderRadius: "var(--radius-lg)",
+                background: "var(--surface)", borderRadius: "var(--radius-md)",
                 border: "1px solid var(--border)",
                 boxShadow: "0 32px 80px -16px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06)",
                 padding: "36px 32px 28px",
@@ -2013,7 +2013,7 @@ function AiExperimentsPanel() {
               className="work-card"
               style={{
                 background: "var(--surface)",
-                borderRadius: "16px",
+                borderRadius: "var(--radius-md)",
                 overflow: "hidden",
                 boxShadow: "var(--card-shadow)",
                 transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -2026,7 +2026,7 @@ function AiExperimentsPanel() {
                 position: "relative",
                 height: "220px",
                 overflow: "hidden",
-                borderRadius: "16px 16px 0 0",
+                borderRadius: "var(--radius-md) var(--radius-md) 0 0",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -2040,7 +2040,7 @@ function AiExperimentsPanel() {
                   height={88}
                   loading="lazy"
                   decoding="async"
-                  style={{ width: "88px", height: "88px", display: "block", borderRadius: "var(--radius-lg)" }}
+                  style={{ width: "88px", height: "88px", display: "block", borderRadius: "var(--radius-sm)" }}
                 />
               </div>
 
@@ -3155,13 +3155,13 @@ function AiExplorationsPanel() {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                 >
-                  <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                  <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "var(--radius-md) var(--radius-md) 0 0" }}>
                     {WORK_THUMBS[astra.slug] ? (
                       <WorkCardThumb
                         src={WORK_THUMBS[astra.slug]}
                         poster={WORK_POSTERS[astra.slug]}
                         height={200}
-                        borderRadius="16px 16px 0 0"
+                        borderRadius="var(--radius-md) var(--radius-md) 0 0"
                       />
                     ) : (
                       <MeshThumbnail index={0} type={astra.type} confidential={astra.confidential} />

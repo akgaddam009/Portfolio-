@@ -117,10 +117,24 @@
 
   /* ── Radius scale ──
      Promoted from inline magic numbers. Cards = md/lg, chips = sm, pills = full. */
+  /* Radius is a nesting hierarchy, not a menu. Each level of containment steps
+     one rung down, so a curve inside another curve always reads as subordinate
+     rather than competing with it:
+
+       panel                       --radius-lg   16px
+        └ work card, portrait      --radius-md   12px
+           └ media inside a card   --radius-sm    8px
+
+     A card matching its panel at 16px is what read as "off": two identical
+     curves a few pixels apart give the eye no sense of which contains which.
+
+     Flush children are the exception -- a thumbnail sitting hard against its
+     card's top corners must use the card's radius exactly, or the curve breaks
+     at the seam. Those are written as `--radius-md --radius-md 0 0`. */
   --radius-xs:   4px;   /* hairline rounds — scrollbar, focus ring */
-  --radius-sm:   8px;   /* small buttons, mono labels */
-  --radius-md:   12px;  /* default card / panel */
-  --radius-lg:   16px;  /* large card / hero media */
+  --radius-sm:   8px;   /* small buttons, mono labels, media inside a card */
+  --radius-md:   12px;  /* cards and media sitting directly in a panel */
+  --radius-lg:   16px;  /* the panel itself */
   --radius-xl:   24px;  /* feature media */
   --radius-pill: 9999px;
 
