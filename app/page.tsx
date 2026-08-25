@@ -2216,7 +2216,11 @@ function CareerPanel() {
   const [hoveredItem, setHoveredItem]   = useState<CareerItem | null>(null);
   const [selectedItem, setSelectedItem] = useState<CareerItem | null>(null);
 
-  const selectedIdx   = selectedItem ? workItems.findIndex(w => w.title === selectedItem.title && w.startYear === selectedItem.startYear) : -1;
+  /* Prev/Next step within the open card's own list. Education and roles are
+     two separate sequences on the calendar, so stepping out of one and into
+     the other would move the card across the panel with no explanation. */
+  const navList       = selectedItem?.type === "education" ? eduItems : workItems;
+  const selectedIdx   = selectedItem ? navList.findIndex(w => w.title === selectedItem.title && w.startYear === selectedItem.startYear) : -1;
   const toggleCard    = (item: CareerItem) => setSelectedItem(prev =>
     prev?.title === item.title && prev?.startYear === item.startYear ? null : item);
   const collapseCard  = () => setSelectedItem(null);
@@ -2232,8 +2236,8 @@ function CareerPanel() {
      looking at the card they just clicked. */
   const navPending    = useRef(false);
   const cancelRef     = useRef(0);
-  const prevCard      = () => { if (selectedIdx > 0) { navPending.current = true; setSelectedItem(workItems[selectedIdx - 1]); } };
-  const nextCard      = () => { if (selectedIdx < workItems.length - 1) { navPending.current = true; setSelectedItem(workItems[selectedIdx + 1]); } };
+  const prevCard      = () => { if (selectedIdx > 0) { navPending.current = true; setSelectedItem(navList[selectedIdx - 1]); } };
+  const nextCard      = () => { if (selectedIdx < navList.length - 1) { navPending.current = true; setSelectedItem(navList[selectedIdx + 1]); } };
 
   useEffect(() => {
     if (!navPending.current || !selectedItem) return;
@@ -2690,8 +2694,9 @@ function CareerPanel() {
                   </div>
                 )}
 
-                {/* Prev / Next navigation. only for work cards */}
-                {!isEdu && <div style={{
+                {/* Prev / Next navigation, for education as well as roles.
+                    Each steps within its own sequence -- see navList. */}
+                {<div style={{
                   display: "flex", gap: "6px", paddingTop: "16px",
                 }}>
                   {/* Rendered only where they lead somewhere. A disabled
@@ -2711,7 +2716,7 @@ function CareerPanel() {
                       Prev
                     </motion.button>
                   )}
-                  {selectedIdx < workItems.length - 1 && (
+                  {selectedIdx < navList.length - 1 && (
                     <motion.button
                       className="btn-secondary career-nav-btn career-nav-btn--next"
                       onClick={e => { e.stopPropagation(); nextCard(); }}
