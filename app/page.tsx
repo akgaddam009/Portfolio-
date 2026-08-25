@@ -1025,7 +1025,7 @@ function MeshThumbnail({ index, type, confidential }: {
 const WORK_THUMBS: Record<string, string> = {
   /* ── Video thumbnails (existing) ── */
   "astra":                "/images/astra/overview.mp4",
-  "planful-esm-tables":   "/images/planful/planful-product-video.mp4",
+  "planful-esm-tables":   "/images/planful/esm-tables-thumbnail.jpg",
   "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
