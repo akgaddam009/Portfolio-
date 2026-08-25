@@ -64,6 +64,10 @@
   --font-body: var(--font-manrope),    'Manrope',    -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-manrope),    'Manrope',    -apple-system, sans-serif;
   --font-logo: var(--font-manrope),    'Manrope',    -apple-system, sans-serif;
+  /* Local experiment: the nav wordmark only. Cursive fallbacks rather than
+     sans, so a failed webfont degrades to something with the same character
+     instead of snapping back to Manrope. */
+  --font-script: var(--font-story-script), 'Story Script', 'Snell Roundhand', cursive;
 
   /* ─── Type scale ─────────────────────────────────────
      Semantic size tokens covering the active type usage.

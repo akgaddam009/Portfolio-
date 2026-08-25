@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Manrope, Story_Script } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/Cursor";
 import AnalyticsClient from "@/components/AnalyticsClient";
@@ -14,6 +14,15 @@ const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
+  display: "swap",
+});
+
+/* Local experiment: Story Script on the nav wordmark only. Ships one weight
+   (400) because that is all the family has. */
+const storyScript = Story_Script({
+  variable: "--font-story-script",
+  subsets: ["latin"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -101,7 +110,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${manrope.variable} ${storyScript.variable}`} suppressHydrationWarning>
       <body>
         <script
           dangerouslySetInnerHTML={{

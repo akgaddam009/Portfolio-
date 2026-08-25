@@ -134,12 +134,18 @@ function HomeNav({
           href="/"
           aria-label="Home. Arun Gaddam"
           style={{
-            fontFamily: "var(--font-logo)",
-            fontSize: "var(--text-caption)",
-            fontWeight: 500,
+            fontFamily: "var(--font-script)",
+            /* Script faces carry far less x-height than Manrope at the same
+               size, so --text-caption would read tiny here; stepped up to
+               --text-title-sm to match the optical weight of the old wordmark.
+               Uppercase and letter-spacing are dropped: a joined script breaks
+               apart when tracked out, and cursive capitals are close to
+               illegible in a 44px pill. */
+            fontSize: "var(--text-title-sm)",
+            fontWeight: 400,
             color: "var(--text)",
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
+            letterSpacing: "0",
+            textTransform: "none",
             height: "44px",
             padding: "0 14px",
             borderRadius: "var(--radius-lg)",
