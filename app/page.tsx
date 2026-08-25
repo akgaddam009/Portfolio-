@@ -3294,13 +3294,23 @@ function AiExplorationsPanel() {
   );
 }
 
-const PANEL_SHADOW_LIGHT = "0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06)";
-const PANEL_SHADOW_ACTIVE_LIGHT = "0 2px 4px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.10)";
+/* A hairline ring defines the panel edge; the blur only has to suggest air
+   under it. That split is what lets the blur go this light -- the edge no
+   longer depends on the shadow being visible, and a shadow you can clearly
+   see on a surface this large is too strong by definition.
+   Light panels also already sit on --chrome (#f5f5f5), a step below the panel
+   fill, so some of the lift is done before any shadow is drawn.
+   Rest and active are deliberately close. They used to differ by 4px of
+   offset, 16px of blur and 0.04 alpha, which made elevation pulse across the
+   rail as you scrolled -- movement in the chrome, competing with the content
+   it frames. */
+const PANEL_SHADOW_LIGHT = "0 0 0 1px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.03)";
+const PANEL_SHADOW_ACTIVE_LIGHT = "0 0 0 1px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.025), 0 12px 32px rgba(0,0,0,0.045)";
 /* Dark panels sit on #050507 canvas. drop shadows are invisible on near-black.
    A white hairline ring defines the panel edge; the surface step (#1c1c1e panel
    vs #050507 canvas) provides the perceived lift. */
-const PANEL_SHADOW_DARK  = "inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.40), 0 6px 24px rgba(0,0,0,0.35)";
-const PANEL_SHADOW_ACTIVE_DARK = "inset 0 1px 0 rgba(255,255,255,0.11), 0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(0,0,0,0.45)";
+const PANEL_SHADOW_DARK  = "inset 0 1px 0 rgba(255,255,255,0.07), 0 1px 2px rgba(0,0,0,0.30), 0 8px 24px rgba(0,0,0,0.26)";
+const PANEL_SHADOW_ACTIVE_DARK = "inset 0 1px 0 rgba(255,255,255,0.10), 0 2px 4px rgba(0,0,0,0.36), 0 12px 32px rgba(0,0,0,0.32)";
 
 /* ── Story View. Stripped-down single-column resume page. ──
    Bio · 3 stats · work list · tenure line · contact.
