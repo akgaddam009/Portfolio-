@@ -1934,7 +1934,7 @@ const careerItems: CareerItem[] = [
   {
     type: "role", startYear: 2022.25, endYear: 2023.833,
     title: "Senior Product Designer", subtitle: "Zetwerk",
-    dateLabel: "Apr 2022 - Nov 2023", impact: "Manufacturing", logoDomain: "zetwerk.com",
+    dateLabel: "Apr 2022 - Nov 2023", impact: "Manufacturing startup", logoDomain: "zetwerk.com",
     link: "https://www.zetwerk.com/",
     images: ["/images/career/zetwerk-team.jpg"],
     description: "Led product design initiatives for Zetwerk's Order Management System (OMS), improving workflows to support business operations during a ~6× revenue growth phase.",
