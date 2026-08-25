@@ -17,6 +17,7 @@ import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure, Mail, FileText, LinkedIn, ChartActivity } from "@/components/ui/Icon";
 import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
 import LoadingScreen from "@/components/LoadingScreen";
+import { playClick, isClickSoundEnabled, setClickSoundEnabled } from "@/lib/clickSound";
 import { trackEmailClick, trackLinkedInClick, trackResumeDownload } from "@/lib/analytics";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -26,6 +27,11 @@ const haptic = (pattern: number | number[]) => {
   if (typeof navigator !== "undefined" && "vibrate" in navigator) {
     navigator.vibrate(pattern);
   }
+  /* Sound rides on the same call haptics already do. Every interaction that
+     deserves a buzz on a phone deserves the same acknowledgement on a desktop,
+     and hooking here means no call site has to know about audio. Off unless
+     the visitor turns it on -- see lib/clickSound.ts. */
+  playClick();
 };
 
 /* ── Home nav. name + panel arrows ──
@@ -567,6 +573,9 @@ function BrandGlyph({ name }: { name: string }) {
 /* Single source for the About panel's skill groups. The Contact panel's
    "Skills & Tools" marquee derives from this too -- it used to keep its own
    23-item list, which had already drifted from this one. One array, no drift. */
+/* Skills that begin a new line in the About panel's prose run. */
+const SKILL_LINE_BREAKS = new Set(["AI-Assisted Design", "Usability & Accessibility"]);
+
 const SKILL_GROUPS: {
   label: string;
   variant: "prose" | "chips";
@@ -818,16 +827,24 @@ function AboutPanel() {
                 fontWeight: 400, lineHeight: 1.7, letterSpacing: "-0.01em",
                 color: "var(--muted2)",
               }}>
-                {items.map((item, ii) => (
-                  <li key={item} style={{ display: "inline" }}>
-                    {ii > 0 && (
-                      <span aria-hidden="true" style={{ color: "var(--muted)", padding: "0 6px" }}>
-                        ·
-                      </span>
-                    )}
-                    {item}
-                  </li>
-                ))}
+                {items.map((item, ii) => {
+                  /* These two start a new line rather than flowing on. The run
+                     otherwise wraps wherever the column happens to run out,
+                     which split related terms mid-phrase. display: block forces
+                     the break, and the leading middot is dropped with it --
+                     a separator at the start of a line reads as a bullet. */
+                  const startsLine = SKILL_LINE_BREAKS.has(item);
+                  return (
+                    <li key={item} style={{ display: startsLine ? "block" : "inline" }}>
+                      {ii > 0 && !startsLine && (
+                        <span aria-hidden="true" style={{ color: "var(--muted)", padding: "0 6px" }}>
+                          ·
+                        </span>
+                      )}
+                      {item}
+                    </li>
+                  );
+                })}
               </ul>
             ) : (
               <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
@@ -3319,6 +3336,40 @@ function AiExplorationsPanel() {
    offset, 16px of blur and 0.04 alpha, which made elevation pulse across the
    rail as you scrolled -- movement in the chrome, competing with the content
    it frames. */
+/* ── Click sound switch ────────────────────────────────────
+   Unlike ShadowToggle this is a real candidate control, not scaffolding: if
+   the site ever ships sound it needs a visible way to turn it off, and that
+   control has to exist wherever the sound does. Parked in the dev corner for
+   now so both experiments are in one place. */
+function SoundToggle() {
+  const [on, setOn] = useState(false);
+  useEffect(() => { setOn(isClickSoundEnabled()); }, []);
+  return (
+    <button
+      onClick={() => {
+        const next = !on;
+        setClickSoundEnabled(next);
+        setOn(next);
+        /* Play on the gesture that enables it, so the first thing you hear is
+           the thing you just switched on. */
+        if (next) playClick();
+      }}
+      aria-pressed={on}
+      title="Click sound"
+      style={{
+        position: "fixed", left: "16px", bottom: "52px", zIndex: 9999,
+        height: "28px", padding: "0 10px",
+        border: "1px solid #999", borderRadius: "4px",
+        background: "#fff", color: "#222",
+        fontFamily: "ui-monospace, monospace", fontSize: "10px",
+        letterSpacing: "0.08em", cursor: "pointer",
+      }}
+    >
+      {on ? "SOUND · ON" : "SOUND · OFF"}
+    </button>
+  );
+}
+
 /* ── Shadow preset toggle. LOCAL DEV ONLY ──────────────────
    Cycles data-shadow on <html> so the three elevation treatments can be
    compared on the real page instead of from a description. Presets live in
@@ -3929,6 +3980,7 @@ export default function Home() {
     <>
       <LoadingScreen visible={loading} />
       <ShadowToggle />
+      <SoundToggle />
       <HomeNav
         onPrev={() => scrollByPanel(-1)}
         onNext={() => scrollByPanel(1)}
