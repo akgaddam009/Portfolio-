@@ -38,12 +38,11 @@ let hydrated = false;
 function hydrate() {
   if (hydrated || typeof window === "undefined") return;
   hydrated = true;
-  try {
-    /* Only an explicit "off" turns it down; anything else keeps the default. */
-    enabled = window.localStorage.getItem(STORAGE_KEY) !== "off";
-  } catch {
-    /* storage unavailable — stays off */
-  }
+  /* Deliberately does NOT read storage. The switch that wrote that value is
+     gone, so anyone who happened to toggle it off while it existed would be
+     stuck with silence and no way back. With no control there is no
+     preference: sound is simply on. Restore this read at the same time as a
+     control, not before. */
 }
 
 function audioContext(): AudioContext | null {

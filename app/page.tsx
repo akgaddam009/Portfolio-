@@ -841,15 +841,18 @@ function AboutPanel() {
                 color: "var(--muted2)",
               }}>
                 {items.map((item, ii) => {
-                  /* These two start a new line rather than flowing on. The run
-                     otherwise wraps wherever the column happens to run out,
-                     which split related terms mid-phrase. display: block forces
-                     the break, and the leading middot is dropped with it --
-                     a separator at the start of a line reads as a bullet. */
+                  /* Two items start their own line. display: block breaks
+                     before them -- but it also breaks AFTER them, so the next
+                     item begins a line too. Both cases have to drop their
+                     leading middot, or a line opens with a stray separator
+                     that reads as a bullet. Suppressing only the first was the
+                     bug here. */
                   const startsLine = SKILL_LINE_BREAKS.has(item);
+                  const afterBreak = ii > 0 && SKILL_LINE_BREAKS.has(items[ii - 1]);
+                  const showDot    = ii > 0 && !startsLine && !afterBreak;
                   return (
                     <li key={item} style={{ display: startsLine ? "block" : "inline" }}>
-                      {ii > 0 && !startsLine && (
+                      {showDot && (
                         <span aria-hidden="true" style={{ color: "var(--muted)", padding: "0 6px" }}>
                           ·
                         </span>
@@ -3717,6 +3720,9 @@ export default function Home() {
   const containerRef  = useRef<HTMLDivElement>(null);
   const [activePanel, setActivePanel] = useState(0);
   const [loading, setLoading]         = useState(true);
+
+  /* Click sound: one document-level listener for the page. */
+  useEffect(() => installClickSound(), []);
   const [revealed, setRevealed]       = useState(false);
   const [isDark, setIsDark]           = useState(false);
   /* viewMode persists across sessions. Default "workspace" so SSR matches
