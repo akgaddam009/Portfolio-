@@ -1396,33 +1396,12 @@ function WorkChip({ label }: { label: string }) {
    Slugs not listed here render tags only, which is the correct default -- a
    card with no clear single domain should not be given a fabricated one. */
 /* Cards whose thumbnail gets the dithered treatment rather than a plain
-   <img>. Same size and colorSteps as the About portrait, so the three read as
-   one imagery style rather than three separate effects. */
+   <img>. FanCode only. Planful was tried here and taken back out: it is a
+   product screenshot, and the fine table rules that make it worth showing are
+   the first thing a dither destroys. */
 const DITHERED_THUMBS = new Set<string>([
   "first-time-user-experience",
-  "financial-planning-workflow",
 ]);
-
-/* How strongly the dither reads, 0-1. Absent means full strength.
-
-   Halving `size` is how this has been softened before (3 -> 1.5 -> 0.75), but
-   the grid bottoms out at 0.5px -- it is a real pixel measurement, not a
-   ratio, which is why the testimonial avatars stop at 0.525. Going to half of
-   0.75 is not available.
-
-   So the grid stays where it is, matching FanCode's texture exactly, and the
-   treated layer is composited over the untreated image instead. 0.5 is
-   literally half the effect, and unlike a coarser grid it cannot muddy the
-   fine table rules in a product screenshot. */
-const DITHER_STRENGTH: Record<string, number> = {
-  /* 0.25, down from 0.5. At half strength the grid still fought the content:
-     this thumbnail is a product screenshot, and the fine table rules that make
-     it worth showing are the first thing a dither destroys. A quarter reads as
-     a grain over a legible screenshot rather than a treatment applied to it,
-     which keeps the family resemblance to FanCode and the About portrait
-     without spending the legibility to get it. */
-  "financial-planning-workflow": 0.25,
-};
 
 /* Tags that should not become chips on a specific card. Same reasoning as the
    badge filter below: the tag stays in the data, so the case study page keeps
@@ -1729,43 +1708,14 @@ function WorkPanel() {
                               2 -> 1 -> 0.5, then back up to 0.75 (+50%), which
                               is also what the About portrait uses. */}
                           {DITHERED_THUMBS.has(cs.slug) ? (
-                            <div style={{ position: "relative", width: "100%", height: "100%" }}>
-                              {/* Only laid down where the dither is composited
-                                  at less than full strength, so a full-strength
-                                  card still fetches one image, not two. Same
-                                  src either way, so the browser serves it from
-                                  cache rather than over the network.
-
-                                  objectPosition is centre, NOT the top used by
-                                  the undithered branch below. DitheredImage
-                                  renders its shader with fit="cover" anchored
-                                  centre, and the inner box is not 16:9 -- the
-                                  16px inset changes its aspect -- so cover
-                                  genuinely crops. Anchoring the two layers
-                                  differently shows two different crops of the
-                                  same photo through a half-transparent top
-                                  layer, which reads as a distorted or ghosted
-                                  image. They have to agree. */}
-                              {(DITHER_STRENGTH[cs.slug] ?? 1) < 1 && (
-                                <img
-                                  src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
-                                  alt="" aria-hidden="true"
-                                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
-                                />
-                              )}
-                              <DitheredImage
-                                src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
-                                alt={cs.title}
-                                radius="6px"
-                                size={0.75}
-                                colorSteps={6}
-                                style={{
-                                  position: "absolute", inset: 0,
-                                  width: "100%", height: "100%",
-                                  opacity: DITHER_STRENGTH[cs.slug] ?? 1,
-                                }}
-                              />
-                            </div>
+                            <DitheredImage
+                              src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
+                              alt={cs.title}
+                              radius="6px"
+                              size={0.75}
+                              colorSteps={6}
+                              style={{ width: "100%", height: "100%" }}
+                            />
                           ) : (
                             <img
                               src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
