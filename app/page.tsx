@@ -2369,12 +2369,24 @@ function CareerPanel() {
                 the layout says once. Impact now shows at rest and lifts to
                 --text on hover. */}
             {!isExpanded && !isEdu && item.impact && (
+              /* The line after the company name takes a fill on interaction.
+                 Padding and the offsetting negative margin are constant, so
+                 only the background colour changes and the text never shifts
+                 as the fill arrives. inline-block keeps the fill hugging the
+                 text instead of running the full card width, and max-width
+                 preserves the ellipsis on long lines. Prev/Next stay
+                 unfilled -- they are on .btn-secondary, transparent with a
+                 hairline. */
               <p style={{
                 fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                 fontWeight: 400, letterSpacing: "-0.01em",
                 color: isHovered ? "var(--text)" : "var(--muted)", marginTop: "2px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                transition: "color 0.2s",
+                display: "inline-block", maxWidth: "100%",
+                padding: "2px 8px", marginLeft: "-8px",
+                borderRadius: "var(--radius-sm)",
+                background: isHovered ? "var(--surface2)" : "transparent",
+                transition: "color 0.2s, background 0.2s",
               }}>
                 {item.impact}
               </p>
