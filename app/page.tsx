@@ -163,6 +163,24 @@ function HomeNav({
              signal. */
           onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.color = "var(--text-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.color = "var(--text)"; }}
+          /* Already on "/", a Link to "/" is a no-op: the router sees the same
+             route and does nothing, so the wordmark felt dead on the homepage.
+             Reload instead, which replays the load reveal.
+
+             Only when we are actually on "/". From a case-study page the Link
+             still does a client-side navigation, which is the faster path and
+             the reason to keep this a Link rather than a plain <a href="/">.
+
+             Modified clicks are left alone so cmd/ctrl-click still opens a new
+             tab and middle-click still works. */
+          onClick={e => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            if (window.location.pathname === "/") {
+              e.preventDefault();
+              haptic(8);
+              window.location.reload();
+            }
+          }}
         >
           Arun Gaddam
         </Link>
