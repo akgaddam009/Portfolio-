@@ -1025,7 +1025,7 @@ function MeshThumbnail({ index, type, confidential }: {
 const WORK_THUMBS: Record<string, string> = {
   /* ── Video thumbnails (existing) ── */
   "astra":                "/images/astra/overview.mp4",
-  "planful-esm-tables":   "/images/planful/esm-tables-thumbnail.jpg",
+  "planful-esm-tables":   "/images/planful/landing-page.jpg",
   "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
@@ -1036,14 +1036,14 @@ const THUMB_LIGHT: Record<string, string> = {
   "apple-business-listings":     "/images/reputation/thumbnail.jpg",
   "vendor-credit-financing":     "/images/vendor-credit.png",
   "logistics-tax-compliance":    "/images/logistics.png",
-  "financial-planning-workflow": "/images/financial-planning.png",
+  "financial-planning-workflow": "/images/financial-planning-workflow.jpg",
   "first-time-user-experience":  "/images/ftux.png",
 };
 const THUMB_DARK: Record<string, string> = {
   "apple-business-listings":     "/images/reputation/thumbnail.jpg",
   "vendor-credit-financing":     "/images/vendor-credit.png",
   "logistics-tax-compliance":    "/images/logistics.png",
-  "financial-planning-workflow": "/images/financial-planning.png",
+  "financial-planning-workflow": "/images/financial-planning-workflow.jpg",
   "first-time-user-experience":  "/images/ftux.png",
 };
 
@@ -1055,18 +1055,69 @@ const WORK_POSTERS: Record<string, string> = {
 };
 
 // Video file extensions that should render through <video> instead of <img>.
+/* Videos that play on hover over an otherwise still card. The still is what
+   the card is; the video is a reward for pointing at it.
+
+   Only wired where a card has a real product video worth revealing. Touch
+   never reaches this -- see WorkCardThumb for why. */
+const WORK_HOVER_VIDEOS: Record<string, string> = {
+  "planful-esm-tables": "/images/planful/planful-product-video.mp4",
+};
+
 const isVideoThumb = (src: string) => /\.(mov|mp4|webm)$/i.test(src);
 
 /* ── Work card thumbnail shimmer wrapper ── */
 function WorkCardThumb({
-  src, poster, height = 200, borderRadius = "8px 8px 0 0",
+  src, poster, height = 200, borderRadius = "8px 8px 0 0", hoverVideo,
 }: {
-  src: string; poster?: string; height?: number; borderRadius?: string;
+  src: string; poster?: string; height?: number; borderRadius?: string; hoverVideo?: string;
 }) {
   const [ready, setReady] = useState(false);
   const [inView, setInView] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const [hoverReady, setHoverReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hoverVideoRef = useRef<HTMLVideoElement>(null);
   const isVideo = isVideoThumb(src);
+
+  /* Hover video is opt-in per card, and only on hardware that can hover.
+
+     A phone reports no hover, and a touch that lingers would otherwise fire
+     mouseenter and start a download the visitor never asked for. Pointing a
+     mouse at something is a deliberate act; resting a finger on it while
+     scrolling is not.
+
+     prefers-reduced-motion opts out too: an autoplaying loop is exactly the
+     kind of motion that setting exists to stop. */
+  const [canHover, setCanHover] = useState(false);
+  useEffect(() => {
+    if (!hoverVideo || isVideo) return;
+    const ok =
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setCanHover(ok);
+  }, [hoverVideo, isVideo]);
+
+  /* Mounted on first hover, never before, so a visitor who only scrolls past
+     the card pays nothing for a video they never see. Once mounted it stays,
+     so a second hover is instant rather than re-buffering. */
+  const [hoverMounted, setHoverMounted] = useState(false);
+  useEffect(() => {
+    if (hovering && canHover) setHoverMounted(true);
+  }, [hovering, canHover]);
+
+  useEffect(() => {
+    const v = hoverVideoRef.current;
+    if (!v) return;
+    if (hovering) {
+      void v.play().catch(() => {
+        /* Autoplay refused. The still underneath is already correct. */
+      });
+    } else {
+      v.pause();
+      v.currentTime = 0;
+    }
+  }, [hovering, hoverMounted]);
 
   /* Only trigger video loading when the card is (nearly) visible.
      rootMargin of 120px means the video starts buffering one card-height
@@ -1094,7 +1145,12 @@ function WorkCardThumb({
   };
 
   return (
-    <div ref={containerRef} style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div
+      ref={containerRef}
+      style={{ position: "relative", width: "100%", height: "100%" }}
+      onMouseEnter={canHover ? () => setHovering(true) : undefined}
+      onMouseLeave={canHover ? () => setHovering(false) : undefined}
+    >
       {isVideo ? (
         <>
           {/* Shimmer skeleton while the video buffers. No poster image —
@@ -1153,6 +1209,28 @@ function WorkCardThumb({
               transition: "opacity 0.3s ease",
             }}
           />
+          {/* Sits over the still and fades in once it can actually play, so a
+              hover never flashes an empty black rectangle before the first
+              frame arrives. */}
+          {hoverMounted && (
+            <video
+              ref={hoverVideoRef}
+              className="work-thumb"
+              src={hoverVideo}
+              loop muted playsInline
+              preload="none"
+              aria-hidden="true"
+              onCanPlay={() => setHoverReady(true)}
+              onError={() => setHoverReady(false)}
+              style={{
+                ...coverStyle,
+                opacity: hovering && hoverReady ? 1 : 0,
+                transition: "opacity 0.35s var(--ease-out-quart)",
+                zIndex: 2,
+                pointerEvents: "none",
+              }}
+            />
+          )}
         </>
       )}
     </div>
@@ -1317,6 +1395,14 @@ function WorkChip({ label }: { label: string }) {
 
    Slugs not listed here render tags only, which is the correct default -- a
    card with no clear single domain should not be given a fabricated one. */
+/* Tags that should not become chips on a specific card. Same reasoning as the
+   badge filter below: the tag stays in the data, so the case study page keeps
+   it, and only the card is trimmed. Cards show two chips at most, so dropping
+   one here promotes whatever came next rather than leaving a gap. */
+const CARD_CHIP_EXCLUDE: Record<string, string[]> = {
+  "first-time-user-experience": ["UX Design"],
+};
+
 const CARD_CATEGORY: Record<string, {
   label: string;
   tone: ChipTone;
@@ -1597,6 +1683,7 @@ function WorkPanel() {
                         <WorkCardThumb
                           src={WORK_THUMBS[cs.slug]}
                           poster={WORK_POSTERS[cs.slug]}
+                          hoverVideo={WORK_HOVER_VIDEOS[cs.slug]}
                           height={220}
                           borderRadius="16px 16px 0 0"
                         />
@@ -1653,6 +1740,9 @@ function WorkPanel() {
                         {cs.tags
                           .filter(tag =>
                             tag.toLowerCase() !== CARD_CATEGORY[cs.slug]?.label.toLowerCase())
+                          .filter(tag =>
+                            !CARD_CHIP_EXCLUDE[cs.slug]?.some(
+                              x => x.toLowerCase() === tag.toLowerCase()))
                           .slice(0, 2)
                           .map(tag => (
                             <WorkChip key={tag} label={tag} />
@@ -1708,6 +1798,7 @@ function WorkPanel() {
                           <WorkCardThumb
                             src={WORK_THUMBS[cs.slug] || ""}
                             poster={WORK_POSTERS[cs.slug]}
+                            hoverVideo={WORK_HOVER_VIDEOS[cs.slug]}
                             height={200}
                             borderRadius="16px 16px 0 0"
                           />
