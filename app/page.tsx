@@ -145,15 +145,15 @@ function HomeNav({
             borderRadius: "var(--radius-lg)",
             border: "none",
             background: "var(--surface)",
-            boxShadow: "var(--card-shadow)",
+            boxShadow: "var(--card-ring)",
             display: "inline-flex",
             alignItems: "center",
             textDecoration: "none",
             userSelect: "none",
             transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
           }}
-          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-lift)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-ring)"; }}
         >
           Arun Gaddam
         </Link>
@@ -221,7 +221,7 @@ function HomeNav({
                   borderRadius: "var(--radius-lg)",
                   border: "none",
                   background: "var(--surface)",
-                  boxShadow: "var(--card-shadow)",
+                  boxShadow: "var(--card-ring)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -229,8 +229,8 @@ function HomeNav({
                   opacity: disabled ? 0.3 : 1,
                   cursor: disabled ? "default" : "pointer",
                 }}
-                onMouseEnter={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-                onMouseLeave={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+                onMouseEnter={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-lift)"; }}
+                onMouseLeave={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-ring)"; }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                   <path d={d} />
@@ -3304,13 +3304,63 @@ function AiExplorationsPanel() {
    offset, 16px of blur and 0.04 alpha, which made elevation pulse across the
    rail as you scrolled -- movement in the chrome, competing with the content
    it frames. */
-const PANEL_SHADOW_LIGHT = "0 0 0 1px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.03)";
-const PANEL_SHADOW_ACTIVE_LIGHT = "0 0 0 1px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.025), 0 12px 32px rgba(0,0,0,0.045)";
+/* ── Shadow preset toggle. LOCAL DEV ONLY ──────────────────
+   Cycles data-shadow on <html> so the three elevation treatments can be
+   compared on the real page instead of from a description. Presets live in
+   globals.css under "Shadow presets"; delete this component and that block
+   together before anything ships.
+
+   Deliberately ugly: a mono chip in a corner, no theme tokens, so it can
+   never be mistaken for part of the design. */
+const SHADOW_PRESETS = [
+  { id: "soft",   label: "SOFT · current" },
+  { id: "strong", label: "STRONG · original" },
+  { id: "flat",   label: "FLAT · edges only" },
+] as const;
+
+function ShadowToggle() {
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("dev-shadow-preset");
+    const i = SHADOW_PRESETS.findIndex(p => p.id === saved);
+    if (i > 0) setIdx(i);
+  }, []);
+
+  useEffect(() => {
+    const preset = SHADOW_PRESETS[idx];
+    /* "soft" is the shipping default, expressed as the absence of the
+       attribute so the preset CSS never applies unless asked for. */
+    if (preset.id === "soft") document.documentElement.removeAttribute("data-shadow");
+    else document.documentElement.setAttribute("data-shadow", preset.id);
+    try { localStorage.setItem("dev-shadow-preset", preset.id); } catch {}
+  }, [idx]);
+
+  return (
+    <button
+      onClick={() => setIdx((idx + 1) % SHADOW_PRESETS.length)}
+      title="Cycle shadow preset (local only)"
+      style={{
+        position: "fixed", left: "16px", bottom: "16px", zIndex: 9999,
+        height: "28px", padding: "0 10px",
+        border: "1px solid #999", borderRadius: "4px",
+        background: "#fff", color: "#222",
+        fontFamily: "ui-monospace, monospace", fontSize: "10px",
+        letterSpacing: "0.08em", cursor: "pointer",
+      }}
+    >
+      {SHADOW_PRESETS[idx].label}
+    </button>
+  );
+}
+
+const PANEL_SHADOW_LIGHT = "var(--panel-shadow)";
+const PANEL_SHADOW_ACTIVE_LIGHT = "var(--panel-shadow-active)";
 /* Dark panels sit on #050507 canvas. drop shadows are invisible on near-black.
    A white hairline ring defines the panel edge; the surface step (#1c1c1e panel
    vs #050507 canvas) provides the perceived lift. */
-const PANEL_SHADOW_DARK  = "inset 0 1px 0 rgba(255,255,255,0.07), 0 1px 2px rgba(0,0,0,0.30), 0 8px 24px rgba(0,0,0,0.26)";
-const PANEL_SHADOW_ACTIVE_DARK = "inset 0 1px 0 rgba(255,255,255,0.10), 0 2px 4px rgba(0,0,0,0.36), 0 12px 32px rgba(0,0,0,0.32)";
+const PANEL_SHADOW_DARK  = "var(--panel-shadow)";
+const PANEL_SHADOW_ACTIVE_DARK = "var(--panel-shadow-active)";
 
 /* ── Story View. Stripped-down single-column resume page. ──
    Bio · 3 stats · work list · tenure line · contact.
@@ -3863,6 +3913,7 @@ export default function Home() {
   return (
     <>
       <LoadingScreen visible={loading} />
+      <ShadowToggle />
       <HomeNav
         onPrev={() => scrollByPanel(-1)}
         onNext={() => scrollByPanel(1)}

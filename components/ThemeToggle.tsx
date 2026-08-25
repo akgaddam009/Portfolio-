@@ -57,7 +57,7 @@ export default function ThemeToggle() {
         borderRadius: "var(--radius-lg)",
         border: "none",
         background: "var(--surface)",
-        boxShadow: "var(--card-shadow)",
+        boxShadow: "var(--card-ring)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -65,10 +65,11 @@ export default function ThemeToggle() {
         flexShrink: 0,
         transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
       }}
-      // Shadow elevation system (matches cards). Resting uses --card-shadow,
-      // hover lifts to --card-shadow-hover. No border anywhere.
-      onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+      // Shadow elevation system (matches cards). Resting is --card-ring,
+      // hover lifts to --card-lift. Both are preset-swappable, so this
+      // follows whatever the rest of the chrome is set to. No border anywhere.
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-lift)"; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-ring)"; }}
     >
       <AnimatePresence mode="wait" initial={false}>
         {dark ? (

@@ -167,6 +167,10 @@
      on this and take the full --card-shadow-hover only on hover. It cannot
      just be `none`: --surface and --bg are both #ffffff in light theme, so a
      card with no ring has no edge at all and disappears into the panel. */
+  /* Panel elevation as variables so the local shadow toggle can swap presets
+     at runtime. See ShadowToggle in app/page.tsx -- dev only, must not ship. */
+  --panel-shadow:        0 0 0 1px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.03);
+  --panel-shadow-active: 0 0 0 1px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.025), 0 12px 32px rgba(0,0,0,0.045);
   --card-ring:         0 0 0 1px rgba(0, 0, 0, 0.06);
   /* Four shallow layers instead of one deep one. --card-shadow-hover ends in
      `0 14px 36px rgba(0,0,0,0.10)`, and a single 36px blur at that alpha is
@@ -267,6 +271,8 @@
   --accent-success: #34c759;
   --chrome:   #000000;   /* canvas — pure black, panels lift off it */
 
+  --panel-shadow:        inset 0 1px 0 rgba(255,255,255,0.07), 0 1px 2px rgba(0,0,0,0.30), 0 8px 24px rgba(0,0,0,0.26);
+  --panel-shadow-active: inset 0 1px 0 rgba(255,255,255,0.10), 0 2px 4px rgba(0,0,0,0.36), 0 12px 32px rgba(0,0,0,0.32);
   --card-ring:         0 0 0 1px rgba(255, 255, 255, 0.10);
   --card-lift:         0 0 0 1px rgba(255, 255, 255, 0.16),
                        0 1px 2px rgba(0, 0, 0, 0.12),
@@ -907,16 +913,13 @@ html[data-mode="executive"] .exec-decision-image {
 .work-card {
   background: var(--surface);
   box-shadow: var(--card-ring);
-  transition: background 200ms var(--ease-out-quart),
-              box-shadow 200ms var(--ease-out-quart);
+  transition: box-shadow 200ms var(--ease-out-quart);
 }
-/* --surface2 is the scale's own "subtle differentiation for hover / inset"
-   step, so the fill change is the system answering rather than a new colour
-   invented for this state. It also does the work the shadow no longer has to:
-   with a fill shift carrying the hover, the lift can stay as light as it is
-   and still register. */
+/* The fill does not change. A --surface2 tint was tried here and greyed the
+   whole card on hover, which fought the thumbnail sitting inside it: the image
+   is the thing being pointed at, and dimming its surround to announce that is
+   backwards. The shadow and the image drift carry the state instead. */
 .work-card:not(.work-card--static):hover {
-  background: var(--surface2);
   box-shadow: var(--card-lift);
 }
 
@@ -934,4 +937,33 @@ html[data-mode="executive"] .exec-decision-image {
   .work-card video { transition: none; }
   .work-card:not(.work-card--static):hover img,
   .work-card:not(.work-card--static):hover video { transform: none; }
+}
+
+
+/* ─── Shadow presets (LOCAL DEV ONLY) ─────────────────────
+   Driven by data-shadow on <html> from the ShadowToggle control. Absent
+   attribute = the "soft" values defined above, which is what ships.
+   Delete this block and the control together. */
+
+/* What the panels and cards carried before the softening pass. */
+html[data-shadow="strong"] {
+  --panel-shadow:        0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06);
+  --panel-shadow-active: 0 2px 4px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.10);
+  --card-lift:           0 0 0 1px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.07), 0 14px 36px rgba(0,0,0,0.10);
+}
+html[data-shadow="strong"][data-theme="dark"] {
+  --panel-shadow:        inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.40), 0 6px 24px rgba(0,0,0,0.35);
+  --panel-shadow-active: inset 0 1px 0 rgba(255,255,255,0.11), 0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(0,0,0,0.45);
+}
+
+/* Edges only: every blur removed, hairlines kept so nothing disappears. */
+html[data-shadow="flat"] {
+  --panel-shadow:        0 0 0 1px rgba(0,0,0,0.06);
+  --panel-shadow-active: 0 0 0 1px rgba(0,0,0,0.10);
+  --card-lift:           0 0 0 1px rgba(0,0,0,0.12);
+}
+html[data-shadow="flat"][data-theme="dark"] {
+  --panel-shadow:        0 0 0 1px rgba(255,255,255,0.10);
+  --panel-shadow-active: 0 0 0 1px rgba(255,255,255,0.16);
+  --card-lift:           0 0 0 1px rgba(255,255,255,0.20);
 }
