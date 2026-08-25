@@ -150,10 +150,13 @@ function HomeNav({
             alignItems: "center",
             textDecoration: "none",
             userSelect: "none",
-            transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
+            transition: "box-shadow 200ms var(--ease-out-quart), color 200ms var(--ease-out-quart)",
           }}
-          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; }}
+          /* Shadow alone is a weak hover for a white pill on a light canvas,
+             so the label lifts to --text-hover as a second, non-spatial
+             signal. */
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.color = "var(--text-hover)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.color = "var(--text)"; }}
         >
           Arun Gaddam
         </Link>
