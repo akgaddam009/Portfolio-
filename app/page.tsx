@@ -2694,24 +2694,33 @@ function CareerPanel() {
                 {!isEdu && <div style={{
                   display: "flex", gap: "6px", paddingTop: "16px",
                 }}>
-                  <motion.button
-                    className="btn-secondary career-nav-btn career-nav-btn--prev"
-                    onClick={e => { e.stopPropagation(); prevCard(); }}
-                    disabled={selectedIdx <= 0}
-                    whileTap={selectedIdx > 0 ? { scale: 0.9 } : {}}
-                  >
-                    <span className="career-nav-chevron" aria-hidden="true">‹</span>
-                    Prev
-                  </motion.button>
-                  <motion.button
-                    className="btn-secondary career-nav-btn career-nav-btn--next"
-                    onClick={e => { e.stopPropagation(); nextCard(); }}
-                    disabled={selectedIdx >= workItems.length - 1}
-                    whileTap={selectedIdx < workItems.length - 1 ? { scale: 0.9 } : {}}
-                  >
-                    Next
-                    <span className="career-nav-chevron" aria-hidden="true">›</span>
-                  </motion.button>
+                  {/* Rendered only where they lead somewhere. A disabled
+                      button still reads as an offer the card is refusing, and
+                      on the first and last card that is a question the visitor
+                      has to answer for themselves. Absent, there is nothing to
+                      resolve. The remaining button takes the full row through
+                      flex: 1, so a single Next reads as deliberate rather than
+                      as half a pair with a gap beside it. */}
+                  {selectedIdx > 0 && (
+                    <motion.button
+                      className="btn-secondary career-nav-btn career-nav-btn--prev"
+                      onClick={e => { e.stopPropagation(); prevCard(); }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <span className="career-nav-chevron" aria-hidden="true">‹</span>
+                      Prev
+                    </motion.button>
+                  )}
+                  {selectedIdx < workItems.length - 1 && (
+                    <motion.button
+                      className="btn-secondary career-nav-btn career-nav-btn--next"
+                      onClick={e => { e.stopPropagation(); nextCard(); }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      Next
+                      <span className="career-nav-chevron" aria-hidden="true">›</span>
+                    </motion.button>
+                  )}
                 </div>}
               </div>
             </motion.div>
