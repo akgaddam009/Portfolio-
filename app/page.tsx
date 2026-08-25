@@ -1198,11 +1198,11 @@ function SystemFeatureCard() {
             background: "var(--surface)",
             borderRadius: "16px",
             overflow: "hidden",
-            boxShadow: "var(--card-shadow)",
+            boxShadow: "var(--card-ring)",
             transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
           }}
           onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-ring)"; }}
         >
           {/* Thumbnail. auto-playing screen recording of the portfolio's
               design language in motion. Muted + looped, mirrors the case
@@ -1561,11 +1561,11 @@ function WorkPanel() {
                       background: "var(--surface)",
                       borderRadius: "16px",
                       overflow: "hidden",
-                      boxShadow: "var(--card-shadow)",
+                      boxShadow: "var(--card-ring)",
                       transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
                     }}
                     onMouseEnter={e => { if (!comingSoon) e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-ring)"; }}
                   >
                     {/* Thumbnail */}
                     <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
@@ -1680,11 +1680,11 @@ function WorkPanel() {
                         background: "var(--surface)",
                         borderRadius: "16px",
                         overflow: "hidden",
-                        boxShadow: "var(--card-shadow)",
+                        boxShadow: "var(--card-ring)",
                         transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
                       }}
                       onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-                      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-ring)"; }}
                       >
                         <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                           <WorkCardThumb
@@ -2131,11 +2131,11 @@ function AiExperimentsPanel() {
                 background: "var(--surface)",
                 borderRadius: "16px",
                 overflow: "hidden",
-                boxShadow: "var(--card-shadow)",
+                boxShadow: "var(--card-ring)",
                 transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
               }}
               onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-              onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-ring)"; }}
             >
               {/* Same 16:9 / 16px-top-radius geometry as the work cards. */}
               <div style={{
@@ -2342,9 +2342,14 @@ function CareerPanel() {
           overflow: "hidden",
           cursor: isClickable ? "pointer" : "default",
           zIndex: isExpanded ? 10 : isHovered ? 5 : 1,
+          /* Flat at rest like a calendar event, lifting only on hover or when
+             expanded. --card-ring rather than none: the card fills with
+             --surface / --bg, both #ffffff in light theme, so with no ring it
+             would have no edge against the panel at all. A real calendar event
+             gets away with flat because it is filled with saturated colour. */
           boxShadow: isExpanded || isHovered
             ? "var(--card-shadow-hover)"
-            : "var(--card-shadow)",
+            : "var(--card-ring)",
           transition: "box-shadow 0.35s cubic-bezier(0.22,1,0.36,1)",
         }}
       >
