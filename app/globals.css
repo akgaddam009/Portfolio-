@@ -283,8 +283,14 @@
   --text:         #ffffff;
   --text-hover:   #c8c3bc;   /* hover — warm parchment off-white */
   --text-display: #e8e8ed;   /* large display / H1 — warm off-white, ~12.8:1 on #1a1918 */
-  --about-h1: #85acea;   /* same hue as light's #113264, lifted to ~7.4:1 on
-                                 #1a1918. The literal navy would land at ~1.35:1. */
+  --about-h1: #9fb2d1;   /* Light's #113264 translated for a warm dark panel,
+                                 not just lightened. The previous #85acea kept
+                                 the navy's 71% saturation while raising
+                                 lightness to 72%, and that much chroma high up
+                                 the scale reads as neon -- especially cool blue
+                                 against a warm #1a1918. Saturation drops to
+                                 ~35% at the same hue: recognisably the same
+                                 colour, no longer shouting. ~8.3:1 on --bg. */
   --muted:    #8f8f97;   /* secondary label — ≈4.9:1 on #1a1918 (AA pass) */
   --muted2:   #a1a1aa;   /* body / value text */
   --accent-success: #34c759;
