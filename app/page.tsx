@@ -586,9 +586,6 @@ function BrandGlyph({ name }: { name: string }) {
 /* Single source for the About panel's skill groups. The Contact panel's
    "Skills & Tools" marquee derives from this too -- it used to keep its own
    23-item list, which had already drifted from this one. One array, no drift. */
-/* Skills that begin a new line in the About panel's prose run. */
-const SKILL_LINE_BREAKS = new Set(["AI-Assisted Design", "Usability & Accessibility"]);
-
 const SKILL_GROUPS: {
   label: string;
   variant: "prose" | "chips";
@@ -847,27 +844,25 @@ function AboutPanel() {
                 fontWeight: 400, lineHeight: 1.7, letterSpacing: "-0.01em",
                 color: "var(--muted2)",
               }}>
-                {items.map((item, ii) => {
-                  /* Two items start their own line. display: block breaks
-                     before them -- but it also breaks AFTER them, so the next
-                     item begins a line too. Both cases have to drop their
-                     leading middot, or a line opens with a stray separator
-                     that reads as a bullet. Suppressing only the first was the
-                     bug here. */
-                  const startsLine = SKILL_LINE_BREAKS.has(item);
-                  const afterBreak = ii > 0 && SKILL_LINE_BREAKS.has(items[ii - 1]);
-                  const showDot    = ii > 0 && !startsLine && !afterBreak;
-                  return (
-                    <li key={item} style={{ display: startsLine ? "block" : "inline" }}>
-                      {showDot && (
-                        <span aria-hidden="true" style={{ color: "var(--muted)", padding: "0 6px" }}>
-                          ·
-                        </span>
-                      )}
-                      {item}
-                    </li>
-                  );
-                })}
+                {/* Every item inline, wrapping where the column runs out.
+
+                   Two of these used to be display: block to force a line of
+                   their own. That worked at 11 items and fell apart at 18: a
+                   block li ends the line before it AND after it, so the run
+                   stopped dead at "Usability & Accessibility" and restarted,
+                   which reads as broken sequence rather than as grouping.
+                   Forced breaks only make sense when the list is short enough
+                   to plan; past that, let it wrap. */}
+                {items.map((item, ii) => (
+                  <li key={item} style={{ display: "inline" }}>
+                    {ii > 0 && (
+                      <span aria-hidden="true" style={{ color: "var(--muted)", padding: "0 6px" }}>
+                        ·
+                      </span>
+                    )}
+                    {item}
+                  </li>
+                ))}
               </ul>
             ) : (
               <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
