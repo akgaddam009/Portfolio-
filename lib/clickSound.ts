@@ -115,3 +115,37 @@ export function playClick(): void {
     /* Audio is decoration. Never let it break an interaction. */
   }
 }
+
+/* Interactive elements that should click. Everything a pointer can press and
+   that does something when pressed -- not plain text, not the page body. */
+const INTERACTIVE =
+  'a[href], button, summary, [role="button"], [role="tab"], [role="link"], ' +
+  'input[type="checkbox"], input[type="radio"], input[type="submit"], label[for]';
+
+/* One document-level listener rather than a handler per control.
+
+   Wiring sound into haptic() only covered the handful of places that already
+   called it -- the nav arrows and the mobile menu -- so most of the site was
+   silent. Every control would otherwise need its own onClick, and every
+   control added later would need remembering.
+
+   pointerdown, not click: the sound belongs to the press. Firing on click
+   means firing on release, which lands a beat after the finger and reads as
+   lag even when nothing is slow.
+
+   Capture phase so a handler calling stopPropagation cannot silence it. */
+export function installClickSound(): () => void {
+  if (typeof document === "undefined") return () => {};
+
+  const onDown = (e: PointerEvent) => {
+    if (!enabled) return;
+    if (e.button !== 0) return;
+    const el = (e.target as Element | null)?.closest?.(INTERACTIVE) as HTMLElement | null;
+    if (!el) return;
+    if (el.hasAttribute("disabled") || el.getAttribute("aria-disabled") === "true") return;
+    playClick();
+  };
+
+  document.addEventListener("pointerdown", onDown, true);
+  return () => document.removeEventListener("pointerdown", onDown, true);
+}

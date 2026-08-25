@@ -17,7 +17,7 @@ import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure, Mail, FileText, LinkedIn, ChartActivity } from "@/components/ui/Icon";
 import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
 import LoadingScreen from "@/components/LoadingScreen";
-import { playClick, isClickSoundEnabled, setClickSoundEnabled } from "@/lib/clickSound";
+import { playClick, isClickSoundEnabled, setClickSoundEnabled, installClickSound } from "@/lib/clickSound";
 import { trackEmailClick, trackLinkedInClick, trackResumeDownload } from "@/lib/analytics";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -27,11 +27,6 @@ const haptic = (pattern: number | number[]) => {
   if (typeof navigator !== "undefined" && "vibrate" in navigator) {
     navigator.vibrate(pattern);
   }
-  /* Sound rides on the same call haptics already do. Every interaction that
-     deserves a buzz on a phone deserves the same acknowledgement on a desktop,
-     and hooking here means no call site has to know about audio. Off unless
-     the visitor turns it on -- see lib/clickSound.ts. */
-  playClick();
 };
 
 /* ── Home nav. name + panel arrows ──
@@ -3362,6 +3357,10 @@ function AiExplorationsPanel() {
 function SoundToggle() {
   const [on, setOn] = useState(false);
   useEffect(() => { setOn(isClickSoundEnabled()); }, []);
+  /* Mounted here because this component is always present and already owns
+     the feature. If sound ships, this listener moves somewhere less
+     incidental. */
+  useEffect(() => installClickSound(), []);
   return (
     <button
       onClick={() => {
