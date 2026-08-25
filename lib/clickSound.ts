@@ -147,27 +147,13 @@ const INTERACTIVE =
    silent. Every control would otherwise need its own onClick, and every
    control added later would need remembering.
 
-   pointerdown, not click: the sound belongs to the press. Firing on click
-   means firing on release, which lands a beat after the finger and reads as
-   lag even when nothing is slow.
-
-   Capture phase so a handler calling stopPropagation cannot silence it. */
-/* A finger may drift a little without meaning to. Past this it was a scroll,
-   not a press. Ten pixels is roughly the slop browsers themselves allow before
-   they stop treating a touch as a tap. */
-const TAP_SLOP_PX = 10;
-
-/* A finger resting on a card before the page starts moving is not a tap
-   either. Half a second is long enough for a deliberate press and short
-   enough to exclude a hold. */
-const TAP_TIMEOUT_MS = 500;
-
+   Which event depends on the input, and installClickSound explains why. */
 /* Short enough to read as a tick rather than a buzz. Android only: iOS Safari
    has never shipped navigator.vibrate, so this is a no-op on iPhone and sound
    stays the only feedback there. */
 const TAP_VIBRATE_MS = 8;
 
-function target(e: PointerEvent): HTMLElement | null {
+function target(e: Event): HTMLElement | null {
   const el = (e.target as Element | null)?.closest?.(INTERACTIVE) as HTMLElement | null;
   if (!el) return null;
   if (el.hasAttribute("disabled") || el.getAttribute("aria-disabled") === "true") return null;
@@ -177,62 +163,60 @@ function target(e: PointerEvent): HTMLElement | null {
 export function installClickSound(): () => void {
   if (typeof document === "undefined") return () => {};
 
-  /* Where and when the finger landed, and on what. Null whenever no touch is
-     in flight. */
-  let pending: { x: number; y: number; t: number; el: HTMLElement } | null = null;
+  /* A mouse presses and releases in the same spot, so the sound can fire on
+     the press, where it belongs -- waiting for the release lands a beat after
+     the button goes down and reads as lag.
 
+     Nothing else gets that treatment. A finger landing on a card is how a
+     scroll begins, so pressing is not yet a decision to activate anything.
+     Touch waits for click, which the browser only fires once it has decided
+     the gesture really was a tap and not the start of a drag. That is the same
+     judgement this file previously tried to make itself with a distance
+     threshold and a timeout, and the browser is better at it. */
   const onDown = (e: PointerEvent) => {
     if (!enabled) return;
     if (e.button !== 0) return;
-    const el = target(e);
-    if (!el) return;
-
-    /* Mouse and pen press and release in place, so the sound can fire on the
-       press, where it belongs -- firing on release lands a beat after the
-       finger and reads as lag.
-
-       Touch cannot do that. The gesture that starts a scroll is a finger
-       landing on whatever is under it, which on this site is usually a card or
-       a link, so playing on pointerdown made the page click at the visitor
-       every time they scrolled past something. Touch therefore waits for the
-       release and checks it was a tap. */
-    if (e.pointerType === "touch") {
-      pending = { x: e.clientX, y: e.clientY, t: e.timeStamp, el };
-      return;
-    }
+    if (e.pointerType !== "mouse") return;
+    if (!target(e)) return;
     playClick();
   };
 
-  const onUp = (e: PointerEvent) => {
-    const start = pending;
-    pending = null;
-    if (!enabled || !start) return;
-    if (e.pointerType !== "touch") return;
+  /* Everything that is not a mouse: touch, pen, and keyboard activation.
 
-    /* Same control, barely moved, released promptly. A scroll drag fails the
-       distance test; a long press fails the time test. */
-    if (target(e) !== start.el) return;
-    if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > TAP_SLOP_PX) return;
-    if (e.timeStamp - start.t > TAP_TIMEOUT_MS) return;
+     Keyboard arrives here too, and that is deliberate. Enter and Space on a
+     focused control fire click with no pointer event before it, so a
+     keyboard-only visitor used to get silence while mouse users got a click on
+     every press. Same interaction, same feedback. */
+  const onClick = (e: MouseEvent) => {
+    if (!enabled) return;
+    const pointerType = (e as PointerEvent).pointerType;
 
+    /* The mouse already played on the press. Skip, or every mouse click
+       sounds twice.
+
+       Firefox dispatched click as a plain MouseEvent until recently, so
+       pointerType can be missing entirely. There, detail tells them apart:
+       keyboard activation reports 0, a real click reports the click count. */
+    if (pointerType === "mouse") return;
+    if (pointerType === undefined && e.detail !== 0) return;
+
+    if (!target(e)) return;
     playClick();
-    try {
-      navigator.vibrate?.(TAP_VIBRATE_MS);
-    } catch {
-      /* Haptics are decoration too. Never let them break an interaction. */
+
+    if (pointerType === "touch") {
+      try {
+        navigator.vibrate?.(TAP_VIBRATE_MS);
+      } catch {
+        /* Haptics are decoration too. Never let them break an interaction. */
+      }
     }
   };
 
-  /* The browser takes the pointer away when a scroll actually begins, which is
-     the clearest possible signal that this was never a tap. */
-  const onCancel = () => { pending = null; };
-
+  /* Capture phase so a handler calling stopPropagation cannot silence it. */
   document.addEventListener("pointerdown", onDown, true);
-  document.addEventListener("pointerup", onUp, true);
-  document.addEventListener("pointercancel", onCancel, true);
+  document.addEventListener("click", onClick, true);
   return () => {
     document.removeEventListener("pointerdown", onDown, true);
-    document.removeEventListener("pointerup", onUp, true);
-    document.removeEventListener("pointercancel", onCancel, true);
+    document.removeEventListener("click", onClick, true);
   };
 }
