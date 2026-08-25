@@ -1728,12 +1728,23 @@ function WorkPanel() {
                                   at less than full strength, so a full-strength
                                   card still fetches one image, not two. Same
                                   src either way, so the browser serves it from
-                                  cache rather than over the network. */}
+                                  cache rather than over the network.
+
+                                  objectPosition is centre, NOT the top used by
+                                  the undithered branch below. DitheredImage
+                                  renders its shader with fit="cover" anchored
+                                  centre, and the inner box is not 16:9 -- the
+                                  16px inset changes its aspect -- so cover
+                                  genuinely crops. Anchoring the two layers
+                                  differently shows two different crops of the
+                                  same photo through a half-transparent top
+                                  layer, which reads as a distorted or ghosted
+                                  image. They have to agree. */}
                               {(DITHER_STRENGTH[cs.slug] ?? 1) < 1 && (
                                 <img
                                   src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                                   alt="" aria-hidden="true"
-                                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", display: "block" }}
+                                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
                                 />
                               )}
                               <DitheredImage
