@@ -3174,7 +3174,11 @@ function ContactPanel() {
                covers the fill, so only the label strip shows it and the card
                would otherwise read as edgeless. 60% of --border, the value
                tuned for the testimonial cards before they went fill-only. */
-            background: "var(--surface2)",
+            /* No fill. The map fills the top of this card edge to edge and the
+               row beneath it is two short labels, so a --surface2 tint only
+               tinted the strip under the map and read as a separate band
+               rather than one card. The hairline keeps the edge. */
+            background: "transparent",
             border: "1px solid color-mix(in srgb, var(--border) 60%, transparent)",
           }}
         >
