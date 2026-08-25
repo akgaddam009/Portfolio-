@@ -134,13 +134,9 @@ function HomeNav({
           href="/"
           aria-label="Home. Arun Gaddam"
           style={{
-            fontFamily: "var(--font-script)",
-            /* Back to the original wordmark settings apart from the family.
-               Syne Tactile is unjoined, so tracking no longer pulls letters
-               apart at the joins, and its capitals stay legible at pill size.
-               Weight is 400 because the family ships nothing else. */
+            fontFamily: "var(--font-logo)",
             fontSize: "var(--text-caption)",
-            fontWeight: 400,
+            fontWeight: 500,
             color: "var(--text)",
             letterSpacing: "0.06em",
             textTransform: "uppercase",

@@ -64,8 +64,6 @@
   --font-body: var(--font-manrope),    'Manrope',    -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-manrope),    'Manrope',    -apple-system, sans-serif;
   --font-logo: var(--font-manrope),    'Manrope',    -apple-system, sans-serif;
-  /* Local experiment: the nav wordmark only. */
-  --font-script: var(--font-syne-tactile), 'Syne Tactile', 'Manrope', sans-serif;
 
   /* ─── Type scale ─────────────────────────────────────
      Semantic size tokens covering the active type usage.

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Syne_Tactile } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/Cursor";
 import AnalyticsClient from "@/components/AnalyticsClient";
@@ -14,15 +14,6 @@ const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
-  display: "swap",
-});
-
-/* Local experiment: Syne Tactile on the nav wordmark only. One weight (400)
-   is all the family ships. */
-const syneTactile = Syne_Tactile({
-  variable: "--font-syne-tactile",
-  subsets: ["latin"],
-  weight: ["400"],
   display: "swap",
 });
 
@@ -110,7 +101,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable} ${syneTactile.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${manrope.variable}`} suppressHydrationWarning>
       <body>
         <script
           dangerouslySetInnerHTML={{
