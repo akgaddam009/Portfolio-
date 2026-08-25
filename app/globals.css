@@ -904,38 +904,29 @@ html[data-mode="executive"] .exec-decision-image {
 
 
 /* ─── Card hover ──────────────────────────────────────────
-   The card itself does not move. Translating a card that contains type forces
-   the browser to re-rasterize that text every frame, and the resulting
-   subpixel shimmer is what read as unsmooth -- no easing curve fixes it,
-   because the problem is rasterization, not timing.
+   One property, one curve: --card-ring to --card-lift over 200ms.
 
-   The motion moves to the thumbnail instead. A transform on an image inside an
-   overflow: hidden frame is pure compositor work: no reflow, no text repaint,
-   nothing to shimmer. The card answers with a shadow, the image answers with a
-   slow drift, and the two read as one gesture because only one of them is
-   fast enough to notice.
+   It got here by removing things. The card used to lift 2px while the shadow
+   ran on a separate framer-motion spring -- two timelines on one gesture, and
+   translating a card full of type re-rasterizes that text every frame, which
+   is what read as unsmooth however the easing changed. Then a --surface2 fill
+   greyed the card and fought the thumbnail inside it. Then a slow image scale
+   drew attention to itself under a frame that no longer moved.
 
-   Durations are deliberately different. 200ms on the shadow so the pointer
-   gets an immediate answer; 600ms on the image so it feels like weight moving
-   rather than a snap. Matching them would make the zoom feel mechanical. */
+   What is left answers the pointer without moving anything: no transform, no
+   reflow, no text repaint, and nothing for prefers-reduced-motion to undo.
+
+   200ms and quart-out per the impeccable motion reference -- the fast end of
+   its 200-300ms hover band, since a pointer state should answer at once, with
+   a gentle tail so it does not feel clipped. */
 .work-card {
   background: var(--surface);
   box-shadow: var(--card-ring);
   transition: box-shadow 200ms var(--ease-out-quart);
 }
-/* The fill does not change. A --surface2 tint was tried here and greyed the
-   whole card on hover, which fought the thumbnail sitting inside it: the image
-   is the thing being pointed at, and dimming its surround to announce that is
-   backwards. The shadow and the image drift carry the state instead. */
 .work-card:not(.work-card--static):hover {
   box-shadow: var(--card-lift);
 }
-
-/* No image movement on hover. The slow scale was there to carry the gesture
-   once the card itself stopped moving; the shadow does that on its own, and
-   with both running the thumbnail drifted under a static frame in a way that
-   drew attention to the effect rather than the work. Nothing animates the
-   image now, so there is no reduced-motion case left to handle here. */
 
 
 /* ─── Shadow presets (LOCAL DEV ONLY) ─────────────────────
