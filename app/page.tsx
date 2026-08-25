@@ -135,17 +135,15 @@ function HomeNav({
           aria-label="Home. Arun Gaddam"
           style={{
             fontFamily: "var(--font-script)",
-            /* Script faces carry far less x-height than Manrope at the same
-               size, so --text-caption would read tiny here; stepped up to
-               --text-title-sm to match the optical weight of the old wordmark.
-               Uppercase and letter-spacing are dropped: a joined script breaks
-               apart when tracked out, and cursive capitals are close to
-               illegible in a 44px pill. */
-            fontSize: "var(--text-title-sm)",
+            /* Back to the original wordmark settings apart from the family.
+               Syne Tactile is unjoined, so tracking no longer pulls letters
+               apart at the joins, and its capitals stay legible at pill size.
+               Weight is 400 because the family ships nothing else. */
+            fontSize: "var(--text-caption)",
             fontWeight: 400,
             color: "var(--text)",
-            letterSpacing: "0",
-            textTransform: "none",
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
             height: "44px",
             padding: "0 14px",
             borderRadius: "var(--radius-lg)",

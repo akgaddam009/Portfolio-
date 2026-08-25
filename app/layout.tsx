@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Story_Script } from "next/font/google";
+import { Manrope, Syne_Tactile } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/Cursor";
 import AnalyticsClient from "@/components/AnalyticsClient";
@@ -17,10 +17,10 @@ const manrope = Manrope({
   display: "swap",
 });
 
-/* Local experiment: Story Script on the nav wordmark only. Ships one weight
-   (400) because that is all the family has. */
-const storyScript = Story_Script({
-  variable: "--font-story-script",
+/* Local experiment: Syne Tactile on the nav wordmark only. One weight (400)
+   is all the family ships. */
+const syneTactile = Syne_Tactile({
+  variable: "--font-syne-tactile",
   subsets: ["latin"],
   weight: ["400"],
   display: "swap",
@@ -110,7 +110,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable} ${storyScript.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${manrope.variable} ${syneTactile.variable}`} suppressHydrationWarning>
       <body>
         <script
           dangerouslySetInnerHTML={{
