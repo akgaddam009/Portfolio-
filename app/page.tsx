@@ -1203,7 +1203,7 @@ function SystemFeatureCard() {
           {/* Thumbnail. auto-playing screen recording of the portfolio's
               design language in motion. Muted + looped, mirrors the case
               study video thumbnail pattern. */}
-          <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+          <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
             <WorkCardThumb
               src="/images/system/portfolio-design-language.mp4"
               poster="/images/system/cover.png"
@@ -1564,7 +1564,7 @@ function WorkPanel() {
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                   >
                     {/* Thumbnail */}
-                    <div style={{ position: "relative", height: "220px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                    <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         <WorkCardThumb
                           src={WORK_THUMBS[cs.slug]}
@@ -1682,7 +1682,7 @@ function WorkPanel() {
                       onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
                       onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
                       >
-                        <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                        <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
                           <WorkCardThumb
                             src={WORK_THUMBS[cs.slug] || ""}
                             poster={WORK_POSTERS[cs.slug]}
@@ -2133,10 +2133,10 @@ function AiExperimentsPanel() {
               onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
               onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
             >
-              {/* Same 220px / 16px-top-radius geometry as the work cards. */}
+              {/* Same 16:9 / 16px-top-radius geometry as the work cards. */}
               <div style={{
                 position: "relative",
-                height: "220px",
+                aspectRatio: "16 / 9",
                 overflow: "hidden",
                 borderRadius: "16px 16px 0 0",
                 display: "flex",
