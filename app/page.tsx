@@ -1027,7 +1027,7 @@ const WORK_THUMBS: Record<string, string> = {
   "astra":                "/images/astra/overview.mp4",
   "planful-esm-tables":   "/images/planful/landing-page.jpg",
   "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
-  "zetwerk-dc":           "/images/zetwerk/cover.png",
+  "zetwerk-dc":           "/images/zetwerk-dc/delivery-challan-thumbnail.jpg",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
 };
 
