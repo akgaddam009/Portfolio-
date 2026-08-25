@@ -1395,6 +1395,14 @@ function WorkChip({ label }: { label: string }) {
 
    Slugs not listed here render tags only, which is the correct default -- a
    card with no clear single domain should not be given a fabricated one. */
+/* Cards whose thumbnail gets the dithered treatment rather than a plain
+   <img>. Same size and colorSteps as the About portrait, so the three read as
+   one imagery style rather than three separate effects. */
+const DITHERED_THUMBS = new Set<string>([
+  "first-time-user-experience",
+  "financial-planning-workflow",
+]);
+
 /* Tags that should not become chips on a specific card. Same reasoning as the
    badge filter below: the tag stays in the data, so the case study page keeps
    it, and only the card is trimmed. Cards show two chips at most, so dropping
@@ -1689,16 +1697,17 @@ function WorkPanel() {
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
                         <div style={{ position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
-                            {/* FanCode only. `first-time-user-experience` is the
-                              FanCode sports-app card -- the one FanCode entry
-                              in CARD_ORDER, so it is the only FanCode thumbnail
-                              that renders on the homepage (`fancode-homepage`
-                              exists in the data but is not in CARD_ORDER, so
-                              nothing reaches it). Every other card keeps the
-                              plain <img>: this treatment was asked for on
-                              FanCode alone. Grid softened on request:
-                              2 -> 1 -> 0.5, then back up to 0.75 (+50%). */}
-                          {cs.slug === "first-time-user-experience" ? (
+                            {/* Dithered cards, listed in DITHERED_THUMBS. Started
+                              as FanCode alone (`first-time-user-experience` is
+                              the FanCode sports-app card -- the one FanCode
+                              entry in CARD_ORDER, so it is the only FanCode
+                              thumbnail that reaches the homepage). Planful
+                              joined it so the card grid and the About portrait
+                              share one imagery style. Everything else keeps the
+                              plain <img>. Grid softened on request:
+                              2 -> 1 -> 0.5, then back up to 0.75 (+50%), which
+                              is also what the About portrait uses. */}
+                          {DITHERED_THUMBS.has(cs.slug) ? (
                             <DitheredImage
                               src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                               alt={cs.title}
