@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Alkatra } from "next/font/google";
+import { Manrope, Syne_Tactile } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/Cursor";
 import AnalyticsClient from "@/components/AnalyticsClient";
@@ -17,13 +17,12 @@ const manrope = Manrope({
   display: "swap",
 });
 
-/* Local experiment: Alkatra on the nav wordmark only. Unlike the previous
-   two candidates it ships a weight range, so the wordmark can keep its
-   original 500 rather than being forced to 400. */
-const alkatra = Alkatra({
-  variable: "--font-alkatra",
+/* Local experiment: Syne Tactile on the nav wordmark only. One weight (400)
+   is all the family ships. */
+const syneTactile = Syne_Tactile({
+  variable: "--font-syne-tactile",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -111,7 +110,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable} ${alkatra.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${manrope.variable} ${syneTactile.variable}`} suppressHydrationWarning>
       <body>
         <script
           dangerouslySetInnerHTML={{

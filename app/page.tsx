@@ -135,11 +135,12 @@ function HomeNav({
           aria-label="Home. Arun Gaddam"
           style={{
             fontFamily: "var(--font-script)",
-            /* Original wordmark settings apart from the family. Alkatra is
-               unjoined, so 0.06em tracking sits fine, and it ships a weight
-               range, so the wordmark keeps its original 500. */
+            /* Back to the original wordmark settings apart from the family.
+               Syne Tactile is unjoined, so tracking no longer pulls letters
+               apart at the joins, and its capitals stay legible at pill size.
+               Weight is 400 because the family ships nothing else. */
             fontSize: "var(--text-caption)",
-            fontWeight: 500,
+            fontWeight: 400,
             color: "var(--text)",
             letterSpacing: "0.06em",
             textTransform: "uppercase",
