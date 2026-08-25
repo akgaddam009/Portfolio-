@@ -153,7 +153,6 @@
      retoned away from the Tailwind-default lavender that reads as AI
      boilerplate. */
 
-
   /* ── Soft hover overlay — theme-aware via color-mix ──
      Replaces full --surface2 swaps on icon buttons / chrome elements where
      the original feels too intense. Auto-adapts because --text differs per theme. */
@@ -167,8 +166,10 @@
      on this and take the full --card-shadow-hover only on hover. It cannot
      just be `none`: --surface and --bg are both #ffffff in light theme, so a
      card with no ring has no edge at all and disappears into the panel. */
-  /* Panel elevation as variables so the local shadow toggle can swap presets
-     at runtime. See ShadowToggle in app/page.tsx -- dev only, must not ship. */
+  /* Panel elevation. Kept as variables rather than inlined at the call site
+     so light and dark stay side by side and the pair can be read as one
+     decision. Half the weight of the originals: see the note on
+     --chrome-shadow about not halving the hairline with them. */
   --panel-shadow:        0 1px 2px rgba(0,0,0,0.02), 0 6px 24px rgba(0,0,0,0.03);
   --panel-shadow-active: 0 2px 4px rgba(0,0,0,0.03), 0 12px 40px rgba(0,0,0,0.05);
   /* Top-nav chrome. The original --card-shadow / --card-shadow-hover with
@@ -358,7 +359,6 @@
   box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.3);
 }
 
-
 /* ─── Base ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -476,7 +476,6 @@ a { color: inherit; text-decoration: none; }
   overflow: hidden;
 }
 
-
 /* ─── Buttons ────────────────────────────────────────── */
 .btn-primary {
   display: inline-flex;
@@ -574,7 +573,6 @@ a { color: inherit; text-decoration: none; }
 [data-theme="dark"] .work-thumb {
   filter: brightness(0.88) contrast(1.02) saturate(0.95);
 }
-
 
 /* ─── Text highlighter — sticky to element ──────────── */
 @keyframes highlight-sweep {
@@ -838,7 +836,6 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
-
 /* ─── Executive mode ─────────────────────────────────────
    Hides non-essential case study content for a ~60 second scan.
    Activated by data-mode="executive" on <html>. Hero, metrics
@@ -914,7 +911,6 @@ html[data-mode="executive"] .exec-decision-image {
   .career-nav-btn { transition: none; }
 }
 
-
 /* ─── Card hover ──────────────────────────────────────────
    One property, one curve: --card-ring to --card-lift over 200ms.
 
@@ -940,31 +936,3 @@ html[data-mode="executive"] .exec-decision-image {
   box-shadow: var(--card-lift);
 }
 
-
-/* ─── Shadow presets (LOCAL DEV ONLY) ─────────────────────
-   Driven by data-shadow on <html> from the ShadowToggle control. Absent
-   attribute = the "soft" values defined above, which is what ships.
-   Delete this block and the control together. */
-
-/* What the panels and cards carried before the softening pass. */
-html[data-shadow="strong"] {
-  --panel-shadow:        0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06);
-  --panel-shadow-active: 0 2px 4px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.10);
-  --card-lift:           0 0 0 1px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.07), 0 14px 36px rgba(0,0,0,0.10);
-}
-html[data-shadow="strong"][data-theme="dark"] {
-  --panel-shadow:        inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.40), 0 6px 24px rgba(0,0,0,0.35);
-  --panel-shadow-active: inset 0 1px 0 rgba(255,255,255,0.11), 0 2px 4px rgba(0,0,0,0.50), 0 12px 40px rgba(0,0,0,0.45);
-}
-
-/* Edges only: every blur removed, hairlines kept so nothing disappears. */
-html[data-shadow="flat"] {
-  --panel-shadow:        0 0 0 1px rgba(0,0,0,0.06);
-  --panel-shadow-active: 0 0 0 1px rgba(0,0,0,0.10);
-  --card-lift:           0 0 0 1px rgba(0,0,0,0.12);
-}
-html[data-shadow="flat"][data-theme="dark"] {
-  --panel-shadow:        0 0 0 1px rgba(255,255,255,0.10);
-  --panel-shadow-active: 0 0 0 1px rgba(255,255,255,0.16);
-  --card-lift:           0 0 0 1px rgba(255,255,255,0.20);
-}

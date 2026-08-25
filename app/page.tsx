@@ -17,7 +17,7 @@ import ISTClock from "@/components/ISTClock";
 import { ArrowUpRight, Compass, Search, Sparkles, LayoutGrid, Menu, X, Users, Briefcase, Path, TreeStructure, Mail, FileText, LinkedIn, ChartActivity } from "@/components/ui/Icon";
 import { InlineChip, type ChipTone } from "@/components/ui/InlineChip";
 import LoadingScreen from "@/components/LoadingScreen";
-import { playClick, isClickSoundEnabled, setClickSoundEnabled, installClickSound } from "@/lib/clickSound";
+import { installClickSound } from "@/lib/clickSound";
 import { trackEmailClick, trackLinkedInClick, trackResumeDownload } from "@/lib/analytics";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -3379,93 +3379,7 @@ function AiExplorationsPanel() {
    offset, 16px of blur and 0.04 alpha, which made elevation pulse across the
    rail as you scrolled -- movement in the chrome, competing with the content
    it frames. */
-/* ── Click sound switch ────────────────────────────────────
-   Unlike ShadowToggle this is a real candidate control, not scaffolding: if
-   the site ever ships sound it needs a visible way to turn it off, and that
-   control has to exist wherever the sound does. Parked in the dev corner for
-   now so both experiments are in one place. */
-function SoundToggle() {
-  const [on, setOn] = useState(false);
-  useEffect(() => { setOn(isClickSoundEnabled()); }, []);
-  /* Mounted here because this component is always present and already owns
-     the feature. If sound ships, this listener moves somewhere less
-     incidental. */
-  useEffect(() => installClickSound(), []);
-  return (
-    <button
-      onClick={() => {
-        const next = !on;
-        setClickSoundEnabled(next);
-        setOn(next);
-        /* Play on the gesture that enables it, so the first thing you hear is
-           the thing you just switched on. */
-        if (next) playClick();
-      }}
-      aria-pressed={on}
-      title="Click sound"
-      style={{
-        position: "fixed", left: "16px", bottom: "52px", zIndex: 9999,
-        height: "28px", padding: "0 10px",
-        border: "1px solid #999", borderRadius: "4px",
-        background: "#fff", color: "#222",
-        fontFamily: "ui-monospace, monospace", fontSize: "10px",
-        letterSpacing: "0.08em", cursor: "pointer",
-      }}
-    >
-      {on ? "SOUND · ON" : "SOUND · OFF"}
-    </button>
-  );
-}
 
-/* ── Shadow preset toggle. LOCAL DEV ONLY ──────────────────
-   Cycles data-shadow on <html> so the three elevation treatments can be
-   compared on the real page instead of from a description. Presets live in
-   globals.css under "Shadow presets"; delete this component and that block
-   together before anything ships.
-
-   Deliberately ugly: a mono chip in a corner, no theme tokens, so it can
-   never be mistaken for part of the design. */
-const SHADOW_PRESETS = [
-  { id: "soft",   label: "SOFT · current" },
-  { id: "strong", label: "STRONG · original" },
-  { id: "flat",   label: "FLAT · edges only" },
-] as const;
-
-function ShadowToggle() {
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("dev-shadow-preset");
-    const i = SHADOW_PRESETS.findIndex(p => p.id === saved);
-    if (i > 0) setIdx(i);
-  }, []);
-
-  useEffect(() => {
-    const preset = SHADOW_PRESETS[idx];
-    /* "soft" is the shipping default, expressed as the absence of the
-       attribute so the preset CSS never applies unless asked for. */
-    if (preset.id === "soft") document.documentElement.removeAttribute("data-shadow");
-    else document.documentElement.setAttribute("data-shadow", preset.id);
-    try { localStorage.setItem("dev-shadow-preset", preset.id); } catch {}
-  }, [idx]);
-
-  return (
-    <button
-      onClick={() => setIdx((idx + 1) % SHADOW_PRESETS.length)}
-      title="Cycle shadow preset (local only)"
-      style={{
-        position: "fixed", left: "16px", bottom: "16px", zIndex: 9999,
-        height: "28px", padding: "0 10px",
-        border: "1px solid #999", borderRadius: "4px",
-        background: "#fff", color: "#222",
-        fontFamily: "ui-monospace, monospace", fontSize: "10px",
-        letterSpacing: "0.08em", cursor: "pointer",
-      }}
-    >
-      {SHADOW_PRESETS[idx].label}
-    </button>
-  );
-}
 
 const PANEL_SHADOW_LIGHT = "var(--panel-shadow)";
 const PANEL_SHADOW_ACTIVE_LIGHT = "var(--panel-shadow-active)";
@@ -4026,8 +3940,6 @@ export default function Home() {
   return (
     <>
       <LoadingScreen visible={loading} />
-      <ShadowToggle />
-      <SoundToggle />
       <HomeNav
         onPrev={() => scrollByPanel(-1)}
         onNext={() => scrollByPanel(1)}

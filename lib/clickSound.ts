@@ -14,10 +14,13 @@
    the remaining 1.24s was silence. Trimmed to 170ms, which is 30KB and
    identical to the ear.
 
-   OFF BY DEFAULT. Sound a visitor did not ask for is intrusive in a way a
-   shadow never is: it carries into a quiet room, an open-plan office, a pair
-   of headphones at the wrong volume. The preference persists per browser once
-   set. */
+   ON by default, with the switch removed. Worth naming the trade rather than
+   burying it: sound a visitor did not ask for carries into a quiet room, an
+   open-plan office, or headphones at the wrong volume, and there is now no way
+   for them to stop it short of muting the tab. That is fine for a local build
+   and a decision to revisit before this reaches anyone else -- the enable/
+   disable functions are still exported, so restoring a control is wiring, not
+   rework. */
 
 const STORAGE_KEY = "portfolio-click-sound";
 const SRC = "/sound/click.wav";
@@ -29,14 +32,15 @@ const VOLUME = 0.25;
 let ctx: AudioContext | null = null;
 let buffer: AudioBuffer | null = null;
 let loading: Promise<void> | null = null;
-let enabled = false;
+let enabled = true;
 let hydrated = false;
 
 function hydrate() {
   if (hydrated || typeof window === "undefined") return;
   hydrated = true;
   try {
-    enabled = window.localStorage.getItem(STORAGE_KEY) === "on";
+    /* Only an explicit "off" turns it down; anything else keeps the default. */
+    enabled = window.localStorage.getItem(STORAGE_KEY) !== "off";
   } catch {
     /* storage unavailable — stays off */
   }
