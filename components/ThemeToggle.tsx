@@ -63,13 +63,15 @@ export default function ThemeToggle() {
         justifyContent: "center",
         overflow: "hidden",
         flexShrink: 0,
-        transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), transform 0.25s cubic-bezier(0.22,1,0.36,1)",
+        transition: "box-shadow 200ms var(--ease-out-quart), background 200ms var(--ease-out-quart)",
       }}
-      // Shadow elevation system (matches cards). Resting is --card-ring,
-      // hover lifts to --card-lift. Both are preset-swappable, so this
-      // follows whatever the rest of the chrome is set to. No border anywhere.
-      onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; }}
-      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; }}
+      // Matches the rest of the top nav: --chrome-shadow at rest lifting to
+      // --chrome-shadow-hover, plus a --chrome-hover fill. The fill is what
+      // makes the hover legible -- shadow alone on a white pill over a light
+      // canvas is too subtle to read. transform is out of the transition
+      // because the whileTap spring owns it. No border anywhere.
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.background = "var(--chrome-hover)"; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.background = "var(--surface)"; }}
     >
       <AnimatePresence mode="wait" initial={false}>
         {dark ? (

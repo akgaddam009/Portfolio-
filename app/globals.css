@@ -175,6 +175,13 @@
      every alpha halved: same offsets, same blurs, half the weight. The
      hairline ring is NOT halved -- it is what defines the pill's edge against
      white, and at 0.02 it disappears. */
+  /* Hover fill for the nav pills. It has to go DARKER: the pills are
+     --surface (#ffffff) on a --chrome (#f5f5f5) canvas, so there is nothing
+     lighter available, and --surface2 (#f5f5f7) would sink them into the
+     canvas rather than lift them off it. 6% of --text lands around #f0f0f0,
+     clearly darker than both. Inverts correctly in dark, where --text is
+     white and --surface is the dark panel. */
+  --chrome-hover:        color-mix(in srgb, var(--text) 6%, var(--surface));
   --chrome-shadow:       0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03), 0 6px 18px rgba(0, 0, 0, 0.035);
   /* Roughly double the resting values, not half the original hover. Halving
      rest and hover together kept their ratio but collapsed the gap between

@@ -151,13 +151,13 @@ function HomeNav({
             alignItems: "center",
             textDecoration: "none",
             userSelect: "none",
-            transition: "box-shadow 200ms var(--ease-out-quart), color 200ms var(--ease-out-quart)",
+            transition: "box-shadow 200ms var(--ease-out-quart), color 200ms var(--ease-out-quart), background 200ms var(--ease-out-quart)",
           }}
           /* Shadow alone is a weak hover for a white pill on a light canvas,
              so the label lifts to --text-hover as a second, non-spatial
              signal. */
-          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.color = "var(--text-hover)"; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.color = "var(--text)"; }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.background = "var(--chrome-hover)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface)"; }}
           /* Already on "/", a Link to "/" is a no-op: the router sees the same
              route and does nothing, so the wordmark felt dead on the homepage.
              Reload instead, which replays the load reveal.
@@ -251,8 +251,8 @@ function HomeNav({
                   opacity: disabled ? 0.3 : 1,
                   cursor: disabled ? "default" : "pointer",
                 }}
-                onMouseEnter={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; }}
-                onMouseLeave={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; }}
+                onMouseEnter={e => { if (!disabled) { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.background = "var(--chrome-hover)"; } }}
+                onMouseLeave={e => { if (!disabled) { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.background = "var(--surface)"; } }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                   <path d={d} />
