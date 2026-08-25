@@ -2336,6 +2336,22 @@ function CareerPanel() {
         onMouseEnter={() => setHoveredItem(item)}
         onMouseLeave={() => setHoveredItem(null)}
         onClick={() => isClickable && toggleCard(item)}
+        /* A div with an onClick and nothing else is invisible to a keyboard
+           and announced as plain text. Giving it the button role and a tab
+           stop makes it a real control -- which is also what puts it in reach
+           of the click-sound listener, since that only fires on things that
+           present as controls. */
+        {...(isClickable ? {
+          role: "button",
+          tabIndex: 0,
+          "aria-expanded": isExpanded,
+          onKeyDown: (e: React.KeyboardEvent) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              toggleCard(item);
+            }
+          },
+        } : {})}
         style={{
           position: "absolute",
           top: `${top}px`,
