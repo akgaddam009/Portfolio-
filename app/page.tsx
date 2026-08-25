@@ -145,15 +145,15 @@ function HomeNav({
             borderRadius: "var(--radius-lg)",
             border: "none",
             background: "var(--surface)",
-            boxShadow: "var(--card-ring)",
+            boxShadow: "var(--chrome-shadow)",
             display: "inline-flex",
             alignItems: "center",
             textDecoration: "none",
             userSelect: "none",
             transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
           }}
-          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-lift)"; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-ring)"; }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; }}
         >
           Arun Gaddam
         </Link>
@@ -221,7 +221,7 @@ function HomeNav({
                   borderRadius: "var(--radius-lg)",
                   border: "none",
                   background: "var(--surface)",
-                  boxShadow: "var(--card-ring)",
+                  boxShadow: "var(--chrome-shadow)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -229,8 +229,8 @@ function HomeNav({
                   opacity: disabled ? 0.3 : 1,
                   cursor: disabled ? "default" : "pointer",
                 }}
-                onMouseEnter={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-lift)"; }}
-                onMouseLeave={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--card-ring)"; }}
+                onMouseEnter={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; }}
+                onMouseLeave={e => { if (!disabled) e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                   <path d={d} />
