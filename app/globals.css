@@ -931,21 +931,11 @@ html[data-mode="executive"] .exec-decision-image {
   box-shadow: var(--card-lift);
 }
 
-.work-card img,
-.work-card video {
-  transition: transform 600ms var(--ease-out-quart);
-}
-.work-card:not(.work-card--static):hover img,
-.work-card:not(.work-card--static):hover video {
-  transform: scale(1.04);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .work-card img,
-  .work-card video { transition: none; }
-  .work-card:not(.work-card--static):hover img,
-  .work-card:not(.work-card--static):hover video { transform: none; }
-}
+/* No image movement on hover. The slow scale was there to carry the gesture
+   once the card itself stopped moving; the shadow does that on its own, and
+   with both running the thumbnail drifted under a static frame in a way that
+   drew attention to the effect rather than the work. Nothing animates the
+   image now, so there is no reduced-motion case left to handle here. */
 
 
 /* ─── Shadow presets (LOCAL DEV ONLY) ─────────────────────
