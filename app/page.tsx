@@ -1195,7 +1195,6 @@ function SystemFeatureCard() {
         <div
           className="work-card"
           style={{
-            background: "var(--surface)",
             borderRadius: "16px",
             overflow: "hidden",
             transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -1554,7 +1553,6 @@ function WorkPanel() {
                   <div
                     className={`work-card${comingSoon ? " work-card--static" : ""}`}
                     style={{
-                      background: "var(--surface)",
                       borderRadius: "16px",
                       overflow: "hidden",
                     }}
@@ -1668,7 +1666,6 @@ function WorkPanel() {
                   >
                     <Link href={href}>
                       <div className="work-card" style={{
-                        background: "var(--surface)",
                         borderRadius: "16px",
                         overflow: "hidden",
                       }}
@@ -2080,6 +2077,7 @@ const testimonials: Testimonial[] = [
 ];
 
 /* ── Panel: AI Experiments ── */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; hidden from PANEL_CONFIGS
 function AiExperimentsPanel() {
   return (
     <div>
@@ -2115,7 +2113,6 @@ function AiExperimentsPanel() {
             <div
               className="work-card"
               style={{
-                background: "var(--surface)",
                 borderRadius: "16px",
                 overflow: "hidden",
                 transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
@@ -3256,7 +3253,6 @@ function AiExplorationsPanel() {
                 <div
                   className="work-card"
                   style={{
-                    background: "var(--surface)", borderRadius: "16px", overflow: "hidden",
                     boxShadow: "var(--card-shadow)",
                   }}
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
@@ -3620,7 +3616,10 @@ function StoryView() {
 const PANEL_CONFIGS = [
   { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
   { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
-  { label: "AI Experiments", width: "420px", minWidth: "380px", Component: AiExperimentsPanel },
+  /* AI Experiments hidden again. PANEL_LABELS derives from this array, so the
+     nav dots, arrows and floating menu all drop it with no other change.
+     Uncomment to bring it back. */
+  // { label: "AI Experiments", width: "420px", minWidth: "380px", Component: AiExperimentsPanel },
   { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
   { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
   { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },
