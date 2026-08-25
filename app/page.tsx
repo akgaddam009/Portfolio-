@@ -1491,7 +1491,7 @@ function WorkPanel() {
     <div id="work-panel">
       <PanelHeader label="Selected Work" />
       <div style={{ padding: "16px 24px 32px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
 
           {allCards.map((cs, i) => {
             const href = cs.driveUrl ?? `/work/${cs.slug}`;
@@ -1646,7 +1646,7 @@ function WorkPanel() {
             }}>
               AI Exploration
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
               {explorationCards.map((cs) => {
                 const href = `/work/${cs.slug}`;
                 return (
@@ -2079,7 +2079,7 @@ function AiExperimentsPanel() {
     <div>
       <PanelHeader label="AI Experiments" />
       <div style={{ padding: "16px 24px 32px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
 
           <motion.div
             initial={{ opacity: 0, y: 10 }}
