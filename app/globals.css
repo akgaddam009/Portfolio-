@@ -94,6 +94,9 @@
   --text-display:   clamp(26px, 4vw, 44px);
 
   --ease-expo:   cubic-bezier(0.22, 1, 0.36, 1);
+  /* Quart-out. Gentler tail than --ease-expo, which is why it suits a hover
+     that has to settle rather than arrive. */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-out:    cubic-bezier(0.25, 0.1, 0.25, 1);
 
   --dur-fast: 180ms;
@@ -167,6 +170,16 @@
      just be `none`: --surface and --bg are both #ffffff in light theme, so a
      card with no ring has no edge at all and disappears into the panel. */
   --card-ring:         0 0 0 1px rgba(0, 0, 0, 0.06);
+  /* Four shallow layers instead of one deep one. --card-shadow-hover ends in
+     `0 14px 36px rgba(0,0,0,0.10)`, and a single 36px blur at that alpha is
+     what reads as dark and heavy. Spreading the same impression across
+     doubling blur radii at 0.02-0.03 each gives a smooth falloff and a much
+     lighter impression at the same apparent height. */
+  --card-lift:         0 0 0 1px rgba(0, 0, 0, 0.05),
+                       0 1px 2px rgba(0, 0, 0, 0.02),
+                       0 3px 6px rgba(0, 0, 0, 0.02),
+                       0 8px 16px rgba(0, 0, 0, 0.03),
+                       0 16px 32px rgba(0, 0, 0, 0.03);
   --card-shadow:       0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(0, 0, 0, 0.07);
   --card-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.07), 0 14px 36px rgba(0, 0, 0, 0.10);
 
@@ -258,6 +271,11 @@
   --chrome:   #000000;   /* canvas — pure black, panels lift off it */
 
   --card-ring:         0 0 0 1px rgba(255, 255, 255, 0.10);
+  --card-lift:         0 0 0 1px rgba(255, 255, 255, 0.14),
+                       0 1px 2px rgba(0, 0, 0, 0.18),
+                       0 3px 6px rgba(0, 0, 0, 0.18),
+                       0 8px 16px rgba(0, 0, 0, 0.22),
+                       0 16px 32px rgba(0, 0, 0, 0.22);
   --card-shadow:       0 0 0 1px rgba(255, 255, 255, 0.08), 0 1px 3px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.35);
   --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.6), 0 12px 28px rgba(0, 0, 0, 0.45);
 
@@ -872,4 +890,33 @@ html[data-mode="executive"] .exec-decision-image {
 }
 @media (prefers-reduced-motion: reduce) {
   .career-nav-btn { transition: none; }
+}
+
+
+/* ─── Card hover ──────────────────────────────────────────
+   One system owns this gesture. It used to be two: framer-motion ran the
+   -2px lift as a spring on the wrapper while an inline style ran the shadow
+   on a 250ms cubic-bezier on the card. A spring and a fixed-duration curve
+   share no timeline, so the lift and the shadow pulled apart mid-gesture --
+   that is what read as unsmooth, not the durations.
+
+   Now both properties move together on one curve. 200ms sits at the fast end
+   of the reference's 200-300ms band for hover, because a pointer state should
+   answer immediately; the quart-out tail is what keeps it from feeling
+   clipped. Transform and box-shadow only, so it stays off the layout path. */
+.work-card {
+  box-shadow: var(--card-ring);
+  transition: box-shadow 200ms var(--ease-out-quart),
+              transform  200ms var(--ease-out-quart);
+  will-change: transform;
+}
+.work-card:not(.work-card--static):hover {
+  box-shadow: var(--card-lift);
+  transform: translateY(-2px);
+}
+
+/* The lift is the decorative half; the shadow still answers the pointer. */
+@media (prefers-reduced-motion: reduce) {
+  .work-card { transition: box-shadow 200ms var(--ease-out-quart); }
+  .work-card:not(.work-card--static):hover { transform: none; }
 }
