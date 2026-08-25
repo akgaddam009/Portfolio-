@@ -2889,7 +2889,7 @@ function TestimonialsPanel() {
             literally invisible against the panel. The border is load-bearing,
             not decoration. Semantic figure/blockquote retained from the text
             pass; the 28px decorative quote glyph stays out. */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
           {testimonials.map((t, i) => (
             <motion.figure
               key={t.name}
