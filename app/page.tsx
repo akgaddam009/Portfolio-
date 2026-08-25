@@ -1415,7 +1415,13 @@ const DITHERED_THUMBS = new Set<string>([
    literally half the effect, and unlike a coarser grid it cannot muddy the
    fine table rules in a product screenshot. */
 const DITHER_STRENGTH: Record<string, number> = {
-  "financial-planning-workflow": 0.5,
+  /* 0.25, down from 0.5. At half strength the grid still fought the content:
+     this thumbnail is a product screenshot, and the fine table rules that make
+     it worth showing are the first thing a dither destroys. A quarter reads as
+     a grain over a legible screenshot rather than a treatment applied to it,
+     which keeps the family resemblance to FanCode and the About portrait
+     without spending the legibility to get it. */
+  "financial-planning-workflow": 0.25,
 };
 
 /* Tags that should not become chips on a specific card. Same reasoning as the
