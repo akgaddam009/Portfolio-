@@ -38,11 +38,16 @@ let hydrated = false;
 function hydrate() {
   if (hydrated || typeof window === "undefined") return;
   hydrated = true;
-  /* Deliberately does NOT read storage. The switch that wrote that value is
-     gone, so anyone who happened to toggle it off while it existed would be
-     stuck with silence and no way back. With no control there is no
-     preference: sound is simply on. Restore this read at the same time as a
-     control, not before. */
+  /* The control is back (components/SoundToggle.tsx), so the stored preference
+     is safe to honour again: someone who turns sound off has a visible way to
+     turn it back on. Only an explicit "off" silences things -- an unset or
+     unreadable value leaves sound on, so the default survives private windows
+     and blocked storage. */
+  try {
+    if (window.localStorage.getItem(STORAGE_KEY) === "off") enabled = false;
+  } catch {
+    /* storage blocked. stay with the default */
+  }
 }
 
 function audioContext(): AudioContext | null {
@@ -77,9 +82,19 @@ export function isClickSoundEnabled(): boolean {
   return enabled;
 }
 
+/* The toggle needs to re-render when the value changes. One listener set is
+   enough -- there is only ever one control on screen. */
+const listeners = new Set<(on: boolean) => void>();
+
+export function subscribeClickSound(fn: (on: boolean) => void): () => void {
+  listeners.add(fn);
+  return () => { listeners.delete(fn); };
+}
+
 export function setClickSoundEnabled(next: boolean): void {
   hydrate();
   enabled = next;
+  listeners.forEach(fn => fn(next));
   try {
     window.localStorage.setItem(STORAGE_KEY, next ? "on" : "off");
   } catch {
@@ -137,18 +152,87 @@ const INTERACTIVE =
    lag even when nothing is slow.
 
    Capture phase so a handler calling stopPropagation cannot silence it. */
+/* A finger may drift a little without meaning to. Past this it was a scroll,
+   not a press. Ten pixels is roughly the slop browsers themselves allow before
+   they stop treating a touch as a tap. */
+const TAP_SLOP_PX = 10;
+
+/* A finger resting on a card before the page starts moving is not a tap
+   either. Half a second is long enough for a deliberate press and short
+   enough to exclude a hold. */
+const TAP_TIMEOUT_MS = 500;
+
+/* Short enough to read as a tick rather than a buzz. Android only: iOS Safari
+   has never shipped navigator.vibrate, so this is a no-op on iPhone and sound
+   stays the only feedback there. */
+const TAP_VIBRATE_MS = 8;
+
+function target(e: PointerEvent): HTMLElement | null {
+  const el = (e.target as Element | null)?.closest?.(INTERACTIVE) as HTMLElement | null;
+  if (!el) return null;
+  if (el.hasAttribute("disabled") || el.getAttribute("aria-disabled") === "true") return null;
+  return el;
+}
+
 export function installClickSound(): () => void {
   if (typeof document === "undefined") return () => {};
+
+  /* Where and when the finger landed, and on what. Null whenever no touch is
+     in flight. */
+  let pending: { x: number; y: number; t: number; el: HTMLElement } | null = null;
 
   const onDown = (e: PointerEvent) => {
     if (!enabled) return;
     if (e.button !== 0) return;
-    const el = (e.target as Element | null)?.closest?.(INTERACTIVE) as HTMLElement | null;
+    const el = target(e);
     if (!el) return;
-    if (el.hasAttribute("disabled") || el.getAttribute("aria-disabled") === "true") return;
+
+    /* Mouse and pen press and release in place, so the sound can fire on the
+       press, where it belongs -- firing on release lands a beat after the
+       finger and reads as lag.
+
+       Touch cannot do that. The gesture that starts a scroll is a finger
+       landing on whatever is under it, which on this site is usually a card or
+       a link, so playing on pointerdown made the page click at the visitor
+       every time they scrolled past something. Touch therefore waits for the
+       release and checks it was a tap. */
+    if (e.pointerType === "touch") {
+      pending = { x: e.clientX, y: e.clientY, t: e.timeStamp, el };
+      return;
+    }
     playClick();
   };
 
+  const onUp = (e: PointerEvent) => {
+    const start = pending;
+    pending = null;
+    if (!enabled || !start) return;
+    if (e.pointerType !== "touch") return;
+
+    /* Same control, barely moved, released promptly. A scroll drag fails the
+       distance test; a long press fails the time test. */
+    if (target(e) !== start.el) return;
+    if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > TAP_SLOP_PX) return;
+    if (e.timeStamp - start.t > TAP_TIMEOUT_MS) return;
+
+    playClick();
+    try {
+      navigator.vibrate?.(TAP_VIBRATE_MS);
+    } catch {
+      /* Haptics are decoration too. Never let them break an interaction. */
+    }
+  };
+
+  /* The browser takes the pointer away when a scroll actually begins, which is
+     the clearest possible signal that this was never a tap. */
+  const onCancel = () => { pending = null; };
+
   document.addEventListener("pointerdown", onDown, true);
-  return () => document.removeEventListener("pointerdown", onDown, true);
+  document.addEventListener("pointerup", onUp, true);
+  document.addEventListener("pointercancel", onCancel, true);
+  return () => {
+    document.removeEventListener("pointerdown", onDown, true);
+    document.removeEventListener("pointerup", onUp, true);
+    document.removeEventListener("pointercancel", onCancel, true);
+  };
 }

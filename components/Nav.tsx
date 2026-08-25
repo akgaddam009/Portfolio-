@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
+import SoundToggle from "@/components/SoundToggle";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -94,6 +95,7 @@ export default function Nav() {
               />
               Arun Gaddam
             </Link>
+            <SoundToggle />
             <ThemeToggle />
           </div>
 

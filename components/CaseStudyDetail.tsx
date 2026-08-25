@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import SoundToggle from "@/components/SoundToggle";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; Quick guide is hidden from case study nav
 import PortfolioChat from "@/components/PortfolioChat";
 import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring, useTransform, useReducedMotion } from "framer-motion";
@@ -388,6 +389,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
           >
             Arun Gaddam
           </Link>
+          <SoundToggle />
           <ThemeToggle />
           {/* PortfolioChat (Quick guide) removed from case study top nav. */}
         </div>

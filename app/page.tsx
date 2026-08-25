@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
+import SoundToggle from "@/components/SoundToggle";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; PortfolioChat is hidden from the nav for now
 import dynamic from "next/dynamic";
 const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
@@ -179,6 +180,7 @@ function HomeNav({
         >
           Arun Gaddam
         </Link>
+        <SoundToggle />
         <ThemeToggle />
         {/* Quick guide + view-mode toggle hidden -focus is on Workspace
             polish for now. Underlying components stay in code so they can
