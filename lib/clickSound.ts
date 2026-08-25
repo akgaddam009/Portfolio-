@@ -38,16 +38,11 @@ let hydrated = false;
 function hydrate() {
   if (hydrated || typeof window === "undefined") return;
   hydrated = true;
-  /* The control is back (components/SoundToggle.tsx), so the stored preference
-     is safe to honour again: someone who turns sound off has a visible way to
-     turn it back on. Only an explicit "off" silences things -- an unset or
-     unreadable value leaves sound on, so the default survives private windows
-     and blocked storage. */
-  try {
-    if (window.localStorage.getItem(STORAGE_KEY) === "off") enabled = false;
-  } catch {
-    /* storage blocked. stay with the default */
-  }
+  /* Deliberately does NOT read storage. There is no control on screen, so
+     anyone carrying a stored "off" from a build that had one would be stuck
+     with silence and no way back. With no control there is no preference:
+     feedback is simply on. Restore this read at the same time as a control,
+     not before. */
 }
 
 function audioContext(): AudioContext | null {
@@ -82,19 +77,9 @@ export function isClickSoundEnabled(): boolean {
   return enabled;
 }
 
-/* The toggle needs to re-render when the value changes. One listener set is
-   enough -- there is only ever one control on screen. */
-const listeners = new Set<(on: boolean) => void>();
-
-export function subscribeClickSound(fn: (on: boolean) => void): () => void {
-  listeners.add(fn);
-  return () => { listeners.delete(fn); };
-}
-
 export function setClickSoundEnabled(next: boolean): void {
   hydrate();
   enabled = next;
-  listeners.forEach(fn => fn(next));
   try {
     window.localStorage.setItem(STORAGE_KEY, next ? "on" : "off");
   } catch {
