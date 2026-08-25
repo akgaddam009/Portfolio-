@@ -1,13 +1,18 @@
-/* Click feedback, synthesised rather than sampled.
+/* Click feedback from public/sound/click.wav.
 
-   Web Audio instead of an <audio> file: a sampled click would be a network
-   request, a decode, and a cache entry for ~80ms of sound, and the first play
-   would lag behind the tap it is meant to acknowledge. An oscillator has no
-   asset, no load, and fires on the same frame as the gesture.
+   Decoded once into an AudioBuffer rather than played through an <audio>
+   element. A single <audio> cannot overlap itself: click twice quickly and the
+   second call restarts the first mid-playback, which sounds like a stutter
+   rather than two clicks. A decoded buffer spawns a fresh source node per
+   play, so rapid clicks layer the way real ones do.
 
-   Deliberately quiet and short. Interface sound earns its place by being
-   almost subliminal; anything you consciously notice on a portfolio becomes
-   the thing people remember, and not fondly.
+   Fetched lazily on the first play, not at import: a visitor who never turns
+   sound on should never pay for it.
+
+   The source was mixkit-mouse-click-close-1113.wav, 1.376s and 240KB, of
+   which only 0.010s-0.140s was audible -- the press and the release -- and
+   the remaining 1.24s was silence. Trimmed to 170ms, which is 30KB and
+   identical to the ear.
 
    OFF BY DEFAULT. Sound a visitor did not ask for is intrusive in a way a
    shadow never is: it carries into a quiet room, an open-plan office, a pair
@@ -15,8 +20,15 @@
    set. */
 
 const STORAGE_KEY = "portfolio-click-sound";
+const SRC = "/sound/click.wav";
+
+/* The sample is recorded at full scale. Played raw under a UI it is far too
+   loud -- interface sound earns its place by being almost subliminal. */
+const VOLUME = 0.25;
 
 let ctx: AudioContext | null = null;
+let buffer: AudioBuffer | null = null;
+let loading: Promise<void> | null = null;
 let enabled = false;
 let hydrated = false;
 
@@ -28,6 +40,33 @@ function hydrate() {
   } catch {
     /* storage unavailable — stays off */
   }
+}
+
+function audioContext(): AudioContext | null {
+  if (typeof window === "undefined") return null;
+  const Ctor =
+    window.AudioContext ??
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!Ctor) return null;
+  /* Created on a real gesture. Browsers refuse to start a context without
+     one, and building it at import leaves a suspended context alive for every
+     visitor whether they want sound or not. */
+  ctx = ctx ?? new Ctor();
+  if (ctx.state === "suspended") void ctx.resume();
+  return ctx;
+}
+
+function load(c: AudioContext): Promise<void> {
+  loading = loading ?? fetch(SRC)
+    .then(r => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(String(r.status)))))
+    .then(b => c.decodeAudioData(b))
+    .then(decoded => { buffer = decoded; })
+    .catch(() => {
+      /* Missing or undecodable file. Leave buffer null and stop retrying:
+         a failed fetch on every click would be worse than silence. */
+      buffer = null;
+    });
+  return loading;
 }
 
 export function isClickSoundEnabled(): boolean {
@@ -43,41 +82,35 @@ export function setClickSoundEnabled(next: boolean): void {
   } catch {
     /* preference just will not persist */
   }
+  /* Warm the buffer as the switch is flipped, so the first deliberate click
+     after enabling is not the one that waits on a 240KB download. */
+  if (next) {
+    const c = audioContext();
+    if (c) void load(c);
+  }
+}
+
+function fire(c: AudioContext) {
+  if (!buffer) return;
+  const source = c.createBufferSource();
+  const gain = c.createGain();
+  gain.gain.value = VOLUME;
+  source.buffer = buffer;
+  source.connect(gain).connect(c.destination);
+  source.start();
 }
 
 export function playClick(): void {
   hydrate();
-  if (!enabled || typeof window === "undefined") return;
+  if (!enabled) return;
 
   try {
-    /* Created lazily on the first real gesture. Browsers refuse to start an
-       AudioContext without one, and constructing it at import time leaves a
-       suspended context running for every visitor, sound or no sound. */
-    const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!Ctor) return;
-    ctx = ctx ?? new Ctor();
-    if (ctx.state === "suspended") void ctx.resume();
-
-    const t = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    /* A short downward chirp reads as a physical click; a flat tone reads as a
-       beep, which is an alert, which is not what a nav button is doing. */
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(760, t);
-    osc.frequency.exponentialRampToValueAtTime(380, t + 0.035);
-
-    /* Ramps rather than steps: an instant gain change puts a discontinuity in
-       the waveform, and that is the pop you hear at the start of cheap UI
-       sounds. exponentialRamp cannot reach zero, hence the tiny floor. */
-    gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.exponentialRampToValueAtTime(0.035, t + 0.006);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.075);
-
-    osc.connect(gain).connect(ctx.destination);
-    osc.start(t);
-    osc.stop(t + 0.09);
+    const c = audioContext();
+    if (!c) return;
+    if (buffer) { fire(c); return; }
+    /* First call races the download. Play when it lands rather than dropping
+       the click, but never await on the interaction path. */
+    void load(c).then(() => { if (enabled) fire(c); });
   } catch {
     /* Audio is decoration. Never let it break an interaction. */
   }
