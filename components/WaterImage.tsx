@@ -45,8 +45,13 @@ export function WaterImage({
   src,
   alt = "",
   radius = "6px",
-  /* Defaults are the values Arun dialled in on Paper's playground. */
-  colorBack = "#8f8f8f",
+  /* Defaults are the values Arun dialled in on Paper's playground, with three
+     changed since: fit, scale, and colorBack.
+
+     rgba(0,0,0,0), not "transparent". The library parses #, rgb() and hsl()
+     only -- anything else logs "Unsupported color format" and falls back to an
+     opaque colour, which is the opposite of what is wanted here. */
+  colorBack = "rgba(0, 0, 0, 0)",
   colorHighlight = "#ffffff",
   highlights = 0.08,
   layering = 0.5,
@@ -55,8 +60,15 @@ export function WaterImage({
   caustic = 0.01,
   size = 1,
   speed = 1,
-  scale = 0.8,
-  fit = "contain",
+  /* scale 1 and fit cover, up from 0.8 and contain.
+
+     The playground frames the image in 16:9, where contain fits exactly. The
+     card's inner box is not 16:9 -- the 16px inset changes its aspect -- so
+     contain letterboxed it and the gaps filled with colorBack. Cover fills the
+     box instead, and scale 1 stops the image being inset within that fill.
+     Between them there is no background left to show, which is the point. */
+  scale = 1,
+  fit = "cover",
   style,
   className,
 }: WaterImageProps) {
