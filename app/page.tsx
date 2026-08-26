@@ -1413,6 +1413,7 @@ const WATER_THUMBS = new Set<string>([
    edge. Centring splits it evenly. */
 const THUMB_POSITION: Record<string, string> = {
   "vendor-credit-financing": "center",
+  "first-time-user-experience": "center",
 };
 
 /* Tags that should not become chips on a specific card. Same reasoning as the
