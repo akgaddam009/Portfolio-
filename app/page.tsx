@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
+import { WaterImage } from "@/components/WaterImage";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; PortfolioChat is hidden from the nav for now
 import dynamic from "next/dynamic";
 const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
@@ -1403,6 +1404,13 @@ const DITHERED_THUMBS = new Set<string>([
   "first-time-user-experience",
 ]);
 
+/* Cards whose thumbnail gets the water shader. Parameters live in WaterImage
+   as its defaults -- the values Arun dialled in on Paper's playground -- so
+   tuning is one file, not a prop list repeated per card. */
+const WATER_THUMBS = new Set<string>([
+  "financial-planning-workflow",
+]);
+
 /* Tags that should not become chips on a specific card. Same reasoning as the
    badge filter below: the tag stays in the data, so the case study page keeps
    it, and only the card is trimmed. Cards show two chips at most, so dropping
@@ -1707,7 +1715,14 @@ function WorkPanel() {
                               plain <img>. Grid softened on request:
                               2 -> 1 -> 0.5, then back up to 0.75 (+50%), which
                               is also what the About portrait uses. */}
-                          {DITHERED_THUMBS.has(cs.slug) ? (
+                          {WATER_THUMBS.has(cs.slug) ? (
+                            <WaterImage
+                              src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
+                              alt={cs.title}
+                              radius="6px"
+                              style={{ width: "100%", height: "100%" }}
+                            />
+                          ) : DITHERED_THUMBS.has(cs.slug) ? (
                             <DitheredImage
                               src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                               alt={cs.title}
