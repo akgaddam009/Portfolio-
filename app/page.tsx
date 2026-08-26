@@ -1396,19 +1396,12 @@ function WorkChip({ label }: { label: string }) {
 
    Slugs not listed here render tags only, which is the correct default -- a
    card with no clear single domain should not be given a fabricated one. */
-/* Cards whose thumbnail gets the dithered treatment rather than a plain
-   <img>. FanCode only. Planful was tried here and taken back out: it is a
-   product screenshot, and the fine table rules that make it worth showing are
-   the first thing a dither destroys. */
-const DITHERED_THUMBS = new Set<string>([
-  "first-time-user-experience",
-]);
-
 /* Cards whose thumbnail gets the water shader. Parameters live in WaterImage
    as its defaults -- the values Arun dialled in on Paper's playground -- so
    tuning is one file, not a prop list repeated per card. */
 const WATER_THUMBS = new Set<string>([
   "financial-planning-workflow",
+  "first-time-user-experience",
 ]);
 
 /* Tags that should not become chips on a specific card. Same reasoning as the
@@ -1705,30 +1698,20 @@ function WorkPanel() {
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
                         <div style={{ position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
-                            {/* Dithered cards, listed in DITHERED_THUMBS. Started
-                              as FanCode alone (`first-time-user-experience` is
-                              the FanCode sports-app card -- the one FanCode
-                              entry in CARD_ORDER, so it is the only FanCode
-                              thumbnail that reaches the homepage). Planful
-                              joined it so the card grid and the About portrait
-                              share one imagery style. Everything else keeps the
-                              plain <img>. Grid softened on request:
-                              2 -> 1 -> 0.5, then back up to 0.75 (+50%), which
-                              is also what the About portrait uses. */}
+                            {/* Cards listed in WATER_THUMBS get Paper's water
+                              shader; everything else keeps the plain <img>.
+
+                              This slot used to hold a dither, on FanCode first
+                              and briefly on Planful too. Both moved to water,
+                              which left the dither branch unreachable, so it
+                              is gone. DitheredImage itself is still very much
+                              in use -- the About portrait and the testimonial
+                              avatars both render through it. */}
                           {WATER_THUMBS.has(cs.slug) ? (
                             <WaterImage
                               src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                               alt={cs.title}
                               radius="6px"
-                              style={{ width: "100%", height: "100%" }}
-                            />
-                          ) : DITHERED_THUMBS.has(cs.slug) ? (
-                            <DitheredImage
-                              src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
-                              alt={cs.title}
-                              radius="6px"
-                              size={0.75}
-                              colorSteps={6}
                               style={{ width: "100%", height: "100%" }}
                             />
                           ) : (
