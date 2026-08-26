@@ -1404,6 +1404,18 @@ const WATER_THUMBS = new Set<string>([
   "first-time-user-experience",
 ]);
 
+/* Where a plain thumbnail crops from. Absent means "top", which is what the
+   grid has always used and what suits a screenshot whose subject sits at the
+   top of the frame.
+
+   vendor-credit-financing is centred because it arrived 3:2 rather than the
+   16:9 its neighbours came in at. In a 16:9 box, cover crops that image top
+   and bottom, and anchoring to the top throws all of the loss onto the bottom
+   edge. Centring splits it evenly. */
+const THUMB_POSITION: Record<string, string> = {
+  "vendor-credit-financing": "center",
+};
+
 /* Per-card overrides on WaterImage's defaults. Absent means the defaults.
 
    FanCode is calmer than Planful because its thumbnail carries a logo, and a
@@ -1736,7 +1748,7 @@ function WorkPanel() {
                             <img
                               src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                               alt={cs.title}
-                              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", display: "block" }}
+                              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: THUMB_POSITION[cs.slug] ?? "top", display: "block" }}
                             />
                           )}
                         </div>
