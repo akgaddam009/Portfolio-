@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
-import { WaterImage, type WaterImageProps } from "@/components/WaterImage";
+import { WaterImage } from "@/components/WaterImage";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; PortfolioChat is hidden from the nav for now
 import dynamic from "next/dynamic";
 const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
@@ -1401,7 +1401,6 @@ function WorkChip({ label }: { label: string }) {
    tuning is one file, not a prop list repeated per card. */
 const WATER_THUMBS = new Set<string>([
   "financial-planning-workflow",
-  "first-time-user-experience",
 ]);
 
 /* Where a plain thumbnail crops from. Absent means "top", which is what the
@@ -1416,27 +1415,10 @@ const THUMB_POSITION: Record<string, string> = {
   "vendor-credit-financing": "center",
 };
 
-/* Per-card overrides on WaterImage's defaults. Absent means the defaults.
-
-   FanCode is calmer than Planful because its thumbnail carries a logo, and a
-   logo is the one thing on a card a visitor is meant to recognise instantly.
-   The three terms turned down here are the ones that add visible texture:
-   `edges` outlines shapes and so traces the logo's own contours, `layering`
-   overlaps distortions on top of each other, and `caustic` speckles light
-   across the surface. Movement is untouched -- this is less noise, not less
-   water. */
-const WATER_PARAMS: Record<string, Partial<WaterImageProps>> = {
-  "first-time-user-experience": {
-    edges: 0.12,
-    layering: 0.2,
-    caustic: 0,
-  },
-};
-
 /* Tags that should not become chips on a specific card. Same reasoning as the
-   badge filter below: the tag stays in the data, so the case study page keeps
-   it, and only the card is trimmed. Cards show two chips at most, so dropping
-   one here promotes whatever came next rather than leaving a gap. */
+   badge filter at the call site: the tag stays in the data, so the case study
+   page keeps it, and only the card is trimmed. Cards show two chips at most,
+   so dropping one here promotes whatever came next rather than leaving a gap. */
 const CARD_CHIP_EXCLUDE: Record<string, string[]> = {
   "first-time-user-experience": ["UX Design"],
 };
@@ -1742,7 +1724,6 @@ function WorkPanel() {
                               alt={cs.title}
                               radius="6px"
                               style={{ width: "100%", height: "100%" }}
-                              {...WATER_PARAMS[cs.slug]}
                             />
                           ) : (
                             <img
