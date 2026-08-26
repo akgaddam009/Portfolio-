@@ -1414,6 +1414,7 @@ const WATER_THUMBS = new Set<string>([
 const THUMB_POSITION: Record<string, string> = {
   "vendor-credit-financing": "center",
   "first-time-user-experience": "center",
+  "logistics-tax-compliance": "center",
 };
 
 /* Tags that should not become chips on a specific card. Same reasoning as the
