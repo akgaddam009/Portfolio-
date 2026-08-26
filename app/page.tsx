@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
-import { WaterImage } from "@/components/WaterImage";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; PortfolioChat is hidden from the nav for now
 import dynamic from "next/dynamic";
 const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
@@ -1396,13 +1395,6 @@ function WorkChip({ label }: { label: string }) {
 
    Slugs not listed here render tags only, which is the correct default -- a
    card with no clear single domain should not be given a fabricated one. */
-/* Cards whose thumbnail gets the water shader. Parameters live in WaterImage
-   as its defaults -- the values Arun dialled in on Paper's playground -- so
-   tuning is one file, not a prop list repeated per card. */
-const WATER_THUMBS = new Set<string>([
-  "financial-planning-workflow",
-]);
-
 /* Where a plain thumbnail crops from. Absent means "top", which is what the
    grid has always used and what suits a screenshot whose subject sits at the
    top of the frame.
@@ -1415,6 +1407,7 @@ const THUMB_POSITION: Record<string, string> = {
   "vendor-credit-financing": "center",
   "first-time-user-experience": "center",
   "logistics-tax-compliance": "center",
+  "financial-planning-workflow": "center",
 };
 
 /* Tags that should not become chips on a specific card. Same reasoning as the
@@ -1711,29 +1704,22 @@ function WorkPanel() {
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
                         <div style={{ position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
-                            {/* Cards listed in WATER_THUMBS get Paper's water
-                              shader; everything else keeps the plain <img>.
+                            {/* Plain image, matted. No treatment on any card.
 
-                              This slot used to hold a dither, on FanCode first
-                              and briefly on Planful too. Both moved to water,
-                              which left the dither branch unreachable, so it
-                              is gone. DitheredImage itself is still very much
-                              in use -- the About portrait and the testimonial
-                              avatars both render through it. */}
-                          {WATER_THUMBS.has(cs.slug) ? (
-                            <WaterImage
-                              src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
-                              alt={cs.title}
-                              radius="6px"
-                              style={{ width: "100%", height: "100%" }}
-                            />
-                          ) : (
-                            <img
-                              src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
-                              alt={cs.title}
-                              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: THUMB_POSITION[cs.slug] ?? "top", display: "block" }}
-                            />
-                          )}
+                              This slot has held two: a dither on FanCode, then
+                              Paper's water shader on FanCode and Planful. Both
+                              were taken back out, so the branching went with
+                              them. THUMB_POSITION is all that varies per card
+                              now.
+
+                              DitheredImage is still very much in use elsewhere
+                              -- the About portrait and the testimonial avatars
+                              both render through it. */}
+                          <img
+                            src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
+                            alt={cs.title}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: THUMB_POSITION[cs.slug] ?? "top", display: "block" }}
+                          />
                         </div>
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.slug === "apple-business-listings" ? false : cs.confidential} />
