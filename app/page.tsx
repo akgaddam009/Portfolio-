@@ -1038,14 +1038,14 @@ const THUMB_LIGHT: Record<string, string> = {
   "vendor-credit-financing":     "/images/vendor-credit-financing.jpg",
   "logistics-tax-compliance":    "/images/logistics-tax-compliance.jpg",
   "financial-planning-workflow": "/images/financial-planning-workflow.jpg",
-  "first-time-user-experience":  "/images/ftux.png",
+  "first-time-user-experience":  "/images/first-time-user-experience.jpg",
 };
 const THUMB_DARK: Record<string, string> = {
   "apple-business-listings":     "/images/reputation/thumbnail.jpg",
   "vendor-credit-financing":     "/images/vendor-credit-financing.jpg",
   "logistics-tax-compliance":    "/images/logistics-tax-compliance.jpg",
   "financial-planning-workflow": "/images/financial-planning-workflow.jpg",
-  "first-time-user-experience":  "/images/ftux.png",
+  "first-time-user-experience":  "/images/first-time-user-experience.jpg",
 };
 
 const WORK_POSTERS: Record<string, string> = {
