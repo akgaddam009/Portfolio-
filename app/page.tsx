@@ -1479,12 +1479,15 @@ function WorkPanel() {
     return () => observer.disconnect();
   }, []);
 
+  /* Card sequence for Selected Work: Zetwerk credit financing leads,
+     then Planful, Reputation, FanCode. Zetwerk logistics trails — it
+     wasn't part of the requested sequence. */
   const CARD_ORDER = [
-    "vendor-credit-financing",
-    "apple-business-listings",
-    "logistics-tax-compliance",
-    "financial-planning-workflow",
-    "first-time-user-experience",
+    "vendor-credit-financing",      // Zetwerk — credit financing
+    "financial-planning-workflow",  // Planful
+    "apple-business-listings",      // Reputation.com
+    "first-time-user-experience",   // FanCode — FTUX
+    "logistics-tax-compliance",     // Zetwerk — logistics & tax
   ];
   /* Drive-linked cards that require a password before the PDF opens. */
   const PROTECTED_DRIVE = new Set<string>();
