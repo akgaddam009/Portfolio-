@@ -72,3 +72,9 @@ writer.md
 /portfolio-export.md
 /scripts/
 /public/images/lorenzo-lanfranconi-ex-22-f.jpg
+
+# Working source images and research exports. Anything under public/ is
+# publicly served, so full-size originals must not live here -- they were
+# moved to ~/Desktop/portfolio-archive (see MANIFEST.tsv there).
+public/New Thumbnails/
+public/**/New Thumbnails/
