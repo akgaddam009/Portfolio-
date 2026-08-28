@@ -1,15 +1,24 @@
 import type { NextConfig } from "next";
 
+/* Dev-only CSP relaxations. React 19 and Turbopack need real eval() in
+   development — for HMR and for reconstructing server callstacks in the
+   error overlay. Without it the page ships HTML but never hydrates, so
+   local preview renders dead: no theme toggle, no motion, no nav. Neither
+   token is emitted in a production build. */
+const isDev = process.env.NODE_ENV !== "production";
+const devScriptSrc = isDev ? " 'unsafe-eval'" : "";
+const devConnectSrc = isDev ? " ws://localhost:* http://localhost:*" : "";
+
 /* CSP directives shared across every route. Frame-ancestors is overridden
    per-route below — locked down for everything except the Astra prototype
    pages, which are embedded as iframes inside /work/astra. */
 const baseCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://www.googletagmanager.com https://www.clarity.ms", // GA4 + Clarity
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${devScriptSrc} https://www.googletagmanager.com https://www.clarity.ms`, // GA4 + Clarity
   "style-src 'self' 'unsafe-inline'",                // unsafe-inline: Framer Motion inline styles
   "img-src 'self' data: blob: https://tiles.openfreemap.org https://drive.google.com https://lh3.googleusercontent.com https://lh4.googleusercontent.com https://lh5.googleusercontent.com https://lh6.googleusercontent.com https://www.google-analytics.com", // GA4 pixel
   "media-src 'self'",                                // portfolio videos served from /public
-  "connect-src 'self' https://tiles.openfreemap.org https://www.google-analytics.com https://analytics.google.com https://www.clarity.ms", // GA4 + Clarity beacons
+  `connect-src 'self'${devConnectSrc} https://tiles.openfreemap.org https://www.google-analytics.com https://analytics.google.com https://www.clarity.ms`, // GA4 + Clarity beacons
   "font-src 'self' https://tiles.openfreemap.org",   // next/font Inter + maplibre glyph PBFs
   "worker-src blob:",                                // maplibre Web Workers
 ];
