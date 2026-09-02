@@ -21,6 +21,24 @@ following statements in this document are superseded:
 - Verification step "Try `/astra/p1.html` directly → expect 404": drop it,
   the path is gone.
 
+## Addendum — 2026-09-02: planful-esm-tables removed
+
+The Planful ESM Tables case study was deleted along with all 57MB of its
+media. Consequently:
+
+- The `/^\/images\/planful\//i` pattern is gone from
+  `GATED_PATH_PATTERNS`, and its two `PUBLIC_ASSETS` entries with it. This
+  is not a loosening: the directory it guarded no longer exists, so there
+  is nothing left to gate. Finding 3's Planful clause is moot.
+- `/images/planful/` is no longer disallowed in `robots.ts`, for the same
+  reason.
+- Verification step "Try `/images/planful/landing-page.jpg` directly →
+  expect 404": still 404, but now because the file is gone rather than
+  because the proxy blocked it.
+
+Planful survives on the site as `financial-planning-workflow`, a
+Drive-linked card with no gated local media.
+
 ---
 
 ## TL;DR

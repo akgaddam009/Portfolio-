@@ -53,7 +53,6 @@ type GateCover =
   | { kind: "pair";   before: string; after: string };
 
 const GATE_COVERS: Record<string, GateCover> = {
-  "planful-esm-tables":      { kind: "single", src: "/images/planful/planful-product-video.mp4", appType: "Enterprise SaaS · Fintech",   chromeUrl: "app.planful.com" },
   "apple-business-listings": { kind: "single", src: "/images/reputation/after.mp4",              appType: "Enterprise SaaS · Analytics", chromeUrl: "app.reputation.com" },
   "fancode-homepage":        { kind: "pair",   before: "/images/fancode/fancode-homepage-before.mp4", after: "/images/fancode/fancode-homepage-after.mp4" },
 };

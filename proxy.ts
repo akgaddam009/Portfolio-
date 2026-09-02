@@ -7,11 +7,9 @@ import { UNLOCK_COOKIE_NAME, UNLOCK_TOKEN_VALUE } from "@/lib/auth";
    The case study page does a server-side cookie check before rendering
    confidential content. This proxy adds a second layer of defense for
    the static assets in /public — without this, an attacker who guessed
-   /images/planful/bulk-update.mp4 could download confidential media
    directly, bypassing the React route entirely.
 
    Gated paths (require valid unlock cookie):
-   - /images/planful/*       Planful confidential mockups + videos
    - /images/reputation/*    Reputation confidential data viz
    - /images/zetwerk/*       Zetwerk confidential UI
    - /images/zetwerk-bu/*    Zetwerk Business Unit confidential personas
@@ -36,7 +34,6 @@ import { UNLOCK_COOKIE_NAME, UNLOCK_TOKEN_VALUE } from "@/lib/auth";
    URL gets the same response as a typo. */
 
 const GATED_PATH_PATTERNS = [
-  /^\/images\/planful\//i,
   /^\/images\/reputation\//i,
   /^\/images\/zetwerk\//i,
   /^\/images\/zetwerk-bu\//i,
@@ -58,8 +55,6 @@ const PUBLIC_ASSETS = new Set<string>([
   "/images/fancode/fancode-homepage-before.mp4",
   "/images/fancode/earlier-homepage.jpg",
   "/images/fancode/overall-homepage.jpg",
-  "/images/planful/landing-page.jpg",
-  "/images/planful/planful-product-video.mp4",
   "/images/reputation/after.mp4",
   "/images/reputation/thumbnail.jpg",
   "/images/zetwerk-bu/service-blueprint.png",

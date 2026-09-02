@@ -1024,7 +1024,6 @@ function MeshThumbnail({ index, type, confidential }: {
 
 const WORK_THUMBS: Record<string, string> = {
   /* ── Video thumbnails (existing) ── */
-  "planful-esm-tables":   "/images/planful/landing-page.jpg",
   "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
   "zetwerk-bu-ecosystem": "/images/zetwerk-bu/service-blueprint.png",
@@ -1047,7 +1046,6 @@ const THUMB_DARK: Record<string, string> = {
 };
 
 const WORK_POSTERS: Record<string, string> = {
-  "planful-esm-tables":   "/images/planful/landing-page.jpg",
   "apple-business-listings": "/images/reputation/thumbnail.jpg",
   "fancode-homepage":     "/images/fancode/overall-homepage.jpg",
 };
@@ -1059,7 +1057,6 @@ const WORK_POSTERS: Record<string, string> = {
    Only wired where a card has a real product video worth revealing. Touch
    never reaches this -- see WorkCardThumb for why. */
 const WORK_HOVER_VIDEOS: Record<string, string> = {
-  "planful-esm-tables": "/images/planful/planful-product-video.mp4",
 };
 
 const isVideoThumb = (src: string) => /\.(mov|mp4|webm)$/i.test(src);
@@ -1427,7 +1424,6 @@ const CARD_CATEGORY: Record<string, {
   "apple-business-listings":     { label: "Customer Experience", tone: "emerald", icon: ChartActivity },
   "first-time-user-experience":  { label: "Sports App",    tone: "sage",    icon: Users },
   /* Not currently on the homepage, kept so they carry their badge if revived. */
-  "planful-esm-tables":          { label: "Fintech",        tone: "indigo", icon: Briefcase },
   "zetwerk-dc":                  { label: "Supply Chain",   tone: "amber",  icon: Path },
   "zetwerk-bu-ecosystem":        { label: "Service Design", tone: "amber",  icon: TreeStructure },
 };
@@ -3406,7 +3402,7 @@ const PANEL_SHADOW_ACTIVE_DARK = "var(--panel-shadow-active)";
    no animations beyond the standard load fade. Uses theme tokens
    so it adapts to dark/light. */
 const STORY_WORK: { title: string; slug: string | null }[] = [
-  { title: "Planful · Senior Product Designer · 2025", slug: "planful-esm-tables" },
+  { title: "Planful · Senior Product Designer · 2025", slug: null },
   { title: "Reputation.com · Senior UX Designer · 2024–2025", slug: "apple-business-listings" },
   { title: "Zetwerk · Senior Product Designer · 2022–2023", slug: null },
   { title: "FanCode · Manager UX Designer · 2020–2022", slug: "fancode-homepage" },

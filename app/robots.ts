@@ -19,7 +19,6 @@ export default function robots(): MetadataRoute.Robots {
        3. If a crawler probes asset URLs directly, the proxy returns 404 */
   const disallowed: string[] = [
     "/ai/",
-    "/images/planful/",
     "/images/reputation/",
     "/images/zetwerk/",
     "/images/zetwerk-bu/",

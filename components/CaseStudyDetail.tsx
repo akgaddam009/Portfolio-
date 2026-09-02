@@ -71,7 +71,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
   // Prev/Next sequencing on case study pages mirrors the order visitors see
   // when browsing the portfolio. Hidden slugs (zetwerk-*) are kept out of the
   // sequence entirely — never reached via Prev/Next.
-  const NAV_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage"];
+  const NAV_ORDER = ["apple-business-listings", "fancode-homepage"];
   const navList = NAV_ORDER
     .map(slug => caseStudies.find(c => c.slug === slug))
     .filter((c): c is NonNullable<typeof c> => !!c);
@@ -287,7 +287,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             border-right: none !important;
             border-bottom: 1px solid var(--border);
           }
-          /* Planful ESM outcomes side-by-side tiles */
+          /* Side-by-side outcome tiles */
           .cs-flex-tiles {
             flex-direction: column !important;
           }
@@ -822,82 +822,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   cluttered the Overview reading flow. The hero placement is the
                   only place these need to appear. */}
 
-              {/* OLAP vs ESM data shapes — Planful case studies only */}
-              {cs.slug === "planful-esm-tables" && cs.insightDiagram === "olap-vs-esm" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.65, ease: EASE }}
-                  style={{ marginTop: "32px" }}
-                >
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
-                    ESM vs OLAP data model (two different types of data)
-                  </p>
-                  <div className="cs-esm-olap" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden" }}>
-                    {/* ESM — Tabular */}
-                    <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-                        ESM · Tabular
-                      </span>
-                      <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
-                        <svg width="140" height="80" viewBox="0 0 140 80" fill="none" stroke="currentColor" strokeWidth="0.9" style={{ color: "var(--muted2)" }}>
-                          {/* Header band */}
-                          <rect x="2" y="2" width="136" height="14" fill="currentColor" fillOpacity="0.06" />
-                          {/* Outer table */}
-                          <rect x="2" y="2" width="136" height="76" />
-                          {/* Column dividers */}
-                          <line x1="36" y1="2" x2="36" y2="78" />
-                          <line x1="70" y1="2" x2="70" y2="78" />
-                          <line x1="104" y1="2" x2="104" y2="78" />
-                          {/* Row dividers */}
-                          <line x1="2" y1="16" x2="138" y2="16" />
-                          <line x1="2" y1="31" x2="138" y2="31" />
-                          <line x1="2" y1="46" x2="138" y2="46" />
-                          <line x1="2" y1="61" x2="138" y2="61" />
-                          {/* Header label dashes */}
-                          <line x1="10" y1="9" x2="28" y2="9" strokeWidth="1.2" />
-                          <line x1="44" y1="9" x2="62" y2="9" strokeWidth="1.2" />
-                          <line x1="78" y1="9" x2="96" y2="9" strokeWidth="1.2" />
-                          <line x1="112" y1="9" x2="130" y2="9" strokeWidth="1.2" />
-                        </svg>
-                      </div>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
-                        Rows × columns. Typed cells. Editable in a sandbox before publish.
-                      </p>
-                    </div>
-
-                    {/* OLAP — Multi-dimensional */}
-                    <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-                        OLAP · Multi-dimensional
-                      </span>
-                      <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
-                        <svg width="140" height="80" viewBox="0 0 140 80" fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinejoin="round" strokeLinecap="round" style={{ color: "var(--muted2)" }}>
-                          {/* Hex outline */}
-                          <path d="M70 6 L106 22 L106 54 L70 70 L34 54 L34 22 Z" />
-                          {/* 3 inner edges to the front-top corner */}
-                          <path d="M70 6 L70 38 M34 22 L70 38 M106 22 L70 38" />
-                          {/* Top face subdivisions */}
-                          <line x1="52" y1="14" x2="52" y2="30" strokeOpacity="0.5" />
-                          <line x1="88" y1="14" x2="88" y2="30" strokeOpacity="0.5" />
-                          <line x1="42" y1="26" x2="78" y2="42" strokeOpacity="0.4" />
-                          <line x1="98" y1="26" x2="62" y2="42" strokeOpacity="0.4" />
-                          {/* Front-left face vertical subdivisions */}
-                          <line x1="46" y1="28" x2="46" y2="60" strokeOpacity="0.5" />
-                          <line x1="58" y1="34" x2="58" y2="66" strokeOpacity="0.5" />
-                          {/* Front-right face vertical subdivisions */}
-                          <line x1="82" y1="34" x2="82" y2="66" strokeOpacity="0.5" />
-                          <line x1="94" y1="28" x2="94" y2="60" strokeOpacity="0.5" />
-                        </svg>
-                      </div>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
-                        Dimensions × members. Aggregated. The shape reports and forecasts read from.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
 
               {/* Structured Context cards — render AFTER the diagram so
                   the data-shape primitives (ESM vs OLAP) are introduced
@@ -1158,10 +1082,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             {/* ── User Types ─────────────────────────────────────────── */}
             {cs.users && cs.users.length > 0 && (() => {
               const USER_ICONS: Record<string, React.FC<{size?: number; strokeWidth?: number}>> = {
-                // Planful
-                "Finance Analyst":          ChartActivity,
-                "Business Team Owner":      Users,
-                "Finance Manager":          Briefcase,
+                /* Empty since the case study that defined these roles was
+                   removed. Every role now falls through to UserCircle below;
+                   this stays as the per-role override point. */
               };
               return (
               <CsSection label="User types" id="cs-who">
@@ -2453,7 +2376,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             {(cs.outcomesImage || cs.prototypeVideo || cs.outcomesVideo) && (
               <CsSection label="Final Design" className="exec-hide">
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                  {/* outcomesVideo renders first (Planful) */}
+                  {/* outcomesVideo renders first */}
                   {cs.outcomesVideo && (
                     <motion.div
                       initial={{ opacity: 0, y: 12 }}
@@ -2581,47 +2504,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   </motion.div>
                 )}
 
-                {/* Impact tiles — Planful ESM Tables */}
-                {cs.slug === "planful-esm-tables" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, ease: EASE }}
-                    className="cs-flex-tiles"
-                    style={{ display: "flex", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}
-                  >
-                    {/* Tile 1: Time on task */}
-                    <div style={{ flex: 1, padding: "24px 24px 20px", display: "flex", flexDirection: "column", gap: "16px", borderRight: "1px solid var(--border)" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-                        Time on task
-                      </span>
-                      <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap" }}>
-                        <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 300, letterSpacing: "-0.03em", color: "var(--muted)", lineHeight: 1, textDecoration: "line-through", textDecorationColor: "var(--border)" }}>3.5 hrs</span>
-                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" style={{ color: "var(--muted)", flexShrink: 0 }}>
-                          <path d="M3 10h14M13 5l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(28px, 3.4vw, 36px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1 }}>10 to 15 min</span>
-                      </div>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
-                        ~95% reduction. Simple updates that took half a day now take a coffee break.
-                      </p>
-                    </div>
-
-                    {/* Tile 2: Access expanded */}
-                    <div style={{ flex: 1, padding: "24px 24px 20px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>
-                        Access expanded
-                      </span>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(22px, 2.6vw, 28px)", fontWeight: 400, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1.15 }}>
-                        Finance → Any team
-                      </p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.55, color: "var(--muted2)", letterSpacing: "-0.01em" }}>
-                        Non-finance teams now load their own data without finance mediating every update.
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
 
                 {/* Zetwerk BU Ecosystem — qualitative shift card */}
                 {cs.slug === "zetwerk-bu-ecosystem" && (
@@ -2661,8 +2543,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 )}
 
 
-                {/* Outcomes — planful-esm-tables, Zetwerk BU, FanCode, and apple-business-listings have their own custom blocks above */}
-                {cs.slug !== "planful-esm-tables" && cs.slug !== "zetwerk-bu-ecosystem" && cs.slug !== "fancode-homepage" && cs.slug !== "apple-business-listings" && (() => {
+                {/* Outcomes — Zetwerk BU, FanCode, and apple-business-listings have their own custom blocks above */}
+                {cs.slug !== "zetwerk-bu-ecosystem" && cs.slug !== "fancode-homepage" && cs.slug !== "apple-business-listings" && (() => {
                   /* Single-outcome treatment — promote the stat to a hero
                      stat block instead of an "01" numbered row. Triggers
                      when there's exactly one outcome AND it starts with a
@@ -4739,9 +4621,9 @@ function TaskFlowDiagram({ stages }: { stages: TaskFlowStage[] }) {
               )}
             </div>
 
-            {/* Icon — keyed by label, with mappings for both the
-                older planful-esm vocabulary (Define / Prepare) and
-                the new planful-esm-tables vocabulary (Add / Transform). */}
+            {/* Icon — keyed by label, with mappings for both the older
+                vocabulary (Define / Prepare) and the newer one
+                (Add / Transform). */}
             <div style={{ color: "var(--muted2)", width: "22px", height: "22px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
               <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
                 {stage.label === "Define" && <><rect x="2" y="2" width="5" height="5" rx="0.5"/><rect x="9" y="2" width="5" height="5" rx="0.5"/><rect x="2" y="9" width="5" height="5" rx="0.5"/><rect x="9" y="9" width="5" height="5" rx="0.5"/></>}

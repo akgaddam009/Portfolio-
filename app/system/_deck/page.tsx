@@ -123,7 +123,7 @@ const TOC_GROUPS = [
   ]},
 ] as const;
 
-const NEXT_AFTER_DECK_ORDER = ["planful-esm-tables", "apple-business-listings", "fancode-homepage"];
+const NEXT_AFTER_DECK_ORDER = ["apple-business-listings", "fancode-homepage"];
 
 /* =========================================================================
    PRIMITIVES — same scale as the /system article so the type system stays

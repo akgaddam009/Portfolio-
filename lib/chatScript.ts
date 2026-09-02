@@ -211,7 +211,7 @@ export const NODES: Record<string, ChatNode> = {
     chip: "Most recent project",
     answer:
       "Planful, 2025. End-to-end design for two finance planning features. Training time on the modernised workflows dropped ~30%.",
-    link: { label: "Open Planful case study", href: "/work/planful-esm-tables" },
+    link: { label: "Open the Planful deck", href: "https://drive.google.com/file/d/1A-zLT6nJ2aYRrMYx3g_ueVF0EaPPRudD/view?usp=sharing", external: true },
     followups: ["cs-planful", "work-pickone", "section-work"],
   },
 
@@ -251,7 +251,7 @@ export const NODES: Record<string, ChatNode> = {
     chip: "Planful",
     answer:
       "Finance analysts were living in Excel. My job: move them to a web tool without slowing them down.\n\n• Challenge: preserve the spreadsheet muscle memory while adding versioning, audit trails, and role separation.",
-    link: { label: "Open Planful case study", href: "/work/planful-esm-tables" },
+    link: { label: "Open the Planful deck", href: "https://drive.google.com/file/d/1A-zLT6nJ2aYRrMYx3g_ueVF0EaPPRudD/view?usp=sharing", external: true },
     followups: ["planful-decision", "planful-cut", "planful-outcome"],
   },
 
