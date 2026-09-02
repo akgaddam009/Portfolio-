@@ -106,7 +106,7 @@ npm run lint         # eslint
 | Branch                       | Purpose                                          |
 | ---------------------------- | ------------------------------------------------ |
 | `main`                       | Production. Deployed via Vercel. Don't push without approval. |
-| `local/with-explorations`    | In-progress work — includes hidden case studies (Astra, Design System) |
+| `local/with-explorations`    | In-progress work — includes hidden case studies (Design System) |
 
 ---
 

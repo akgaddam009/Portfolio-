@@ -5,6 +5,24 @@ Scope: full portfolio site (https://arungaddamux.vercel.app)
 
 ---
 
+## Addendum — 2026-09-01: Astra removed
+
+The Astra case study and its prototype routes were deleted from the repo.
+The findings below are left exactly as recorded on the audit date; the
+following statements in this document are superseded:
+
+- Finding 4 and the `/astra/*` row in the proxy diagram: those routes no
+  longer exist. (The proxy `matcher` only ever covered `/images/:path*`,
+  so `/astra/*` was in fact gated by `notFound()` in the route, not by
+  `proxy.ts`.)
+- "X-Frame-Options: DENY (per-route SAMEORIGIN for Astra embedding)": the
+  SAMEORIGIN exception is gone. `frame-ancestors 'none'` and
+  `X-Frame-Options: DENY` now apply to every route with no opt-out.
+- Verification step "Try `/astra/p1.html` directly → expect 404": drop it,
+  the path is gone.
+
+---
+
 ## TL;DR
 
 The most embarrassing leak — a hardcoded password sitting in the JS

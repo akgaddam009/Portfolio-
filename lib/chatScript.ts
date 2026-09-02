@@ -170,14 +170,14 @@ export const NODES: Record<string, ChatNode> = {
   },
 
   // TODO: Arun to rewrite or replace. The text below is the AI's read of
-  // the POV already present in your other answers (pattern + Astra philosophy).
+  // the POV already present in your other answers (pattern + AI philosophy).
   // If you have a sharper take, swap it in.
   "about-hottake": {
     id: "about-hottake",
     chip: "A hot take",
     answer:
       "Most 'enterprise UX' is design theater. The real leverage is where users are already working around your product. Build for the workaround, not the spec.\n\nSecond one: in AI products, the win is admitting where the model is wrong, not hiding it. The 10–15% handoff is the design problem, not the 85–90% that just works.",
-    followups: ["about-pattern", "about-philosophy", "cs-astra"],
+    followups: ["about-pattern", "about-philosophy", "ai-philosophy"],
   },
 
   "about-problems": {
@@ -194,7 +194,7 @@ export const NODES: Record<string, ChatNode> = {
     id: "work-pattern",
     chip: "Common thread across projects",
     answer:
-      "Users compensating with manual work. Planful: analysts living in Excel. Apple: businesses guessing why their listings rejected. FanCode: new users not knowing what the app was for. Astra: legal and procurement bouncing contracts over email. The design leverage is where the system loses to manual effort.",
+      "Users compensating with manual work. Planful: analysts living in Excel. Apple: businesses guessing why their listings rejected. FanCode: new users not knowing what the app was for. The design leverage is where the system loses to manual effort.",
     followups: ["work-pickone", "about-philosophy", "section-work"],
   },
 
@@ -202,8 +202,8 @@ export const NODES: Record<string, ChatNode> = {
     id: "work-pickone",
     chip: "Where to start",
     answer:
-      "Depends what you want to see:\n\n• Astra. How I think about AI uncertainty. Solo-built in a weekend.\n• Planful. Enterprise rigor. Spreadsheet muscle memory migrated into a modern web tool without slowing analysts down.\n• FanCode. Consumer scale. 50M users, fixed first-session drop-off.",
-    followups: ["cs-astra", "cs-planful", "cs-fancode"],
+      "Depends what you want to see:\n\n• Planful. Enterprise rigor. Spreadsheet muscle memory migrated into a modern web tool without slowing analysts down.\n• Apple. Data accuracy across 100+ locations, inside an enterprise dashboard.\n• FanCode. Consumer scale. 50M users, fixed first-session drop-off.",
+    followups: ["cs-planful", "cs-apple", "cs-fancode"],
   },
 
   "work-recent": {
@@ -271,15 +271,6 @@ export const NODES: Record<string, ChatNode> = {
       "50M users. First-session confusion was the main drop-off. I had to fix the homepage.\n\n• Problem: new users landed and didn't know what to do. The homepage assumed they already had a team or sport in mind.\n• Move: reframe it as a discovery surface. Let content pull them in.\n• Outcome: retention up ~18%. Paid subscriptions climbed the following month.",
     link: { label: "Open FanCode case study", href: "/work/fancode-homepage" },
     followups: ["fancode-decision", "fancode-cut", "fancode-outcome"],
-  },
-
-  "cs-astra": {
-    id: "cs-astra",
-    chip: "Astra",
-    answer:
-      "Designed and built solo in 6 to 8 hours using Claude Code.\n\n• Two flows: procurement and legal, each with different views and goals.\n• Question: when AI is right 85–90% of the time, what does the other 10–15% look like?\n• Answer: structured role handoff, not a single approval button.",
-    link: { label: "Open Astra case study", href: "/work/astra" },
-    followups: ["astra-decision", "astra-cut", "astra-outcome"],
   },
 
   // ── Case study deep dives ─────────────────────────────────────────────────
@@ -350,37 +341,19 @@ export const NODES: Record<string, ChatNode> = {
     followups: ["fancode-decision", "fancode-cut", "cs-fancode"],
   },
 
-  "astra-decision": {
-    id: "astra-decision",
-    chip: "One button or split by role",
-    answer:
-      "Whether to give the AI a single approval button or split the flow by role. I split it. Procurement and legal see different views with structured handoff between them. That handoff was what the AI contract intelligence team pushed back on hardest, and what stayed.",
-    followups: ["astra-cut", "astra-outcome", "cs-astra"],
-  },
-  "astra-cut": {
-    id: "astra-cut",
-    chip: "What I cut",
-    answer:
-      "An 'approve all' bulk action. It felt powerful but undid the point of the role split. I kept per-clause approval and added keyboard shortcuts to maintain speed.",
-    followups: ["astra-decision", "astra-outcome", "cs-astra"],
-  },
-  "astra-outcome": {
-    id: "astra-outcome",
-    chip: "The outcome",
-    answer:
-      "Two working prototypes shipped in 6 to 8 hours with Claude Code. I reviewed them with an AI contract intelligence team. It's a designed experiment, not a launched product.",
-    followups: ["astra-decision", "astra-cut", "cs-astra"],
-  },
-
   // ── AI deep dives ─────────────────────────────────────────────────────────
 
   "ai-example": {
     id: "ai-example",
     chip: "An example",
     answer:
-      "Astra. I designed and built it solo in 6 to 8 hours. Two flows, procurement and legal, with structured handoff between them. I reviewed it with an AI contract intelligence team afterward.",
-    link: { label: "Open Astra case study", href: "/work/astra" },
-    followups: ["cs-astra", "ai-philosophy", "ai-tools"],
+      "A Custom GPT I built and launched for UX and product professionals. Designed, written and shipped solo. It has since generated 73K+ organic LinkedIn impressions.",
+    link: {
+      label: "Open the Custom GPT",
+      href: "https://chatgpt.com/g/g-6a6b5aeb663c81919ca14dbf88115b73-ux-product-research-assistant",
+      external: true,
+    },
+    followups: ["ai-philosophy", "ai-tools", "section-work"],
   },
   "ai-philosophy": {
     id: "ai-philosophy",

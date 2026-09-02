@@ -25,7 +25,7 @@ const DRIVE_EMBEDS: Record<string, string> = {
 
    Two-tier confidentiality model:
    - HIDDEN_SLUGS (this set):   404. NDA-strict. URL is not guessable.
-                                Examples: zetwerk-dc, zetwerk-bu-ecosystem, astra.
+                                Examples: zetwerk-dc, zetwerk-bu-ecosystem.
    - confidential: true (data): Renders a gate. Confidential content
                                 ONLY ships to the browser after the
                                 server-side cookie check passes —

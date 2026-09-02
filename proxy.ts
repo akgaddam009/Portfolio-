@@ -20,7 +20,6 @@ import { UNLOCK_COOKIE_NAME, UNLOCK_TOKEN_VALUE } from "@/lib/auth";
    - /images/fancode/*       FanCode confidential UI
    - /images/fancode-ftux/*  FanCode FTUX confidential thumbnails
    - /images/apple*          Apple Business Listings confidential
-   - /astra/*                Astra NDA-strict prototype HTML
 
    Public allowlist (always served, even inside gated folders):
    Certain thumbnail / cover / landing images are referenced by the
@@ -54,8 +53,6 @@ const GATED_PATH_PATTERNS = [
    actual <img src=...> values in app/page.tsx — anything used in
    the home-page grid must be here. */
 const PUBLIC_ASSETS = new Set<string>([
-  "/images/astra/cover.jpg",
-  "/images/astra/overview.mp4",
   "/images/fancode-ftux/fc-ftux-thumbnail.jpg",
   "/images/fancode/fancode-homepage-after.mp4",
   "/images/fancode/fancode-homepage-before.mp4",

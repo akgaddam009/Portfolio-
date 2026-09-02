@@ -1024,7 +1024,6 @@ function MeshThumbnail({ index, type, confidential }: {
 
 const WORK_THUMBS: Record<string, string> = {
   /* ── Video thumbnails (existing) ── */
-  "astra":                "/images/astra/overview.mp4",
   "planful-esm-tables":   "/images/planful/landing-page.jpg",
   "fancode-homepage":     "/images/fancode/fancode-homepage-after.mp4",
   "zetwerk-dc":           "/images/zetwerk/cover.png",
@@ -1048,7 +1047,6 @@ const THUMB_DARK: Record<string, string> = {
 };
 
 const WORK_POSTERS: Record<string, string> = {
-  "astra":                "/images/astra/cover.jpg",
   "planful-esm-tables":   "/images/planful/landing-page.jpg",
   "apple-business-listings": "/images/reputation/thumbnail.jpg",
   "fancode-homepage":     "/images/fancode/overall-homepage.jpg",
@@ -1429,7 +1427,6 @@ const CARD_CATEGORY: Record<string, {
   "apple-business-listings":     { label: "Customer Experience", tone: "emerald", icon: ChartActivity },
   "first-time-user-experience":  { label: "Sports App",    tone: "sage",    icon: Users },
   /* Not currently on the homepage, kept so they carry their badge if revived. */
-  "astra":                       { label: "AI Experiments", tone: "violet", icon: Sparkles },
   "planful-esm-tables":          { label: "Fintech",        tone: "indigo", icon: Briefcase },
   "zetwerk-dc":                  { label: "Supply Chain",   tone: "amber",  icon: Path },
   "zetwerk-bu-ecosystem":        { label: "Service Design", tone: "amber",  icon: TreeStructure },
@@ -1492,13 +1489,13 @@ function WorkPanel() {
   /* Drive-linked cards that require a password before the PDF opens. */
   const PROTECTED_DRIVE = new Set<string>();
   /* AI Exploration section hidden from the live homepage. Empty array
-     collapses the entire "AI Exploration" block (header + Astra card +
-     Portfolio Design Language card) via the `explorationCards.length > 0`
-     gate further down. Routes for /work/astra and /system still exist
-     for direct linking; only the homepage surface is removed. */
+     collapses the entire "AI Exploration" block via the
+     `explorationCards.length > 0` gate further down. Nothing feeds this
+     any more: /system is a notFound() stub and the one case study that
+     used to sit here has been deleted. Kept because the block is still
+     wired up and repopulating EXPLORATION_ORDER revives it. */
   const EXPLORATION_ORDER: string[] = [];
   const COMING_SOON = new Set<string>();
-
   const allCards = CARD_ORDER
     .map(slug => caseStudies.find(cs => cs.slug === slug))
     .filter((cs): cs is NonNullable<typeof cs> => !!cs);
@@ -1771,6 +1768,83 @@ function WorkPanel() {
               </motion.div>
             );
           })}
+
+          {/* Custom GPT — the one non-case-study card in Selected Work. It has
+              no /work/<slug> page and no case study entry, so it is authored
+              inline here rather than driven off CARD_ORDER. Everything else
+              (work-card class, 16:9 thumb, chip row, h3) matches the mapped
+              cards above so it reads as one of them.
+
+              The thumbnail is the ChatGPT mark on a matted panel, the same
+              inset-16px / 6px-radius treatment the THUMB_LIGHT cards use. There
+              is no screenshot of a GPT to show, and a stretched logo would look
+              worse than a centred one. Source and licence for the mark are in
+              public/images/ai/README.txt. */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{
+              opacity: { duration: 0.5, ease: EASE, delay: allCards.length * 0.06 },
+              y: { type: "spring", stiffness: 320, damping: 28 },
+            }}
+          >
+            <Link
+              href="https://chatgpt.com/g/g-6a6b5aeb663c81919ca14dbf88115b73-ux-product-research-assistant"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Launched a Custom GPT that helps UX researchers plan, synthesize, and communicate research, driving 73K+ organic LinkedIn impressions. AI Experiments, Custom GPT. Opens ChatGPT in a new tab"
+            >
+              <div className="work-card" style={{ borderRadius: "16px", overflow: "hidden" }}>
+                {/* Thumbnail. Every card in CARD_ORDER renders through the
+                    THUMB_LIGHT branch, which mattes its image inside a 16px
+                    inset at 6px radius — so this one matches that geometry
+                    exactly or it reads as the odd card out.
+
+                    Inside the matte it follows the FanCode card: a flat field
+                    in the brand's own colour with the mark centred on it in
+                    white, plus .paper-grain for the same texture. #74aa9c is
+                    the backplate colour from the source logo, and the mark is
+                    the same file with that backplate removed. Not theme-aware
+                    on purpose — the FanCode orange does not flip either. */}
+                <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                  <div style={{
+                    position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    background: "#74aa9c",
+                  }}>
+                    <div className="paper-grain" />
+                    <img
+                      src="/images/ai/chatgpt-mark-white.svg"
+                      alt=""
+                      aria-hidden="true"
+                      width={118}
+                      height={104}
+                      loading="lazy"
+                      decoding="async"
+                      style={{ width: "118px", height: "104px", display: "block", position: "relative" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div style={{ padding: "16px 16px 18px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
+                    <AccentChip label="AI Experiments" tone="violet" icon={Sparkles} />
+                    <WorkChip label="Custom GPT" />
+                  </div>
+                  <h3 style={{
+                    fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
+                    lineHeight: "26px", letterSpacing: "-0.02em",
+                    color: "var(--text)", marginBottom: 0,
+                  }}>
+                    Launched a Custom GPT that helps UX researchers plan, synthesize,
+                    and communicate research, driving 73K+ organic LinkedIn impressions.
+                  </h3>
+                </div>
+              </div>
+            </Link>
+          </motion.div>
         </div>
 
         {/* AI Exploration — separate section below the main work grid. */}
@@ -2209,109 +2283,6 @@ const testimonials: Testimonial[] = [
   { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB", image: "/images/testimonial/nikhil-bhagya.jpeg" },
   { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB", image: "/images/testimonial/bishal-biswas.jpeg" },
 ];
-
-/* ── Panel: AI Experiments ── */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; hidden from PANEL_CONFIGS
-function AiExperimentsPanel() {
-  return (
-    <div>
-      <PanelHeader label="AI Experiments" />
-      <div style={{ padding: "16px 24px 32px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-20px" }}
-            transition={{
-              opacity: { duration: 0.5, ease: EASE },
-              y: { type: "spring", stiffness: 320, damping: 28 },
-            }}
-          >
-            {/* Thumbnail is the ChatGPT mark rather than a screenshot: it
-                identifies where the GPT lives, and there is no captured asset
-                of the GPT itself. Centred at its own size, not stretched --
-                it is a logo, not a photograph. Source and licence are recorded
-                in public/images/ai/README.txt (public domain, PD-shape).
-
-                The whole card is the link, matching the work cards. It used to
-                carry a "View GPT" button instead; removing that without moving
-                the href up here would have left the card with no destination. */}
-            <Link
-              href="https://chatgpt.com/g/g-6a6b5aeb663c81919ca14dbf88115b73-ux-product-research-assistant"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="UX product research assistant. Custom GPT on ChatGPT. Opens in a new tab"
-              style={{ textDecoration: "none", display: "block" }}
-            >
-            <div
-              className="work-card"
-              style={{
-                borderRadius: "16px",
-                overflow: "hidden",
-                transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
-              }}
-            >
-              {/* Same 16:9 / 16px-top-radius geometry as the work cards. */}
-              <div style={{
-                position: "relative",
-                aspectRatio: "16 / 9",
-                overflow: "hidden",
-                borderRadius: "16px 16px 0 0",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "var(--surface2)",
-              }}>
-                <img
-                  src="/images/ai/chatgpt-logo.svg"
-                  alt=""
-                  aria-hidden="true"
-                  width={88}
-                  height={88}
-                  loading="lazy"
-                  decoding="async"
-                  style={{ width: "88px", height: "88px", display: "block", borderRadius: "20px" }}
-                />
-              </div>
-
-              <div style={{ padding: "16px 16px 18px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "10px" }}>
-                  <AccentChip label="Custom GPT" tone="violet" icon={Sparkles} />
-                  <WorkChip label="UX Research" />
-                </div>
-
-                <h3 style={{
-                  fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)",
-                  fontWeight: 500, lineHeight: "22px", letterSpacing: 0,
-                  color: "var(--text)", marginBottom: "6px",
-                }}>
-                  UX product research assistant.
-                </h3>
-
-                <p style={{
-                  fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
-                  fontWeight: 400, lineHeight: 1.6, letterSpacing: "-0.01em",
-                  color: "var(--muted)", marginBottom: "14px",
-                }}>
-                  Built and launched a Custom GPT for UX researchers, product designers,
-                  and product managers, generating{" "}
-                  <strong style={{ color: "var(--text)", fontWeight: 500 }}>
-                    73K+ organic LinkedIn impressions
-                  </strong>
-                  .
-                </p>
-
-              </div>
-            </div>
-            </Link>
-          </motion.div>
-
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function CareerPanel() {
   const totalH = (CAL_END - CAL_START) * YEAR_PX + TOP_OFFSET;
@@ -3408,71 +3379,6 @@ function ContactPanel() {
 }
 
 /* ── Panel shadow helpers ── */
-/* ── AI Explorations panel ── */
-function AiExplorationsPanel() {
-  const astra = caseStudies.find(cs => cs.slug === "astra");
-  return (
-    <div>
-      <PanelHeader label="AI Explorations" />
-      <div style={{ padding: "16px 24px 32px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-
-          {/* Featured: AI Contract Review. live React prototype built with Claude */}
-          {astra && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ opacity: { duration: 0.5, ease: EASE }, y: { type: "spring", stiffness: 320, damping: 28 } }}
-            >
-              <Link href={`/work/${astra.slug}`}>
-                <div
-                  className="work-card"
-                  style={{
-                    boxShadow: "var(--card-shadow)",
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
-                >
-                  <div style={{ position: "relative", height: "200px", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
-                    {WORK_THUMBS[astra.slug] ? (
-                      <WorkCardThumb
-                        src={WORK_THUMBS[astra.slug]}
-                        poster={WORK_POSTERS[astra.slug]}
-                        height={200}
-                        borderRadius="16px 16px 0 0"
-                      />
-                    ) : (
-                      <MeshThumbnail index={0} type={astra.type} confidential={astra.confidential} />
-                    )}
-                  </div>
-                  <div style={{ padding: "12px 16px 16px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
-                      <WorkChip label="Live Prototype" />
-                      {astra.tags.slice(0, 2).map(tag => (
-                        <WorkChip key={tag} label={tag} />
-                      ))}
-                    </div>
-                    <h3 style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500, lineHeight: "22px", letterSpacing: 0, color: "var(--text)", marginBottom: "4px" }}>
-                      {astra.title}
-                    </h3>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 300, lineHeight: 1.5, letterSpacing: 0, color: "var(--muted)" }}>
-                      {astra.subtitle}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          )}
-
-          {/* Portfolio Design Language — meta artifact card. */}
-          <SystemFeatureCard />
-
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* A hairline ring defines the panel edge; the blur only has to suggest air
    under it. That split is what lets the blur go this light -- the edge no
@@ -3804,10 +3710,6 @@ function StoryView() {
 const PANEL_CONFIGS = [
   { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
   { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
-  /* AI Experiments hidden again. PANEL_LABELS derives from this array, so the
-     nav dots, arrows and floating menu all drop it with no other change.
-     Uncomment to bring it back. */
-  // { label: "AI Experiments", width: "420px", minWidth: "380px", Component: AiExperimentsPanel },
   { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
   { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
   { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },

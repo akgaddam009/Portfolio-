@@ -77,8 +77,9 @@ export type CaseStudy = {
       renders inline in the Prototype section, with its label as a sub-heading.
       `screens` is an optional jump-navigation: a tab strip the visitor can
       use to scrub directly to a specific screen via postMessage to the iframe.
-      The target page must listen for `{ type: 'astra-nav', screen, role? }`
-      messages see /app/astra/p1/page.tsx for the reference implementation. */
+      The target page must listen for `{ type: 'prototype-nav', screen, role? }`
+      messages and scrub itself to that screen. No prototype currently uses
+      this; see CaseStudyDetail for the sender side. */
   prototypeIframes?: {
     label: string;
     src: string;
@@ -298,12 +299,10 @@ export type CaseStudy = {
    guessable, plus slugs that live at their own route instead.
    Single source of truth. This was previously duplicated in
    app/work/[slug]/page.tsx and app/sitemap.ts with a "keep in sync" comment;
-   they drifted, "astra" was missing from the sitemap copy, and the sitemap
-   ended up advertising a URL that 404s. */
+   they drifted and the sitemap ended up advertising a URL that 404s. */
 export const HIDDEN_SLUGS = new Set<string>([
   "zetwerk-dc",
   "zetwerk-bu-ecosystem",
-  "astra",
 ]);
 
 export const caseStudies: CaseStudy[] = [
@@ -571,136 +570,6 @@ export const caseStudies: CaseStudy[] = [
 
     lesson:
       "Accessible enterprise systems aren't built by simplifying complexity. They're built by removing unnecessary judgment, making remaining decisions explicit, and respecting how people already think.",
-  },
-  {
-    slug: "astra",
-    number: "00",
-    title: "AI contract review and approval workflow.",
-    titleHighlights: { "AI": "violet", "Contract Review": "amber", "Approval Workflow": "indigo" },
-    subtitle: "When AI is right 85 to 90% of the time, what should the other 10 to 15% look like? Two flows, built in 6–8 hours with Claude Code.",
-    cardImpact: "Working prototype shipped in 6–8 hours. AI review and approval in 2 flows.",
-    company: "AI Exploration",
-    type: "AI · B2B SaaS",
-    role: "AI UX",
-    timeline: "2026 · 6–8 hour build",
-    team: "Solo (designer + Claude Code)",
-    tags: ["AI UX", "B2B SaaS", "Built with Claude"],
-    heroLabel: "AI Exploration",
-    confidential: false,
-
-    summary:
-      "==When AI is right 85 to 90% of the time, what should the other 10 to 15% look like in the interface?==\n\nTwo flows, built in 6–8 hours with Claude Code. Still working through the answer.",
-
-    context:
-      "AI scans a contract and pulls out 30 to 40 fields.\n\nA person checks the result, fixes mistakes, and sends it for approval.\n\n==The hard part isn't the upload or the dashboard.== It's the moment a reviewer has to decide whether to trust what the AI pulled out.",
-
-
-    users: [
-      {
-        role: "Procurement Professional",
-        name: "Contract review · data accuracy",
-        bullets: [
-          "Handles 5 to 15 contracts a day.",
-          "Checks the AI's work, fixes mistakes, approves the data.",
-          "Mistakes cost the company real money.",
-          "Needs to move fast without losing accuracy.",
-        ],
-        coreTension: "Speed vs. accuracy when the AI is right 85 to 90% of the time.",
-      },
-      {
-        role: "Legal Professional",
-        name: "Contract review · risk and liability",
-        bullets: [
-          "Reads the same contract as procurement, but for risk, not data.",
-          "Focuses on indemnity, SLAs, and liability terms.",
-          "Mistakes here become legal problems.",
-          "Needs a view that shows only what legal owns.",
-        ],
-        coreTension: "Same document, completely different job.",
-      },
-      {
-        role: "Procurement Manager",
-        name: "Workflow configuration · approval routing",
-        bullets: [
-          "Sets up 10 to 15 approval paths across the company.",
-          "Rules change by contract type, dollar amount, vendor risk, and department.",
-          "Today it runs over email. Approvals get stuck, skipped, or sent to the wrong person.",
-          "Needs to build and edit rules without engineering help.",
-        ],
-        coreTension: "Complex logic that has to read like plain English.",
-      },
-    ],
-
-    uxGoals: [
-      {
-        title: "Make AI uncertainty easy to act on",
-        body: "Every field gets a clear state: confident, needs review, or missing.\n\nThe reviewer shouldn't have to guess confidence from a number or a tooltip.",
-      },
-      {
-        title: "Split the two review jobs",
-        body: "Procurement and legal read the same contract but care about different things.\n\nOne shared screen makes each role scroll past work that isn't theirs.",
-      },
-      {
-        title: "Make rule building feel like writing a sentence",
-        body: "A manager building approval paths shouldn't have to think in conditions.\n\nEvery rule should read back in plain English they can check at a glance.",
-      },
-    ],
-
-    productGoals: [
-      {
-        title: "Replace email-based approvals",
-        body: "Today, approvals get stuck, skipped, or sent to the wrong person.\n\nA configurable workflow removes the manual handoff and makes the process easy to track.",
-      },
-      {
-        title: "Catch errors before they enter the approval chain",
-        body: "Bad data approved by procurement becomes a legal or financial problem later.\n\nThe review screen is the last check before that data is treated as a fact.",
-      },
-      {
-        title: "Ship two flows that work together",
-        body: "Contract review feeds the approval workflow.\n\nDesigning them apart misses how they connect: what comes in shapes what gets routed.",
-      },
-    ],
-
-    problem:
-      "Most AI products hide uncertainty in a tooltip the reviewer never opens.\n\n==That's not design. That's ducking the problem.==\n\nAt 85 to 90% accuracy, every field is a small decision: trust it, check it, or fix it.\n\nThe decision has to be fast, easy to see, and impossible to skip.\n\nDesigning that moment, and the rules for what happens next, is the actual product.",
-
-    decisions: [
-      {
-        title: "Two roles, two tracks. Same contract, different focus.",
-        body:
-          "Procurement fixes data gaps. Legal looks at indemnity, SLAs, and liability.\n\nOne shared screen makes each role scroll past work that isn't theirs. So the flow splits them.\n\nProcurement clears the open fields first, then hands off. Legal sees only what matters to legal, in the order that matters.",
-      },
-      {
-        title: "Three clear field states, not a confidence number",
-        body:
-          "Every field is tagged: confident, needs review, or missing.\n\nThe reviewer handles the open ones first. The top bar shows how many are left. You can't approve until that number hits zero.\n\n==The list of open items is the work, not the contract.==",
-      },
-      {
-        title: "Every rule reads like a sentence",
-        body:
-          "An admin building 10 to 15 approval paths shouldn't have to think in logic. At every step, the rule shows as plain English.\n\nExample: \"Software contracts under $50K go to direct manager only.\"\n\nThat sentence is how they check the rule while building it, and how they read it back a month later.",
-      },
-    ],
-
-    /* prototypeIframes removed. These pointed at /astra/p1 and /astra/p2,
-       which now return notFound() -- app/astra/p1/page.tsx and p2/page.tsx
-       were retired from the live site but this block was left behind, so the
-       case study rendered a "Live prototype" section whose two iframes both
-       404'd. Restore both routes first if this section is ever revived. */
-
-    approach:
-      "==6–8 hours, from problem to a working React prototype, using Claude Code.==\n\nClaude was a thinking partner, not just a code tool.\n\nWe worked through the problem together, tested ideas, and threw away most of the wireframes.\n\nThe role-based handoff didn't come from a brief. It came from asking who actually needs to see an open indemnity clause.\n\nThe wireframes were the exploration. The React build is the artifact.",
-
-    outcomes: [
-      "Reviewed with Astra's contract intelligence team. The role-based handoff was the part they pushed back on the most, and the part we kept.",
-      "Two complete flows, shipped in 6–8 hours.",
-    ],
-
-    lesson:
-      "AI UX isn't about making the model look smart.\n\nIt's about making the person's correction work feel easy.\n\n==The interface earns trust by making uncertainty obvious, fixable, and impossible to skip.==",
-
-    reflection:
-      "The role-based handoff is a hypothesis, not a finding.\n\nThe real question (do procurement and legal want separate screens, or a shared negotiation space?) needs users, not wireframes.\n\nSpeculative work earns its place by making the bet clear enough to disprove.",
   },
   /* ── #07 Bringing Apple into Business Listing Performance (fresh, verbatim) ── */
   {

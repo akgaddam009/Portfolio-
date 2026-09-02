@@ -9,9 +9,8 @@ const isDev = process.env.NODE_ENV !== "production";
 const devScriptSrc = isDev ? " 'unsafe-eval'" : "";
 const devConnectSrc = isDev ? " ws://localhost:* http://localhost:*" : "";
 
-/* CSP directives shared across every route. Frame-ancestors is overridden
-   per-route below — locked down for everything except the Astra prototype
-   pages, which are embedded as iframes inside /work/astra. */
+/* CSP directives shared across every route. Frame-ancestors is locked to
+   'none' everywhere: nothing on this site is embedded in an iframe. */
 const baseCsp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${devScriptSrc} https://www.googletagmanager.com https://www.clarity.ms`, // GA4 + Clarity
@@ -40,25 +39,6 @@ const securityHeaders = [
   },
 ];
 
-/* Astra prototype headers — same security stack, but frame-ancestors 'self'
-   and X-Frame-Options: SAMEORIGIN so the case study at /work/astra can
-   embed /astra/p1 and /astra/p2 as iframes. Cross-origin framing still
-   blocked. */
-const astraEmbedHeaders = [
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "SAMEORIGIN" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
-  {
-    key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
-  },
-  {
-    key: "Content-Security-Policy",
-    value: [...baseCsp, "frame-ancestors 'self'"].join("; "),
-  },
-];
-
 const nextConfig: NextConfig = {
   // Remove the X-Powered-By: Next.js header — no need to advertise the stack
   poweredByHeader: false,
@@ -77,12 +57,6 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        // Astra prototype routes — allow same-origin framing so the case
-        // study can embed them.
-        source: "/astra/:path*",
-        headers: astraEmbedHeaders,
-      },
-      {
         /* Confidential case studies — disable shared caching so a CDN /
            reverse proxy can't accidentally serve an unlocked variant of
            the page to a different visitor. The page itself is fast to
@@ -94,12 +68,9 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Everything else — strictest clickjacking protection.
-        // Negative lookahead excludes /astra/* so the route-specific rule
-        // above isn't overridden by this catch-all (Next.js applies headers
-        // from every matching source; later matches override same-named
-        // headers from earlier ones).
-        source: "/((?!astra/).*)",
+        // Everything else — strictest clickjacking protection. No route
+        // opts out of frame-ancestors 'none' any more.
+        source: "/(.*)",
         headers: securityHeaders,
       },
     ];

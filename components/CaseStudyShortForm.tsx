@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 /* Minimal short-form case study layout — used for exploration-style
-   builds (Astra, the recreated Reputation dashboard) where the
+   builds (the recreated Reputation dashboard, and similar) where the
    artifact is a quick proof of concept, not a multi-month project
    that deserves a full narrative. Title, tags, a single contextual
    paragraph, optional media, and one "built with" line. */

@@ -8,7 +8,7 @@ import { motion, AnimatePresence, useMotionTemplate, useScroll, useSpring, useTr
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import type { CaseStudy, CaseStudyImage, TaskFlowStage } from "@/lib/caseStudies";
 import { caseStudies } from "@/lib/caseStudies";
-import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle, ClipboardList, Scale, GitBranch, Check, XMark } from "@/components/ui/Icon";
+import { Briefcase, LayoutGrid, Users, Scissors, ChartActivity, Info, Calendar, ArrowUpRight, UserCircle, Check, XMark } from "@/components/ui/Icon";
 import { renderTitleWithChips } from "@/components/ui/InlineChip";
 
 /* Decision icons: keyed by the optional `icon` name on each
@@ -668,10 +668,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
             TLDR → Process (problem/approach/research/insight) → Design Ideas →
             Final Design → Impact. */}
 
-        {/* Prototype iframes — render here only for non-astra case studies.
-            For astra the prototypes sit below the user types / problem context
-            so the reader sees WHO and WHY before clicking through the live flows. */}
-        {cs.prototypeIframes && cs.prototypeIframes.length > 0 && cs.slug !== "astra" && (
+        {/* Prototype iframes. There used to be a second, slug-specific copy of
+            this section further down that rendered instead for one case study;
+            that case study is gone, so this is the only place they render. */}
+        {cs.prototypeIframes && cs.prototypeIframes.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1155,14 +1155,9 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               </CsSection>
             )}
 
-            {/* ── User Types — user cards (astra / AI case studies) ── */}
             {/* ── User Types ─────────────────────────────────────────── */}
             {cs.users && cs.users.length > 0 && (() => {
               const USER_ICONS: Record<string, React.FC<{size?: number; strokeWidth?: number}>> = {
-                // Astra
-                "Procurement Professional": ClipboardList,
-                "Legal Professional":       Scale,
-                "Procurement Manager":      GitBranch,
                 // Planful
                 "Finance Analyst":          ChartActivity,
                 "Business Team Owner":      Users,
@@ -1260,48 +1255,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     </div>
                   ))}
                 </motion.div>
-              </CsSection>
-            )}
-
-            {/* ── Live prototypes — astra only ──────────────────────────
-                The prototypes break out of the 680px .page-pad column so the
-                Claude artifact iframes have room to breathe (they were feeling
-                cramped inside the body column). The breakout uses the classic
-                `marginLeft: 50%` + `translateX(-50%)` pattern: position the
-                element relative to the parent, then pull it back by half its
-                own width so it centers on the viewport rather than the parent.
-                Capped at 1240px so it doesn't go edge-to-edge on huge monitors. */}
-            {cs.slug === "astra" && cs.prototypeIframes && cs.prototypeIframes.length > 0 && (
-              <CsSection label="Live prototype" id="cs-prototype">
-                {/* Outer plain div owns the viewport-centered breakout
-                    (translateX(-50%) trick). The inner motion.div only
-                    animates opacity + y so its transform doesn't fight
-                    the breakout transform. */}
-                <div
-                  style={{
-                    width: "min(1240px, calc(100vw - 48px))",
-                    maxWidth: "none",
-                    position: "relative",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                  }}
-                >
-                  <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.65, ease: EASE }}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "32px",
-                    }}
-                  >
-                    {cs.prototypeIframes.map(p => (
-                      <PrototypeBlock key={p.src} prototype={p} />
-                    ))}
-                  </motion.div>
-                </div>
               </CsSection>
             )}
 
@@ -2259,7 +2212,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* ── Key design decisions ──────────────────────────────────────────
                 Renders for all case studies that have a top-level cs.decisions
-                array (Planful, Apple, Astra, Zetwerk DC, Zetwerk BU).
+                array (Planful, Apple, Zetwerk DC, Zetwerk BU).
                 FanCode uses cs.designApproach.decisions instead and is excluded
                 via the !cs.designApproach guard. ── */}
             {cs.decisions && cs.decisions.length > 0 && !cs.designApproach && (
@@ -2773,14 +2726,10 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   }
 
                   /* Single non-stat outcome — render as a clean callout card.
-                     Astra gets a special split layout to highlight the key
-                     stat ("Two complete flows · 8 hours") above the prose. */
+                     One case study used to get a split "headline + supporting
+                     prose" variant here; it has been removed, so every single
+                     outcome now renders through the one layout below. */
                   if (cs.outcomes.length === 1) {
-                    const isAstra = cs.slug === "astra";
-                    // For astra: pull the trailing "X in Y" sentence as a headline
-                    const astraMatch = isAstra
-                      ? cs.outcomes[0].match(/^(.+?)\.\s+(Two .+\.)$/)
-                      : null;
                     return (
                       <motion.div
                         initial={{ opacity: 0, y: 12 }}
@@ -2794,8 +2743,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           padding: "32px 32px 30px",
                           display: "flex",
                           flexDirection: "column",
-                          gap: isAstra ? "16px" : "10px",
-                          maxWidth: isAstra ? "none" : "640px",
+                          gap: "10px",
+                          maxWidth: "640px",
                         }}
                       >
                         <p style={{
@@ -2803,48 +2752,19 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           letterSpacing: "0.1em", textTransform: "uppercase",
                           color: "var(--muted)", margin: 0,
                         }}>
-                          {isAstra ? "Validation" : "Result"}
+                          Result
                         </p>
-                        {astraMatch ? (
-                          <>
-                            {/* Hero highlight */}
-                            <p style={{
-                              fontFamily: "var(--font-body)",
-                              fontSize: "clamp(24px, 3.5vw, 36px)",
-                              fontWeight: 300,
-                              lineHeight: 1.15,
-                              letterSpacing: "-0.03em",
-                              color: "var(--text)",
-                              margin: 0,
-                            }}>
-                              {astraMatch[2]}
-                            </p>
-                            {/* Supporting context */}
-                            <p style={{
-                              fontFamily: "var(--font-body)",
-                              fontSize: "var(--text-body)",
-                              lineHeight: 1.6,
-                              letterSpacing: "-0.01em",
-                              color: "var(--muted2)",
-                              margin: 0,
-                              maxWidth: "600px",
-                            }}>
-                              {astraMatch[1]}.
-                            </p>
-                          </>
-                        ) : (
-                          <p style={{
-                            fontFamily: "var(--font-body)",
-                            fontSize: "var(--text-title-sm)",
-                            fontWeight: 400,
-                            lineHeight: 1.55,
-                            letterSpacing: "-0.01em",
-                            color: "var(--text)",
-                            margin: 0,
-                          }}>
-                            {cs.outcomes[0]}
-                          </p>
-                        )}
+                        <p style={{
+                          fontFamily: "var(--font-body)",
+                          fontSize: "var(--text-title-sm)",
+                          fontWeight: 400,
+                          lineHeight: 1.55,
+                          letterSpacing: "-0.01em",
+                          color: "var(--text)",
+                          margin: 0,
+                        }}>
+                          {cs.outcomes[0]}
+                        </p>
                       </motion.div>
                     );
                   }
@@ -4197,10 +4117,10 @@ function Highlight({ children }: { children: React.ReactNode }) {
 
 /* ─── Prototype iframe with optional jump-navigation strip ─────
    When `prototype.screens` is defined, renders a tab strip above the iframe
-   that postMessages `{ type: 'astra-nav', screen, role }` to let the visitor
-   scrub directly to a specific screen without doing the full linear flow.
-   The target route handles the message — see /app/astra/p1/page.tsx for the
-   reference implementation. */
+   that postMessages `{ type: 'prototype-nav', screen, role }` to let the
+   visitor scrub directly to a specific screen without doing the full linear
+   flow. The target route has to handle the message. No prototype currently
+   defines `screens`, so the strip does not render anywhere today. */
 function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["prototypeIframes"]>[number] }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -4210,7 +4130,7 @@ function PrototypeBlock({ prototype: p }: { prototype: NonNullable<CaseStudy["pr
     if (!target) return;
     setActiveIdx(idx);
     iframeRef.current?.contentWindow?.postMessage(
-      { type: "astra-nav", screen: target.screen, role: target.role },
+      { type: "prototype-nav", screen: target.screen, role: target.role },
       "*"
     );
   };
