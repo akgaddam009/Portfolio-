@@ -1,12 +1,8 @@
 import type { MetadataRoute } from "next";
 import { caseStudies } from "@/lib/caseStudies";
+import { HIDDEN_SLUGS } from "@/lib/workSlugs";
 
 const SITE_URL = "https://arungaddamux.vercel.app";
-
-const HIDDEN_SLUGS = new Set<string>([
-  "zetwerk-dc",
-  "zetwerk-bu-ecosystem",
-]);
 
 export default function robots(): MetadataRoute.Robots {
   /* Confidential case study paths and their corresponding asset

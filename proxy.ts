@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { PUBLIC_WORK_SLUGS } from "@/lib/workSlugs";
 import type { NextRequest } from "next/server";
 import { UNLOCK_COOKIE_NAME, UNLOCK_TOKEN_VALUE } from "@/lib/auth";
 
@@ -63,6 +64,25 @@ const PUBLIC_ASSETS = new Set<string>([
   "/images/zetwerk/cover.png",
 ]);
 
+/* /work/<slug> for a slug that is not a real public page.
+
+   Next returns 200 for these. `dynamicParams = false` and the notFound() in
+   the route both resolve inside the streamed RSC payload, which is flushed
+   after the HTTP status line has already gone out — so the body says "not
+   found" while the status says 200. A browser renders the right thing, but
+   crawlers, uptime monitors and link checkers all read a healthy page, and
+   Google can index the soft-404.
+
+   No confidential content is in that 200 body (verified: the shell is
+   identical for a hidden slug and for a slug that never existed), so this is
+   a correctness fix, not a leak fix. Deciding here means the status line is
+   right because nothing has been sent yet. */
+function isUnroutableWorkPath(pathname: string): boolean {
+  const m = /^\/work\/([^/]+)\/?$/.exec(pathname);
+  if (!m) return false;
+  return !PUBLIC_WORK_SLUGS.has(decodeURIComponent(m[1]));
+}
+
 function isGatedPath(pathname: string): boolean {
   if (PUBLIC_ASSETS.has(pathname)) return false;
   return GATED_PATH_PATTERNS.some((re) => re.test(pathname));
@@ -70,6 +90,20 @@ function isGatedPath(pathname: string): boolean {
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  /* Unknown or hidden /work/<slug>: answer 404 with an actual 404 status.
+     Same opaque body as the asset gate — we don't distinguish "hidden" from
+     "never existed", so probing a URL tells you nothing. */
+  if (isUnroutableWorkPath(pathname)) {
+    return new NextResponse("Not Found", {
+      status: 404,
+      headers: {
+        "Cache-Control": "private, no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        "Content-Type": "text/plain",
+      },
+    });
+  }
 
   if (!isGatedPath(pathname)) return NextResponse.next();
 
@@ -102,5 +136,6 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/images/:path*",
+    "/work/:path*",
   ],
 };
