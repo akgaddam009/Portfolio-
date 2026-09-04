@@ -3705,8 +3705,8 @@ function StoryView() {
 
 const PANEL_CONFIGS = [
   { label: "About",          width: "420px", minWidth: "380px", Component: AboutPanel },
-  { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
   { label: "Career",         width: "420px", minWidth: "380px", Component: CareerPanel },
+  { label: "Work",           width: "440px", minWidth: "380px", Component: WorkPanel },
   { label: "Testimonials",   width: "400px", minWidth: "360px", Component: TestimonialsPanel },
   { label: "Contact",        width: "380px", minWidth: "340px", Component: ContactPanel },
 ];
