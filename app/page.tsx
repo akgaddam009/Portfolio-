@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -247,7 +247,7 @@ function HomeNav({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), opacity 0.2s",
+                  transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), background 0.25s cubic-bezier(0.22,1,0.36,1), opacity 0.2s",
                   opacity: disabled ? 0.3 : 1,
                   cursor: disabled ? "default" : "pointer",
                 }}
@@ -634,6 +634,22 @@ const SKILL_GROUPS: {
           }
 ];
 
+/* Display order for the About panel only: Tools above Skills.
+
+   Done here rather than by reordering SKILL_GROUPS itself, because the Contact
+   panel flattens that same array into its marquee and needs the original
+   sequence -- a marquee labelled "Skills & Tools" that ran tools first would
+   contradict its own header. So the array stays the source of truth for
+   content and for Contact's order, and About takes a sorted view of it.
+
+   Ranked rather than reversed: a group added later with no entry here falls to
+   the end instead of silently flipping the whole panel, and Array#sort is
+   stable so any such additions keep their relative order. */
+const ABOUT_GROUP_RANK: Record<string, number> = { Tools: 0, Skills: 1 };
+const ABOUT_SKILL_GROUPS = [...SKILL_GROUPS].sort(
+  (a, b) => (ABOUT_GROUP_RANK[a.label] ?? 99) - (ABOUT_GROUP_RANK[b.label] ?? 99),
+);
+
 function AboutPanel() {
   const [copied, setCopied] = useState(false);
   const copyEmail = () => {
@@ -811,8 +827,12 @@ function AboutPanel() {
               get chips; abstract capabilities get text.
 
             The mono eyebrow header is shared by both, and by the
-            Industries block above, which is what keeps them one system. */}
-        {SKILL_GROUPS.map(({ label, variant, items, tone }, gi) => (
+            Industries block above, which is what keeps them one system.
+
+            Rendered from ABOUT_SKILL_GROUPS, not SKILL_GROUPS: this panel shows
+            Tools first, while the Contact marquee keeps the array's own
+            Skills-then-Tools order. */}
+        {ABOUT_SKILL_GROUPS.map(({ label, variant, items, tone }, gi) => (
           <motion.div
             key={label}
             initial={{ opacity: 0, y: 6 }}
@@ -821,7 +841,13 @@ function AboutPanel() {
             transition={{ duration: 0.4, ease: EASE, delay: 0.24 + gi * 0.03 }}
             style={{ padding: "16px 0" }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+            {/* 11px, down 30% from 16px. The eyebrow is 9px uppercase with
+                0.1em tracking, so it reads as a label attached to the run
+                below it rather than as a heading needing its own airspace --
+                16px let the two drift apart. Applies to both groups, since
+                Tools and Skills share this header and splitting them would
+                put two different label rhythms in one panel. */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "11px" }}>
               <p style={{
                 fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                 letterSpacing: "0.1em", textTransform: "uppercase",
@@ -838,8 +864,20 @@ function AboutPanel() {
                  aria-hidden so they are not read out as punctuation. Separators
                  use --muted, which is lighter than the --muted2 text, so the
                  words dominate and the dots recede. */
+              /* -4px top margin cancels half-leading, so this block starts
+                 where the Tools chips start.
+
+                 Both groups share one 11px header margin, so the boxes were
+                 already aligned -- but they do not look it. A chip paints its
+                 tinted fill at the very top of its box, while this list is
+                 13px type on a 1.7 line-height, which puts a 22px line box
+                 around 13px of glyphs and leaves ~4.5px of empty half-leading
+                 above the first word. Tools showed colour at 11px; Skills
+                 showed nothing until ~15.5px, and the label read as detached.
+                 Pulling the list up by 4px aligns the first thing the eye
+                 actually sees in each group. */
               <ul style={{
-                listStyle: "none", margin: 0, padding: 0,
+                listStyle: "none", margin: "-4px 0 0", padding: 0,
                 fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                 fontWeight: 400, lineHeight: 1.7, letterSpacing: "-0.01em",
                 color: "var(--muted2)",
@@ -1722,8 +1760,12 @@ function WorkPanel() {
                       )}
                     </div>
 
-                    {/* Body */}
-                    <div style={{ padding: "16px 16px 18px" }}>
+                    {/* Body. Top padding is 11px, not 16 — that is the gap
+                        between the thumbnail's bottom edge and the chip row,
+                        and at 16 the chips read as a separate block rather
+                        than as a caption belonging to the image above them.
+                        Sides and bottom are unchanged. */}
+                    <div style={{ padding: "11px 16px 18px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
                         {CARD_CATEGORY[cs.slug] && (
                           <AccentChip
@@ -1789,7 +1831,7 @@ function WorkPanel() {
               href="https://chatgpt.com/g/g-6a6b5aeb663c81919ca14dbf88115b73-ux-product-research-assistant"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Launched a Custom GPT that helps UX researchers plan, synthesize, and communicate research, driving 73K+ organic LinkedIn impressions. AI Experiments, Custom GPT. Opens ChatGPT in a new tab"
+              aria-label="Launched a Custom GPT that helps UX researchers plan, synthesize, and communicate research insights. AI Experiments, Custom GPT. Opens ChatGPT in a new tab"
             >
               <div className="work-card" style={{ borderRadius: "16px", overflow: "hidden" }}>
                 {/* Thumbnail. Every card in CARD_ORDER renders through the
@@ -1823,8 +1865,10 @@ function WorkPanel() {
                   </div>
                 </div>
 
-                {/* Body */}
-                <div style={{ padding: "16px 16px 18px" }}>
+                {/* Body. 11px top, matching the mapped cards above — this card
+                    sits in the same column and would read as misaligned if its
+                    chip row sat 5px lower than theirs. */}
+                <div style={{ padding: "11px 16px 18px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
                     <AccentChip label="AI Experiments" tone="violet" icon={Sparkles} />
                     <WorkChip label="Custom GPT" />
@@ -1835,7 +1879,7 @@ function WorkPanel() {
                     color: "var(--text)", marginBottom: 0,
                   }}>
                     Launched a Custom GPT that helps UX researchers plan, synthesize,
-                    and communicate research, driving 73K+ organic LinkedIn impressions.
+                    and communicate research insights.
                   </h3>
                 </div>
               </div>
@@ -2280,6 +2324,64 @@ const testimonials: Testimonial[] = [
   { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB", image: "/images/testimonial/bishal-biswas.jpeg" },
 ];
 
+/* Alt text and intrinsic dimensions for the career card photographs.
+
+   Two fixes, one map. The images shipped with alt="" -- declaring them
+   decorative -- but they are team and cohort photographs carrying the human
+   half of this panel: a screen reader user got silence where a sighted user
+   got a room full of colleagues. And they shipped with no width or height, so
+   each one reflowed the card as it decoded, inside a card that had just
+   animated open.
+
+   The dimensions are the files' real pixel sizes, read off disk rather than
+   guessed, so the reserved box matches what actually arrives -- a wrong ratio
+   here would distort the photo instead of merely shifting it. Rendered size is
+   still governed by the CSS below (width:100%, height:auto); these attributes
+   only reserve the space.
+
+   Alt text describes what is in frame and no more. It does not name anyone. */
+const CAREER_IMAGE_META: Record<string, { w: number; h: number; alt: string }> = {
+  "/images/career/zetwerk-team.jpg": {
+    w: 2400, h: 1467,
+    alt: "The Zetwerk design team, seven people, standing together on a lawn at an outdoor team gathering.",
+  },
+  "/images/career/fancode-team.jpg": {
+    w: 4000, h: 3000,
+    alt: "The FanCode team, around a dozen people, gathered outside a glass-fronted building for a group photograph.",
+  },
+  "/images/career/iitb-1.jpg": {
+    w: 1156, h: 521,
+    alt: "Five participants wearing lanyards in a studio at IDC, IIT Bombay, in front of a wall of line-drawn illustration.",
+  },
+  "/images/career/iitb-2.jpg": {
+    w: 2400, h: 1600,
+    alt: "The full IDC, IIT Bombay cohort, roughly twenty-five people, posed in front of the studio's large IDC mural.",
+  },
+  "/images/career/dsil-1.jpg": {
+    w: 960, h: 720,
+    alt: "The DSIL Global cohort celebrating on a rooftop terrace, arms raised, with a city skyline behind them.",
+  },
+  "/images/career/dsil-2.jpg": {
+    w: 1944, h: 1296,
+    alt: "A DSIL Global workshop in progress: participants seated at tables, a paper world map and product shelves on the brick wall behind.",
+  },
+};
+
+/* Hover variants for the career card, hoisted out of render.
+
+   These were inline object literals, and the rest case was a bare `{}` — a new
+   object on every render of the panel, which is every mouse move across it. A
+   fresh variant identity each time means framer re-evaluates the target
+   mid-animation instead of leaving it alone. */
+/* The same spring every other tap button in the app uses -- the nav arrows and
+   the theme toggle both run 400/25. The career Prev/Next pair were the only
+   whileTap in the codebase with no transition at all, so they fell through to
+   framer's default and bounced at a different rate from their own siblings. */
+const CAREER_NAV_TAP = { type: "spring" as const, stiffness: 400, damping: 25 };
+
+const CARD_HOVER = { y: -2 };
+const CARD_REST  = { y: 0 };
+
 function CareerPanel() {
   const totalH = (CAL_END - CAL_START) * YEAR_PX + TOP_OFFSET;
   const allYears = Array.from({ length: CAL_END - CAL_START + 1 }, (_, i) => CAL_END - i);
@@ -2296,6 +2398,28 @@ function CareerPanel() {
   const toggleCard    = (item: CareerItem) => setSelectedItem(prev =>
     prev?.title === item.title && prev?.startYear === item.startYear ? null : item);
   const collapseCard  = () => setSelectedItem(null);
+  const panelRef      = useRef<HTMLDivElement>(null);
+
+  /* Clicking outside the panel closes an open card.
+
+     Listens only while a card is actually open, so the page carries no
+     document-level handler in the common case. pointerdown rather than click:
+     it fires before the click that may be selecting something in another
+     panel, so the card is already collapsing as that panel responds instead of
+     one frame after it.
+
+     Scoped to the whole panel, not the open card -- clicking the timeline or a
+     sibling card inside Career should not close, since a sibling click is a
+     card switch and the card's own handler owns it. */
+  useEffect(() => {
+    if (!selectedItem) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const root = panelRef.current;
+      if (root && !root.contains(e.target as Node)) setSelectedItem(null);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [selectedItem]);
 
   /* Prev / Next fired correctly but read as dead buttons. They sit at the bottom
      of an expanded card that runs 600-900px tall, so the click happens deep in
@@ -2403,9 +2527,23 @@ function CareerPanel() {
         initial={{ opacity: 0, x: isEdu ? 8 : -8 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
-        whileHover={!isExpanded && isClickable ? { y: -2 } : {}}
+        whileHover={!isExpanded && isClickable ? CARD_HOVER : CARD_REST}
         transition={{
-          layout: { type: "spring", stiffness: 320, damping: 32 },
+          /* Critically damped, and quicker. 320/32 is a damping ratio of
+             0.89 -- under 1, so the card overshot its target and wobbled back,
+             which on a panel that opens to 600-900px tall reads as slack
+             rather than springy. 420/42 puts the ratio at 1.02: it arrives and
+             stops, settling in roughly 190ms instead of 250ms. */
+          layout: { type: "spring", stiffness: 420, damping: 42 },
+          /* y runs the SAME spring as layout, and that is the whole fix for the
+             stutter. There was no `y` entry here at all, so the hover lift fell
+             through to framer's default spring. Clicking a hovered card flips
+             isExpanded, which changes the hover target from -2 to 0, so the
+             default spring animated y while the 420/42 layout spring animated
+             the box -- two springs writing one matrix, resolving at different
+             rates. That is what read as dropped frames. One spring, one
+             timeline, one settle. */
+          y:       { type: "spring", stiffness: 420, damping: 42 },
           opacity: { duration: 0.4, ease: EASE },
           x:       { duration: 0.4, ease: EASE, delay: index * 0.055 },
         }}
@@ -2441,7 +2579,9 @@ function CareerPanel() {
           // slightly different colours, which read as one heavy edge. The
           // shadow ring alone defines the card, exactly as it does collapsed.
           border: "none",
-          overflow: "hidden",
+          /* The clip moved to the content wrapper below. This element is the
+             one framer scales, and overflow:hidden here would cut off the
+             shadow layer's outward shadow. */
           cursor: isClickable ? "pointer" : "default",
           zIndex: isExpanded ? 10 : isHovered ? 5 : 1,
           /* Flat at rest like a calendar event, lifting only on hover or when
@@ -2449,12 +2589,72 @@ function CareerPanel() {
              --surface / --bg, both #ffffff in light theme, so with no ring it
              would have no edge against the panel at all. A real calendar event
              gets away with flat because it is filled with saturated colour. */
-          boxShadow: isExpanded || isHovered
-            ? "var(--card-lift)"
-            : "var(--card-ring)",
-          transition: "box-shadow 200ms var(--ease-out-quart)",
+          /* Expanded gets a real border-strength ring, not a tinted one.
+             The card fills with --bg when open and the panel behind it is
+             --surface; in light theme both are #ffffff, so the tinted hairline
+             was the only edge and it disappeared while the card was moving.
+             Hover keeps the softer --card-lift, since a hovered card is still
+             sitting on the panel rather than floating above it. */
+          boxShadow: isExpanded
+            ? "var(--card-lift-edge)"
+            : isHovered
+              ? "var(--card-lift)"
+              : "var(--card-ring)",
+          /* Hint only while the card is actually the moving one. Left on at
+             rest it would keep a compositor layer alive for every card in the
+             panel. */
+          willChange: isExpanded ? "transform" : "auto",
         }}
       >
+        {/* ── Shadow layer ──────────────────────────────────────────────
+            The card's ring and shadow live here, on their own projection
+            node, and not on the card itself.
+
+            framer scales this card from ~72px to ~700px on expand, and a 1px
+            ring painted on a scaling element is squashed to sub-pixel for the
+            length of the spring -- the border simply was not there during the
+            transition, then snapped in when the transform returned to identity.
+            framer does ship a box-shadow scale-corrector, but it reads
+            `if (parsed.length > 5) return uncorrected`, so it only handles a
+            single-layer shadow. --card-lift-edge is four layers, so it was
+            always going to bail; resolving the var() to a literal would not
+            have helped either.
+
+            It must NOT be a projection node. framer scale-corrects box-shadow
+            on anything it projects, and that corrector is actively destructive
+            here: it runs `parse(value)`, and a `var(--x)` string contains no
+            numbers, so the `if (parsed.length > 5) return uncorrected` guard
+            does not fire. It proceeds to divide `parsed[1]` -- undefined -- by
+            the scale, gets NaN, and emits an invalid shadow that the browser
+            resolves to `none`. Measured live: computed box-shadow was exactly
+            "none" for the whole spring, then correct again once it ended. That
+            is the disappearing border, and it is why putting the shadow on its
+            own `layout` node did not help -- same corrector, same mangling.
+
+            So this is a plain div. framer never touches it. It inherits the
+            card's transform, which means the 1px ring is drawn very slightly
+            thinner mid-flight, and that is a far better trade than absent. */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "16px",
+            pointerEvents: "none",
+            boxShadow: isExpanded
+              ? "var(--card-lift-edge)"
+              : isHovered
+                ? "var(--card-lift)"
+                : "var(--card-ring)",
+            /* Hover still fades; the expanded swap is instant because the
+               layout spring is already carrying that moment. */
+            transition: isExpanded ? "none" : "box-shadow 200ms var(--ease-out-quart)",
+          }}
+        />
+
+        {/* Content clip. Holds the rounded corners now that the card cannot. */}
+        <div style={{ position: "relative", borderRadius: "16px", overflow: "hidden" }}>
+
         {/* ── Compact header row. always visible ── */}
         <motion.div layout style={{
           display: "flex", alignItems: "center", gap: "8px",
@@ -2494,24 +2694,29 @@ function CareerPanel() {
                 the layout says once. Impact now shows at rest and lifts to
                 --text on hover. */}
             {!isExpanded && !isEdu && item.impact && (
-              /* The line after the company name takes a fill on interaction.
-                 Padding and the offsetting negative margin are constant, so
-                 only the background colour changes and the text never shifts
-                 as the fill arrives. inline-block keeps the fill hugging the
-                 text instead of running the full card width, and max-width
-                 preserves the ellipsis on long lines. Prev/Next stay
-                 unfilled -- they are on .btn-secondary, transparent with a
-                 hairline. */
+              /* Static on hover. This line used to lighten from --muted to
+                 --text and take a --surface2 fill when the card was hovered,
+                 which meant pointing at a card repainted its text and pulled a
+                 second highlighted object into view. The card already answers
+                 the pointer by lifting; a label inside it does not need to
+                 answer separately, and two responses to one gesture read as
+                 the card flickering rather than as feedback.
+
+                 The padding, the offsetting negative margin and the radius are
+                 kept even though nothing fills any more: together they are
+                 geometrically neutral -- the -8px margin cancels the 8px
+                 padding -- so removing them would nudge the text 2px vertically
+                 for no gain. inline-block plus max-width still preserve the
+                 ellipsis on long lines. */
               <p style={{
                 fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
                 fontWeight: 400, letterSpacing: "-0.01em",
-                color: isHovered ? "var(--text)" : "var(--muted)", marginTop: "2px",
+                color: "var(--muted)", marginTop: "2px",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                 display: "inline-block", maxWidth: "100%",
                 padding: "2px 8px", marginLeft: "-8px",
                 borderRadius: "var(--radius-sm)",
-                background: isHovered ? "var(--surface2)" : "transparent",
-                transition: "color 0.2s, background 0.2s",
+                background: "transparent",
               }}>
                 {item.impact}
               </p>
@@ -2577,14 +2782,21 @@ function CareerPanel() {
                 {/* Images */}
                 {item.images && item.images.length > 0 && (
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
-                    {item.images.map((src, i) => (
-                      <img
-                        key={i}
-                        src={src}
-                        alt=""
-                        style={{ width: "100%", height: "auto", display: "block", borderRadius: "8px", filter: "grayscale(15%)" }}
-                      />
-                    ))}
+                    {item.images.map((src, i) => {
+                      const meta = CAREER_IMAGE_META[src];
+                      return (
+                        <img
+                          key={i}
+                          src={src}
+                          alt={meta?.alt ?? ""}
+                          width={meta?.w}
+                          height={meta?.h}
+                          loading="lazy"
+                          decoding="async"
+                          style={{ width: "100%", height: "auto", display: "block", borderRadius: "8px", filter: "grayscale(15%)" }}
+                        />
+                      );
+                    })}
                   </div>
                 )}
 
@@ -2626,7 +2838,16 @@ function CareerPanel() {
                         return (
                           <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
                             <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.5, flexShrink: 0 }}>·</span>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--text)" }}>
+                            {/* --muted2, matching the description and bullets above.
+                                These were --text, which put two different body-copy
+                                colours in one open card. Harmless in light theme, where
+                                --text and --muted2 sit 17 L* apart and read as one voice;
+                                obvious in dark, where they are #ffffff against #a1a1aa,
+                                33.5 L* apart. It also inverted the hierarchy -- the
+                                highlights elaborating on the description were brighter
+                                than the description itself. --text is now reserved for
+                                the card title. */}
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--muted2)" }}>
                               {h}{hLink && <>{" "}<a href={hLink} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "underline" }}>Watch ↗</a></>}
                             </p>
                           </div>
@@ -2673,7 +2894,7 @@ function CareerPanel() {
                           <span style={{ color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", lineHeight: 1.5, flexShrink: 0 }}>·</span>
                           <p style={{
                             fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
-                            letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--text)",
+                            letterSpacing: "-0.01em", lineHeight: 1.55, color: "var(--muted2)",
                           }}>{l}</p>
                         </div>
                       ))}
@@ -2783,6 +3004,7 @@ function CareerPanel() {
                       className="btn-secondary career-nav-btn career-nav-btn--prev"
                       onClick={e => { e.stopPropagation(); prevCard(); }}
                       whileTap={{ scale: 0.9 }}
+                      transition={CAREER_NAV_TAP}
                     >
                       <span className="career-nav-chevron" aria-hidden="true">‹</span>
                       Prev
@@ -2793,6 +3015,7 @@ function CareerPanel() {
                       className="btn-secondary career-nav-btn career-nav-btn--next"
                       onClick={e => { e.stopPropagation(); nextCard(); }}
                       whileTap={{ scale: 0.9 }}
+                      transition={CAREER_NAV_TAP}
                     >
                       Next
                       <span className="career-nav-chevron" aria-hidden="true">›</span>
@@ -2803,12 +3026,13 @@ function CareerPanel() {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </motion.div>
     );
   };
 
   return (
-    <div id="career-panel-container">
+    <div id="career-panel-container" ref={panelRef}>
       <PanelHeader label="Career" />
       <div style={{ padding: "16px 0 32px 0" }}>
 
@@ -3944,6 +4168,19 @@ export default function Home() {
   const isLastPanel = activePanel === PANEL_CONFIGS.length - 1;
 
   return (
+    /* reducedMotion="user" is the only thing that reaches framer.
+
+       The CSS block in globals.css cannot touch any of this: framer writes
+       inline transform and opacity per frame, it does not use CSS transitions,
+       so a media query collapsing transition-duration leaves every spring,
+       stagger and layout animation on this page running at full amplitude. A
+       visitor who asked their OS for less motion was still getting the panel
+       blur reveal, the card entrance staggers and the career expand spring.
+
+       "user" defers to the OS preference rather than forcing it either way,
+       and framer keeps opacity animations while dropping transforms -- state
+       changes stay legible, spatial movement goes. */
+    <MotionConfig reducedMotion="user">
     <>
       <LoadingScreen visible={loading} />
       <HomeNav
@@ -4013,6 +4250,12 @@ export default function Home() {
                 key={i}
                 className={panelClass}
                 aria-label={label}
+                /* The career card is a projecting layout node living inside
+                   this scroller. Without layoutScroll, framer measures its box
+                   once and never accounts for the panel scrolling underneath
+                   it, so an expand that happens after any scroll animates from
+                   a stale origin. */
+                layoutScroll
                 initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
                 animate={revealed
                   ? { opacity: 1, y: 0,  filter: "blur(0px)" }
@@ -4124,5 +4367,6 @@ export default function Home() {
       </>
       )}
     </>
+    </MotionConfig>
   );
 }

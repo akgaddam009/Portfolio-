@@ -156,7 +156,17 @@
   /* ── Soft hover overlay — theme-aware via color-mix ──
      Replaces full --surface2 swaps on icon buttons / chrome elements where
      the original feels too intense. Auto-adapts because --text differs per theme. */
-  --hover: color-mix(in srgb, var(--text) 5%, transparent);
+  /* 20%, up from an original 5%. At 5% the tint moved the surface under 4 L*
+     in light theme -- perceptible only if you were looking for it, which is not
+     what a hover state is for. Defined once against var(--text), so it stays a
+     dark tint in light theme and a light one in dark without a second
+     declaration.
+
+     12% after trying 10% (too quiet), 20% and 15% (both too heavy -- it read as a
+     pressed or selected state rather than a pointer response). This lands
+     around 9-12 L* in both themes: clearly past the resting surface, still
+     obviously a hover. */
+  --hover: color-mix(in srgb, var(--text) 12%, transparent);
 
   /* ── Card depth tokens ──
      Light: pure layered shadow lifts cards off the warm bg, no border needed.
@@ -182,26 +192,53 @@
      canvas rather than lift them off it. 6% of --text lands around #f0f0f0,
      clearly darker than both. Inverts correctly in dark, where --text is
      white and --surface is the dark panel. */
-  --chrome-hover:        color-mix(in srgb, var(--text) 6%, var(--surface));
+  --chrome-hover:        color-mix(in srgb, var(--text) 12%, var(--surface));
   --chrome-shadow:       0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03), 0 6px 18px rgba(0, 0, 0, 0.035);
   /* Roughly double the resting values, not half the original hover. Halving
      rest and hover together kept their ratio but collapsed the gap between
      them to 0.005 on the middle layer, which is invisible -- the eye reads the
      absolute difference, not the proportion. Rest stays light; hover steps far
      enough to register. */
-  --chrome-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.09), 0 2px 6px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.09);
+  --chrome-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.09);
+  /* Ring parity: every *-hover token carries the same `0 0 0 1px` ring as the
+     token it replaces on hover. A border belongs to the object, not to the
+     pointer -- redrawing it darker on hover reads as the edge thickening,
+     which is a different and more alarming signal than the surface lifting.
+     Hover is expressed entirely through the blurred layers underneath. */
   --card-ring:         0 0 0 1px rgba(0, 0, 0, 0.06);
   /* Four shallow layers instead of one deep one. --card-shadow-hover ends in
      `0 14px 36px rgba(0,0,0,0.10)`, and a single 36px blur at that alpha is
      what reads as dark and heavy. Spreading the same impression across
      doubling blur radii at 0.02-0.03 each gives a smooth falloff and a much
-     lighter impression at the same apparent height. */
-  --card-lift:         0 0 0 1px rgba(0, 0, 0, 0.07),
-                       0 1px 2px rgba(0, 0, 0, 0.015),
-                       0 4px 8px rgba(0, 0, 0, 0.015),
-                       0 10px 24px rgba(0, 0, 0, 0.02);
+     lighter impression at the same apparent height.
+
+     The ring is deliberately identical to --card-ring in both themes -- 0.06
+     light, 0.10 dark -- so hovering does not redraw the card's edge. An edge
+     belongs to the object and should not change because a pointer is nearby;
+     what changes is height, and height is the shadow's job. Darkening the ring
+     on hover was tried and read as the border thickening, which is a different
+     and more alarming signal than the card lifting.
+
+     So the whole hover delta lives in the three shadow layers, raised from
+     0.015-0.02 to 0.05-0.07 in light theme. At the original values they were
+     below the threshold where anything reads as having moved. Dark was already
+     carrying real shadow (0.12-0.16) and keeps it. */
+  --card-lift:         0 0 0 1px rgba(0, 0, 0, 0.06),
+                       0 1px 2px rgba(0, 0, 0, 0.05),
+                       0 4px 8px rgba(0, 0, 0, 0.055),
+                       0 10px 24px rgba(0, 0, 0, 0.07);
+  /* Same falloff as --card-lift but with a real edge instead of a tinted
+     hairline. For surfaces that open onto a background of their own colour --
+     the expanded career card fills with --bg, and in light theme --bg and
+     --surface are both #ffffff, so a 6-11% black ring was the only thing
+     separating a white card from a white panel. --border is ~15 L* off white
+     and actually reads as an edge, including mid-animation. */
+  --card-lift-edge:    0 0 0 1px var(--border),
+                       0 1px 2px rgba(0, 0, 0, 0.05),
+                       0 4px 8px rgba(0, 0, 0, 0.055),
+                       0 10px 24px rgba(0, 0, 0, 0.07);
   --card-shadow:       0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(0, 0, 0, 0.07);
-  --card-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.07), 0 14px 36px rgba(0, 0, 0, 0.10);
+  --card-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.07), 0 14px 36px rgba(0, 0, 0, 0.10);
 
   /* Minimal resting elevation for non-interactive cards. Half the strength of
      --card-shadow — provides just enough lift in light mode where hairline
@@ -299,14 +336,18 @@
   --panel-shadow:        inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.20), 0 6px 24px rgba(0,0,0,0.18);
   --panel-shadow-active: inset 0 1px 0 rgba(255,255,255,0.11), 0 2px 4px rgba(0,0,0,0.25), 0 12px 40px rgba(0,0,0,0.22);
   --chrome-shadow:       0 0 0 1px rgba(255, 255, 255, 0.08), 0 1px 3px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.18);
-  --chrome-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.20), 0 2px 6px rgba(0, 0, 0, 0.45), 0 10px 28px rgba(0, 0, 0, 0.40);
+  --chrome-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.45), 0 10px 28px rgba(0, 0, 0, 0.40);
   --card-ring:         0 0 0 1px rgba(255, 255, 255, 0.10);
-  --card-lift:         0 0 0 1px rgba(255, 255, 255, 0.16),
+  --card-lift:         0 0 0 1px rgba(255, 255, 255, 0.10),
+                       0 1px 2px rgba(0, 0, 0, 0.12),
+                       0 4px 8px rgba(0, 0, 0, 0.12),
+                       0 10px 24px rgba(0, 0, 0, 0.16);
+  --card-lift-edge:    0 0 0 1px var(--border),
                        0 1px 2px rgba(0, 0, 0, 0.12),
                        0 4px 8px rgba(0, 0, 0, 0.12),
                        0 10px 24px rgba(0, 0, 0, 0.16);
   --card-shadow:       0 0 0 1px rgba(255, 255, 255, 0.08), 0 1px 3px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.35);
-  --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.6), 0 12px 28px rgba(0, 0, 0, 0.45);
+  --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.6), 0 12px 28px rgba(0, 0, 0, 0.45);
 
   /* Dark mode relies on the hairline border for edge definition; no resting
      shadow needed. Hover/focal states still use --card-shadow-hover. */
@@ -414,7 +455,12 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   box-shadow: none;
-  transition: color 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s;
+  /* Easing named explicitly. These four had no timing function, so they were
+     the only transitions in the file falling back to the browser default. */
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .btn-cta:hover,
@@ -494,8 +540,13 @@ a { color: inherit; text-decoration: none; }
   background: var(--text);
   color: var(--bg);
   border-radius: 8px;
+  /* One duration, one curve. This was opacity at --dur-fast (180ms) and
+     transform at --dur-base (320ms) on --ease-expo, so a single hover arrived
+     in two pieces -- the 1px lift landing 140ms after the fade. 320ms is also
+     roughly twice the band for pointer feedback. An expo curve on a 1px move
+     spends its easing on distance that is not there. */
   transition: opacity var(--dur-fast) var(--ease-out),
-              transform var(--dur-base) var(--ease-expo);
+              transform var(--dur-fast) var(--ease-out);
   letter-spacing: -0.01em;
 }
 .btn-primary:hover { opacity: 0.8; transform: translateY(-1px); }
@@ -512,9 +563,11 @@ a { color: inherit; text-decoration: none; }
   color: var(--muted2);
   border-radius: 8px;
   background: transparent;
-  transition: border-color var(--dur-base) var(--ease-out),
-              color var(--dur-base) var(--ease-out),
-              transform var(--dur-base) var(--ease-expo);
+  /* Same correction as .btn-primary: all three were at --dur-base (320ms),
+     a third of a second to acknowledge a pointer. */
+  transition: border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
   letter-spacing: -0.01em;
 }
 .btn-secondary:hover { border-color: var(--text-hover); color: var(--text-hover); transform: translateY(-1px); }
@@ -686,6 +739,21 @@ a { color: inherit; text-decoration: none; }
   animation-delay: 2s;
 }
 
+/* ─── Press feedback ──────────────────────────────────────
+   Desktop had none. The rule below was the only :active in the stylesheet and
+   it sits behind (pointer: coarse), so with a mouse no button in the app
+   acknowledged a click at all -- the surface answered the pointer on hover and
+   then went silent on the thing the user actually did. 60ms because a press
+   should register as contact, not as an animation. */
+@media (pointer: fine) {
+  .btn-primary:active,
+  .btn-secondary:active,
+  .btn-cta:active {
+    transform: translateY(0) scale(0.98);
+    transition-duration: 60ms;
+  }
+}
+
 /* ─── Mobile touch press feedback ─────────────────────── */
 @media (pointer: coarse) {
   button:active,
@@ -829,10 +897,22 @@ a { color: inherit; text-decoration: none; }
   100% { background-position: 0%   50%; }
 }
 
-/* ─── Reduced motion ─────────────────────────────────── */
+/* ─── Reduced motion ───────────────────────────────────
+   Reduced motion means fewer and gentler animations, not silence. Feedback
+   that confirms an action has to stay legible, so this collapses duration
+   rather than removing transitions outright.
+
+   animation-iteration-count is the important addition. Collapsing duration
+   alone does not stop an infinite animation -- it runs it roughly a hundred
+   times faster. .grain-overlay is `position: fixed; inset: -150px` running
+   grain-shift on an infinite loop, so under the old rule a user who asked for
+   less motion got a full-viewport strobe repainting continuously: worse than
+   the default, and the exact opposite of the request. Pinning the count to 1
+   lets every looping animation finish its first pass and stop. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
   ::view-transition-old(*),
