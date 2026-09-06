@@ -347,7 +347,7 @@ export const NODES: Record<string, ChatNode> = {
     id: "ai-example",
     chip: "An example",
     answer:
-      "A Custom GPT I built and launched for UX and product professionals. Designed, written and shipped solo. It has since generated 73K+ organic LinkedIn impressions.",
+      "A Custom GPT I built and launched for UX and product professionals. Designed, written and shipped solo.",
     link: {
       label: "Open the Custom GPT",
       href: "https://chatgpt.com/g/g-6a6b5aeb663c81919ca14dbf88115b73-ux-product-research-assistant",
