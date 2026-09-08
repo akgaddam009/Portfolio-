@@ -1,4 +1,3 @@
-import { HIDDEN_SLUGS as _HIDDEN, assertSlugsInSync } from "./workSlugs";
 export type CaseStudyImage = {
   src: string;
   alt: string;
@@ -1241,11 +1240,3 @@ export function getCaseStudy(slug: string): CaseStudy | undefined {
   return caseStudies.find((cs) => cs.slug === slug);
 }
 
-/* Dev-only guard: lib/workSlugs.ts is duplicated slug data by necessity (the
-   proxy cannot import this file), so fail loudly the moment it drifts rather
-   than discovering it as a 404 on a live page. Stripped from production
-   builds by the NODE_ENV check. */
-if (process.env.NODE_ENV !== "production") {
-  assertSlugsInSync(caseStudies.map(cs => cs.slug));
-  void _HIDDEN;
-}

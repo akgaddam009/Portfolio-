@@ -171,6 +171,21 @@ export default async function CaseStudyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  /* These two notFound() calls must stay ABOVE any await or <Suspense>
+     boundary, and there must be no loading.tsx anywhere above this route.
+
+     Once a Suspense fallback renders, the server has already committed to
+     200 and cannot change the status; notFound() then only injects a
+     noindex meta into the stream. An app/work/loading.tsx existed here and
+     did exactly that — every /work/<slug> returned 200 in production,
+     including slugs that never existed, so crawlers and uptime monitors saw
+     a healthy page. Deleting that spinner is what makes these two lines
+     produce a real 404 status line.
+
+     If a loading state is wanted here again, put <Suspense> INSIDE the
+     returned tree, below these checks, not in a loading.tsx above them.
+     See node_modules/next/dist/docs/01-app/02-guides/streaming.md
+     ("The HTTP contract"). */
   if (HIDDEN_SLUGS.has(slug)) notFound();
   const cs = getCaseStudy(slug);
   if (!cs) notFound();
