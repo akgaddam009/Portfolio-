@@ -15,7 +15,7 @@ export default function ContactCTA() {
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.7, ease: EASE }}
           style={{
-            background: "var(--text)", borderRadius: "16px",
+            background: "var(--text)", borderRadius: "var(--radius-lg)",
             padding: "40px 36px",
           }}
         >

@@ -123,7 +123,12 @@
   --radius-xs:   4px;   /* hairline rounds — scrollbar, focus ring */
   --radius-sm:   8px;   /* small buttons, mono labels */
   --radius-md:   12px;  /* default card / panel */
-  --radius-lg:   16px;  /* large card / hero media */
+  /* EXPERIMENT: 20px, up from 16px. Local only -- flip this one line back to
+     16px to revert. All 46 previously-hardcoded 16px radii across app/page.tsx
+     and components/ were repointed at this token first, so the whole house
+     radius now moves from here. 24px was tried and read as too soft; 20px also
+     keeps a real step between this and --radius-xl (24px), which 24 collapsed. */
+  --radius-lg:   20px;  /* large card / hero media */
   --radius-xl:   24px;  /* feature media */
   --radius-pill: 9999px;
 

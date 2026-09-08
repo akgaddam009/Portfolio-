@@ -91,7 +91,7 @@ export default function LoadingScreen({ visible }: { visible: boolean }) {
                   flexShrink: 0,
                   width: `${width}px`,
                   height: "100%",
-                  borderRadius: "16px",
+                  borderRadius: "var(--radius-lg)",
                   background: "var(--surface)",
                   overflow: "hidden",
                   // Stagger the shimmer sweep on each panel so the row doesn't pulse in unison

@@ -535,7 +535,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                 ] as const).map(({ label, src }) => (
                   <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
-                    <div style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)", position: "relative", aspectRatio: "9 / 19.5" }}>
+                    <div style={{ borderRadius: "var(--radius-lg)", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)", position: "relative", aspectRatio: "9 / 19.5" }}>
                       <video
                         src={src}
                         autoPlay loop muted playsInline preload="metadata"
@@ -911,7 +911,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ display: "flex", flexDirection: "column", gap: "10px" }}
                 >
                   {cs.contextSection.cards.map((card, i) => (
-                    <div key={i} style={{ padding: "20px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div key={i} style={{ padding: "20px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", display: "flex", flexDirection: "column", gap: "8px" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{card.tag}</span>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted2)", margin: 0 }}>{card.body}</p>
                     </div>
@@ -1005,7 +1005,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, ease: EASE }}
-                  style={{ marginTop: "24px", background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}
+                  style={{ marginTop: "24px", background: "var(--surface)", borderRadius: "var(--radius-lg)", padding: "24px", boxShadow: "var(--card-shadow)" }}
                 >
                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>
                     Legacy Spotlight
@@ -1516,7 +1516,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   transition={{ duration: 0.7, ease: EASE }}
                   style={{
                     marginBottom: "80px",
-                    borderRadius: "16px",
+                    borderRadius: "var(--radius-lg)",
                     border: "1px solid var(--border)",
                     overflow: "hidden",
                     background: "var(--surface2)",
@@ -1828,7 +1828,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   transition={{ duration: 0.7, ease: EASE }}
                   style={{
                     marginBottom: "80px",
-                    borderRadius: "16px",
+                    borderRadius: "var(--radius-lg)",
                     border: "1px solid var(--border)",
                     overflow: "hidden",
                     background: "var(--surface2)",
@@ -1946,7 +1946,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" }}
                 >
                   {cs.keyDecisions.map((d, i) => (
-                    <div key={i} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "24px", padding: "24px 24px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "16px" }}>
+                    <div key={i} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "24px", padding: "24px 24px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                         {d.stat && (
                           <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
@@ -2030,7 +2030,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                               padding: "24px 24px 24px",
                               background: "var(--surface)",
                               border: "1px solid var(--border)",
-                              borderRadius: "16px",
+                              borderRadius: "var(--radius-lg)",
                             }}
                           >
                             <span style={{
@@ -2280,7 +2280,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         onMouseLeave={() => setHoveredPersona(null)}
                         style={{
                           background: "var(--surface)",
-                          borderRadius: "16px",
+                          borderRadius: "var(--radius-lg)",
                           display: "flex",
                           flexDirection: "column",
                           minWidth: "320px",
@@ -2357,7 +2357,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   ] as const).map(({ label, src }) => (
                     <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
-                      <ScrollScaleMedia style={{ borderRadius: "16px", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                      <ScrollScaleMedia style={{ borderRadius: "var(--radius-lg)", overflow: "hidden", background: "var(--surface2)", border: "1px solid var(--border)" }}>
                         <div style={{ position: "relative", width: "100%", aspectRatio: "9 / 19.5" }}>
                           <video
                             src={src}
@@ -2512,7 +2512,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, ease: EASE }}
-                    style={{ background: "var(--surface)", borderRadius: "16px", padding: "28px 32px", boxShadow: "var(--card-shadow)" }}
+                    style={{ background: "var(--surface)", borderRadius: "var(--radius-lg)", padding: "28px 32px", boxShadow: "var(--card-shadow)" }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap", marginBottom: "24px" }}>
                       <div>
@@ -2568,7 +2568,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         style={{
                           background: "var(--surface)",
                           border: "1px solid var(--border)",
-                          borderRadius: "16px",
+                          borderRadius: "var(--radius-lg)",
                           padding: "56px 32px 48px",
                           display: "flex",
                           flexDirection: "column",
@@ -2621,7 +2621,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         style={{
                           background: "var(--surface)",
                           border: "1px solid var(--border)",
-                          borderRadius: "16px",
+                          borderRadius: "var(--radius-lg)",
                           padding: "32px 32px 30px",
                           display: "flex",
                           flexDirection: "column",
@@ -3742,7 +3742,7 @@ function AppleChallengeBlock({ text }: { text: string }) {
             gap: "1px",
             background: "var(--border)",
             border: "1px solid var(--border)",
-            borderRadius: "16px",
+            borderRadius: "var(--radius-lg)",
             overflow: "hidden",
           }}
         >
@@ -4126,7 +4126,7 @@ function OutcomesImage({ src, alt, caption, width, onOpen }: { src: string; alt:
           cursor: onOpen ? "zoom-in" : undefined,
           background: "var(--surface)",
           border: "1px solid var(--border)",
-          borderRadius: "16px",
+          borderRadius: "var(--radius-lg)",
           padding: "12px",
           position: "relative",
         }}
@@ -4257,7 +4257,7 @@ function VideoBlock({ src, appType, chromeUrl, dark }: { src: string; appType?: 
 
   if (isMobile) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", background: "var(--surface)", borderRadius: "16px", padding: "24px", boxShadow: "var(--card-shadow)" }}>
+      <div style={{ display: "flex", justifyContent: "center", background: "var(--surface)", borderRadius: "var(--radius-lg)", padding: "24px", boxShadow: "var(--card-shadow)" }}>
         {/* Reserve mobile-phone aspect ratio (~9/19.5) so the shimmer
             sits at the eventual video's height, not a 480px stub. */}
         <div style={{ position: "relative", width: "100%", maxWidth: "320px", aspectRatio: "9 / 19.5" }}>
@@ -4290,7 +4290,7 @@ function VideoBlock({ src, appType, chromeUrl, dark }: { src: string; appType?: 
   }
 
   return (
-    <div style={{ borderRadius: "16px", overflow: "hidden", background: panelBg, boxShadow: "var(--card-shadow)" }}>
+    <div style={{ borderRadius: "var(--radius-lg)", overflow: "hidden", background: panelBg, boxShadow: "var(--card-shadow)" }}>
       {/* macOS chrome bar */}
       <div style={{ position: "relative", height: "38px", background: panelBg, borderBottom: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         {/* Traffic lights — positioned absolute so URL bar truly centres */}
@@ -5122,7 +5122,7 @@ function LensLightbox({ src, onClose }: { src: string | null; onClose: () => voi
           position: "relative",
           maxWidth: "88vw",
           maxHeight: "88vh",
-          borderRadius: "16px",
+          borderRadius: "var(--radius-lg)",
           overflow: "hidden",
           cursor: "crosshair",
           boxShadow: "0 32px 80px rgba(0,0,0,0.6)",
@@ -5274,7 +5274,7 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
             maxWidth: "90vw",
             maxHeight: "90vh",
             objectFit: "contain",
-            borderRadius: "16px",
+            borderRadius: "var(--radius-lg)",
             boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
             cursor: "default",
             background: "#0a0a0a",
@@ -5292,7 +5292,7 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
           maxWidth: naturalWidth ? `min(90vw, ${naturalWidth}px)` : "90vw",
           maxHeight: "90vh",
           objectFit: "contain",
-          borderRadius: "16px",
+          borderRadius: "var(--radius-lg)",
           boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
           cursor: "default",
           imageRendering: "auto",

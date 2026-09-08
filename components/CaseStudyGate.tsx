@@ -194,7 +194,7 @@ export default function CaseStudyGate({ title, tags, heroLabel, teaser, cover }:
                       <div key={label} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)" }}>{label}</span>
                         <div style={{
-                          borderRadius: "16px",
+                          borderRadius: "var(--radius-lg)",
                           overflow: "hidden",
                           background: "var(--surface2)",
                           border: "1px solid var(--border)",

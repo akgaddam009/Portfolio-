@@ -357,7 +357,7 @@ function FloatingPanelMenu({
                 bottom: "56px",
                 minWidth: "180px",
                 padding: "6px",
-                borderRadius: "16px",
+                borderRadius: "var(--radius-lg)",
                 background: "color-mix(in srgb, var(--bg) 92%, transparent)",
                 border: "1px solid var(--border)",
                 boxShadow: "var(--card-shadow)",
@@ -472,7 +472,7 @@ function PixelRevealPortrait({ src, alt }: { src: string; alt: string }) {
   }, []);
 
   return (
-    <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "16px", overflow: "hidden" }}>
+    <div ref={ref} style={{ position: "relative", width: "100%", height: "100%", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
       {/* Dithered treatment. The grayscale->colour reveal stays on the wrapper
           rather than the image, so it applies to the shader canvas and the
           plain-<img> fallback identically -- CSS filters apply to a <canvas>
@@ -526,7 +526,7 @@ function PortraitMagnify() {
         style={{
           position: "relative",
           width: "100%", height: "100%",
-          borderRadius: "16px",
+          borderRadius: "var(--radius-lg)",
           overflow: "hidden",
           transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
           transition: leaving ? "transform 0.55s cubic-bezier(0.22,1,0.36,1)" : "transform 0.08s linear",
@@ -1340,7 +1340,7 @@ function SystemFeatureCard() {
         <div
           className="work-card"
           style={{
-            borderRadius: "16px",
+            borderRadius: "var(--radius-lg)",
             overflow: "hidden",
             transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
           }}
@@ -1348,7 +1348,7 @@ function SystemFeatureCard() {
           {/* Thumbnail. auto-playing screen recording of the portfolio's
               design language in motion. Muted + looped, mirrors the case
               study video thumbnail pattern. */}
-          <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+          <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "var(--radius-lg) var(--radius-lg) 0 0" }}>
             <WorkCardThumb
               src="/images/system/portfolio-design-language.mp4"
               poster="/images/system/cover.png"
@@ -1722,12 +1722,12 @@ function WorkPanel() {
                   <div
                     className={`work-card${comingSoon ? " work-card--static" : ""}`}
                     style={{
-                      borderRadius: "16px",
+                      borderRadius: "var(--radius-lg)",
                       overflow: "hidden",
                     }}
                   >
                     {/* Thumbnail */}
-                    <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                    <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "var(--radius-lg) var(--radius-lg) 0 0" }}>
                       {WORK_THUMBS[cs.slug] ? (
                         <WorkCardThumb
                           src={WORK_THUMBS[cs.slug]}
@@ -1833,7 +1833,7 @@ function WorkPanel() {
               rel="noopener noreferrer"
               aria-label="Launched a Custom GPT that helps UX researchers plan, synthesize, and communicate research insights. AI Experiments, Custom GPT. Opens ChatGPT in a new tab"
             >
-              <div className="work-card" style={{ borderRadius: "16px", overflow: "hidden" }}>
+              <div className="work-card" style={{ borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
                 {/* Thumbnail. Every card in CARD_ORDER renders through the
                     THUMB_LIGHT branch, which mattes its image inside a 16px
                     inset at 6px radius — so this one matches that geometry
@@ -1845,7 +1845,7 @@ function WorkPanel() {
                     the backplate colour from the source logo, and the mark is
                     the same file with that backplate removed. Not theme-aware
                     on purpose — the FanCode orange does not flip either. */}
-                <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "var(--radius-lg) var(--radius-lg) 0 0" }}>
                   <div style={{
                     position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden",
                     display: "flex", alignItems: "center", justifyContent: "center",
@@ -1913,11 +1913,11 @@ function WorkPanel() {
                   >
                     <Link href={href}>
                       <div className="work-card" style={{
-                        borderRadius: "16px",
+                        borderRadius: "var(--radius-lg)",
                         overflow: "hidden",
                       }}
                       >
-                        <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
+                        <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "var(--radius-lg) var(--radius-lg) 0 0" }}>
                           <WorkCardThumb
                             src={WORK_THUMBS[cs.slug] || ""}
                             poster={WORK_POSTERS[cs.slug]}
@@ -2571,7 +2571,7 @@ function CareerPanel() {
           top: `${top}px`,
           left: isExpanded ? "22px" : isEdu ? "calc(58% + 4px)" : "22px",
           right: isExpanded ? "16px" : isEdu ? "16px" : "calc(42% + 8px)",
-          borderRadius: "16px",
+          borderRadius: "var(--radius-lg)",
           background: isExpanded ? "var(--bg)" : "var(--surface)",
           // No border in either state. --card-shadow / --card-shadow-hover
           // already open with `0 0 0 1px`, so adding a border here stacked a
@@ -2632,7 +2632,7 @@ function CareerPanel() {
           style={{
             position: "absolute",
             inset: 0,
-            borderRadius: "16px",
+            borderRadius: "var(--radius-lg)",
             pointerEvents: "none",
             boxShadow: isExpanded
               ? "var(--card-lift-edge)"
@@ -2646,7 +2646,7 @@ function CareerPanel() {
         />
 
         {/* Content clip. Holds the rounded corners now that the card cannot. */}
-        <div style={{ position: "relative", borderRadius: "16px", overflow: "hidden" }}>
+        <div style={{ position: "relative", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
 
         {/* ── Compact header row. always visible ── */}
         <motion.div layout style={{
@@ -3188,7 +3188,7 @@ function TestimonialsPanel() {
               transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}
               style={{
                 margin: 0,
-                borderRadius: "16px",
+                borderRadius: "var(--radius-lg)",
                 /* --surface2, the same fill every chip on the site uses. The
                    card originally had --surface plus a hairline, which in the
                    light theme meant no fill contrast at all (--surface and --bg
@@ -4260,7 +4260,7 @@ export default function Home() {
                   flex: "0 0 auto",
                   height: "100%",
                   overflowY: "auto",
-                  borderRadius: "16px",
+                  borderRadius: "var(--radius-lg)",
                   background: "var(--bg)",
                   boxShadow: shadow,
                   scrollSnapAlign: "start",

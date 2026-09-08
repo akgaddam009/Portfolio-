@@ -36,7 +36,7 @@ export default function CaseStudyCard({
           transition={{ type: "spring", stiffness: 280, damping: 28 }}
           style={{
             background: "var(--surface)",
-            borderRadius: "16px",
+            borderRadius: "var(--radius-lg)",
             overflow: "hidden",
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -151,7 +151,7 @@ export default function CaseStudyCard({
           transition={{ type: "spring", stiffness: 280, damping: 28 }}
           style={{
             background: "var(--surface)",
-            borderRadius: "16px",
+            borderRadius: "var(--radius-lg)",
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",

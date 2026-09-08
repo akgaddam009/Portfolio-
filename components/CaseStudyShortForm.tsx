@@ -128,7 +128,7 @@ export default function CaseStudyShortForm({ title, tags, paragraphs, builtWith,
                 style={{
                   width: "100%",
                   display: "block",
-                  borderRadius: "16px",
+                  borderRadius: "var(--radius-lg)",
                   background: "var(--surface)",
                   boxShadow: "var(--card-shadow)",
                 }}

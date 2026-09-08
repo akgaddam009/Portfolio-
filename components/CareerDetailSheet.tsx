@@ -105,7 +105,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
               {item.logoDomain && (
                 <div style={{
                   width: "44px", height: "44px",
-                  borderRadius: "16px",
+                  borderRadius: "var(--radius-lg)",
                   border: "1px solid var(--border)",
                   background: "var(--bg)",
                   overflow: "hidden",
@@ -248,7 +248,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                 whileTap={hasPrev ? { scale: 0.9 } : {}}
                 style={{
                   width: "40px", height: "40px",
-                  borderRadius: "16px",
+                  borderRadius: "var(--radius-lg)",
                   border: "1px solid var(--border)",
                   background: "var(--bg)",
                   color: "var(--text)",
@@ -268,7 +268,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                 style={{
                   height: "40px",
                   padding: "0 28px",
-                  borderRadius: "16px",
+                  borderRadius: "var(--radius-lg)",
                   border: "1px solid var(--border)",
                   background: "var(--bg)",
                   color: "var(--text)",
@@ -288,7 +288,7 @@ export default function CareerDetailSheet({ item, onClose, onPrev, onNext, hasPr
                 whileTap={hasNext ? { scale: 0.9 } : {}}
                 style={{
                   width: "40px", height: "40px",
-                  borderRadius: "16px",
+                  borderRadius: "var(--radius-lg)",
                   border: "1px solid var(--border)",
                   background: "var(--bg)",
                   color: "var(--text)",
