@@ -1081,11 +1081,6 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
 
             {/* ── User Types ─────────────────────────────────────────── */}
             {cs.users && cs.users.length > 0 && (() => {
-              const USER_ICONS: Record<string, React.FC<{size?: number; strokeWidth?: number}>> = {
-                /* Empty since the case study that defined these roles was
-                   removed. Every role now falls through to UserCircle below;
-                   this stays as the per-role override point. */
-              };
               return (
               <CsSection label="User types" id="cs-who">
                 <motion.div
@@ -1097,7 +1092,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                   style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
                 >
                   {cs.users.map((u, idx) => {
-                    const RoleIcon = USER_ICONS[u.role] ?? UserCircle;
+                    const RoleIcon = UserCircle;
                     return (
                     <div
                       key={u.role}

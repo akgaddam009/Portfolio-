@@ -79,7 +79,7 @@ export const NODES: Record<string, ChatNode> = {
     id: "section-work",
     chip: "Selected Work",
     answer:
-      "Three companies, one solo build. Pick how you want to look at it.",
+      "Three companies. Pick how you want to look at it.",
     followups: ["work-pickone", "work-pattern", "work-recent"],
   },
 
