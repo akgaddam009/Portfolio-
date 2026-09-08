@@ -2584,22 +2584,15 @@ function CareerPanel() {
              shadow layer's outward shadow. */
           cursor: isClickable ? "pointer" : "default",
           zIndex: isExpanded ? 10 : isHovered ? 5 : 1,
-          /* Flat at rest like a calendar event, lifting only on hover or when
-             expanded. --card-ring rather than none: the card fills with
-             --surface / --bg, both #ffffff in light theme, so with no ring it
-             would have no edge against the panel at all. A real calendar event
-             gets away with flat because it is filled with saturated colour. */
-          /* Expanded gets a real border-strength ring, not a tinted one.
-             The card fills with --bg when open and the panel behind it is
-             --surface; in light theme both are #ffffff, so the tinted hairline
-             was the only edge and it disappeared while the card was moving.
-             Hover keeps the softer --card-lift, since a hovered card is still
-             sitting on the panel rather than floating above it. */
-          boxShadow: isExpanded
-            ? "var(--card-lift-edge)"
-            : isHovered
-              ? "var(--card-lift)"
-              : "var(--card-ring)",
+          /* No box-shadow here. The ring and shadow live on the layer below,
+             and leaving a copy on this element too drew the hairline twice --
+             one ring on the card, an identical one on the layer, stacked. At
+             rgba(255,255,255,0.10) on a dark panel that reads as a border at
+             roughly double weight, which is why the career cards looked heavier
+             than the Selected Work thumbnails even though both resolve the same
+             --card-ring token. Measured: work card box-shadow was a single
+             rgba(255,255,255,0.1) ring, the career card had the same ring on
+             two stacked elements. */
           /* Hint only while the card is actually the moving one. Left on at
              rest it would keep a compositor layer alive for every card in the
              panel. */
