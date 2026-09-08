@@ -54,7 +54,8 @@ export default function ThemeToggle() {
       style={{
         width: "44px",
         height: "44px",
-        borderRadius: "var(--radius-lg)",
+        /* --radius-chrome, as the nav pill and arrows. */
+        borderRadius: "var(--radius-chrome)",
         border: "none",
         background: "var(--surface)",
         boxShadow: "var(--chrome-shadow)",

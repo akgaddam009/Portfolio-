@@ -130,6 +130,12 @@
      keeps a real step between this and --radius-xl (24px), which 24 collapsed. */
   --radius-lg:   20px;  /* large card / hero media */
   --radius-xl:   24px;  /* feature media */
+  /* Chrome sits between the two: 12px made the 44px controls read as their own
+     smaller system, 20px made them read as small panels. 16px is the step
+     between --radius-md and --radius-lg, named for its role rather than
+     inserted into the xs/sm/md/lg/xl ladder, which would have meant renaming
+     every step below it. */
+  --radius-chrome: 16px;
   --radius-pill: 9999px;
 
   /* ── Weight scale ──

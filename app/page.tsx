@@ -143,7 +143,9 @@ function HomeNav({
             textTransform: "uppercase",
             height: "44px",
             padding: "0 14px",
-            borderRadius: "var(--radius-lg)",
+            /* --radius-chrome. 12px read as a separate system, 20px read as a
+               small panel; 16px sits between them. */
+            borderRadius: "var(--radius-chrome)",
             border: "none",
             background: "var(--surface)",
             boxShadow: "var(--chrome-shadow)",
@@ -240,7 +242,8 @@ function HomeNav({
                 style={{
                   width: "44px",
                   height: "44px",
-                  borderRadius: "var(--radius-lg)",
+                  /* --radius-chrome, as the wordmark pill. */
+                  borderRadius: "var(--radius-chrome)",
                   border: "none",
                   background: "var(--surface)",
                   boxShadow: "var(--chrome-shadow)",
@@ -645,10 +648,17 @@ const SKILL_GROUPS: {
    Ranked rather than reversed: a group added later with no entry here falls to
    the end instead of silently flipping the whole panel, and Array#sort is
    stable so any such additions keep their relative order. */
+/* Skills is dropped from the About panel; only Tools renders there now.
+
+   Filtered here rather than removed from SKILL_GROUPS, because the Contact
+   panel flattens that same array into its "Skills & Tools" marquee and still
+   needs the capability list. Deleting the group outright would empty half of
+   that marquee and leave its label lying. */
+const ABOUT_HIDDEN_GROUPS = new Set(["Skills"]);
 const ABOUT_GROUP_RANK: Record<string, number> = { Tools: 0, Skills: 1 };
-const ABOUT_SKILL_GROUPS = [...SKILL_GROUPS].sort(
-  (a, b) => (ABOUT_GROUP_RANK[a.label] ?? 99) - (ABOUT_GROUP_RANK[b.label] ?? 99),
-);
+const ABOUT_SKILL_GROUPS = [...SKILL_GROUPS]
+  .filter(g => !ABOUT_HIDDEN_GROUPS.has(g.label))
+  .sort((a, b) => (ABOUT_GROUP_RANK[a.label] ?? 99) - (ABOUT_GROUP_RANK[b.label] ?? 99));
 
 function AboutPanel() {
   const [copied, setCopied] = useState(false);
@@ -1500,6 +1510,92 @@ function AccentChip({ label, icon: Icon }: {
   );
 }
 
+/* The one non-case-study card in Selected Work, lifted out of the panel body
+   so it can be spliced into the card sequence rather than only appended after
+   it. delayIndex keeps its entrance stagger in step with its neighbours. */
+function CustomGptCard({ delayIndex }: { delayIndex: number }) {
+  /* Was a JSX comment inside the return, which made it a second sibling
+     expression and would not parse. Plain comment above the return instead. */
+  /* No /work/<slug> page and no case study entry, so it is authored here
+     rather than driven off CARD_ORDER. Everything else -- work-card class,
+     16:9 thumb, chip row, h3 -- matches the mapped cards so it reads as one
+     of them.
+
+     The thumbnail is the ChatGPT mark on a flat panel in the brand colour.
+     There is no screenshot of a GPT to show, and a stretched logo would look
+     worse than a centred one. Source and licence are in
+     public/images/ai/README.txt. */
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-20px" }}
+      transition={{
+        opacity: { duration: 0.5, ease: EASE, delay: delayIndex * 0.06 },
+        y: { type: "spring", stiffness: 320, damping: 28 },
+      }}
+    >
+      <Link
+        href="https://chatgpt.com/g/g-6a6b5aeb663c81919ca14dbf88115b73-ux-product-research-assistant"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Launched a Custom GPT that helps UX researchers plan, synthesize, and communicate research insights. AI Experiments, Custom GPT. Opens ChatGPT in a new tab"
+      >
+        <div className="work-card" style={{ borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
+          {/* Thumbnail. Every card in CARD_ORDER renders through the
+              THUMB_LIGHT branch, which mattes its image inside a 16px
+              inset at 6px radius — so this one matches that geometry
+              exactly or it reads as the odd card out.
+
+              Inside the matte it follows the FanCode card: a flat field
+              in the brand's own colour with the mark centred on it in
+              white, plus .paper-grain for the same texture. #74aa9c is
+              the backplate colour from the source logo, and the mark is
+              the same file with that backplate removed. Not theme-aware
+              on purpose — the FanCode orange does not flip either. */}
+          <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "var(--radius-lg) var(--radius-lg) 0 0" }}>
+            <div style={{
+              position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              background: "#74aa9c",
+            }}>
+              <div className="paper-grain" />
+              <img
+                src="/images/ai/chatgpt-mark-white.svg"
+                alt=""
+                aria-hidden="true"
+                width={75}
+                height={66}
+                loading="lazy"
+                decoding="async"
+                style={{ width: "75px", height: "66px", display: "block", position: "relative" }}
+              />
+            </div>
+          </div>
+
+          {/* Body. 11px top, matching the mapped cards above — this card
+              sits in the same column and would read as misaligned if its
+              chip row sat 5px lower than theirs. */}
+          <div style={{ padding: "11px 16px 18px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
+              <AccentChip label="AI Experiments" tone="violet" icon={Sparkles} />
+              <WorkChip label="Custom GPT" />
+            </div>
+            <h3 style={{
+              fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
+              lineHeight: "26px", letterSpacing: "-0.02em",
+              color: "var(--text)", marginBottom: 0,
+            }}>
+              Launched a Custom GPT that helps UX researchers plan, synthesize,
+              and communicate research insights.
+            </h3>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
 function WorkPanel() {
   const [isDark, setIsDark] = useState(false);
   useEffect(() => {
@@ -1666,7 +1762,9 @@ function WorkPanel() {
       <div style={{ padding: "16px 24px 32px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
 
-          {allCards.map((cs, i) => {
+          {/* flatMap, not map: the Custom GPT card is spliced in after index 1
+              so it lands third in the sequence rather than last. */}
+          {allCards.flatMap((cs, i) => {
             const href = cs.driveUrl ?? `/work/${cs.slug}`;
             const isExternal = !!cs.driveUrl;
             /* Composed accessible name. Without this the link announces as a
@@ -1706,7 +1804,7 @@ function WorkPanel() {
                     );
                   }
                 : ({ children }: { children: React.ReactNode }) => <Link href={href} aria-label={cardLabel} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
-            return (
+            const card = (
               <motion.div
                 key={cs.slug}
                 initial={{ opacity: 0, y: 10 }}
@@ -1805,86 +1903,13 @@ function WorkPanel() {
                 </CardWrapper>
               </motion.div>
             );
+            /* The Custom GPT card rides along with the second case study so it
+               lands third in the sequence. flatMap flattens the pair. */
+            return i === 1
+              ? [card, <CustomGptCard key="custom-gpt" delayIndex={2} />]
+              : card;
           })}
 
-          {/* Custom GPT — the one non-case-study card in Selected Work. It has
-              no /work/<slug> page and no case study entry, so it is authored
-              inline here rather than driven off CARD_ORDER. Everything else
-              (work-card class, 16:9 thumb, chip row, h3) matches the mapped
-              cards above so it reads as one of them.
-
-              The thumbnail is the ChatGPT mark on a matted panel, the same
-              inset-16px / 6px-radius treatment the THUMB_LIGHT cards use. There
-              is no screenshot of a GPT to show, and a stretched logo would look
-              worse than a centred one. Source and licence for the mark are in
-              public/images/ai/README.txt. */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-20px" }}
-            transition={{
-              opacity: { duration: 0.5, ease: EASE, delay: allCards.length * 0.06 },
-              y: { type: "spring", stiffness: 320, damping: 28 },
-            }}
-          >
-            <Link
-              href="https://chatgpt.com/g/g-6a6b5aeb663c81919ca14dbf88115b73-ux-product-research-assistant"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Launched a Custom GPT that helps UX researchers plan, synthesize, and communicate research insights. AI Experiments, Custom GPT. Opens ChatGPT in a new tab"
-            >
-              <div className="work-card" style={{ borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
-                {/* Thumbnail. Every card in CARD_ORDER renders through the
-                    THUMB_LIGHT branch, which mattes its image inside a 16px
-                    inset at 6px radius — so this one matches that geometry
-                    exactly or it reads as the odd card out.
-
-                    Inside the matte it follows the FanCode card: a flat field
-                    in the brand's own colour with the mark centred on it in
-                    white, plus .paper-grain for the same texture. #74aa9c is
-                    the backplate colour from the source logo, and the mark is
-                    the same file with that backplate removed. Not theme-aware
-                    on purpose — the FanCode orange does not flip either. */}
-                <div style={{ position: "relative", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: "var(--radius-lg) var(--radius-lg) 0 0" }}>
-                  <div style={{
-                    position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    background: "#74aa9c",
-                  }}>
-                    <div className="paper-grain" />
-                    <img
-                      src="/images/ai/chatgpt-mark-white.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={118}
-                      height={104}
-                      loading="lazy"
-                      decoding="async"
-                      style={{ width: "118px", height: "104px", display: "block", position: "relative" }}
-                    />
-                  </div>
-                </div>
-
-                {/* Body. 11px top, matching the mapped cards above — this card
-                    sits in the same column and would read as misaligned if its
-                    chip row sat 5px lower than theirs. */}
-                <div style={{ padding: "11px 16px 18px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
-                    <AccentChip label="AI Experiments" tone="violet" icon={Sparkles} />
-                    <WorkChip label="Custom GPT" />
-                  </div>
-                  <h3 style={{
-                    fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
-                    lineHeight: "26px", letterSpacing: "-0.02em",
-                    color: "var(--text)", marginBottom: 0,
-                  }}>
-                    Launched a Custom GPT that helps UX researchers plan, synthesize,
-                    and communicate research insights.
-                  </h3>
-                </div>
-              </div>
-            </Link>
-          </motion.div>
         </div>
 
         {/* AI Exploration — separate section below the main work grid. */}
@@ -2686,34 +2711,10 @@ function CareerPanel() {
                 already encodes the timeframe, so the date was saying twice what
                 the layout says once. Impact now shows at rest and lifts to
                 --text on hover. */}
-            {!isExpanded && !isEdu && item.impact && (
-              /* Static on hover. This line used to lighten from --muted to
-                 --text and take a --surface2 fill when the card was hovered,
-                 which meant pointing at a card repainted its text and pulled a
-                 second highlighted object into view. The card already answers
-                 the pointer by lifting; a label inside it does not need to
-                 answer separately, and two responses to one gesture read as
-                 the card flickering rather than as feedback.
-
-                 The padding, the offsetting negative margin and the radius are
-                 kept even though nothing fills any more: together they are
-                 geometrically neutral -- the -8px margin cancels the 8px
-                 padding -- so removing them would nudge the text 2px vertically
-                 for no gain. inline-block plus max-width still preserve the
-                 ellipsis on long lines. */
-              <p style={{
-                fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
-                fontWeight: 400, letterSpacing: "-0.01em",
-                color: "var(--muted)", marginTop: "2px",
-                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                display: "inline-block", maxWidth: "100%",
-                padding: "2px 8px", marginLeft: "-8px",
-                borderRadius: "var(--radius-sm)",
-                background: "transparent",
-              }}>
-                {item.impact}
-              </p>
-            )}
+            {/* The industry line ("Manufacturing startup", "B2C startup",
+                "Fintech") is no longer rendered on the collapsed card. The
+                `impact` field stays on the data so it can be brought back or
+                used elsewhere without re-authoring it per role. */}
           </div>
 
 
@@ -2749,28 +2750,9 @@ function CareerPanel() {
 
               <div style={{ padding: "16px 12px 12px" }}>
 
-                {/* Company / project link. top */}
-                {item.link && (
-                  <div style={{ marginBottom: "12px" }}>
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={e => e.stopPropagation()}
-                      style={{
-                        display: "inline-flex", alignItems: "center", gap: "4px",
-                        fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
-                        fontWeight: 500, letterSpacing: "-0.01em",
-                        color: "var(--muted)", textDecoration: "none",
-                        transition: "color 0.15s",
-                      }}
-                      onMouseEnter={e => (e.currentTarget.style.color = "var(--text-hover)")}
-                      onMouseLeave={e => (e.currentTarget.style.color = "var(--muted)")}
-                    >
-                      Visit site <ArrowUpRight size={11} strokeWidth={1.5} />
-                    </a>
-                  </div>
-                )}
+                {/* The "Visit site" link is removed. `item.link` stays on the
+                    data -- it is still the company URL, and nothing else had
+                    to change to drop the affordance. */}
 
                 {/* Images */}
                 {item.images && item.images.length > 0 && (
