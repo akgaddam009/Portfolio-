@@ -24,6 +24,10 @@ export default function robots(): MetadataRoute.Robots {
     "/images/fancode-ftux/",
     "/images/apple/",
     "/images/apple-business-listings/",
+    /* Planful is not gated in proxy.ts — the homepage plays its loop to
+       everyone — but the folder holds client product footage that has no
+       business turning up in image or video search. */
+    "/images/planful/",
   ];
 
   for (const cs of caseStudies) {

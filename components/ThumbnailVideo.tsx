@@ -110,6 +110,16 @@ export default function ThumbnailVideo({
         onLoadedData={e => { e.currentTarget.playbackRate = PLAYBACK_RATE; setReady(true); }}
         /* Not a control surface — the card itself is the link. */
         tabIndex={-1}
+        /* Deterrents, not protection. These remove the browser's own
+           "Save video as…" and picture-in-picture affordances, which is
+           the only vector a casual visitor would ever use. They do
+           nothing against anyone who opens the network panel: the file
+           has already been fetched in order to play at all. The only
+           real control over who gets these files is the gate in
+           proxy.ts — see PUBLIC_ASSETS there. */
+        onContextMenu={e => e.preventDefault()}
+        controlsList="nodownload noremoteplayback"
+        disablePictureInPicture
         style={{
           width: "100%",
           height: "100%",

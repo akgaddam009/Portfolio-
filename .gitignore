@@ -78,3 +78,17 @@ writer.md
 # moved to ~/Desktop/portfolio-archive (see MANIFEST.tsv there).
 public/New Thumbnails/
 public/**/New Thumbnails/
+
+# Local experiments that are real Next.js routes. Untracked, but a
+# blanket `git add -A` would publish /lab/thumbnails, /zetwerk and
+# /zetwerk/flow on the live site. Ignored so that cannot happen.
+app/lab/
+app/zetwerk/
+components/lab/
+lib/lab/
+lib/zetwerk/
+.codex/
+
+# Raw career photos: 42MB tracked at the repo root, outside public/, so
+# nothing ever served them. Archived to ~/Desktop/portfolio-archive-2026-09-09.
+Career/

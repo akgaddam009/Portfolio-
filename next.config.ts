@@ -68,6 +68,22 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        /* Thumbnail loops. These play on the public homepage, so the
+           file is by definition fetchable — anything a browser can play,
+           it has already downloaded. What these headers remove is
+           *discovery*: the videos should never be a video-search result,
+           an archived copy, or hotlinked into someone else's page.
+           Together with robots.txt and the right-click block in
+           ThumbnailVideo that covers every casual route to the file.
+           None of it stops someone reading the network panel, and it is
+           not meant to — only the proxy.ts gate does that. */
+        source: "/images/:path*.mp4",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive, noimageindex" },
+          { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+        ],
+      },
+      {
         // Everything else — strictest clickjacking protection. No route
         // opts out of frame-ancestors 'none' any more.
         source: "/(.*)",
