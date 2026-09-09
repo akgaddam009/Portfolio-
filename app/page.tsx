@@ -1115,15 +1115,6 @@ const THUMB_VIDEOS: Record<string, string> = {
   "financial-planning-workflow": "/images/planful/financial-planning.mp4",
 };
 
-/* Poster for the video cards above — what the card is until the loop
-   is ready, and all it ever is under prefers-reduced-motion. */
-const THUMB_VIDEO_POSTERS: Record<string, string> = {
-  "vendor-credit-financing": "/images/zetwerk-cu/zw-creditunderwriting-thumbnail.jpg",
-  "logistics-tax-compliance": "/images/zetwerk-dc/zw-dc-thumbnail.png",
-  /* No dedicated poster shipped with this one — reuse the still the
-     card held before it started playing. */
-  "financial-planning-workflow": "/images/financial-planning-workflow.jpg",
-};
 
 const WORK_POSTERS: Record<string, string> = {
   "apple-business-listings": "/images/reputation/thumbnail.jpg",
@@ -1948,11 +1939,7 @@ function WorkPanel() {
                               -- the About portrait and the testimonial avatars
                               both render through it. */}
                           {THUMB_VIDEOS[cs.slug] ? (
-                            <ThumbnailVideo
-                              src={THUMB_VIDEOS[cs.slug]}
-                              poster={THUMB_VIDEO_POSTERS[cs.slug] ?? (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
-                              alt={cs.title}
-                            />
+                            <ThumbnailVideo src={THUMB_VIDEOS[cs.slug]} alt={cs.title} />
                           ) : (
                             <img
                               src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
