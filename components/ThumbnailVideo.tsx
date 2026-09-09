@@ -27,8 +27,16 @@ const PLAYBACK_RATE = 0.75;
 export default function ThumbnailVideo({
   src,
   alt,
+  fallback,
 }: {
   src: string;
+  /** Still to show when the video cannot be fetched. The two Zetwerk
+      loops sit behind the unlock gate in proxy.ts, so for a visitor who
+      has not unlocked, the request 404s by design. Without this the card
+      would shimmer forever waiting for a file it is never allowed to
+      have. Unlocked visitors get the loop; everyone else gets the still,
+      and neither has to be told which they are. */
+  fallback?: string;
   /** The video is the card's content, not decoration, so it carries the
       case study's own title the way the <img> it replaced did. */
   alt: string;
@@ -37,6 +45,7 @@ export default function ThumbnailVideo({
   const [inView, setInView] = useState(false);
   const [visible, setVisible] = useState(false);
   const [ready, setReady] = useState(false);
+  const [denied, setDenied] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
   /* Read live rather than once — the visitor can change the setting
@@ -104,7 +113,17 @@ export default function ThumbnailVideo({
       {/* Shimmer holds the box until there is a real frame to show.
           globals.css stops the animation under reduced motion via its
           [style*="shimmer"] rule, so the surface stays but stops moving. */}
-      {!ready && (
+      {denied && fallback && (
+        /* eslint-disable-next-line @next/next/no-img-element -- same
+           plain <img> the non-video cards use; going through next/image
+           here would change the crop behaviour mid-fallback. */
+        <img
+          src={fallback}
+          alt={alt}
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
+        />
+      )}
+      {!ready && !denied && (
         <div
           aria-hidden="true"
           style={{
@@ -131,6 +150,9 @@ export default function ThumbnailVideo({
            exists to paint, which is the moment the shimmer has done its
            job. canplay can lead it by enough to flash an empty box. */
         onLoadedData={e => { e.currentTarget.playbackRate = PLAYBACK_RATE; setReady(true); }}
+        /* Fires on a 404 from the gate as well as on a genuinely broken
+           file. Both cases want the same thing: show the still. */
+        onError={() => setDenied(true)}
         /* Not a control surface — the card itself is the link. */
         tabIndex={-1}
         /* Deterrents, not protection. These remove the browser's own
@@ -148,7 +170,7 @@ export default function ThumbnailVideo({
           height: "100%",
           objectFit: "cover",
           objectPosition: "center",
-          display: "block",
+          display: denied ? "none" : "block",
         }}
       />
     </>

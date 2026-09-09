@@ -6,7 +6,6 @@ import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ThemeToggle from "@/components/ThemeToggle";
-import ThumbnailGrain from "@/components/ThumbnailGrain";
 import ThumbnailVideo from "@/components/ThumbnailVideo";
 import StoryView from "@/components/StoryView";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for revival; PortfolioChat is hidden from the nav for now
@@ -1525,10 +1524,6 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
                 decoding="async"
                 style={{ width: "75px", height: "66px", display: "block", position: "relative" }}
               />
-              {/* Index 2 — this card sits third in the row, so it takes
-                  the third rotation/scale step and stays out of phase
-                  with the mapped cards either side of it. */}
-              <ThumbnailGrain index={2} variant="field" />
             </div>
           </div>
 
@@ -1826,7 +1821,14 @@ function WorkPanel() {
                               -- the About portrait and the testimonial avatars
                               both render through it. */}
                           {THUMB_VIDEOS[cs.slug] ? (
-                            <ThumbnailVideo src={THUMB_VIDEOS[cs.slug]} alt={cs.title} />
+                            <ThumbnailVideo
+                              src={THUMB_VIDEOS[cs.slug]}
+                              alt={cs.title}
+                              /* The still this card held before it played a
+                                 loop. Both Zetwerk cards fall back to a
+                                 public image; the gate only covers the mp4. */
+                              fallback={THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]}
+                            />
                           ) : (
                             <img
                               src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
@@ -1840,7 +1842,6 @@ function WorkPanel() {
                               style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: THUMB_POSITION[cs.slug] ?? "top", display: "block", filter: THUMB_FILTER[cs.slug] }}
                             />
                           )}
-                          <ThumbnailGrain index={i} />
                         </div>
                       ) : (
                         <MeshThumbnail index={i} type={cs.type} confidential={cs.slug === "apple-business-listings" ? false : cs.confidential} />
