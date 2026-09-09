@@ -59,6 +59,12 @@ const PUBLIC_ASSETS = new Set<string>([
   "/images/reputation/thumbnail.jpg",
   "/images/zetwerk-bu/service-blueprint.png",
   "/images/zetwerk-cu/zw-creditunderwriting-thumbnail.jpg",
+  /* The homepage cards play these loops. Listing them here serves the
+     footage to anyone on the public homepage -- deliberate, and the
+     reason the fallback still in ThumbnailVideo exists: remove these two
+     lines and each card drops back to its still with no other change. */
+  "/images/zetwerk-cu/credit-underwriting.mp4",
+  "/images/zetwerk-dc/delivery-challan.mp4",
   "/images/zetwerk-dc/zw-dc-thumbnail.png",
   "/images/zetwerk/cover.png",
 ]);
