@@ -35,6 +35,7 @@ export default function ThumbnailVideo({
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [inView, setInView] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [ready, setReady] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
@@ -48,14 +49,33 @@ export default function ThumbnailVideo({
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  /* Buffer one card-height early so the loop is running by the time the
-     card is looked at, without paying for it on page load. */
+  /* Two jobs, one observer, and they are not the same job.
+
+     `inView` latches true the first time the card comes near the
+     viewport and never resets — that is what attaches src, and there is
+     no point detaching it once the file is fetched.
+
+     `visible` tracks the card continuously, because a loop that has
+     scrolled away should not keep decoding. The observer used to
+     disconnect after the first hit, which left all three videos playing
+     and buffering at once for the rest of the session — three
+     simultaneous decodes on a phone, and three files competing for the
+     same connection while the one you are actually looking at waits its
+     turn.
+
+     rootMargin is smaller than the 120px it was: on a phone the card is
+     179px tall, so 120px started the next video while you were still
+     watching the current one. 48px still gives a head start without
+     putting two downloads in flight. */
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
-      { rootMargin: "120px" },
+      ([entry]) => {
+        setVisible(entry.isIntersecting);
+        if (entry.isIntersecting) setInView(true);
+      },
+      { rootMargin: "48px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -64,6 +84,9 @@ export default function ThumbnailVideo({
   useEffect(() => {
     const v = ref.current;
     if (!v || !inView) return;
+    /* Off-screen: hold position rather than reset, so scrolling back
+       resumes where the loop was instead of restarting it. */
+    if (!visible) { v.pause(); return; }
     /* Assigned here rather than once on mount: the browser resets
        playbackRate to 1 when a new src is attached, and src is attached
        lazily on scroll, so an earlier assignment would be discarded. */
@@ -74,7 +97,7 @@ export default function ThumbnailVideo({
     void v.play().catch(() => {
       /* Autoplay refused. The first frame is already showing. */
     });
-  }, [inView, reduceMotion]);
+  }, [inView, visible, reduceMotion]);
 
   return (
     <>

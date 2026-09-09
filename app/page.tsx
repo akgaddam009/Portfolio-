@@ -1831,6 +1831,12 @@ function WorkPanel() {
                             <img
                               src={isDark ? (THUMB_DARK[cs.slug] ?? THUMB_LIGHT[cs.slug]!) : (THUMB_LIGHT[cs.slug] ?? THUMB_DARK[cs.slug]!)}
                               alt={cs.title}
+                              /* The panel scrolls, so only the first card or
+                                 two are ever on screen. Eager was making every
+                                 thumbnail compete with the visible card's
+                                 video for the same connection. */
+                              loading={i === 0 ? "eager" : "lazy"}
+                              decoding="async"
                               style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: THUMB_POSITION[cs.slug] ?? "top", display: "block", filter: THUMB_FILTER[cs.slug] }}
                             />
                           )}
