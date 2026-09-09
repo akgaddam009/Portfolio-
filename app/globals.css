@@ -1033,3 +1033,30 @@ html[data-mode="executive"] .exec-decision-image {
   box-shadow: var(--card-lift);
 }
 
+/* EXPERIMENT — caption outside the frame.
+
+   The bordered object becomes the thumbnail alone: the chips and
+   headline sit on the panel beneath it with no surface of their own, so
+   the card stops reading as a container and starts reading as an image
+   with a caption under it. Ring and lift move from the card to the
+   image, which is what keeps the hover legible once the card itself
+   has no edge left to draw.
+
+   Paired with THUMB_FULL_BLEED in app/page.tsx — the treatment only
+   makes sense where the image already runs the card's full width.
+   Remove both to revert. */
+.work-card--bare {
+  background: transparent;
+  box-shadow: none;
+}
+.work-card--bare .work-card__frame {
+  box-shadow: var(--card-ring);
+  transition: box-shadow 200ms var(--ease-out-quart);
+}
+.work-card--bare:not(.work-card--static):hover {
+  box-shadow: none;
+}
+.work-card--bare:not(.work-card--static):hover .work-card__frame {
+  box-shadow: var(--card-lift);
+}
+

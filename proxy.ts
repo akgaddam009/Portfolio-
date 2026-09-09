@@ -59,7 +59,17 @@ const PUBLIC_ASSETS = new Set<string>([
   "/images/reputation/thumbnail.jpg",
   "/images/zetwerk-bu/service-blueprint.png",
   "/images/zetwerk-cu/zw-creditunderwriting-thumbnail.jpg",
+  /* The homepage card for vendor-credit-financing plays this loop in
+     place of its still. Listing it here takes 9s of Zetwerk credit
+     underwriting UI out from behind the unlock gate and onto the public
+     homepage — a wider disclosure than the single still above it.
+     Remove this line and the card falls back to that poster. */
+  "/images/zetwerk-cu/credit-underwriting.mp4",
   "/images/zetwerk-dc/zw-dc-thumbnail.png",
+  /* Same trade as the credit-underwriting loop above: the logistics
+     card plays this instead of a still, which takes 9s of the delivery
+     challan workflow out from behind the gate. */
+  "/images/zetwerk-dc/delivery-challan.mp4",
   "/images/zetwerk/cover.png",
 ]);
 
