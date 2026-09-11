@@ -1712,7 +1712,7 @@ function WorkPanel() {
 
   return (
     <div id="work-panel">
-      <PanelHeader label="Selected Work" />
+      <PanelHeader label="Select Work" />
       <div style={{ padding: "16px 24px 32px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
 
