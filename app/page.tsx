@@ -3534,7 +3534,7 @@ function ContactPanel() {
           }}>
             © 2026 · Arun Gaddam
           </p>
-          <p style={{
+          <p className="claude-colophon" style={{
             fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
             fontWeight: 400, letterSpacing: "-0.01em",
             color: "var(--muted)", lineHeight: 1.3,
@@ -3545,6 +3545,7 @@ function ContactPanel() {
                 #D97757 rather than currentColor so it reads as the brand
                 in both themes. */}
             <svg
+              className="claude-mark"
               width="15"
               height="15"
               viewBox="0 0 24 24"

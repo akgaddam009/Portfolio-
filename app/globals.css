@@ -324,10 +324,10 @@
      layered, matching the depth clarity of light mode.
      Warm undertone (#1a1918) on panel bg mirrors Apple's subtle dark warmth —
      prevents the flat cool-grey fog feeling. */
-  --bg:       #1a1918;   /* panel fill — warm dark, clearly lifted from black canvas */
-  --surface:  #242422;   /* card fill — wider gap from panel for visible elevation */
-  --surface2: #2e2e2b;   /* hover / inset */
-  --border:   #383836;   /* hairlines — stronger, clearly visible on warm dark panels */
+  --bg:       #1D1E21;   /* panel fill — cool dark, lifted off the canvas */
+  --surface:  #28292C;   /* card fill — +5.3 L* on the panel, the step it always had */
+  --surface2: #323336;   /* hover / inset */
+  --border:   #3C3D40;   /* hairlines — clearly visible on the cool dark panels */
   --text:         #ffffff;
   --text-hover:   #c8c3bc;   /* hover — warm parchment off-white */
   --text-display: #e8e8ed;   /* large display / H1 — warm off-white, ~12.8:1 on #1a1918 */
@@ -342,7 +342,7 @@
   --muted:    #8f8f97;   /* secondary label — ≈4.9:1 on #1a1918 (AA pass) */
   --muted2:   #a1a1aa;   /* body / value text */
   --accent-success: #34c759;
-  --chrome:   #000000;   /* canvas — pure black, panels lift off it */
+  --chrome:   #101114;   /* canvas — panels lift off it */
 
   --panel-shadow:        inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.20), 0 6px 24px rgba(0,0,0,0.18);
   --panel-shadow-active: inset 0 1px 0 rgba(255,255,255,0.11), 0 2px 4px rgba(0,0,0,0.25), 0 12px 40px rgba(0,0,0,0.22);
@@ -906,6 +906,38 @@ a { color: inherit; text-decoration: none; }
 @keyframes shimmer {
   0%   { background-position: 100% 50%; }
   100% { background-position: 0%   50%; }
+}
+
+/* ─── Claude mark, "Designed with ✳ Claude" ──────────────
+   The mark is a twelve-point burst, so rotation is the one transform it
+   can take without ever looking wrong: every 30° lands back on itself.
+   That also means the speed has to be slow enough to read as drift
+   rather than spin -- at 20s a revolution the eye catches it only if it
+   settles on the footer, which is the right amount of attention for a
+   colophon.
+
+   Hover pulls it to 4s and lifts it a little: the line is not a link, so
+   this is the only acknowledgement it can offer a pointer. */
+@keyframes claude-mark-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.claude-mark {
+  animation: claude-mark-spin 20s linear infinite;
+  transform-origin: 50% 50%;
+  transition: scale var(--dur-base) var(--ease-out-quart);
+  will-change: transform;
+}
+/* :hover on the paragraph, not the svg -- a 15px target is too small to
+   ask a pointer to find, and the whole line is the thing being pointed at. */
+.claude-colophon:hover .claude-mark {
+  animation-duration: 4s;
+  scale: 1.15;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* The global * rule below already collapses duration, but a rotation
+     collapsed to 0.01ms still snaps a full turn. Stop it outright. */
+  .claude-mark { animation: none !important; scale: 1 !important; }
 }
 
 /* ─── Reduced motion ───────────────────────────────────
