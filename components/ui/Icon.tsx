@@ -26,6 +26,9 @@ import {
   TreeStructure as PhTreeStructure,
   Check as PhCheck,
   X as PhX,
+  FolderSimple as PhFolderSimple,
+  Sun as PhSun,
+  Moon as PhMoon,
 } from "@phosphor-icons/react";
 
 type IconProps = {
@@ -287,4 +290,18 @@ export const X = (p: IconProps) => (
   <Svg {...p}>
     <path d="M18 6 6 18" /><path d="m6 6 12 12" />
   </Svg>
+);
+
+/* Added for the canvas layout's sidebar. Same Phosphor Regular weight and
+   the same prop bridge as the chip icons above, so a menu row and a work
+   card tag read as one family. UserCircle and Mail already existed here
+   and are reused rather than re-wrapped. */
+export const FolderSimple = (p: IconProps) => (
+  <PhFolderSimple size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+export const Sun = (p: IconProps) => (
+  <PhSun size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
+);
+export const Moon = (p: IconProps) => (
+  <PhMoon size={p.size ?? 14} weight={phWeight(p.strokeWidth)} className={p.className} style={phStyle(p.style)} aria-hidden="true" />
 );

@@ -50,7 +50,6 @@ const GATED_PATH_PATTERNS = [
    actual <img src=...> values in app/page.tsx — anything used in
    the home-page grid must be here. */
 const PUBLIC_ASSETS = new Set<string>([
-  "/images/fancode-ftux/fc-ftux-thumbnail.jpg",
   "/images/fancode/fancode-homepage-after.mp4",
   "/images/fancode/fancode-homepage-before.mp4",
   "/images/fancode/earlier-homepage.jpg",

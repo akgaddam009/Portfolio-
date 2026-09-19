@@ -92,3 +92,6 @@ lib/zetwerk/
 # Raw career photos: 42MB tracked at the repo root, outside public/, so
 # nothing ever served them. Archived to ~/Desktop/portfolio-archive-2026-09-09.
 Career/
+
+# Canvas layout experiment — a real route, kept local like the others
+app/canvas/
