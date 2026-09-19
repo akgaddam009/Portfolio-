@@ -161,7 +161,7 @@ function HomeNav({
           /* Shadow alone is a weak hover for a white pill on a light canvas,
              so the label lifts to --text-hover as a second, non-spatial
              signal. */
-          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.background = "var(--chrome-hover)"; }}
+          onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.background = "var(--chrome-hover)"; }}
           onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface)"; }}
           /* Already on "/", a Link to "/" is a no-op: the router sees the same
              route and does nothing, so the wordmark felt dead on the homepage.
@@ -257,7 +257,7 @@ function HomeNav({
                   opacity: disabled ? 0.3 : 1,
                   cursor: disabled ? "default" : "pointer",
                 }}
-                onMouseEnter={e => { if (!disabled) { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.background = "var(--chrome-hover)"; } }}
+                onMouseEnter={e => { if (!disabled) { e.currentTarget.style.background = "var(--chrome-hover)"; } }}
                 onMouseLeave={e => { if (!disabled) { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.background = "var(--surface)"; } }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -443,8 +443,11 @@ function PanelHeader({ label }: { label: string }) {
     }}>
       <p style={{
         fontFamily: "var(--font-mono)",
-        fontSize: "var(--text-mono)",
-        fontWeight: 400,
+        /* One step up the mono tier, 10px -> 11px, and one rung up the
+           weight scale, 400 -> 500. The tracking is unchanged, so the
+           label keeps its colour and rhythm and only gains presence. */
+        fontSize: "var(--text-mono-lg)",
+        fontWeight: "var(--weight-medium)",
         letterSpacing: "0.08em",
         textTransform: "uppercase",
         color: "var(--muted)",
@@ -2591,7 +2594,13 @@ function CareerPanel() {
           left: isExpanded ? "22px" : isEdu ? "calc(58% + 4px)" : "22px",
           right: isExpanded ? "16px" : isEdu ? "16px" : "calc(42% + 8px)",
           borderRadius: "var(--radius-lg)",
-          background: isExpanded ? "var(--bg)" : "var(--surface)",
+          /* Hover changes the fill, never the elevation -- the same rule
+             the work cards follow. --surface2 is the fill the testimonial
+             cards already carry. */
+          background: isExpanded
+            ? "var(--bg)"
+            : isHovered ? "var(--surface2)" : "var(--surface)",
+          transition: "background var(--dur-fast) var(--ease-out-quart)",
           // No border in either state. --card-shadow / --card-shadow-hover
           // already open with `0 0 0 1px`, so adding a border here stacked a
           // second 1px ring on top of the shadow's own -- two hairlines at
@@ -2655,9 +2664,9 @@ function CareerPanel() {
             pointerEvents: "none",
             boxShadow: isExpanded
               ? "var(--card-lift-edge)"
-              : isHovered
-                ? "var(--card-lift)"
-                : "var(--card-ring)",
+              /* Ring only. The fill above carries the hover; a shadow as
+                 well would be two answers to one question. */
+              : "var(--card-ring)",
             /* Hover still fades; the expanded swap is instant because the
                layout spring is already carrying that moment. */
             transition: isExpanded ? "none" : "box-shadow 200ms var(--ease-out-quart)",

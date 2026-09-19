@@ -82,7 +82,7 @@ const STYLES: Record<string, React.CSSProperties> = {
 };
 
 const HOVER_STYLES: Record<string, Partial<React.CSSProperties>> = {
-  chrome: { boxShadow: "var(--card-shadow-hover)", color: "var(--text-hover)" },
+  chrome: { background: "var(--chrome-hover)", color: "var(--text-hover)" },
   inline: { background: "var(--surface2)" },
   tag: { background: "var(--border)" },
 };

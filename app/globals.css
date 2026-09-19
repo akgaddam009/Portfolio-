@@ -1056,13 +1056,17 @@ html[data-mode="executive"] .exec-decision-image {
    200ms and quart-out per the impeccable motion reference -- the fast end of
    its 200-300ms hover band, since a pointer state should answer at once, with
    a gentle tail so it does not feel clipped. */
+/* One interaction rule across the site: hover changes the fill, never
+   the elevation. Nothing lifts and nothing gains a shadow, so the
+   card's edge never moves -- only the surface under it warms to
+   --surface2, the fill the testimonial cards already carry. */
 .work-card {
   background: var(--surface);
   box-shadow: var(--card-ring);
-  transition: box-shadow 200ms var(--ease-out-quart);
+  transition: background 200ms var(--ease-out-quart);
 }
 .work-card:not(.work-card--static):hover {
-  box-shadow: var(--card-lift);
+  background: var(--surface2);
 }
 
 /* EXPERIMENT — caption outside the frame.
@@ -1086,9 +1090,9 @@ html[data-mode="executive"] .exec-decision-image {
   transition: box-shadow 200ms var(--ease-out-quart);
 }
 .work-card--bare:not(.work-card--static):hover {
-  box-shadow: none;
+  background: transparent;
 }
 .work-card--bare:not(.work-card--static):hover .work-card__frame {
-  box-shadow: var(--card-lift);
+  box-shadow: var(--card-ring);
 }
 

@@ -71,8 +71,8 @@ export default function ThemeToggle() {
       // makes the hover legible -- shadow alone on a white pill over a light
       // canvas is too subtle to read. transform is out of the transition
       // because the whileTap spring owns it. No border anywhere.
-      onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.background = "var(--chrome-hover)"; }}
-      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.background = "var(--surface)"; }}
+      onMouseEnter={e => { e.currentTarget.style.background = "var(--chrome-hover)"; }}
+      onMouseLeave={e => { e.currentTarget.style.background = "var(--surface)"; }}
     >
       <AnimatePresence mode="wait" initial={false}>
         {dark ? (

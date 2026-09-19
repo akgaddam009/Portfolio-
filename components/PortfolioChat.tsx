@@ -168,8 +168,8 @@ export default function PortfolioChat() {
           cursor: "pointer", userSelect: "none",
           transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
         }}
-        onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-        onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+        onMouseEnter={e => { e.currentTarget.style.background = "var(--surface2)"; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "var(--surface)"; }}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <line x1="4" y1="6" x2="20" y2="6" />

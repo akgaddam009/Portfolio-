@@ -383,8 +383,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
               userSelect: "none",
               transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1)",
             }}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--card-shadow-hover)"; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--card-shadow)"; }}
+            onMouseEnter={e => { e.currentTarget.style.background = "var(--surface2)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "var(--surface)"; }}
           >
             Arun Gaddam
           </Link>
@@ -2274,7 +2274,7 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                         onMouseEnter={() => setHoveredPersona(i)}
                         onMouseLeave={() => setHoveredPersona(null)}
                         style={{
-                          background: "var(--surface)",
+                          background: hoveredPersona === i ? "var(--surface2)" : "var(--surface)",
                           borderRadius: "var(--radius-lg)",
                           display: "flex",
                           flexDirection: "column",
@@ -2282,8 +2282,8 @@ export default function CaseStudyDetail({ cs }: { cs: CaseStudy }) {
                           maxWidth: "320px",
                           scrollSnapAlign: "start",
                           flexShrink: 0,
-                          boxShadow: hoveredPersona === i ? "var(--card-shadow-hover)" : "var(--card-shadow)",
-                          transition: "box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+                          boxShadow: "var(--card-shadow)",
+                          transition: "background 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
                           overflow: "hidden",
                         }}
                       >
