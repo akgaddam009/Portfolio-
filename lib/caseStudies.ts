@@ -306,7 +306,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "apple-business-listings",
     number: "07",
-    title: "Designed Apple Maps business listing insights for multi-location enterprise users.",
+    title: "Apple Maps business listing insights for enterprise users.",
     titleHighlights: { "Apple Maps": "indigo" },
     subtitle: "Reputation partnered with Apple in 2023, but Apple data was missing from the performance dashboard.",
     cardImpact: "~68% weekly adoption from launch. Apple Maps data visible across 100M+ US users",
@@ -1181,7 +1181,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "financial-planning-workflow",
     number: "09",
-    title: "Designed core financial planning workflows, cutting time on task from 2–3 weeks to a few minutes and training time by 30%.",
+    title: "Financial data model management workflow.",
     subtitle: "Redesigning a financial planning workflow to reduce complexity and improve team efficiency.",
     role: "Product Designer",
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design"],
@@ -1195,7 +1195,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "first-time-user-experience",
     number: "10",
-    title: "Designed a first-time user experience that strengthened activation, retention, and long-term engagement.",
+    title: "Improved new-user adoption, retention, and monetization.",
     subtitle: "Crafting an onboarding experience that helps new users find value quickly.",
     role: "Product Designer",
     tags: ["Consumer Mobile", "Sports App", "UX Design"],
@@ -1209,7 +1209,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "vendor-credit-financing",
     number: "05",
-    title: "Led the vendor credit financing workflow for a high growth manufacturing startup.",
+    title: "Vendor credit underwriting and approval workflow.",
     subtitle: "Designing a credit financing workflow for vendors in a manufacturing supply chain.",
     role: "Product Designer",
     tags: ["Enterprise SaaS", "Fintech", "Workflow Design"],
@@ -1223,7 +1223,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "logistics-tax-compliance",
     number: "02",
-    title: "Designed logistics and tax compliance workflow for high growth manufacturing startup.",
+    title: "Logistics and tax compliance workflow.",
     subtitle: "Digitising logistics and tax compliance workflows across a 500+ supplier manufacturing network.",
     role: "Product Designer",
     tags: ["Enterprise SaaS", "Supply Chain"],

@@ -1482,7 +1482,7 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
         href="https://chatgpt.com/g/g-6a6b5aeb663c81919ca14dbf88115b73-ux-product-research-assistant"
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Launched a Custom GPT that helps UX researchers plan, synthesize, and communicate research insights. AI Experiments, Custom GPT. Opens ChatGPT in a new tab"
+        aria-label="Custom GPT for UX researchers to plan studies. AI Experiments, Custom GPT. Opens ChatGPT in a new tab"
       >
         <div
           className={`work-card${BARE_THUMBNAILS ? " work-card--bare" : ""}`}
@@ -1543,8 +1543,7 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
               lineHeight: "26px", letterSpacing: "-0.02em",
               color: "var(--text)", marginBottom: 0,
             }}>
-              Launched a Custom GPT that helps UX researchers plan, synthesize,
-              and communicate research insights.
+              Custom GPT for UX researchers to plan studies.
             </h3>
           </div>
         </div>
