@@ -3127,19 +3127,10 @@ function TestimonialsPanel() {
       <PanelHeader label="Testimonials" />
       <div style={{ padding: "24px 24px 48px" }}>
 
-        {/* Intro */}
-        <motion.p
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: EASE }}
-          style={{
-            fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
-            lineHeight: 1.65, letterSpacing: "-0.01em",
-            color: "var(--muted)", marginBottom: "24px", fontWeight: 400,
-          }}
-        >
-          From colleagues and managers I&apos;ve worked closely with.
-        </motion.p>
+        {/* Intro line removed. The panel header already says "Testimonials",
+            and each card names the person's role and company under the quote,
+            so the sentence restated what the content shows. The container's own
+            24px top padding now carries the gap its margin used to. */}
 
         {/* Cards, but flat. boxShadow removed per request -- which means the
             card needs a hairline border to survive: in the light theme --bg and
@@ -3931,7 +3922,7 @@ export default function Home() {
                   flex: "0 0 auto",
                   height: "100%",
                   overflowY: "auto",
-                  borderRadius: "var(--radius-lg)",
+                  borderRadius: "var(--radius-panel)",
                   background: "var(--bg)",
                   boxShadow: shadow,
                   scrollSnapAlign: "start",

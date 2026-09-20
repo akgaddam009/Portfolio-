@@ -135,12 +135,14 @@
      system still moves from this one line. */
   --radius-lg:   16px;  /* large card / panel / hero media */
   --radius-xl:   24px;  /* feature media */
-  /* Chrome kept its own name through the 20px experiment, when it sat between
-     --radius-md and --radius-lg. Now that the house radius is back to 16px it
-     holds the same value as --radius-lg. Kept as a separate token rather than
-     folded in: the 44px controls and the panels round alike today, but they
-     are different things, and collapsing them would mean the next move to one
-     silently moves the other. */
+  /* Panels sit one step above the house radius. They are the only surface that
+     meets the canvas rather than another surface, and at --radius-lg they read
+     as flat against it; the extra 4px gives the outer edge back its lift while
+     16px still governs every card inside. Its own token rather than a shared
+     one -- a panel and a 44px control round alike at times but are different
+     objects, and one token would mean the next move to either silently moves
+     the other. */
+  --radius-panel:  20px;
   --radius-chrome: 16px;
   --radius-pill: 9999px;
 
