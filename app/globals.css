@@ -410,11 +410,17 @@
   background: var(--bg);
   transition: box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
+/* No hard rule on scroll either. `0 1px 0 var(--border)` is a line, not
+   a shadow -- zero blur, zero offset falloff -- so it read as the same
+   border that was just removed from the resting state, reappearing the
+   moment anything scrolled. The soft layer alone is enough to stop
+   content colliding with the label: it separates by depth rather than
+   by drawing an edge. */
 .panel-header-glass.scrolled {
-  box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
 }
 [data-theme="dark"] .panel-header-glass.scrolled {
-  box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.38);
 }
 
 /* ─── Base ───────────────────────────────────────────── */
@@ -1041,7 +1047,7 @@ html[data-mode="executive"] .exec-decision-image {
 }
 
 /* ─── Card hover ──────────────────────────────────────────
-   One property, one curve: --card-ring to --card-lift over 200ms.
+   One property, one curve: the background fill over 200ms.
 
    It got here by removing things. The card used to lift 2px while the shadow
    ran on a separate framer-motion spring -- two timelines on one gesture, and
@@ -1056,15 +1062,16 @@ html[data-mode="executive"] .exec-decision-image {
    200ms and quart-out per the impeccable motion reference -- the fast end of
    its 200-300ms hover band, since a pointer state should answer at once, with
    a gentle tail so it does not feel clipped. */
-/* One interaction rule across the site: hover changes the fill, never
-   the elevation. Nothing lifts and nothing gains a shadow, so the
-   card's edge never moves -- only the surface under it warms to
-   --surface2, the fill the testimonial cards already carry. */
 .work-card {
   background: var(--surface);
   box-shadow: var(--card-ring);
   transition: background 200ms var(--ease-out-quart);
 }
+/* One interaction rule across the whole site: hover changes the fill,
+   never the elevation. Nothing lifts, nothing gains a shadow. The ring
+   stays exactly as it is at rest, so the card's edge never moves --
+   only the surface under it warms to --surface2, the same fill the
+   testimonial cards carry. */
 .work-card:not(.work-card--static):hover {
   background: var(--surface2);
 }

@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
 const MapLibreMap = dynamic(() => import("@/components/ui/MapLibreMap").then(m => ({ default: m.MapLibreMap })), { ssr: false });
 import { caseStudies } from "@/lib/caseStudies";
-import { WORK_THUMBS, THUMB_LIGHT, THUMB_DARK, THUMB_VIDEOS, WORK_POSTERS, WORK_HOVER_VIDEOS, THUMB_POSITION, THUMB_FILTER, BARE_THUMBNAILS, CARD_CHIP_EXCLUDE, CARD_CATEGORY } from "@/lib/workThumbnails";
+import { WORK_THUMBS, THUMB_LIGHT, THUMB_DARK, THUMB_VIDEOS, WORK_POSTERS, WORK_HOVER_VIDEOS, THUMB_POSITION, THUMB_FILTER, BARE_THUMBNAILS } from "@/lib/workThumbnails";
 import { brandIcons } from "@/lib/brandIcons";
 import { DitheredImage } from "@/components/DitheredImage";
 import ISTClock from "@/components/ISTClock";
@@ -1339,7 +1339,7 @@ function SystemFeatureCard() {
               src="/images/system/portfolio-design-language.mp4"
               poster="/images/system/cover.png"
               height={200}
-              borderRadius="16px 16px 0 0"
+              borderRadius="var(--radius-lg) var(--radius-lg) 0 0"
             />
           </div>
 
@@ -1511,8 +1511,8 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
             }}
           >
             <div style={{
-              position: "absolute", inset: BARE_THUMBNAILS ? 0 : "16px",
-              borderRadius: BARE_THUMBNAILS ? 0 : "6px", overflow: "hidden",
+              position: "absolute", inset: BARE_THUMBNAILS ? 0 : "11px 11px 4px",
+              borderRadius: BARE_THUMBNAILS ? 0 : "calc(var(--radius-lg) - 11px)", overflow: "hidden",
               display: "flex", alignItems: "center", justifyContent: "center",
               background: "#74aa9c",
             }}>
@@ -1530,14 +1530,10 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
             </div>
           </div>
 
-          {/* Body. 11px top, matching the mapped cards above — this card
+          {/* Body. 8px top, matching the mapped cards above — this card
               sits in the same column and would read as misaligned if its
-              chip row sat 5px lower than theirs. */}
-          <div style={{ padding: BARE_THUMBNAILS ? "11px 0 18px" : "11px 16px 18px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
-              <AccentChip label="AI Experiments" tone="violet" icon={Sparkles} />
-              <WorkChip label="Custom GPT" />
-            </div>
+              title sat lower than theirs. */}
+          <div style={{ padding: BARE_THUMBNAILS ? "8px 0 12px" : "8px 16px 12px" }}>
             <h3 style={{
               fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
               lineHeight: "26px", letterSpacing: "-0.02em",
@@ -1801,7 +1797,7 @@ function WorkPanel() {
                           poster={WORK_POSTERS[cs.slug]}
                           hoverVideo={WORK_HOVER_VIDEOS[cs.slug]}
                           height={220}
-                          borderRadius="16px 16px 0 0"
+                          borderRadius="var(--radius-lg) var(--radius-lg) 0 0"
                         />
                       ) : (THUMB_LIGHT[cs.slug] || THUMB_DARK[cs.slug]) ? (
                         <div style={BARE_THUMBNAILS
@@ -1810,7 +1806,16 @@ function WorkPanel() {
                              second radius here would round the bottom
                              edge away from the body it sits against. */
                           ? { position: "absolute", inset: 0, overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }
-                          : { position: "absolute", inset: "16px", borderRadius: "6px", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
+                          /* Deliberately uneven: 11px top and sides, 4px
+                             bottom. The matte's bottom edge was the bulk of
+                             the gap between the image and the title -- the
+                             frame plus the body's top padding read as two
+                             separate blocks rather than a caption under an
+                             image. The bottom is cut hardest so the title
+                             sits close, and the other three came down to
+                             11px to keep the frame from looking heavy
+                             against it. */
+                          : { position: "absolute", inset: "11px 11px 4px", borderRadius: "calc(var(--radius-lg) - 11px)", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
                             {/* Plain image, matted. No treatment on any card.
 
                               This slot has held two: a dither on FanCode, then
@@ -1850,43 +1855,22 @@ function WorkPanel() {
                       )}
                     </div>
 
-                    {/* Body. Top padding is 11px, not 16 — that is the gap
-                        between the thumbnail's bottom edge and the chip row,
-                        and at 16 the chips read as a separate block rather
-                        than as a caption belonging to the image above them.
-                        Sides and bottom are unchanged.
+                    {/* Body. Top padding is 8px — that is the gap between
+                        the thumbnail's bottom edge and the title, pulled in
+                        so the title reads as a caption belonging to the
+                        image above it rather than as a separate block.
+                        The bottom is 12px, not 18 — it has to equal the
+                        matte's 4px bottom plus this 8px top, or the title
+                        sits closer to the image above it than to the card
+                        edge below and reads as falling out of the card.
+                        The half-leading on the 26px line-height is equal
+                        above and below the text, so it cancels out of that
+                        sum. Sides are unchanged.
 
                         Bare cards drop the side padding to 0: the text is
                         outside the frame now, so 16px would indent it
                         from the image edge it should be aligned to. */}
-                    <div style={{ padding: BARE_THUMBNAILS ? "11px 0 18px" : "11px 16px 18px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap", marginBottom: "10px" }}>
-                        {CARD_CATEGORY[cs.slug] && (
-                          <AccentChip
-                            label={CARD_CATEGORY[cs.slug].label}
-                            tone={CARD_CATEGORY[cs.slug].tone}
-                            icon={CARD_CATEGORY[cs.slug].icon}
-                          />
-                        )}
-                        {/* Tags minus anything the category badge already says.
-                            Three cards were printing their domain twice --
-                            [FINTECH] next to a FINTECH tag -- because the badge
-                            label and the tag list are authored separately.
-                            Filtering here rather than editing the tag data keeps
-                            the tags intact for the case study page, where there
-                            is no badge to duplicate. */}
-                        {cs.tags
-                          .filter(tag =>
-                            tag.toLowerCase() !== CARD_CATEGORY[cs.slug]?.label.toLowerCase())
-                          .filter(tag =>
-                            !CARD_CHIP_EXCLUDE[cs.slug]?.some(
-                              x => x.toLowerCase() === tag.toLowerCase()))
-                          .slice(0, 2)
-                          .map(tag => (
-                            <WorkChip key={tag} label={tag} />
-                          ))}
-                        {comingSoon && <AccentChip label="Coming soon" tone="amber" />}
-                      </div>
+                    <div style={{ padding: BARE_THUMBNAILS ? "8px 0 12px" : "8px 16px 12px" }}>
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
                         lineHeight: "26px", letterSpacing: "-0.02em",
@@ -1944,7 +1928,7 @@ function WorkPanel() {
                             poster={WORK_POSTERS[cs.slug]}
                             hoverVideo={WORK_HOVER_VIDEOS[cs.slug]}
                             height={200}
-                            borderRadius="16px 16px 0 0"
+                            borderRadius="var(--radius-lg) var(--radius-lg) 0 0"
                           />
                         </div>
                         <div style={{ padding: "12px 16px 16px" }}>

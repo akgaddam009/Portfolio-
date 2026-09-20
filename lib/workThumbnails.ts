@@ -8,9 +8,6 @@
 
    Behaviour is unchanged -- this is a move, not a rewrite. */
 
-import type React from "react";
-import { Users, Briefcase, Path, TreeStructure, ChartActivity } from "@/components/ui/Icon";
-import { type ChipTone } from "@/components/ui/InlineChip";
 
 export const WORK_THUMBS: Record<string, string> = {
   /* ── Video thumbnails (existing) ── */
@@ -105,25 +102,4 @@ export const THUMB_FILTER: Record<string, string> = {
    Paired with .work-card--bare in globals.css, which moves ring and
    hover lift from the card onto the frame — flip this to false and both
    files fall back to the matted treatment. */
-export const BARE_THUMBNAILS = true;
-/* Tags that should not become chips on a specific card. Same reasoning as the
-   badge filter at the call site: the tag stays in the data, so the case study
-   page keeps it, and only the card is trimmed. Cards show two chips at most,
-   so dropping one here promotes whatever came next rather than leaving a gap. */
-export const CARD_CHIP_EXCLUDE: Record<string, string[]> = {
-  "first-time-user-experience": ["UX Design"],
-};
-export const CARD_CATEGORY: Record<string, {
-  label: string;
-  tone: ChipTone;
-  icon?: (p: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) => React.ReactElement;
-}> = {
-  "vendor-credit-financing":     { label: "Fintech",       tone: "indigo",  icon: Briefcase },
-  "financial-planning-workflow": { label: "Fintech",       tone: "indigo",  icon: Briefcase },
-  "logistics-tax-compliance":    { label: "Supply Chain",  tone: "amber",   icon: Path },
-  "apple-business-listings":     { label: "Customer Experience", tone: "emerald", icon: ChartActivity },
-  "first-time-user-experience":  { label: "Sports App",    tone: "sage",    icon: Users },
-  /* Not currently on the homepage, kept so they carry their badge if revived. */
-  "zetwerk-dc":                  { label: "Supply Chain",   tone: "amber",  icon: Path },
-  "zetwerk-bu-ecosystem":        { label: "Service Design", tone: "amber",  icon: TreeStructure },
-};
+export const BARE_THUMBNAILS = false;
