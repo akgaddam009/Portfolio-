@@ -156,13 +156,15 @@ function HomeNav({
             alignItems: "center",
             textDecoration: "none",
             userSelect: "none",
-            transition: "box-shadow 200ms var(--ease-out-quart), color 200ms var(--ease-out-quart), background 200ms var(--ease-out-quart)",
+            transition: "box-shadow 150ms var(--ease-out-quart), color 150ms var(--ease-out-quart)",
           }}
-          /* Shadow alone is a weak hover for a white pill on a light canvas,
-             so the label lifts to --text-hover as a second, non-spatial
-             signal. */
-          onMouseEnter={e => { e.currentTarget.style.color = "var(--text-hover)"; e.currentTarget.style.background = "var(--chrome-hover)"; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface)"; }}
+          /* Edge and ink, no fill. See --chrome-shadow-hover for why the fill
+             came out: the pill and the bar behind it are the same white, so a
+             tint reads as a stain rather than a response. The ring sharpens
+             and the label goes to --text-hover; both are legible in either
+             theme and neither moves anything. */
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; e.currentTarget.style.color = "var(--text-hover)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.color = "var(--text)"; }}
           /* Already on "/", a Link to "/" is a no-op: the router sees the same
              route and does nothing, so the wordmark felt dead on the homepage.
              Reload instead, which replays the load reveal.
@@ -253,12 +255,13 @@ function HomeNav({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transition: "box-shadow 0.25s cubic-bezier(0.22,1,0.36,1), background 0.25s cubic-bezier(0.22,1,0.36,1), opacity 0.2s",
+                  transition: "box-shadow 150ms var(--ease-out-quart), opacity 0.2s",
                   opacity: disabled ? 0.3 : 1,
                   cursor: disabled ? "default" : "pointer",
                 }}
-                onMouseEnter={e => { if (!disabled) { e.currentTarget.style.background = "var(--chrome-hover)"; } }}
-                onMouseLeave={e => { if (!disabled) { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; e.currentTarget.style.background = "var(--surface)"; } }}
+                /* Same as the wordmark: the ring sharpens, nothing fills. */
+                onMouseEnter={e => { if (!disabled) { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; } }}
+                onMouseLeave={e => { if (!disabled) { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; } }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                   <path d={d} />

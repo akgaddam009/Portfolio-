@@ -211,14 +211,34 @@
      canvas rather than lift them off it. 6% of --text lands around #f0f0f0,
      clearly darker than both. Inverts correctly in dark, where --text is
      white and --surface is the dark panel. */
-  --chrome-hover:        color-mix(in srgb, var(--text) 12%, var(--surface));
+  /* 6%, halved from 12%. At 12 the fill was carrying the hover on its own,
+     because the shadow lift had been removed from the chrome by the site-wide
+     fill-only rule; it had to be a strong tint to register at all. With the
+     lift back on the wordmark, the arrows and the theme toggle, the fill is
+     the second cue rather than the only one, and at 12 it read as the control
+     changing colour rather than responding. */
+  --chrome-hover:        color-mix(in srgb, var(--text) 6%, var(--surface));
   --chrome-shadow:       0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03), 0 6px 18px rgba(0, 0, 0, 0.035);
   /* Roughly double the resting values, not half the original hover. Halving
      rest and hover together kept their ratio but collapsed the gap between
      them to 0.005 on the middle layer, which is invisible -- the eye reads the
      absolute difference, not the proportion. Rest stays light; hover steps far
      enough to register. */
-  --chrome-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.09);
+  /* Hover sharpens the edge and settles the shadow. It does not lift.
+
+     The chrome floats on the canvas and is already the highest thing on the
+     page, so expanding its shadow read as the pill inflating rather than
+     responding -- and a fill change was worse: the pill's rest fill is
+     --surface and the bar behind it is the same white, so any tint appeared
+     as a grey stain inside a white shape. There is no correct strength for
+     that, which is why 12% read as loud and 6% read as nothing.
+
+     The 1px ring is the only part of the pill that is always visible against
+     the bar, at rest and in both themes. Doubling it and pulling the two blur
+     layers in (6/18 -> 3/8) makes the control resolve toward the surface and
+     its edge crisp. Nothing is repainted and nothing moves, so this is also
+     the whole prefers-reduced-motion story. */
+  --chrome-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05), 0 3px 8px rgba(0, 0, 0, 0.05);
   /* Ring parity: every *-hover token carries the same `0 0 0 1px` ring as the
      token it replaces on hover. A border belongs to the object, not to the
      pointer -- redrawing it darker on hover reads as the edge thickening,
@@ -361,7 +381,7 @@
   --panel-shadow:        inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.20), 0 6px 24px rgba(0,0,0,0.18);
   --panel-shadow-active: inset 0 1px 0 rgba(255,255,255,0.11), 0 2px 4px rgba(0,0,0,0.25), 0 12px 40px rgba(0,0,0,0.22);
   --chrome-shadow:       0 0 0 1px rgba(255, 255, 255, 0.08), 0 1px 3px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.18);
-  --chrome-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.45), 0 10px 28px rgba(0, 0, 0, 0.40);
+  --chrome-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.15), 0 1px 2px rgba(0, 0, 0, 0.30), 0 3px 9px rgba(0, 0, 0, 0.24);
   --card-ring:         0 0 0 1px rgba(255, 255, 255, 0.10);
   --card-ring-strong:  0 0 0 1px rgba(255, 255, 255, 0.14);
   --card-lift:         0 0 0 1px rgba(255, 255, 255, 0.10),

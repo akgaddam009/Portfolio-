@@ -64,15 +64,16 @@ export default function ThemeToggle() {
         justifyContent: "center",
         overflow: "hidden",
         flexShrink: 0,
-        transition: "box-shadow 200ms var(--ease-out-quart), background 200ms var(--ease-out-quart)",
+        transition: "box-shadow 150ms var(--ease-out-quart)",
       }}
-      // Matches the rest of the top nav: --chrome-shadow at rest lifting to
-      // --chrome-shadow-hover, plus a --chrome-hover fill. The fill is what
-      // makes the hover legible -- shadow alone on a white pill over a light
-      // canvas is too subtle to read. transform is out of the transition
-      // because the whileTap spring owns it. No border anywhere.
-      onMouseEnter={e => { e.currentTarget.style.background = "var(--chrome-hover)"; }}
-      onMouseLeave={e => { e.currentTarget.style.background = "var(--surface)"; }}
+      // Matches the rest of the top nav: --chrome-shadow sharpening to
+      // --chrome-shadow-hover, which triples the 1px ring and pulls the blur
+      // layers in. No fill: this pill and the bar behind it are the same
+      // --surface, so a tint reads as a stain rather than a response. See the
+      // token in globals.css. transform is out of the transition because the
+      // whileTap spring owns it. No border anywhere.
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow-hover)"; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = "var(--chrome-shadow)"; }}
     >
       <AnimatePresence mode="wait" initial={false}>
         {dark ? (
