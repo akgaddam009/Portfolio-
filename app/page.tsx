@@ -139,7 +139,7 @@ function HomeNav({
           aria-label="Home. Arun Gaddam"
           style={{
             fontFamily: "var(--font-logo)",
-            fontSize: "var(--text-mono)",
+            fontSize: "var(--text-mono-lg)",
             fontWeight: 500,
             color: "var(--text)",
             letterSpacing: "0.06em",
