@@ -1483,6 +1483,9 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Custom GPT for UX researchers to plan studies. AI Experiments, Custom GPT. Opens ChatGPT in a new tab"
+        /* Same as the mapped cards: block, or the focus ring has no box to
+           draw around. */
+        style={{ display: "block", borderRadius: "var(--radius-lg)" }}
       >
         <div
           className={`work-card${BARE_THUMBNAILS ? " work-card--bare" : ""}`}
@@ -1491,8 +1494,8 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
             : { borderRadius: "var(--radius-lg)", overflow: "hidden" }}
         >
           {/* Thumbnail. Every card in CARD_ORDER renders through the
-              THUMB_LIGHT branch, which mattes its image inside a 16px
-              inset at 6px radius — so this one matches that geometry
+              THUMB_LIGHT branch, which mattes its image inside a 12px
+              inset at 8px radius — so this one matches that geometry
               exactly or it reads as the odd card out.
 
               Inside the matte it follows the FanCode card: a flat field
@@ -1511,8 +1514,8 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
             }}
           >
             <div style={{
-              position: "absolute", inset: BARE_THUMBNAILS ? 0 : "11px 11px 4px",
-              borderRadius: BARE_THUMBNAILS ? 0 : "calc(var(--radius-lg) - 11px)", overflow: "hidden",
+              position: "absolute", inset: BARE_THUMBNAILS ? 0 : "12px 12px 4px",
+              borderRadius: BARE_THUMBNAILS ? 0 : "calc(var(--radius-lg) - 12px)", overflow: "hidden",
               display: "flex", alignItems: "center", justifyContent: "center",
               background: "#74aa9c",
             }}>
@@ -1533,7 +1536,7 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
           {/* Body. 8px top, matching the mapped cards above — this card
               sits in the same column and would read as misaligned if its
               title sat lower than theirs. */}
-          <div style={{ padding: BARE_THUMBNAILS ? "8px 0 12px" : "8px 16px 12px" }}>
+          <div style={{ padding: BARE_THUMBNAILS ? "8px 0 12px" : "8px 12px 12px" }}>
             <h3 style={{
               fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
               lineHeight: "26px", letterSpacing: "-0.02em",
@@ -1755,7 +1758,12 @@ function WorkPanel() {
                       </div>
                     );
                   }
-                : ({ children }: { children: React.ReactNode }) => <Link href={href} aria-label={cardLabel} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
+                : ({ children }: { children: React.ReactNode }) => <Link href={href} aria-label={cardLabel} /* An <a> is inline by default, so the global :focus-visible
+                       outline was being drawn around a collapsed inline box and
+                       never appeared on the card at all. Block gives the ring a
+                       real box; the radius keeps it concentric with the card
+                       rather than the rule's own 4px. */
+                    style={{ display: "block", borderRadius: "var(--radius-lg)" }} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{children}</Link>;
             const card = (
               <motion.div
                 key={cs.slug}
@@ -1806,16 +1814,19 @@ function WorkPanel() {
                              second radius here would round the bottom
                              edge away from the body it sits against. */
                           ? { position: "absolute", inset: 0, overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }
-                          /* Deliberately uneven: 11px top and sides, 4px
+                          /* Deliberately uneven: 12px top and sides, 4px
                              bottom. The matte's bottom edge was the bulk of
                              the gap between the image and the title -- the
                              frame plus the body's top padding read as two
                              separate blocks rather than a caption under an
                              image. The bottom is cut hardest so the title
                              sits close, and the other three came down to
-                             11px to keep the frame from looking heavy
-                             against it. */
-                          : { position: "absolute", inset: "11px 11px 4px", borderRadius: "calc(var(--radius-lg) - 11px)", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
+                             12px to keep the frame from looking heavy
+                             against it. The title carries the same 12px side
+                             padding, so its left edge and the image's are one
+                             line -- a caption that does not share an edge with
+                             what it captions is just a thinner border. */
+                          : { position: "absolute", inset: "12px 12px 4px", borderRadius: "calc(var(--radius-lg) - 12px)", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
                             {/* Plain image, matted. No treatment on any card.
 
                               This slot has held two: a dither on FanCode, then
@@ -1870,7 +1881,7 @@ function WorkPanel() {
                         Bare cards drop the side padding to 0: the text is
                         outside the frame now, so 16px would indent it
                         from the image edge it should be aligned to. */}
-                    <div style={{ padding: BARE_THUMBNAILS ? "8px 0 12px" : "8px 16px 12px" }}>
+                    <div style={{ padding: BARE_THUMBNAILS ? "8px 0 12px" : "8px 12px 12px" }}>
                       <h3 style={{
                         fontFamily: "var(--font-body)", fontSize: "var(--text-title-sm)", fontWeight: 500,
                         lineHeight: "26px", letterSpacing: "-0.02em",
