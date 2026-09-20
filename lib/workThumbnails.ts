@@ -89,6 +89,13 @@ export const THUMB_POSITION: Record<string, string> = {
    correction is still here if the card goes back to a still. */
 export const THUMB_FILTER: Record<string, string> = {
   "logistics-tax-compliance": "saturate(0.76)",
+  /* Apple business listings. Same correction, same reason as the entry
+     above: the map screenshot's reds and blues were the most saturated
+     thing in the column, and the card sits third, so the eye landed there
+     before the two cards above it. This one is live rather than dormant --
+     the card renders through the THUMB_LIGHT <img> branch, which is the
+     only place THUMB_FILTER is applied. */
+  "apple-business-listings":  "saturate(0.76)",
 };
 /* Full-bleed thumbnails, caption outside the frame.
 
