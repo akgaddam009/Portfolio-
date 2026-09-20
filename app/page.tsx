@@ -1717,9 +1717,7 @@ function WorkPanel() {
       <div style={{ padding: "16px 24px 32px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
 
-          {/* flatMap, not map: the Custom GPT card is spliced in after index 1
-              so it lands third in the sequence rather than last. */}
-          {allCards.flatMap((cs, i) => {
+          {allCards.map((cs, i) => {
             const href = cs.driveUrl ?? `/work/${cs.slug}`;
             const isExternal = !!cs.driveUrl;
             /* Composed accessible name. Without this the link announces as a
@@ -1894,12 +1892,15 @@ function WorkPanel() {
                 </CardWrapper>
               </motion.div>
             );
-            /* The Custom GPT card rides along with the second case study so it
-               lands third in the sequence. flatMap flattens the pair. */
-            return i === 1
-              ? [card, <CustomGptCard key="custom-gpt" delayIndex={2} />]
-              : card;
+            return card;
           })}
+
+          {/* Last in the sequence, not third. It used to be spliced in after
+              index 1, which put the one card that is an experiment rather than
+              a case study at the point a first-time reader is still deciding
+              whether the work is worth reading. Its delay follows the real
+              card count so the stagger stays continuous. */}
+          <CustomGptCard key="custom-gpt" delayIndex={allCards.length} />
 
         </div>
 
