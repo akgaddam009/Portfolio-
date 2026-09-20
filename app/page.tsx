@@ -2159,8 +2159,20 @@ function WorkPanel() {
 }
 
 /* ── Panel 3: Career ── */
-const YEAR_PX    = 56;   // px per year
+/* 70px per year, up 25% from 56.
+
+   The scale sets how much calendar a padded card covers. A card is only as
+   tall as its tenure when that tenure beats the 72px minimum, and the two
+   shortest roles do not: at 56px a year Planful's five months spanned 1.29
+   years and reached into 2026. At 70 it spans 1.03 and stops at 2024.55, so
+   it no longer claims a year it never touched, and the three longer roles
+   are exact.
+
+   Not larger. 124 would have fitted every card inside its own year, but it
+   made the panel 1880px and read as a chart of empty space. */
+const YEAR_PX    = 70;   // px per year
 const CAL_START  = 2012;
+
 const CAL_END    = 2027;
 const TOP_OFFSET = 20;   // px breathing room above the topmost card
 /* Where "now" sits on the calendar. The axis highlight and the Now dot both
@@ -2219,7 +2231,7 @@ const careerItems: CareerItem[] = [
   },
   {
     type: "role", startYear: 2022.25, endYear: 2023.833,
-    title: "Senior Product Designer", subtitle: "Zetwerk",
+    title: "Senior Product Designer", subtitle: "Zetwerk Manufacturing",
     dateLabel: "Apr 2022 - Nov 2023", impact: "Manufacturing startup", logoDomain: "zetwerk.com",
     link: "https://www.zetwerk.com/",
     images: ["/images/career/zetwerk-team.jpg"],
@@ -2698,8 +2710,12 @@ function CareerPanel() {
             boxShadow: isExpanded
               ? "var(--card-lift-edge)"
               /* Ring only. The fill above carries the hover; a shadow as
-                 well would be two answers to one question. */
-              : "var(--card-ring)",
+                 well would be two answers to one question.
+
+                 --card-ring-strong rather than --card-ring: these cards
+                 shingle into two overlapping columns, so their edges carry
+                 the separation that spacing carries elsewhere. */
+              : "var(--card-ring-strong)",
             /* Hover still fades; the expanded swap is instant because the
                layout spring is already carrying that moment. */
             transition: isExpanded ? "none" : "box-shadow 200ms var(--ease-out-quart)",
@@ -2763,17 +2779,21 @@ function CareerPanel() {
                 that becomes a problem, the fix is to stop the grid rules at
                 the column divider so the decoupled column visibly does not use
                 the axis -- not to put these dates back. */}
-            {!isEdu && item.dateLabel && (
-              <p style={{
-                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
-                fontWeight: 400, letterSpacing: "0.02em",
-                color: "var(--muted)", lineHeight: 1.4, marginTop: "3px",
-                fontVariantNumeric: "tabular-nums",
-                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-              }}>
-                {item.dateLabel}
-              </p>
-            )}
+            {/* No date line. dateLabel stays on the data.
+
+                It was rendered because the axis could not be trusted: at 56px
+                a year, a 72px minimum card spanned 1.29 years, so short roles
+                covered calendar they never occupied -- Planful ran Mar-Aug
+                2025 and reached 2026. At 124px a year that is no longer true.
+                Four of the five work cards are now taller than their minimum,
+                so their height is their tenure, and Planful fits inside 2025.
+                The axis says the dates correctly, so the cards do not have to
+                say them twice.
+
+                Still true of the Other column, which stackedEduPositions packs
+                flush regardless of date. Its cards never carried dates and its
+                positions are still decorative; the fix there is to stop the
+                grid rules at the column divider. */}
             {/* The industry line ("Manufacturing startup", "B2C startup",
                 "Fintech") is no longer rendered on the collapsed card. The
                 `impact` field stays on the data so it can be brought back or

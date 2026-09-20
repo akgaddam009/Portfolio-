@@ -225,6 +225,12 @@
      which is a different and more alarming signal than the surface lifting.
      Hover is expressed entirely through the blurred layers underneath. */
   --card-ring:         0 0 0 1px rgba(0, 0, 0, 0.06);
+  /* Career cards only, one step up from --card-ring. Those cards sit on the
+     panel in two overlapping columns rather than in a single spaced list, so
+     their edges do most of the work of saying where one card stops and the
+     next starts -- at 0.06 the shingled stacks read as one mass. The Selected
+     Work cards keep --card-ring: they are spaced and do not need it. */
+  --card-ring-strong:  0 0 0 1px rgba(0, 0, 0, 0.09);
   /* Four shallow layers instead of one deep one. --card-shadow-hover ends in
      `0 14px 36px rgba(0,0,0,0.10)`, and a single 36px blur at that alpha is
      what reads as dark and heavy. Spreading the same impression across
@@ -357,6 +363,7 @@
   --chrome-shadow:       0 0 0 1px rgba(255, 255, 255, 0.08), 0 1px 3px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.18);
   --chrome-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.45), 0 10px 28px rgba(0, 0, 0, 0.40);
   --card-ring:         0 0 0 1px rgba(255, 255, 255, 0.10);
+  --card-ring-strong:  0 0 0 1px rgba(255, 255, 255, 0.14);
   --card-lift:         0 0 0 1px rgba(255, 255, 255, 0.10),
                        0 1px 2px rgba(0, 0, 0, 0.12),
                        0 4px 8px rgba(0, 0, 0, 0.12),
