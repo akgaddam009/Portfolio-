@@ -146,8 +146,8 @@ function HomeNav({
             textTransform: "uppercase",
             height: "44px",
             padding: "0 14px",
-            /* --radius-chrome. 12px read as a separate system, 20px read as a
-               small panel; 16px sits between them. */
+            /* --radius-chrome. The wordmark is a control, not a panel: it
+               rounds at 16px while the panels behind it stay at 20px. */
             borderRadius: "var(--radius-chrome)",
             border: "none",
             background: "var(--surface)",
@@ -2155,6 +2155,15 @@ const YEAR_PX    = 56;   // px per year
 const CAL_START  = 2012;
 const CAL_END    = 2027;
 const TOP_OFFSET = 20;   // px breathing room above the topmost card
+/* Where "now" sits on the calendar. The axis highlight and the Now dot both
+   derive from this, so the two cannot drift apart -- they were separately
+   hardcoded as 2026 and 2026.25 before. Still a constant rather than
+   new Date(): this page is statically prerendered, so deriving the year at
+   render time would bake the build year into the HTML and disagree with the
+   client after 1 January, which is a hydration mismatch rather than a fix.
+   Bump this when the year turns. */
+const NOW_MARK  = 2026.25;
+const NOW_YEAR  = Math.floor(NOW_MARK);
 
 type CareerItem = {
   type: "role" | "education" | "label";
@@ -2438,6 +2447,18 @@ function CareerPanel() {
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [selectedItem]);
 
+  /* Escape closes an open card. The click-outside handler above covers the
+     pointer; without this a keyboard user's only exit was Enter or Space on
+     the same card, which works but nothing advertises. An expanded card runs
+     600-900px and covers three siblings, so being stuck in one is not a small
+     thing. Same shape as the two Escape handlers the file already carries. */
+  useEffect(() => {
+    if (!selectedItem) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setSelectedItem(null); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [selectedItem]);
+
   /* Prev / Next fired correctly but read as dead buttons. They sit at the bottom
      of an expanded card that runs 600-900px tall, so the click happens deep in
      the panel's scroll. Selecting a sibling collapses that card back to ~72px,
@@ -2480,7 +2501,7 @@ function CareerPanel() {
     return yr >= Math.floor(hoveredItem.startYear) && yr <= Math.ceil(endYr);
   };
 
-  const NOW_Y = (CAL_END - 2026.25) * YEAR_PX + TOP_OFFSET; // y-position of the "Now" dot
+  const NOW_Y = (CAL_END - NOW_MARK) * YEAR_PX + TOP_OFFSET; // y-position of the "Now" dot
 
   // Per-column overlap. Work column keeps a gentle 6 px overlap; the Other
   // (education) column stacks essentially flush to match the Figma's tighter
@@ -2493,7 +2514,16 @@ function CareerPanel() {
     const computed = workItems.map(item => {
       const endYr  = item.endYear ?? (item.startYear + 0.5);
       const height = Math.max((endYr - item.startYear) * YEAR_PX - 4, item.minHeight ?? 36);
-      const rawTop = (CAL_END - item.startYear) * YEAR_PX + 4 + TOP_OFFSET - height;
+      /* Anchored by the end date at the top, not the start date at the bottom.
+         A card is only as tall as its tenure when that tenure clears
+         minHeight, and six of these do not -- Planful is five months, 19px of
+         real span carrying a 72px card. The surplus has to go somewhere, and
+         growing up from the start date sent it forward in time: Planful ran
+         Mar-Aug 2025 and rendered up to 2026.19, measured, which reads as
+         still being there. Anchoring the top at the end date spends the
+         surplus downward into years already past instead, so no card ever
+         claims time after it ended. */
+      const rawTop = (CAL_END - endYr) * YEAR_PX + 4 + TOP_OFFSET;
       return { item, top: Math.max(rawTop, NOW_Y + 10), height };
     });
     computed.sort((a, b) => a.top - b.top);
@@ -2704,11 +2734,38 @@ function CareerPanel() {
                 {item.subtitle}
               </p>
             )}
-            {/* Impact only. dateLabel used to sit here at rest and swap to impact
-                on hover, but the calendar axis this card is positioned against
-                already encodes the timeframe, so the date was saying twice what
-                the layout says once. Impact now shows at rest and lifts to
-                --text on hover. */}
+            {/* dateLabel is back. The reasoning for taking it out -- "the
+                calendar axis this card is positioned against already encodes
+                the timeframe" -- is true of the work column and false of the
+                Other column, which stackedEduPositions packs flush regardless
+                of date. Measured against the rendered axis, cards in that
+                column sit up to two and a half years from their real date, so
+                the layout was not saying the date twice; on one side it was
+                saying it wrongly, with nothing on the card to correct it.
+
+                Work column only. A tenure has a duration worth reading; the
+                Other column holds a one-day workshop, a jury seat and a
+                certification, and dating those draws the eye to the smallest
+                cards on the panel.
+
+                Worth stating plainly, because it is the column that needed the
+                dates most: Other is the one stackedEduPositions packs flush
+                regardless of date, so it is plotted against years it does not
+                obey, now with nothing on the card to correct the reading. If
+                that becomes a problem, the fix is to stop the grid rules at
+                the column divider so the decoupled column visibly does not use
+                the axis -- not to put these dates back. */}
+            {!isEdu && item.dateLabel && (
+              <p style={{
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+                fontWeight: 400, letterSpacing: "0.02em",
+                color: "var(--muted)", lineHeight: 1.4, marginTop: "3px",
+                fontVariantNumeric: "tabular-nums",
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              }}>
+                {item.dateLabel}
+              </p>
+            )}
             {/* The industry line ("Manufacturing startup", "B2C startup",
                 "Fintech") is no longer rendered on the collapsed card. The
                 `impact` field stays on the data so it can be brought back or
@@ -3025,10 +3082,17 @@ function CareerPanel() {
                 <span style={{
                   fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
                   letterSpacing: "-0.01em",
-                  color: isYearActive(yr) ? "var(--text)" : yr === 2026 ? "var(--text)" : "var(--muted)",
+                  color: isYearActive(yr) || yr === NOW_YEAR ? "var(--text)" : "var(--muted)",
                   fontWeight: 400,
                   fontVariantNumeric: "tabular-nums",
-                  opacity: isYearActive(yr) ? 1 : yr === 2026 ? 1 : 0.55,
+                  /* No opacity multiplier. --muted is 5.07:1 on the panel, but
+                     compositing it at 0.55 rendered it at 2.18:1 light and
+                     2.51:1 dark -- measured -- against a 4.50:1 floor for 11px
+                     text. The axis is what every card is read against, so it
+                     was the panel's most important element and its faintest.
+                     Hierarchy now comes from colour alone: --muted for the
+                     scale, --text for the active and current years. */
+                  opacity: 1,
                   transition: "color 0.2s, opacity 0.2s",
                 }}>{yr}</span>
               </div>
@@ -3129,9 +3193,10 @@ function TestimonialsPanel() {
       <div style={{ padding: "24px 24px 48px" }}>
 
         {/* Intro line removed. The panel header already says "Testimonials",
-            and each card names the person's role and company under the quote,
-            so the sentence restated what the content shows. The container's own
-            24px top padding now carries the gap its margin used to. */}
+            and the cards name each person's role and company underneath the
+            quote, so the sentence was restating what the content shows. The
+            container's own 24px top padding now carries the gap the line's
+            margin used to. */}
 
         {/* Cards, but flat. boxShadow removed per request -- which means the
             card needs a hairline border to survive: in the light theme --bg and
