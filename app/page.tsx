@@ -1515,7 +1515,7 @@ function CustomGptCard({ delayIndex }: { delayIndex: number }) {
           >
             <div style={{
               position: "absolute", inset: BARE_THUMBNAILS ? 0 : "12px 12px 4px",
-              borderRadius: BARE_THUMBNAILS ? 0 : "calc(var(--radius-lg) - 12px)", overflow: "hidden",
+              borderRadius: BARE_THUMBNAILS ? 0 : "var(--radius-sm)", overflow: "hidden",
               display: "flex", alignItems: "center", justifyContent: "center",
               background: "#74aa9c",
             }}>
@@ -1823,8 +1823,16 @@ function WorkPanel() {
                              against it. The title carries the same 12px side
                              padding, so its left edge and the image's are one
                              line -- a caption that does not share an edge with
-                             what it captions is just a thinner border. */
-                          : { position: "absolute", inset: "12px 12px 4px", borderRadius: "calc(var(--radius-lg) - 12px)", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
+                             what it captions is just a thinner border.
+
+                             The inner radius is --radius-sm rather than the
+                             strictly concentric --radius-lg minus the 12px
+                             inset, which resolved to 4px. At 4px the image
+                             read as a square sitting inside a rounded card
+                             instead of nesting in it. 8px is softer than the
+                             geometry asks for and the frame absorbs the
+                             difference at this width. */
+                          : { position: "absolute", inset: "12px 12px 4px", borderRadius: "var(--radius-sm)", overflow: "hidden", background: isDark ? "#1a1918" : "#f0f0f2" }}>
                             {/* Plain image, matted. No treatment on any card.
 
                               This slot has held two: a dither on FanCode, then
@@ -2345,8 +2353,8 @@ const hueFromInitials = (initials: string): number => {
 const testimonials: Testimonial[] = [
   { quote: "Arun possesses a remarkable understanding of user needs, seamlessly navigating between design strategy and hands-on execution. His strategic mindset significantly impacted our efforts to enhance retention metrics.", name: "Raissa Fichardo", role: "Director of UX", company: "FanCode", initials: "RF", image: "/images/testimonial/raissa-fichardo.webp" },
   { quote: "I was always impressed by his ability to simplify complex problems and create user-friendly designs. He's a thoughtful, strategic designer who balances business goals with user needs.", name: "Jeff Orshalick", role: "UX Design Manager", company: "Reputation", initials: "JO", image: "/images/testimonial/jeff-orshalick.avif" },
-  { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "FanCode", initials: "VK", image: "/images/testimonial/vikas-kotian.jpeg" },
   { quote: "Arun embodies the core principles of exceptional UX research and design. Our collaboration on numerous uncertain projects highlighted his invaluable contributions. Arun not only drove the research but also championed the significance of user research.", name: "Nikhil Bhagya", role: "Product Manager", company: "Zetwerk", initials: "NB", image: "/images/testimonial/nikhil-bhagya.jpeg" },
+  { quote: "Arun has an exceptional understanding of design and the knack to draw relevant insights to identify the right problems. His business acumen combined with a user-first approach makes him an ideal UX lead.", name: "Vikas Kotian", role: "VP Product Design", company: "FanCode", initials: "VK", image: "/images/testimonial/vikas-kotian.jpeg" },
   { quote: "During the short period we collaborated on the same project I noticed that Arun is very good at UX. As a developer I loved working on his vision. He was always very committed and focused. I was impressed by his UX and research skills.", name: "Bishal Biswas", role: "Engineer", company: "Atlassian", initials: "BB", image: "/images/testimonial/bishal-biswas.jpeg" },
 ];
 
