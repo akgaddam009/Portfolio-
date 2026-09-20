@@ -123,18 +123,24 @@
   --radius-xs:   4px;   /* hairline rounds — scrollbar, focus ring */
   --radius-sm:   8px;   /* small buttons, mono labels */
   --radius-md:   12px;  /* default card / panel */
-  /* EXPERIMENT: 20px, up from 16px. Local only -- flip this one line back to
-     16px to revert. All 46 previously-hardcoded 16px radii across app/page.tsx
-     and components/ were repointed at this token first, so the whole house
-     radius now moves from here. 24px was tried and read as too soft; 20px also
-     keeps a real step between this and --radius-xl (24px), which 24 collapsed. */
-  --radius-lg:   20px;  /* large card / hero media */
+  /* Back to 16px. The 20px experiment above it read as too soft once every
+     panel and card carried it: uniformly rounded at that scale the structural
+     UI stopped looking constructed and started looking cushioned. 16px keeps
+     the step to --radius-xl (24px) that 24 collapsed, and it puts panels and
+     cards on the same value as --radius-chrome, so the panel edge, the card
+     edge and the 44px controls all round at one rate.
+
+     This token is the house radius -- 46 previously-hardcoded 16px values
+     across app/page.tsx and components/ were repointed at it -- so the whole
+     system still moves from this one line. */
+  --radius-lg:   16px;  /* large card / panel / hero media */
   --radius-xl:   24px;  /* feature media */
-  /* Chrome sits between the two: 12px made the 44px controls read as their own
-     smaller system, 20px made them read as small panels. 16px is the step
-     between --radius-md and --radius-lg, named for its role rather than
-     inserted into the xs/sm/md/lg/xl ladder, which would have meant renaming
-     every step below it. */
+  /* Chrome kept its own name through the 20px experiment, when it sat between
+     --radius-md and --radius-lg. Now that the house radius is back to 16px it
+     holds the same value as --radius-lg. Kept as a separate token rather than
+     folded in: the 44px controls and the panels round alike today, but they
+     are different things, and collapsing them would mean the next move to one
+     silently moves the other. */
   --radius-chrome: 16px;
   --radius-pill: 9999px;
 
@@ -541,7 +547,7 @@ a { color: inherit; text-decoration: none; }
 /* ─── Card ───────────────────────────────────────────── */
 .card {
   background: var(--surface);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -556,7 +562,7 @@ a { color: inherit; text-decoration: none; }
   padding: 8px 18px;
   background: var(--text);
   color: var(--bg);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   /* One duration, one curve. This was opacity at --dur-fast (180ms) and
      transform at --dur-base (320ms) on --ease-expo, so a single hover arrived
      in two pieces -- the 1px lift landing 140ms after the fade. 320ms is also
@@ -578,7 +584,7 @@ a { color: inherit; text-decoration: none; }
   padding: 8px 18px;
   border: 1px solid var(--border);
   color: var(--muted2);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: transparent;
   /* Same correction as .btn-primary: all three were at --dur-base (320ms),
      a third of a second to acknowledge a pointer. */
@@ -1001,9 +1007,11 @@ html[data-mode="executive"] .exec-decision-image {
   height: 36px;
   padding: 0;
   justify-content: center;
-  /* --radius-lg to match the copy-email CTA, overriding .btn-secondary's
-     hardcoded 8px. On a 36px box that lands just shy of a full pill. */
-  border-radius: var(--radius-lg);
+  /* --radius-md, matching .btn-primary and .btn-secondary. This tracked
+     --radius-lg to sit just shy of a pill on its 36px box; with the house
+     radius down to 16px that is no longer a distinction worth keeping, and
+     every button on the site now rounds at one rate. */
+  border-radius: var(--radius-md);
   font-size: var(--text-caption);
   /* Explicit, rather than inheriting body's 1.6: at 12px that builds a 19.2px
      line box whose half-leading rides the glyphs above the optical centre of a

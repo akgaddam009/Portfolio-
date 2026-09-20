@@ -139,7 +139,7 @@ function HomeNav({
           aria-label="Home. Arun Gaddam"
           style={{
             fontFamily: "var(--font-logo)",
-            fontSize: "var(--text-caption)",
+            fontSize: "var(--text-body)",
             fontWeight: 500,
             color: "var(--text)",
             letterSpacing: "0.06em",
@@ -751,7 +751,7 @@ function AboutPanel() {
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-md)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               cursor: "pointer",
             }}
@@ -773,7 +773,7 @@ function AboutPanel() {
               style={{
                 fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
                 letterSpacing: "0.08em", textTransform: "uppercase",
-                padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
+                padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-md)",
                 display: "inline-flex", alignItems: "center", gap: "6px",
                 textDecoration: "none",
               }}
@@ -797,9 +797,9 @@ function AboutPanel() {
         >
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
             <p style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
               letterSpacing: "0.1em", textTransform: "uppercase",
-              color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+              color: "var(--muted2)", whiteSpace: "nowrap", fontWeight: 400,
             }}>
               Industries
             </p>
@@ -865,9 +865,9 @@ function AboutPanel() {
                 put two different label rhythms in one panel. */}
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "11px" }}>
               <p style={{
-                fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
                 letterSpacing: "0.1em", textTransform: "uppercase",
-                color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+                color: "var(--muted2)", whiteSpace: "nowrap", fontWeight: 400,
               }}>
                 {label}
               </p>
@@ -3006,22 +3006,12 @@ function CareerPanel() {
   return (
     <div id="career-panel-container" ref={panelRef}>
       <PanelHeader label="Career" />
-      <div style={{ padding: "16px 0 32px 0" }}>
+      <div style={{ padding: "8px 0 32px 0" }}>
 
-        {/* Column headers. single continuous bottom border spans the full panel
-            width (year axis + Work + Other) so the line aligns with where the
-            year text begins on the left. */}
-        <div style={{ display: "flex", borderBottom: "1px solid var(--border)", paddingBottom: "10px" }}>
-          <div style={{ width: "52px", flexShrink: 0 }} />
-          <div style={{ flex: 1, display: "flex" }}>
-            <div style={{ flex: 1, paddingLeft: "24px" }}>
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)" }}>Work</span>
-            </div>
-            <div style={{ width: "42%", paddingLeft: "8px" }}>
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-body)", fontWeight: 400, lineHeight: 1.65, letterSpacing: "-0.01em", color: "var(--muted)" }}>Other</span>
-            </div>
-          </div>
-        </div>
+        {/* Column headers removed. The Work / Other labels and the rule under
+            them named two columns the timeline already distinguishes by
+            position, and the rule repeated an edge the panel header's own
+            border was already drawing a few pixels above it. */}
 
         <div style={{ display: "flex" }}>
           {/* Year axis */}
@@ -3193,7 +3183,15 @@ function TestimonialsPanel() {
               <p style={{
                 fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
                 letterSpacing: "0.12em", textTransform: "uppercase",
-                color: "var(--muted)", fontWeight: 400,
+                /* --muted2, up from --muted. Measured on the rendered card:
+                   9.20:1 light, 4.84:1 dark -- both clear the 4.50:1 AA floor
+                   for text this size, where --muted sat on it. Dark has only
+                   0.34 of headroom because --surface2 went to #323336 with the
+                   cool palette; re-measure here if that token moves again.
+                   It shares the name's ink now but stays clearly secondary to
+                   it: 9px uppercase at 0.12em tracking against a 14px
+                   sentence-case name. */
+                color: "var(--muted2)", fontWeight: 400,
                 margin: "0 0 12px",
               }}>
                 {t.company}
@@ -3364,7 +3362,7 @@ function ContactPanel() {
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-md)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               cursor: "pointer",
             }}
@@ -3380,7 +3378,7 @@ function ContactPanel() {
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-md)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               textDecoration: "none",
             }}
@@ -3397,7 +3395,7 @@ function ContactPanel() {
             style={{
               fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)", fontWeight: 400,
               letterSpacing: "0.08em", textTransform: "uppercase",
-              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-lg)",
+              padding: "5px 10px", minHeight: "32px", borderRadius: "var(--radius-md)",
               display: "inline-flex", alignItems: "center", gap: "6px",
               textDecoration: "none",
             }}
@@ -3426,9 +3424,9 @@ function ContactPanel() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
                 <p style={{
-                  fontFamily: "var(--font-mono)", fontSize: "var(--text-eyebrow)",
+                  fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
                   letterSpacing: "0.1em", textTransform: "uppercase",
-                  color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 400,
+                  color: "var(--muted2)", whiteSpace: "nowrap", fontWeight: 400,
                 }}>
                   Skills &amp; Tools
                 </p>
@@ -3538,7 +3536,7 @@ function ContactPanel() {
             © 2026 · Arun Gaddam
           </p>
           <p className="claude-colophon" style={{
-            fontFamily: "var(--font-body)", fontSize: "var(--text-mono-lg)",
+            fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
             fontWeight: 400, letterSpacing: "-0.01em",
             color: "var(--muted)", lineHeight: 1.3,
           }}>
