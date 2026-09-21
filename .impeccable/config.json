@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "#74aa9c",
+        "createdAt": "2026-09-14T16:07:03.342Z",
+        "reason": "ChatGPT's own backplate colour, taken from the source logo. Already used for the same card in app/page.tsx with a note that it is deliberately not theme-aware, the way the FanCode orange is not. A brand mark, not a palette addition."
+      }
+    ]
+  }
+}

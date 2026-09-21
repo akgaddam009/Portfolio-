@@ -655,7 +655,7 @@ const SKILL_GROUPS: {
        Patterns" came out: naming the tools is the claim, and describing the
        practice on top of them restated it in the vaguer of the two registers.
        The five names below carry it. */
-    label: "AI & Emerging",
+    label: "AI Tools",
     tools: ["ChatGPT", "Claude", "Cursor", "Claude Code"],
     capabilities: [],
   },
