@@ -706,7 +706,12 @@ function AboutPanel() {
             fontWeight: 500,
             lineHeight: 1.5,
             letterSpacing: "-0.02em",
-            color: "var(--about-h1)",
+            /* --text, the ink the Selected Work card titles use. This was
+               --about-h1, the one chromatic colour in the system; dropping it
+               makes the headline read as the same voice as the work titles
+               rather than as its own thing. --about-h1 stays defined and
+               unused, so it is one word to put back. */
+            color: "var(--text)",
             marginBottom: "20px",
           }}
         >
@@ -2177,7 +2182,12 @@ const YEAR_PX    = 70;   // px per year
 const CAL_START  = 2012;
 
 const CAL_END    = 2027;
-const TOP_OFFSET = 20;   // px breathing room above the topmost card
+/* 12, down from 20, paying back the 8px the panel's body padding just
+   regained. Every panel opens on 16px of padding; this panel used to get there
+   with 8 + 20 instead of 16 + 12, which made the one number that is supposed to
+   be shared across panels the odd one out. The timeline renders unmoved: both
+   the year axis and the card positions add TOP_OFFSET, so they shift together. */
+const TOP_OFFSET = 12;   // px breathing room above the topmost card
 /* Where "now" sits on the calendar. The axis highlight and the Now dot both
    derive from this, so the two cannot drift apart -- they were separately
    hardcoded as 2026 and 2026.25 before. Still a constant rather than
@@ -3095,7 +3105,7 @@ function CareerPanel() {
   return (
     <div id="career-panel-container" ref={panelRef}>
       <PanelHeader label="Career" />
-      <div style={{ padding: "8px 0 32px 0" }}>
+      <div style={{ padding: "16px 0 32px 0" }}>
 
         {/* Column headers removed. The Work / Other labels and the rule under
             them named two columns the timeline already distinguishes by
@@ -3221,7 +3231,7 @@ function TestimonialsPanel() {
   return (
     <div>
       <PanelHeader label="Testimonials" />
-      <div style={{ padding: "24px 24px 48px" }}>
+      <div style={{ padding: "16px 24px 48px" }}>
 
         {/* Intro line removed. The panel header already says "Testimonials",
             and the cards name each person's role and company underneath the
