@@ -571,6 +571,7 @@ const TOOL_ICON: Record<string, string> = {
   "Notion": "notion",
   "Jira": "jira",
   "Miro": "miro",
+  "ChatGPT": "openai",
   "Pendo": "pendo",
   /* Brand family, not exact product marks. FigJam and Figma Make are Figma
      products and carry Figma's mark; Claude Code is Anthropic's Claude and
@@ -655,7 +656,7 @@ const SKILL_GROUPS: {
        practice on top of them restated it in the vaguer of the two registers.
        The five names below carry it. */
     label: "AI & Emerging",
-    tools: ["ChatGPT", "Claude", "Cursor", "Claude Code", "Lovable"],
+    tools: ["ChatGPT", "Claude", "Cursor", "Claude Code"],
     capabilities: [],
   },
 ];
@@ -683,7 +684,7 @@ function AboutPanel() {
   return (
     <div>
       <PanelHeader label="About me" />
-      <div className="about-panel-body" style={{ padding: "16px 24px 48px" }}>
+      <div className="about-panel-body" style={{ padding: "16px 24px 32px" }}>
 
         {/* Portrait. illustration by default, real photo on hover */}
         <motion.div
@@ -3194,7 +3195,7 @@ function TestimonialsPanel() {
   return (
     <div>
       <PanelHeader label="Testimonials" />
-      <div style={{ padding: "16px 24px 48px" }}>
+      <div style={{ padding: "16px 24px 32px" }}>
 
         {/* Intro line removed. The panel header already says "Testimonials",
             and the cards name each person's role and company underneath the
@@ -3368,7 +3369,7 @@ function ContactPanel() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <PanelHeader label="Contact" />
-      <div style={{ padding: "16px 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
+      <div style={{ padding: "16px 24px 32px", flex: 1, display: "flex", flexDirection: "column" }}>
 
         {/* Headline. typography per Figma reference:
             Manrope 400 / 18px / line-height 30px / 0 tracking. */}
