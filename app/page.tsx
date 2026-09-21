@@ -572,6 +572,15 @@ const TOOL_ICON: Record<string, string> = {
   "Jira": "jira",
   "Miro": "miro",
   "Pendo": "pendo",
+  /* Brand family, not exact product marks. FigJam and Figma Make are Figma
+     products and carry Figma's mark; Claude Code is Anthropic's Claude and
+     carries Claude's. ChatGPT has no mark here -- the published asset is a
+     two-path 2406 viewBox and these are single-path 24x24, so rescaling it
+     would cost more fidelity than it buys. It renders text-only, the same
+     graceful absence Pendo already uses. */
+  "FigJam": "figma",
+  "Figma Make": "figma",
+  "Claude Code": "claude",
 };
 
 /* Inline brand mark. fill="currentColor" so it takes the chip's text colour and
@@ -598,76 +607,69 @@ function BrandGlyph({ name }: { name: string }) {
 /* Single source for the About panel's skill groups. The Contact panel's
    "Skills & Tools" marquee derives from this too -- it used to keep its own
    23-item list, which had already drifted from this one. One array, no drift. */
+/* Three segments, each a pair: the tools that do the work, then the
+   capabilities the work consists of.
+
+   This replaced a flat "Skills" list of 18 and a flat "Tools" list of 12,
+   which between them gave the reader 30 equal-weight tokens in no order --
+   a linear read with nothing to chunk by. Segmenting by kind of work gives
+   the run a scan order and makes the AI column legible as a column rather
+   than as four names buried mid-list.
+
+   Tools and capabilities are separate fields rather than one list because
+   they take different containers: a tool is a concrete noun carrying a brand
+   mark and earns a chip, a capability is abstract and does not. Mixing them
+   in one array would force one shape onto both. */
 const SKILL_GROUPS: {
   label: string;
-  variant: "prose" | "chips";
-  tone?: "violet" | "indigo";
-  items: string[];
+  tools: string[];
+  capabilities: string[];
 }[] = [
-          {
-            label: "Skills",
-            variant: "prose" as const,
-            items: [
-              "Product Thinking",
-              "Product Discovery & Strategy",
-              "User Research & Validation",
-              "Enterprise SaaS & Workflow Design",
-              "User Journey Mapping",
-              "Service Design",
-              "UX Design",
-              "Interaction Design",
-              "Prototyping",
-              "Usability Testing",
-              "Usability & Accessibility",
-              "Design Systems",
-              "Design Ops",
-              "Designing for AI",
-              "AI-Assisted Design",
-              "Metrics & Outcome Measurement",
-              "Workshop Facilitation",
-              "Cross-functional Leadership",
-            ],
-          },
-          {
-            /* Tools and Data Tools merged into one group. The split read as two
-               eyebrow headers over two rows of visually identical chips, a
-               distinction that carried no meaning for the reader -- they are all
-               tools. Design and AI tools first, then research and analytics, so
-               the internal order still groups by kind without a second header.
-               The Contact panel's marquee flattens this array, so it picks the
-               merge up with no change of its own. */
-            label: "Tools",
-            variant: "chips" as const,
-            items: [
-              "Claude", "Figma", "Gemini", "Perplexity", "Cursor",
-              "Dovetail", "Mixpanel", "Pendo", "Looker",
-              "Notion", "Jira", "Miro",
-            ],
-          }
+  {
+    /* Design and Collaboration were two segments and are now one. Split, the
+       first held a single tool against five capabilities and the second held
+       six tools against none -- so one block read as a caption with a chip
+       stuck on top and the other as a chip row with no caption. Neither was
+       the two-register pattern the segmentation was for. Merged, the pair
+       balances: seven tools over the capabilities they are used to do. */
+    label: "Design & Collaboration",
+    tools: ["Figma", "FigJam", "Figma Make", "Miro", "Notion", "Mixpanel", "Pendo", "Looker"],
+    /* Marquee only -- the About panel renders tools and ignores these.
+
+       They are the "Skills" half of the Contact panel's "Skills & Tools"
+       label, which without them was naming something it did not carry. Figma
+       is deliberately not repeated here: it is already in tools above, and the
+       marquee flattens both fields, so listing it twice would send the same
+       chip past the reader twice in one loop. */
+    capabilities: [
+      "Prototyping & Interaction Design",
+      "Design Systems",
+      "UX Research & Usability Testing",
+      "Product Thinking",
+      "Accessibility",
+    ],
+  },
+  {
+    /* Tools only. "AI-assisted Prototyping" and "AI-native Interaction
+       Patterns" came out: naming the tools is the claim, and describing the
+       practice on top of them restated it in the vaguer of the two registers.
+       The five names below carry it. */
+    label: "AI & Emerging",
+    tools: ["ChatGPT", "Claude", "Cursor", "Claude Code", "Lovable"],
+    capabilities: [],
+  },
 ];
 
-/* Display order for the About panel only: Tools above Skills.
 
-   Done here rather than by reordering SKILL_GROUPS itself, because the Contact
-   panel flattens that same array into its marquee and needs the original
-   sequence -- a marquee labelled "Skills & Tools" that ran tools first would
-   contradict its own header. So the array stays the source of truth for
-   content and for Contact's order, and About takes a sorted view of it.
+/* No view derivation any more. The About panel and the Contact marquee both
+   read SKILL_GROUPS directly: About renders all three segments in order, and
+   the marquee flattens their tools.
 
-   Ranked rather than reversed: a group added later with no entry here falls to
-   the end instead of silently flipping the whole panel, and Array#sort is
-   stable so any such additions keep their relative order. */
-/* Skills is dropped from the About panel; only Tools renders there now.
-
-   Filtered here rather than removed from SKILL_GROUPS, because the Contact
-   panel flattens that same array into its "Skills & Tools" marquee and still
-   needs the capability list. Deleting the group outright would empty half of
-   that marquee and leave its label lying. */
-const ABOUT_HIDDEN_GROUPS = new Set(["Skills"]);
-const ABOUT_GROUP_RANK: Record<string, number> = { Tools: 0, Skills: 1 };
-const ABOUT_SKILL_GROUPS = [...SKILL_GROUPS]
-  .filter(g => !ABOUT_HIDDEN_GROUPS.has(g.label))
-  .sort((a, b) => (ABOUT_GROUP_RANK[a.label] ?? 99) - (ABOUT_GROUP_RANK[b.label] ?? 99));
+   This replaced ABOUT_HIDDEN_GROUPS + ABOUT_GROUP_RANK, which existed to hide
+   the flat "Skills" group from About and to sort Tools above it. Both problems
+   were artefacts of the flat shape -- a capability list that had nowhere to go
+   and a Tools/Skills order that had to differ per panel. Segmenting by kind of
+   work removed the need for either. */
 
 function AboutPanel() {
   const [copied, setCopied] = useState(false);
@@ -798,35 +800,43 @@ function AboutPanel() {
           transition={{ duration: 0.4, ease: EASE, delay: 0.21 }}
           style={{ padding: "16px 0" }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
-            <p style={{
-              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
-              letterSpacing: "0.1em", textTransform: "uppercase",
-              color: "var(--muted2)", whiteSpace: "nowrap", fontWeight: 400,
-            }}>
-              Industries
-            </p>
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-            {["B2B", "SaaS", "Fintech", "Manufacturing", "Entertainment", "Customer Experience"].map(chip => (
-              <span key={chip} style={{
+          {/* 11px, matching the Tools label below. This shipped at 16 while the
+              comment on the other label asserted 11 applied to both groups --
+              two identically styled kickers binding to their content at
+              different distances, 124px apart in one column. */}
+          <p style={{
+            fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+            letterSpacing: "0.1em", textTransform: "uppercase",
+            color: "var(--muted2)", whiteSpace: "nowrap", fontWeight: 400,
+            marginBottom: "11px",
+          }}>
+            Industries
+          </p>
+          {/* Chips, matching the Tools group below: same fill, same radius,
+              same padding, and ul/li so a screen reader announces a count
+              rather than one undifferentiated run.
+
+              Kept as pills by decision, not by inheritance -- worth recording,
+              because the chip rule's stated licence is a concrete noun that
+              carries a brand mark, and these have no mark. Measured, the six
+              span 3.3x in width against the Tools group's 1.6x, so this is the
+              group that produces the ragged right edge the rule warns about.
+              That is the cost of the shape here; the benefit is that the two
+              inventories in this panel read as one system. */}
+          <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexWrap: "wrap", gap: "6px" }}>
+            {["B2B", "SaaS", "Fintech", "Manufacturing", "Entertainment", "Customer Experience"].map(item => (
+              <li key={item} style={{
+                display: "inline-flex", alignItems: "center",
                 fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                 fontWeight: 400, letterSpacing: "-0.01em",
-                padding: "4px 10px", borderRadius: "9999px",
-                /* Matches the Tools chips below: surface2 fill, no hairline.
-                   These were surface + border, which in the light theme meant no
-                   fill contrast at all (--surface and --bg are both #ffffff) so
-                   the border carried the whole shape. Two chip groups in one
-                   panel, same class of information, should not be built
-                   differently. A hairline was tried on top of the fill and
-                   removed again -- fill defines the shape, not fill + border. */
+                padding: "6px 12px", borderRadius: "9999px",
                 background: "var(--surface2)",
                 color: "var(--muted2)",
               }}>
-                {chip}
-              </span>
+                {item}
+              </li>
             ))}
-          </div>
+          </ul>
         </motion.div>
 
         {/* Skill groups.
@@ -851,7 +861,7 @@ function AboutPanel() {
             Rendered from ABOUT_SKILL_GROUPS, not SKILL_GROUPS: this panel shows
             Tools first, while the Contact marquee keeps the array's own
             Skills-then-Tools order. */}
-        {ABOUT_SKILL_GROUPS.map(({ label, variant, items, tone }, gi) => (
+        {SKILL_GROUPS.map(({ label, tools }, gi) => (
           <motion.div
             key={label}
             initial={{ opacity: 0, y: 6 }}
@@ -860,87 +870,45 @@ function AboutPanel() {
             transition={{ duration: 0.4, ease: EASE, delay: 0.24 + gi * 0.03 }}
             style={{ padding: "16px 0" }}
           >
-            {/* 11px, down 30% from 16px. The eyebrow is 9px uppercase with
-                0.1em tracking, so it reads as a label attached to the run
-                below it rather than as a heading needing its own airspace --
-                16px let the two drift apart. Applies to both groups, since
-                Tools and Skills share this header and splitting them would
-                put two different label rhythms in one panel. */}
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "11px" }}>
-              <p style={{
-                fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                color: "var(--muted2)", whiteSpace: "nowrap", fontWeight: 400,
-              }}>
-                {label}
-              </p>
+            {/* 11px, matching the Industries label above. The eyebrow is 10px
+                uppercase with 0.1em tracking, so it reads as a label attached
+                to the run below it rather than a heading needing its own
+                airspace. */}
+            <p style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-mono)",
+              letterSpacing: "0.1em", textTransform: "uppercase",
+              color: "var(--muted2)", whiteSpace: "nowrap", fontWeight: 400,
+              marginBottom: "11px",
+            }}>
+              {label}
+            </p>
 
-            </div>
-
-            {variant === "prose" ? (
-              /* A list that reads as prose. <ul>/<li> rather than a <p> so screen
-                 readers still announce "list, 11 items"; the middots are
-                 aria-hidden so they are not read out as punctuation. Separators
-                 use --muted, which is lighter than the --muted2 text, so the
-                 words dominate and the dots recede. */
-              /* -4px top margin cancels half-leading, so this block starts
-                 where the Tools chips start.
-
-                 Both groups share one 11px header margin, so the boxes were
-                 already aligned -- but they do not look it. A chip paints its
-                 tinted fill at the very top of its box, while this list is
-                 13px type on a 1.7 line-height, which puts a 22px line box
-                 around 13px of glyphs and leaves ~4.5px of empty half-leading
-                 above the first word. Tools showed colour at 11px; Skills
-                 showed nothing until ~15.5px, and the label read as detached.
-                 Pulling the list up by 4px aligns the first thing the eye
-                 actually sees in each group. */
-              <ul style={{
-                listStyle: "none", margin: "-4px 0 0", padding: 0,
-                fontFamily: "var(--font-body)", fontSize: "var(--text-body)",
-                fontWeight: 400, lineHeight: 1.7, letterSpacing: "-0.01em",
-                color: "var(--muted2)",
-              }}>
-                {/* Every item inline, wrapping where the column runs out.
-
-                   Two of these used to be display: block to force a line of
-                   their own. That worked at 11 items and fell apart at 18: a
-                   block li ends the line before it AND after it, so the run
-                   stopped dead at "Usability & Accessibility" and restarted,
-                   which reads as broken sequence rather than as grouping.
-                   Forced breaks only make sense when the list is short enough
-                   to plan; past that, let it wrap. */}
-                {items.map((item, ii) => (
-                  <li key={item} style={{ display: "inline" }}>
-                    {ii > 0 && (
-                      <span aria-hidden="true" style={{ color: "var(--muted)", padding: "0 6px" }}>
-                        ·
-                      </span>
-                    )}
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                {items.map(item => (
-                  <span key={item} style={{
+            {/* Tools first, as chips. A chip is licensed here because these are
+                concrete products carrying a brand mark, and a mark needs a
+                bounded shape to sit on. */}
+            {tools.length > 0 && (
+              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                {tools.map(item => (
+                  <li key={item} style={{
                     display: "inline-flex", alignItems: "center", gap: "6px",
                     fontFamily: "var(--font-body)", fontSize: "var(--text-caption)",
                     fontWeight: 400, letterSpacing: "-0.01em",
-                    padding: "4px 10px", borderRadius: "9999px",
-                    /* Tinted fill replaces surface + hairline. Measured with
-                       --muted2 on the tint: 8.56:1 light / 4.98:1 dark, against
-                       a 4.50:1 floor at 12px. */
+                    padding: "6px 12px", borderRadius: "9999px",
+                    /* Measured --muted2 on the tint: 9.20:1 light / 4.93:1
+                       dark, against a 4.50:1 floor at 12px. */
                     background: "var(--surface2)",
                     color: "var(--muted2)",
                   }}>
                     {TOOL_ICON[item] && <BrandGlyph name={TOOL_ICON[item]} />}
                     {item}
-                  </span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
+
+            {/* Capabilities are not rendered here. They stay on the data as
+                the Contact marquee's "Skills" half; this panel is tools only,
+                so each segment is a label over a chip row and nothing else. */}
           </motion.div>
         ))}
 
@@ -3499,14 +3467,22 @@ function ContactPanel() {
           </Link>
         </motion.div>
 
-        {/* Skills & Tools. matches the about-panel treatment (mono label
-            + marquee of pills). marginTop: auto pushes it
-            and the location card to the bottom of the panel. */}
+        {/* Skills & Tools. Mono label + marquee, matching the about-panel
+            treatment. marginTop: auto pushes it and the location card to the
+            bottom. */}
         {(() => {
-          /* Same data as the About panel's skill groups -- Skills then Tools,
-             flattened in order, which is exactly what the "Skills & Tools"
-             label promises. */
-          const skills = SKILL_GROUPS.flatMap(g => g.items);
+          /* Everything, tools and capabilities together, in segment order:
+             Product Design, then Product Collaboration, then AI & Emerging.
+
+             The About panel splits each segment into two registers -- chips for
+             the tools, prose for the capabilities -- because it has the room
+             and the distinction earns its keep there. A marquee has one
+             register by construction: it is a single moving line. So this is
+             the one surface where the capability-in-a-pill compromise is the
+             honest option rather than a shortcut, and the label says exactly
+             what runs past. */
+          const skills = SKILL_GROUPS.flatMap(g => [...g.tools, ...g.capabilities]);
+
           return (
             <motion.div
               className="skills-ticker"
@@ -3539,7 +3515,7 @@ function ContactPanel() {
                       <span style={{
                         fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                         letterSpacing: "-0.01em", color: "var(--muted2)",
-                        padding: "4px 10px",
+                        padding: "6px 12px",
                         borderRadius: "9999px",
                         background: "var(--surface2)",
                         marginRight: "6px",
@@ -3555,7 +3531,7 @@ function ContactPanel() {
                         <span style={{
                           fontFamily: "var(--font-body)", fontSize: "var(--text-caption)", fontWeight: 400,
                           letterSpacing: "-0.01em", color: "var(--muted2)",
-                          padding: "4px 10px",
+                          padding: "6px 12px",
                           borderRadius: "9999px",
                           background: "var(--surface2)",
                           marginRight: "6px",
